@@ -1,0 +1,390 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+    <title>GeSHi examples</title>
+    <style type="text/css">
+    <!--
+    /**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.autohotkey .de1, .autohotkey .de2 {font: normal normal 1em/1.2em monospace; margin:0; padding:0; background:none; vertical-align:top;color: #000020;}
+.autohotkey  {font: normal normal 90% monospace; color: #000066; border: 1px solid #d0d0d0; background-color: #f0f0f0;}
+.autohotkey a:link {color: #000060;}
+.autohotkey a:hover {background-color: #f0f000;}
+.autohotkey .head {font-family: sans-serif; color: #808080; font-size: 70%; font-weight: bold; background-color: #f0f0ff; border-bottom: 1px solid #d0d0d0; padding: 2px;}
+.autohotkey .foot {font-family: sans-serif; color: #808080; font-size: 70%; font-weight: bold; background-color: #f0f0ff; border-top: 1px solid #d0d0d0; padding: 2px;}
+.autohotkey .imp {font-weight: bold; color: red;}
+.autohotkey li, .autohotkey .li1 {font-weight: normal; vertical-align:top;color: #003030;}
+.autohotkey .ln {width:1px;text-align:right;margin:0;padding:0 2px;vertical-align:top;}
+.autohotkey .li2 {font-weight: bold; vertical-align:top;font-weight: bold; color: #006060;}
+.autohotkey .kw1 {color: #AAAAFF; font-weight: bold;}
+.autohotkey .kw2 {color: #88FF88;}
+.autohotkey .kw3 {color: #FF00FF; font-style: italic;}
+.autohotkey .kw4 {color: #888844; font-weight: bold;}
+.autohotkey .kw5 {color: #000000; font-style: italic;}
+.autohotkey .kw6 {color: #FF0000; font-style: italic;}
+.autohotkey .kw7 {color: #000000; font-style: italic;}
+.autohotkey .kw8 {color: #000000; font-style: italic;}
+.autohotkey .co0 {font-style: italic; color: #009933;}
+.autohotkey .coMULTI {font-style: italic; color: #669900;}
+.autohotkey .br0 {color: #00FF00; font-weight: bold;}
+.autohotkey .sy0 {color: #000000; font-weight: italic;}
+.autohotkey .st0 {font-weight: bold; color: #008080;}
+.autohotkey .nu0 {color: #0000dd;}
+.autohotkey .me1 {color: #0000FF; font-style: italic; font-weight: italic;}
+.autohotkey .re0 {font-weight: italic; color: #A00A0;}
+.autohotkey .re1 {color: #CC0000; font-style: italic;}
+.autohotkey .re2 {color: #DD0000; font-style: italic;}
+.autohotkey span.xtra { display:block; }
+    html {
+        background-color: #f0f0f0;
+    }
+    body {
+        font-family: Verdana, Arial, sans-serif;
+        margin: 10px;
+        border: 2px solid #e0e0e0;
+        background-color: #fcfcfc;
+        padding: 5px;
+    }
+    h2 {
+        margin: .1em 0 .2em .5em;
+        border-bottom: 1px solid #b0b0b0;
+        color: #b0b0b0;
+        font-weight: normal;
+        font-size: 150%;
+    }
+    h3 {
+        margin: .1em 0 .2em .5em;
+        color: #b0b0b0;
+        font-weight: normal;
+        font-size: 120%;
+    }
+    #footer {
+        text-align: center;
+        font-size: 80%;
+        color: #a9a9a9;
+    }
+    #footer a {
+        color: #9999ff;
+    }
+    textarea {
+        border: 1px solid #b0b0b0;
+        font-size: 90%;
+        color: #333;
+        margin-left: 20px;
+    }
+    select, input {
+        margin-left: 20px;
+    }
+    p {
+        font-size: 90%;
+        margin-left: .5em;
+    }
+    -->
+    </style>
+</head><body>
+<h2>GeSHi Example Script</h2>
+<p>To use this script, make sure that <strong>geshi.php</strong> is in the parent directory or in your
+include_path, and that the language files are in a subdirectory of GeSHi's directory called <strong>geshi/</strong>.</p>
+<p>Enter your source and a language to highlight the source in and submit, or just choose a language to
+have that language file highlighted in PHP.</p>
+<div class="autohotkey" style="border: 1px solid rgb(208, 208, 208); font-family: monospace; font-style: normal; font-variant: normal; font-weight: normal; font-size: 90%; line-height: normal; font-size-adjust: none; font-stretch: normal; -x-system-font: none; color: rgb(0, 0, 102); background-color: rgb(240, 240, 240);"><div class="head">23.67 KB/s 0.124 GeSHi © 2004-2007, Nigel McNie, 2007-2008 Benny Baumann. View source of example.php for example of using GeSHi</div><ol><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/_WinActivateForce.htm"><span class="kw5">#IfWinActive</span></a></pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/_WinActivateForce.htm"><span class="kw5">#Persistent</span></a></pre></li><li class="li1"><pre class="de1"><span class="co0">; comment1</span></pre></li><li class="li1"><pre class="de1"><span class="coMULTI">/*</span></pre></li><li class="li2"><pre class="de2"><span class="coMULTI">multiline comment</span></pre></li><li class="li1"><pre class="de1"><span class="coMULTI">msgbox(comment)</span></pre></li><li class="li1"><pre class="de1"><span class="coMULTI">*/</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1"><span class="kw6">F2</span>::     <span class="co0">;; hotkey</span></pre></li><li class="li2"><pre class="de2"><span class="re2">start: </span>  <span class="co0">;; label</span></pre></li><li class="li1"><pre class="de1"><span class="re2">start2: </span>  <span class="co0">; label</span></pre></li><li class="li1"><pre class="de1">  ppm <span class="sy0">:=</span> ppm_new<span class="br0">(</span>50<span class="sy0">,</span> 50<span class="sy0">,</span> 255<span class="br0">)</span>    </pre></li><li class="li1"><pre class="de1">  ppm_fill<span class="br0">(</span>ppm<span class="sy0">,</span> 80<span class="sy0">,</span> 90<span class="sy0">,</span> 95<span class="br0">)</span>      </pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/MsgBox.htm"><span class="kw3">msgbox</span></a> % getPixel<span class="br0">(</span>ppm<span class="sy0">,</span> 1<span class="sy0">,</span> 1<span class="br0">)</span>    </pre></li><li class="li2"><pre class="de2">  setPixel<span class="br0">(</span>90<span class="sy0">,</span> 90<span class="sy0">,</span> 90<span class="sy0">,</span> ppm<span class="sy0">,</span> 1<span class="sy0">,</span> 1<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/MsgBox.htm"><span class="kw3">msgbox</span></a> % getPixel<span class="br0">(</span>ppm<span class="sy0">,</span> 1<span class="sy0">,</span> 1<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/ListVars.htm"><span class="kw3">ListVars</span></a>  <span class="co0">; command</span></pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/MsgBox.htm"><span class="kw3">msgbox</span></a> % ppm</pre></li><li class="li1"><pre class="de1">  <span class="kw1">return</span></pre></li><li class="li2"><pre class="de2">&nbsp;</pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1">  ppm_read<span class="br0">(</span>file<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  <span class="br0">{</span></pre></li><li class="li1"><pre class="de1">	<a href="http://www.autohotkey.com/docs/commands/FileRead.htm"><span class="kw3">fileread</span></a><span class="sy0">,</span> ppm<span class="sy0">,</span> % file</pre></li><li class="li2"><pre class="de2"> <span class="kw1">return</span> ppm</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1"><span class="re1">::hotstring::</span></pre></li><li class="li1"><pre class="de1"><span class="re1">::hot3::</span></pre></li><li class="li2"><pre class="de2">ppm_width<span class="br0">(</span>ppm<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1"> <a href="http://www.autohotkey.com/docs/commands/RegExMatch.htm"><span class="kw3">regexmatch</span></a><span class="br0">(</span>ppm<span class="sy0">,</span> <span class="st0">"\R(\d+)\s(\d+)"</span><span class="sy0">,</span> dim<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"> <span class="kw1">return</span> dim1</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li2"><pre class="de2">ppm_height<span class="br0">(</span>ppm<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1"> <a href="http://www.autohotkey.com/docs/commands/RegExMatch.htm"><span class="kw3">regexmatch</span></a><span class="br0">(</span>ppm<span class="sy0">,</span> <span class="st0">"\R(\d+)\s(\d+)"</span><span class="sy0">,</span> dim<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">    <span class="kw1">return</span> dim2</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span> </pre></li><li class="li2"><pre class="de2">&nbsp;</pre></li><li class="li1"><pre class="de1">ppm_colors<span class="br0">(</span>ppm<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/RegExMatch.htm"><span class="kw3">regexmatch</span></a><span class="br0">(</span>ppm<span class="sy0">,</span> <span class="st0">"\R(\d+)\D*\R"</span><span class="sy0">,</span> colors<span class="br0">)</span>  <span class="co0">; \R stands for any</span></pre></li><li class="li1"><pre class="de1"><span class="kw1">return</span> colors1</pre></li><li class="li2"><pre class="de2"><span class="br0">}</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1">ppm_data<span class="br0">(</span>ppm<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1">pos <span class="sy0">:=</span>  <a href="http://www.autohotkey.com/docs/commands/RegExMatch.htm"><span class="kw3">regexmatch</span></a><span class="br0">(</span>ppm<span class="sy0">,</span> <span class="st0">"\R(\d+)\D*\R"</span><span class="sy0">,</span> colors<span class="br0">)</span>  <span class="co0">; \R stands for any newline</span></pre></li><li class="li2"><pre class="de2"><a href="http://www.autohotkey.com/docs/commands/StringTrimLeft.htm"><span class="kw3">stringtrimleft</span></a><span class="sy0">,</span> data<span class="sy0">,</span> ppm<span class="sy0">,</span> pos <span class="sy0">+</span> <a href="http://www.autohotkey.com/docs/Functions.htm#BuiltIn"><span class="kw4">strlen</span></a><span class="br0">(</span>colors1<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="kw1">return</span> data</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li1"><pre class="de1">ppm_header<span class="br0">(</span>ppm<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li2"><pre class="de2">pos <span class="sy0">:=</span>  <a href="http://www.autohotkey.com/docs/commands/RegExMatch.htm"><span class="kw3">regexmatch</span></a><span class="br0">(</span>ppm<span class="sy0">,</span> <span class="st0">"\R(\d+)\D*\R"</span><span class="sy0">,</span> colors<span class="br0">)</span>  <span class="co0">; \R stands for any newline</span></pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/StringLeft.htm"><span class="kw3">stringleft</span></a><span class="sy0">,</span> header<span class="sy0">,</span> ppm<span class="sy0">,</span> pos <span class="sy0">+</span> <a href="http://www.autohotkey.com/docs/Functions.htm#BuiltIn"><span class="kw4">strlen</span></a><span class="br0">(</span>colors1<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="kw1">return</span> header</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li2"><pre class="de2">ppm_fill<span class="br0">(</span>ByRef ppm<span class="sy0">,</span> r<span class="sy0">,</span> g<span class="sy0">,</span> b<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1">  width <span class="sy0">:=</span> ppm_width<span class="br0">(</span>ppm<span class="br0">)</span>	</pre></li><li class="li1"><pre class="de1">  height <span class="sy0">:=</span> ppm_height<span class="br0">(</span>ppm<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  header <span class="sy0">:=</span> ppm_header<span class="br0">(</span>ppm<span class="br0">)</span></pre></li><li class="li2"><pre class="de2">  headerLength <span class="sy0">:=</span> <a href="http://www.autohotkey.com/docs/Functions.htm#BuiltIn"><span class="kw4">strlen</span></a><span class="br0">(</span>header<span class="br0">)</span> </pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/VarSetCapacity.htm"><span class="kw3">varsetcapacity</span></a><span class="br0">(</span>data<span class="sy0">,</span> width <span class="sy0">*</span> height<span class="sy0">,</span> 0<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/Loop.htm"><span class="kw3">loop</span></a><span class="sy0">,</span> % <span class="br0">(</span>width <span class="sy0">*</span> height<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  <span class="br0">{</span></pre></li><li class="li1"><pre class="de1">	<span class="kw1">if</span> r</pre></li><li class="li2"><pre class="de2">   <a href="http://www.autohotkey.com/docs/Functions.htm#BuiltIn"><span class="kw4">numput</span></a><span class="br0">(</span>r<span class="sy0">,</span> data<span class="sy0">,</span> <span class="br0">(</span>A_Index <span class="sy0">-</span> <span class="nu0">1</span><span class="br0">)</span> <span class="sy0">*</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"uchar"</span><span class="br0">)</span></pre></li><li class="li1"><pre class="de1"> <span class="kw1">if</span> g</pre></li><li class="li1"><pre class="de1">   <a href="http://www.autohotkey.com/docs/Functions.htm#BuiltIn"><span class="kw4">numput</span></a><span class="br0">(</span>g<span class="sy0">,</span> data<span class="sy0">,</span> <span class="br0">(</span>A_Index <span class="sy0">-</span> <span class="nu0">1</span><span class="br0">)</span> <span class="sy0">*</span> <span class="nu0">3</span> <span class="sy0">+</span> <span class="nu0">1</span><span class="sy0">,</span> <span class="st0">"uchar"</span><span class="br0">)</span></pre></li><li class="li1"><pre class="de1"> <span class="kw1">if</span> b</pre></li><li class="li1"><pre class="de1">   <a href="http://www.autohotkey.com/docs/Functions.htm#BuiltIn"><span class="kw4">numput</span></a><span class="br0">(</span>b<span class="sy0">,</span> data<span class="sy0">,</span> <span class="br0">(</span>A_Index <span class="sy0">-</span> <span class="nu0">1</span><span class="br0">)</span> <span class="sy0">*</span> <span class="nu0">3</span> <span class="sy0">+</span> <span class="nu0">2</span><span class="sy0">,</span> <span class="st0">"uchar"</span><span class="br0">)</span></pre></li><li class="li2"><pre class="de2"><span class="br0">}</span></pre></li><li class="li1"><pre class="de1">VarCopy<span class="br0">(</span><span class="sy0">&amp;</span>ppm <span class="sy0">+</span> headerLength<span class="sy0">,</span> <span class="sy0">&amp;</span>data<span class="sy0">,</span> width <span class="sy0">*</span> height<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li2"><pre class="de2">ppm_new<span class="br0">(</span>width<span class="sy0">,</span> height<span class="sy0">,</span> colors<span class="br0">)</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1">  header <span class="sy0">=</span> P6`n<span class="re0">%width%</span> <span class="re0">%height%</span>`n<span class="re0">%colors%</span>`n</pre></li><li class="li1"><pre class="de1">  headerLength <span class="sy0">:=</span> <a href="http://www.autohotkey.com/docs/Functions.htm#BuiltIn"><span class="kw4">strlen</span></a><span class="br0">(</span>header<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/VarSetCapacity.htm"><span class="kw3">varsetcapacity</span></a><span class="br0">(</span>ppm<span class="sy0">,</span> width <span class="sy0">*</span> height <span class="sy0">+</span> headerLength<span class="sy0">,</span> 1<span class="br0">)</span></pre></li><li class="li2"><pre class="de2">  <a href="http://www.autohotkey.com/docs/commands/VarSetCapacity.htm"><span class="kw3">varsetcapacity</span></a><span class="br0">(</span>data<span class="sy0">,</span> width <span class="sy0">*</span> height<span class="sy0">,</span> 0<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  VarCopy<span class="br0">(</span><span class="sy0">&amp;</span>ppm<span class="sy0">,</span> <span class="sy0">&amp;</span>header<span class="sy0">,</span> headerLength<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  VarCopy<span class="br0">(</span><span class="sy0">&amp;</span>ppm <span class="sy0">+</span> headerLength<span class="sy0">,</span> <span class="sy0">&amp;</span>data<span class="sy0">,</span> width <span class="sy0">*</span> height<span class="br0">)</span></pre></li><li class="li1"><pre class="de1">  <span class="kw1">return</span> ppm</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li2"><pre class="de2">&nbsp;</pre></li><li class="li1"><pre class="de1">heredoc <span class="sy0">=</span> </pre></li><li class="li1"><pre class="de1"><span class="br0">(</span></pre></li><li class="li1"><pre class="de1">  P6</pre></li><li class="li1"><pre class="de1">  # lasdjkf</pre></li><li class="li2"><pre class="de2">  87 09</pre></li><li class="li1"><pre class="de1">  255</pre></li><li class="li1"><pre class="de1">  <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Color"><span class="kw7">color</span></a> data<span class="sy0">...</span></pre></li><li class="li1"><pre class="de1"><span class="br0">)</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li2"><pre class="de2"><span class="co0">; Example: Simple image viewer:</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <span class="sy0">+</span>Resize</pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Add"><span class="kw7">Add</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/GuiControls.htm#Button"><span class="kw8">Button</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Default"><span class="kw7">default</span></a><span class="sy0">,</span> <span class="sy0">&amp;</span>Load New Image</pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Add"><span class="kw7">Add</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/GuiControls.htm#Radio"><span class="kw8">Radio</span></a><span class="sy0">,</span> ym<span class="sy0">+</span>5 x<span class="sy0">+</span>10 vRadio checked<span class="sy0">,</span> Load <span class="sy0">&amp;</span>actual size</pre></li><li class="li2"><pre class="de2"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Add"><span class="kw7">Add</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/GuiControls.htm#Radio"><span class="kw8">Radio</span></a><span class="sy0">,</span> ym<span class="sy0">+</span>5 x<span class="sy0">+</span>10<span class="sy0">,</span> Load to <span class="sy0">&amp;</span>fit screen</pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Add"><span class="kw7">Add</span></a><span class="sy0">,</span> Pic<span class="sy0">,</span> xm vPic</pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Show"><span class="kw7">Show</span></a></pre></li><li class="li1"><pre class="de1"><span class="kw1">return</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li2"><pre class="de2"><span class="re2">ButtonLoadNewImage:</span></pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/FileSelectFile.htm"><span class="kw3">FileSelectFile</span></a><span class="sy0">,</span> file<span class="sy0">,,,</span> Select an image:<span class="sy0">,</span> Images <span class="br0">(</span><span class="sy0">*.</span>gif<span class="co0">; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)</span></pre></li><li class="li1"><pre class="de1"><span class="kw1">if</span> file <span class="sy0">=</span></pre></li><li class="li1"><pre class="de1">    <span class="kw1">return</span></pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Submit"><span class="kw7">Submit</span></a><span class="sy0">,</span> NoHide <span class="co0">; Save the values of the radio buttons.</span></pre></li><li class="li2"><pre class="de2"><span class="kw1">if</span> <a href="http://www.autohotkey.com/docs/commands/GuiControls.htm#Radio"><span class="kw8">Radio</span></a> <span class="sy0">=</span> <span class="nu0">1</span>  <span class="co0">; Display image at its actual size.</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1">    Width <span class="sy0">=</span> 0</pre></li><li class="li1"><pre class="de1">    Height <span class="sy0">=</span> 0</pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li2"><pre class="de2"><span class="kw1">else</span> <span class="co0">; Second radio is selected: Resize the image to fit the screen.</span></pre></li><li class="li1"><pre class="de1"><span class="br0">{</span></pre></li><li class="li1"><pre class="de1">    Width <span class="sy0">:=</span> A_ScreenWidth <span class="sy0">-</span> <span class="nu0">28</span>  <span class="co0">; Minus 28 to allow room for borders and margins inside.</span></pre></li><li class="li1"><pre class="de1">    Height <span class="sy0">=</span> <span class="sy0">-</span><span class="nu0">1</span>  <span class="co0">; "Keep aspect ratio" seems best.</span></pre></li><li class="li1"><pre class="de1"><span class="br0">}</span></pre></li><li class="li2"><pre class="de2"><a href="http://www.autohotkey.com/docs/commands/GuiControl.htm"><span class="kw3">GuiControl</span></a><span class="sy0">,,</span> Pic<span class="sy0">,</span> <span class="sy0">*</span>w<span class="re0">%width%</span> <span class="sy0">*</span>h<span class="re0">%height%</span> <span class="re0">%file%</span>  <span class="co0">; Load the image.</span></pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm"><span class="kw3">Gui</span></a><span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Show"><span class="kw7">Show</span></a><span class="sy0">,</span> xCenter y0 AutoSize<span class="sy0">,</span> <span class="re0">%file%</span>  <span class="co0">; Resize the window to match the picture size.</span></pre></li><li class="li1"><pre class="de1"><span class="kw1">return</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Gui.htm#GuiClose"><span class="kw7">GuiClose</span></a>:</pre></li><li class="li2"><pre class="de2"><a href="http://www.autohotkey.com/docs/commands/ExitApp.htm"><span class="kw3">ExitApp</span></a></pre></li><li class="li1"><pre class="de1"><span class="co0">; Example: Simple text editor with menu bar.</span></pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li><li class="li1"><pre class="de1"><span class="co0">; Create the sub-menus for the menu bar:</span></pre></li><li class="li1"><pre class="de1"><a href="http://www.autohotkey.com/docs/commands/Menu.htm"><span class="kw3">Menu</span></a><span class="sy0">,</span> FileMenu<span class="sy0">,</span> <a href="http://www.autohotkey.com/docs/commands/Gui.htm#Add"><span class="kw7">Add</span></a><span class="sy0">,</span> <span class="sy0">&amp;</span>New<span class="sy0">,</span> FileNew</pre></li><li class="li2"><pre class="de2">&nbsp;</pre></li><li class="li1"><pre class="de1">&nbsp;</pre></li></ol><div class="foot">Parsed in 0.124 seconds at 23.67 KB/s, using GeSHi 1.0.8.4</div></div><hr><form action="example.php" method="post">
+<h3>Source to highlight</h3>
+<p>
+<textarea rows="10" cols="60" name="source" id="source">#IfWinActive
+#Persistent
+; comment1
+/*
+multiline comment
+msgbox(comment)
+*/
+  
+F2::     ;; hotkey
+start:   ;; label
+start2:   ; label
+  ppm := ppm_new(50, 50, 255)    
+  ppm_fill(ppm, 80, 90, 95)      
+  msgbox % getPixel(ppm, 1, 1)    
+  setPixel(90, 90, 90, ppm, 1, 1)
+  msgbox % getPixel(ppm, 1, 1)
+  ListVars  ; command
+  msgbox % ppm
+  return
+  
+  
+  ppm_read(file)
+  {
+	fileread, ppm, % file
+ return ppm
+}
+
+::hotstring::
+::hot3::
+ppm_width(ppm)
+{
+ regexmatch(ppm, "\R(\d+)\s(\d+)", dim)
+ return dim1
+}
+ppm_height(ppm)
+{
+ regexmatch(ppm, "\R(\d+)\s(\d+)", dim)
+    return dim2
+} 
+
+ppm_colors(ppm)
+{
+regexmatch(ppm, "\R(\d+)\D*\R", colors)  ; \R stands for any
+return colors1
+}
+
+ppm_data(ppm)
+{
+pos :=  regexmatch(ppm, "\R(\d+)\D*\R", colors)  ; \R stands for any newline
+stringtrimleft, data, ppm, pos + strlen(colors1)
+return data
+}
+ppm_header(ppm)
+{
+pos :=  regexmatch(ppm, "\R(\d+)\D*\R", colors)  ; \R stands for any newline
+stringleft, header, ppm, pos + strlen(colors1)
+return header
+}
+
+ppm_fill(ByRef ppm, r, g, b)
+{
+  width := ppm_width(ppm)	
+  height := ppm_height(ppm)
+  header := ppm_header(ppm)
+  headerLength := strlen(header) 
+  varsetcapacity(data, width * height, 0)
+  loop, % (width * height)
+  {
+	if r
+   numput(r, data, (A_Index - 1) * 3, "uchar")
+ if g
+   numput(g, data, (A_Index - 1) * 3 + 1, "uchar")
+ if b
+   numput(b, data, (A_Index - 1) * 3 + 2, "uchar")
+}
+VarCopy(&amp;ppm + headerLength, &amp;data, width * height)
+
+}
+
+ppm_new(width, height, colors)
+{
+  header = P6`n%width% %height%`n%colors%`n
+  headerLength := strlen(header)
+  varsetcapacity(ppm, width * height + headerLength, 1)
+  varsetcapacity(data, width * height, 0)
+  VarCopy(&amp;ppm, &amp;header, headerLength)
+  VarCopy(&amp;ppm + headerLength, &amp;data, width * height)
+  return ppm
+}
+
+heredoc = 
+(
+  P6
+  # lasdjkf
+  87 09
+  255
+  color data...
+)
+
+; Example: Simple image viewer:
+
+Gui, +Resize
+Gui, Add, Button, default, &amp;Load New Image
+Gui, Add, Radio, ym+5 x+10 vRadio checked, Load &amp;actual size
+Gui, Add, Radio, ym+5 x+10, Load to &amp;fit screen
+Gui, Add, Pic, xm vPic
+Gui, Show
+return
+
+ButtonLoadNewImage:
+FileSelectFile, file,,, Select an image:, Images (*.gif; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)
+if file =
+    return
+Gui, Submit, NoHide ; Save the values of the radio buttons.
+if Radio = 1  ; Display image at its actual size.
+{
+    Width = 0
+    Height = 0
+}
+else ; Second radio is selected: Resize the image to fit the screen.
+{
+    Width := A_ScreenWidth - 28  ; Minus 28 to allow room for borders and margins inside.
+    Height = -1  ; "Keep aspect ratio" seems best.
+}
+GuiControl,, Pic, *w%width% *h%height% %file%  ; Load the image.
+Gui, Show, xCenter y0 AutoSize, %file%  ; Resize the window to match the picture size.
+return
+
+GuiClose:
+ExitApp
+; Example: Simple text editor with menu bar.
+
+; Create the sub-menus for the menu bar:
+Menu, FileMenu, Add, &amp;New, FileNew
+
+</textarea>
+</p>
+<h3>Choose a language</h3>
+<p>
+<select name="language" id="language">
+<option value="abap">abap</option>
+<option value="actionscript">actionscript</option>
+<option value="actionscript3">actionscript3</option>
+<option value="ada">ada</option>
+<option value="apache">apache</option>
+<option value="applescript">applescript</option>
+<option value="apt_sources">apt_sources</option>
+<option value="asm">asm</option>
+<option value="asp">asp</option>
+<option value="autohotkey" selected="selected">autohotkey</option>
+<option value="autoit">autoit</option>
+<option value="avisynth">avisynth</option>
+<option value="bash">bash</option>
+<option value="basic4gl">basic4gl</option>
+<option value="bf">bf</option>
+<option value="bibtex">bibtex</option>
+<option value="blitzbasic">blitzbasic</option>
+<option value="bnf">bnf</option>
+<option value="boo">boo</option>
+<option value="c">c</option>
+<option value="c_mac">c_mac</option>
+<option value="caddcl">caddcl</option>
+<option value="cadlisp">cadlisp</option>
+<option value="cfdg">cfdg</option>
+<option value="cfm">cfm</option>
+<option value="cil">cil</option>
+<option value="cmake">cmake</option>
+<option value="cobol">cobol</option>
+<option value="cpp">cpp</option>
+<option value="cpp-qt">cpp-qt</option>
+<option value="csharp">csharp</option>
+<option value="css">css</option>
+<option value="d">d</option>
+<option value="dcs">dcs</option>
+<option value="delphi">delphi</option>
+<option value="diff">diff</option>
+<option value="div">div</option>
+<option value="dos">dos</option>
+<option value="dot">dot</option>
+<option value="eiffel">eiffel</option>
+<option value="email">email</option>
+<option value="erlang">erlang</option>
+<option value="fo">fo</option>
+<option value="fortran">fortran</option>
+<option value="freebasic">freebasic</option>
+<option value="genero">genero</option>
+<option value="gettext">gettext</option>
+<option value="glsl">glsl</option>
+<option value="gml">gml</option>
+<option value="gnuplot">gnuplot</option>
+<option value="groovy">groovy</option>
+<option value="haskell">haskell</option>
+<option value="hq9plus">hq9plus</option>
+<option value="html4strict">html4strict</option>
+<option value="idl">idl</option>
+<option value="ini">ini</option>
+<option value="inno">inno</option>
+<option value="intercal">intercal</option>
+<option value="io">io</option>
+<option value="java">java</option>
+<option value="java5">java5</option>
+<option value="javascript">javascript</option>
+<option value="kixtart">kixtart</option>
+<option value="klonec">klonec</option>
+<option value="klonecpp">klonecpp</option>
+<option value="latex">latex</option>
+<option value="lisp">lisp</option>
+<option value="locobasic">locobasic</option>
+<option value="lolcode">lolcode</option>
+<option value="lotusformulas">lotusformulas</option>
+<option value="lotusscript">lotusscript</option>
+<option value="lscript">lscript</option>
+<option value="lsl2">lsl2</option>
+<option value="lua">lua</option>
+<option value="m68k">m68k</option>
+<option value="make">make</option>
+<option value="matlab">matlab</option>
+<option value="mirc">mirc</option>
+<option value="modula3">modula3</option>
+<option value="mpasm">mpasm</option>
+<option value="mxml">mxml</option>
+<option value="mysql">mysql</option>
+<option value="nsis">nsis</option>
+<option value="oberon2">oberon2</option>
+<option value="objc">objc</option>
+<option value="ocaml">ocaml</option>
+<option value="ocaml-brief">ocaml-brief</option>
+<option value="old">old</option>
+<option value="oobas">oobas</option>
+<option value="oracle11">oracle11</option>
+<option value="oracle8">oracle8</option>
+<option value="pascal">pascal</option>
+<option value="per">per</option>
+<option value="perl">perl</option>
+<option value="php">php</option>
+<option value="php-brief">php-brief</option>
+<option value="pic16">pic16</option>
+<option value="pixelbender">pixelbender</option>
+<option value="plsql">plsql</option>
+<option value="povray">povray</option>
+<option value="powershell">powershell</option>
+<option value="progress">progress</option>
+<option value="prolog">prolog</option>
+<option value="properties">properties</option>
+<option value="providex">providex</option>
+<option value="python">python</option>
+<option value="qbasic">qbasic</option>
+<option value="rails">rails</option>
+<option value="rebol">rebol</option>
+<option value="reg">reg</option>
+<option value="robots">robots</option>
+<option value="ruby">ruby</option>
+<option value="sas">sas</option>
+<option value="scala">scala</option>
+<option value="scheme">scheme</option>
+<option value="scilab">scilab</option>
+<option value="sdlbasic">sdlbasic</option>
+<option value="smalltalk">smalltalk</option>
+<option value="smarty">smarty</option>
+<option value="sql">sql</option>
+<option value="tcl">tcl</option>
+<option value="temp">temp</option>
+<option value="teraterm">teraterm</option>
+<option value="text">text</option>
+<option value="thinbasic">thinbasic</option>
+<option value="tsql">tsql</option>
+<option value="typoscript">typoscript</option>
+<option value="vb">vb</option>
+<option value="vbnet">vbnet</option>
+<option value="verilog">verilog</option>
+<option value="vhdl">vhdl</option>
+<option value="vim">vim</option>
+<option value="visualfoxpro">visualfoxpro</option>
+<option value="visualprolog">visualprolog</option>
+<option value="whitespace">whitespace</option>
+<option value="whois">whois</option>
+<option value="winbatch">winbatch</option>
+<option value="xml">xml</option>
+<option value="xorg_conf">xorg_conf</option>
+<option value="xpp">xpp</option>
+<option value="z80">z80</option>
+</select>
+</p>
+<p>
+<input name="submit" value="Highlight Source" type="submit">
+<input name="clear" onclick="document.getElementById('source').value='';document.getElementById('language').value='';return false" value="clear" type="submit">
+</p>
+</form>
+<div id="footer">GeSHi © Nigel McNie, 2004, released under the GNU GPL<br>
+For a better demonstration, check out the <a href="http://qbnz.com/highlighter/demo.php">online demo</a>
+</div>
+</body><script type="text/javascript"><!--
+function __RP_Callback_Helper(str, strCallbackEvent, splitSize, func){var event = null;if (strCallbackEvent){event = document.createEvent('Events');event.initEvent(strCallbackEvent, true, true);}if (str && str.length > 0){var splitList = str.split('|');var strCompare = str;if (splitList.length == splitSize)strCompare = splitList[splitSize-1];var pluginList = document.plugins;for (var count = 0; count < pluginList.length; count++){var sSrc = '';if (pluginList[count] && pluginList[count].src)sSrc = pluginList[count].src;if (strCompare.length >= sSrc.length){if (strCompare.indexOf(sSrc) != -1){func(str, count, pluginList, splitList);break;}}}}if (strCallbackEvent)document.body.dispatchEvent(event);}function __RP_Coord_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_Coord_Callback = str;pluginList[index].__RP_Coord_Callback_Left = splitList[0];pluginList[index].__RP_Coord_Callback_Top = splitList[1];pluginList[index].__RP_Coord_Callback_Right = splitList[2];pluginList[index].__RP_Coord_Callback_Bottom = splitList[3];};__RP_Callback_Helper(str, 'rp-js-coord-callback', 5, func);}function __RP_Url_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_Url_Callback = str;pluginList[index].__RP_Url_Callback_Vid = splitList[0];pluginList[index].__RP_Url_Callback_Parent = splitList[1];};__RP_Callback_Helper(str, 'rp-js-url-callback', 3, func);}function __RP_TotalBytes_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_TotalBytes_Callback = str;pluginList[index].__RP_TotalBytes_Callback_Bytes = splitList[0];};__RP_Callback_Helper(str, null, 2, func);}function __RP_Connection_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_Connection_Callback = str;pluginList[index].__RP_Connection_Callback_Url = splitList[0];};__RP_Callback_Helper(str, null, 2, func);}
+//--></script></html>
