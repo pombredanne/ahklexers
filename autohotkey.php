@@ -4,7 +4,7 @@
  * --------
  * Author: naveen garg (naveen.garg@gmail.com)
  * Copyright: (c) 2009 and to GESHi ;)
- * Release Version: 0.1
+ * Release Version: 0.2
  * Date Started: 2009/06/11
  *
  * Autohotkey language file for GeSHi.
