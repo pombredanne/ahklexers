@@ -1,0 +1,329 @@
+diff -r df5582a1c7dd pygments/lexers/compiled.py
+
+a 	b 	 
+28	28	 
+29	29	__all__ = ['CLexer', 'CppLexer', 'DLexer', 'DelphiLexer', 'JavaLexer', 'ScalaLexer', 
+30	30	           'DylanLexer', 'OcamlLexer', 'ObjectiveCLexer', 'FortranLexer', 
+31	 	           'GLShaderLexer', 'PrologLexer', 'CythonLexer', 'ValaLexer'] 
+ 	31	           'GLShaderLexer', 'PrologLexer', 'CythonLexer', 'ValaLexer', 
+ 	32	           'AutoHotkeyLexer'] 
+32	33	 
+33	34	 
+34	35	class CLexer(RegexLexer): 
+… 	… 	 
+1660	1661	            (r'[a-zA-Z_][a-zA-Z0-9_.]*', Name.Namespace, '#pop') 
+1661	1662	        ], 
+1662	1663	    } 
+ 	1664	 
+ 	1665	 
+ 	1666	class AutoHotkeyLexer(RegexLexer): 
+ 	1667	    """ 
+ 	1668	    For `AutoHotkey <http://www.autohotkey.com/>`_ keyboard macro definitions. 
+ 	1669	 
+ 	1670	    *New in Pygments 1.1.* 
+ 	1671	    """ 
+ 	1672	    name = 'autohotkey' 
+ 	1673	    aliases = ['ahk'] 
+ 	1674	    filenames = ['*.ahk', '*.ahkl'] 
+ 	1675	    flags = re.IGNORECASE | re.DOTALL 
+ 	1676	 
+ 	1677	    #: optional Comment or Whitespace 
+ 	1678	    _ws = r'(\s*;+.*?\n|\n*/\*.*?\n*\*/)+' 
+ 	1679	 
+ 	1680	    tokens = { 
+ 	1681	        'whitespace': [ 
+ 	1682	            (r'\n', Text), 
+ 	1683	            (r'\s+', Text), 
+ 	1684	            (r';+(\n|(.|\n)*?[^;]\n)', Comment.Single), 
+ 	1685	            (r'\n*/\*.*?\n*\*/', Comment.Multiline), 
+ 	1686	        ], 
+ 	1687	        'statements': [ 
+ 	1688	            (r'L?"', String, 'string'), 
+ 	1689	            (r"L?'(\`.|\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|[^\\\'\n])'", 
+ 	1690	             String.Char), 
+ 	1691	            (r'(\d+\.\d*|\.\d+|\d+)[eE][+-]?\d+[lL]?', Number.Float), 
+ 	1692	            (r'(\d+\.\d*|\.\d+|\d+[fF])[fF]?', Number.Float), 
+ 	1693	            (r'0x[0-9a-fA-F]+[Ll]?', Number.Hex), 
+ 	1694	            (r'\d+[Ll]?', Number.Integer), 
+ 	1695	            (':{0,2}[a-zA-Z_][a-zA-Z0-9_]*:{1,2}', Name.Label), 
+ 	1696	            (r'[~!%^&*+=|?:<>/-]', Operator), 
+ 	1697	            (r'[()\[\]`,.]', Punctuation), 
+ 	1698	            (r'#\w+?\s', Keyword), 
+ 	1699	            (r'#', Text), 
+ 	1700	            (r'(loop|while)\b', Keyword), 
+ 	1701	            (r'(static|global|local)\b', Keyword.Type), 
+ 	1702	            (r'(autotrim|blockinput|break|click|' 
+ 	1703	             r'clipwait|continue|control|' 
+ 	1704	             r'controlclick|controlfocus|controlget|' 
+ 	1705	             r'controlgetfocus|controlgetpos|controlgettext|' 
+ 	1706	             r'controlmove|controlsend|controlsendraw|' 
+ 	1707	             r'controlsettext|coordmode|critical|' 
+ 	1708	             r'detecthiddentext|detecthiddenwindows|' 
+ 	1709	             r'dllcall|drive|' 
+ 	1710	             r'driveget|drivespacefree|' 
+ 	1711	             r'else|envadd|envdiv|' 
+ 	1712	             r'envget|envmult|envset|' 
+ 	1713	             r'envsub|envupdate|exit|' 
+ 	1714	             r'exitapp|fileappend|filecopy|' 
+ 	1715	             r'filecopydir|filecreatedir|filecreateshortcut|' 
+ 	1716	             r'filedelete|filegetattrib|filegetshortcut|' 
+ 	1717	             r'filegetsize|filegettime|filegetversion|' 
+ 	1718	             r'fileinstall|filemove|filemovedir|' 
+ 	1719	             r'fileread|filereadline|filerecycle|' 
+ 	1720	             r'filerecycleempty|fileremovedir|fileselectfile|' 
+ 	1721	             r'fileselectfolder|filesetattrib|filesettime|' 
+ 	1722	             r'formattime|gosub|' 
+ 	1723	             r'goto|groupactivate|groupadd|' 
+ 	1724	             r'groupclose|groupdeactivate|gui|' 
+ 	1725	             r'guicontrol|guicontrolget|hotkey|' 
+ 	1726	             r'ifexist|ifgreater|ifgreaterorequal|' 
+ 	1727	             r'ifinstring|ifless|iflessorequal|' 
+ 	1728	             r'ifmsgbox|ifnotequal|ifnotexist|' 
+ 	1729	             r'ifnotinstring|ifwinactive|ifwinexist|' 
+ 	1730	             r'ifwinnotactive|ifwinnotexist|imagesearch|' 
+ 	1731	             r'inidelete|iniread|iniwrite|' 
+ 	1732	             r'input|inputbox|keyhistory|' 
+ 	1733	             r'keywait|listhotkeys|listlines|' 
+ 	1734	             r'listvars|loop|' 
+ 	1735	             r'menu|mouseclick|mouseclickdrag|' 
+ 	1736	             r'mousegetpos|mousemove|msgbox|' 
+ 	1737	             r'onmessage|onexit|outputdebug|' 
+ 	1738	             r'pixelgetcolor|pixelsearch|postmessage|' 
+ 	1739	             r'process|progress|random|' 
+ 	1740	             r'regexmatch|regexreplace|registercallback|' 
+ 	1741	             r'regdelete|regread|regwrite|' 
+ 	1742	             r'reload|repeat|return|' 
+ 	1743	             r'run|runas|runwait|' 
+ 	1744	             r'send|sendevent|sendinput|' 
+ 	1745	             r'sendmessage|sendmode|sendplay|' 
+ 	1746	             r'sendraw|setbatchlines|setcapslockstate|' 
+ 	1747	             r'setcontroldelay|setdefaultmousespeed|setenv|' 
+ 	1748	             r'setformat|setkeydelay|setmousedelay|' 
+ 	1749	             r'setnumlockstate|setscrolllockstate|' 
+ 	1750	             r'setstorecapslockmode|' 
+ 	1751	             r'settimer|settitlematchmode|setwindelay|' 
+ 	1752	             r'setworkingdir|shutdown|sleep|' 
+ 	1753	             r'sort|soundbeep|soundget|' 
+ 	1754	             r'soundgetwavevolume|soundplay|soundset|' 
+ 	1755	             r'soundsetwavevolume|splashimage|splashtextoff|' 
+ 	1756	             r'splashtexton|splitpath|statusbargettext|' 
+ 	1757	             r'statusbarwait|stringcasesense|stringgetpos|' 
+ 	1758	             r'stringleft|stringlen|stringlower|' 
+ 	1759	             r'stringmid|stringreplace|stringright|' 
+ 	1760	             r'stringsplit|stringtrimleft|stringtrimright|' 
+ 	1761	             r'stringupper|suspend|sysget|' 
+ 	1762	             r'thread|tooltip|transform|' 
+ 	1763	             r'traytip|urldownloadtofile|while|' 
+ 	1764	             r'varsetcapacity|' 
+ 	1765	             r'winactivate|winactivatebottom|winclose|' 
+ 	1766	             r'winget|wingetactivestats|wingetactivetitle|' 
+ 	1767	             r'wingetclass|wingetpos|wingettext|' 
+ 	1768	             r'wingettitle|winhide|winkill|' 
+ 	1769	             r'winmaximize|winmenuselectitem|winminimize|' 
+ 	1770	             r'winminimizeall|winminimizeallundo|winmove|' 
+ 	1771	             r'winrestore|winset|winsettitle|' 
+ 	1772	             r'winshow|winwait|winwaitactive|' 
+ 	1773	             r'winwaitclose|winwaitnotactive' 
+ 	1774	             r'true|false|NULL)\b', Keyword), 
+ 	1775	            ('[a-zA-Z_][a-zA-Z0-9_]*', Name), 
+ 	1776	        ], 
+ 	1777	        'root': [ 
+ 	1778	            include('whitespace'), 
+ 	1779	            # functions 
+ 	1780	            (r'((?:[a-zA-Z0-9_*\s])+?(?:\s|[*]))'    # return arguments 
+ 	1781	             r'([a-zA-Z_][a-zA-Z0-9_]*)'             # method name 
+ 	1782	             r'(\s*\([^;]*?\))'                      # signature 
+ 	1783	             r'(' + _ws + r')({)', 
+ 	1784	             bygroups(using(this), Name.Function, using(this), using(this), 
+ 	1785	                      Punctuation), 
+ 	1786	             'function'), 
+ 	1787	            # function declarations 
+ 	1788	            (r'([a-zA-Z_][a-zA-Z0-9_]*)'             # method name 
+ 	1789	             r'(' + _ws + r')', 
+ 	1790	             bygroups(Name.Function, using(this), Punctuation)), 
+ 	1791	            ('', Text, 'statement'), 
+ 	1792	        ], 
+ 	1793	        'statement' : [ 
+ 	1794	            include('whitespace'), 
+ 	1795	            include('statements'), 
+ 	1796	            ('[{}]', Punctuation), 
+ 	1797	        ], 
+ 	1798	        'function': [ 
+ 	1799	            include('whitespace'), 
+ 	1800	            include('statements'), 
+ 	1801	            ('{', Punctuation, '#push'), 
+ 	1802	            ('}', Punctuation, '#pop'), 
+ 	1803	        ], 
+ 	1804	        'string': [ 
+ 	1805	            (r'"', String, '#pop'), 
+ 	1806	            (r'\`([\,%;\`abfnrtv"\']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})', 
+ 	1807	             String.Escape), 
+ 	1808	            (r'[^\`"\n]+', String), # all other characters 
+ 	1809	        ], 
+ 	1810	    } 
+
+Index: pygments/lexers/compiled.py
+===================================================================
+--- a/pygments/lexers/compiled.py Mon Jun 22 09:27:11 2009 -0700
++++ b/pygments/lexers/compiled.py Mon Jun 22 09:56:50 2009 -0700
+@@ -28,7 +28,8 @@
+ 
+ __all__ = ['CLexer', 'CppLexer', 'DLexer', 'DelphiLexer', 'JavaLexer', 'ScalaLexer',
+            'DylanLexer', 'OcamlLexer', 'ObjectiveCLexer', 'FortranLexer',
+-           'GLShaderLexer', 'PrologLexer', 'CythonLexer', 'ValaLexer']
++           'GLShaderLexer', 'PrologLexer', 'CythonLexer', 'ValaLexer',
++           'AutoHotkeyLexer']
+ 
+ 
+ class CLexer(RegexLexer):
+@@ -1660,3 +1661,150 @@
+             (r'[a-zA-Z_][a-zA-Z0-9_.]*', Name.Namespace, '#pop')
+         ],
+     }
++
++
++class AutoHotkeyLexer(RegexLexer):
++    """
++    For `AutoHotkey <http://www.autohotkey.com/>`_ keyboard macro definitions.
++
++    *New in Pygments 1.1.*
++    """
++    name = 'autohotkey'
++    aliases = ['ahk']
++    filenames = ['*.ahk', '*.ahkl']
++    flags = re.IGNORECASE | re.DOTALL
++
++    #: optional Comment or Whitespace
++    _ws = r'(\s*;+.*?\n|\n*/\*.*?\n*\*/)+'
++
++    tokens = {
++        'whitespace': [
++            (r'\n', Text),
++            (r'\s+', Text),
++            (r';+(\n|(.|\n)*?[^;]\n)', Comment.Single),
++            (r'\n*/\*.*?\n*\*/', Comment.Multiline),
++        ],
++        'statements': [
++            (r'L?"', String, 'string'),
++            (r"L?'(\`.|\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|[^\\\'\n])'",
++             String.Char),
++            (r'(\d+\.\d*|\.\d+|\d+)[eE][+-]?\d+[lL]?', Number.Float),
++            (r'(\d+\.\d*|\.\d+|\d+[fF])[fF]?', Number.Float),
++            (r'0x[0-9a-fA-F]+[Ll]?', Number.Hex),
++            (r'\d+[Ll]?', Number.Integer),
++            (':{0,2}[a-zA-Z_][a-zA-Z0-9_]*:{1,2}', Name.Label),
++            (r'[~!%^&*+=|?:<>/-]', Operator),
++            (r'[()\[\]`,.]', Punctuation),
++            (r'#\w+?\s', Keyword),
++            (r'#', Text),
++            (r'(loop|while)\b', Keyword),
++            (r'(static|global|local)\b', Keyword.Type),
++            (r'(autotrim|blockinput|break|click|'
++             r'clipwait|continue|control|'
++             r'controlclick|controlfocus|controlget|'
++             r'controlgetfocus|controlgetpos|controlgettext|'
++             r'controlmove|controlsend|controlsendraw|'
++             r'controlsettext|coordmode|critical|'
++             r'detecthiddentext|detecthiddenwindows|'
++             r'dllcall|drive|'
++             r'driveget|drivespacefree|'
++             r'else|envadd|envdiv|'
++             r'envget|envmult|envset|'
++             r'envsub|envupdate|exit|'
++             r'exitapp|fileappend|filecopy|'
++             r'filecopydir|filecreatedir|filecreateshortcut|'
++             r'filedelete|filegetattrib|filegetshortcut|'
++             r'filegetsize|filegettime|filegetversion|'
++             r'fileinstall|filemove|filemovedir|'
++             r'fileread|filereadline|filerecycle|'
++             r'filerecycleempty|fileremovedir|fileselectfile|'
++             r'fileselectfolder|filesetattrib|filesettime|'
++             r'formattime|gosub|'
++             r'goto|groupactivate|groupadd|'
++             r'groupclose|groupdeactivate|gui|'
++             r'guicontrol|guicontrolget|hotkey|'
++             r'ifexist|ifgreater|ifgreaterorequal|'
++             r'ifinstring|ifless|iflessorequal|'
++             r'ifmsgbox|ifnotequal|ifnotexist|'
++             r'ifnotinstring|ifwinactive|ifwinexist|'
++             r'ifwinnotactive|ifwinnotexist|imagesearch|'
++             r'inidelete|iniread|iniwrite|'
++             r'input|inputbox|keyhistory|'
++             r'keywait|listhotkeys|listlines|'
++             r'listvars|loop|'
++             r'menu|mouseclick|mouseclickdrag|'
++             r'mousegetpos|mousemove|msgbox|'
++             r'onmessage|onexit|outputdebug|'
++             r'pixelgetcolor|pixelsearch|postmessage|'
++             r'process|progress|random|'
++             r'regexmatch|regexreplace|registercallback|'
++             r'regdelete|regread|regwrite|'
++             r'reload|repeat|return|'
++             r'run|runas|runwait|'
++             r'send|sendevent|sendinput|'
++             r'sendmessage|sendmode|sendplay|'
++             r'sendraw|setbatchlines|setcapslockstate|'
++             r'setcontroldelay|setdefaultmousespeed|setenv|'
++             r'setformat|setkeydelay|setmousedelay|'
++             r'setnumlockstate|setscrolllockstate|'
++             r'setstorecapslockmode|'
++             r'settimer|settitlematchmode|setwindelay|'
++             r'setworkingdir|shutdown|sleep|'
++             r'sort|soundbeep|soundget|'
++             r'soundgetwavevolume|soundplay|soundset|'
++             r'soundsetwavevolume|splashimage|splashtextoff|'
++             r'splashtexton|splitpath|statusbargettext|'
++             r'statusbarwait|stringcasesense|stringgetpos|'
++             r'stringleft|stringlen|stringlower|'
++             r'stringmid|stringreplace|stringright|'
++             r'stringsplit|stringtrimleft|stringtrimright|'
++             r'stringupper|suspend|sysget|'
++             r'thread|tooltip|transform|'
++             r'traytip|urldownloadtofile|while|'
++             r'varsetcapacity|'
++             r'winactivate|winactivatebottom|winclose|'
++             r'winget|wingetactivestats|wingetactivetitle|'
++             r'wingetclass|wingetpos|wingettext|'
++             r'wingettitle|winhide|winkill|'
++             r'winmaximize|winmenuselectitem|winminimize|'
++             r'winminimizeall|winminimizeallundo|winmove|'
++             r'winrestore|winset|winsettitle|'
++             r'winshow|winwait|winwaitactive|'
++             r'winwaitclose|winwaitnotactive'
++             r'true|false|NULL)\b', Keyword),
++            ('[a-zA-Z_][a-zA-Z0-9_]*', Name),
++        ],
++        'root': [
++            include('whitespace'),
++            # functions
++            (r'((?:[a-zA-Z0-9_*\s])+?(?:\s|[*]))'    # return arguments
++             r'([a-zA-Z_][a-zA-Z0-9_]*)'             # method name
++             r'(\s*\([^;]*?\))'                      # signature
++             r'(' + _ws + r')({)',
++             bygroups(using(this), Name.Function, using(this), using(this),
++                      Punctuation),
++             'function'),
++            # function declarations
++            (r'([a-zA-Z_][a-zA-Z0-9_]*)'             # method name
++             r'(' + _ws + r')',
++             bygroups(Name.Function, using(this), Punctuation)),
++            ('', Text, 'statement'),
++        ],
++        'statement' : [
++            include('whitespace'),
++            include('statements'),
++            ('[{}]', Punctuation),
++        ],
++        'function': [
++            include('whitespace'),
++            include('statements'),
++            ('{', Punctuation, '#push'),
++            ('}', Punctuation, '#pop'),
++        ],
++        'string': [
++            (r'"', String, '#pop'),
++            (r'\`([\,%;\`abfnrtv"\']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})',
++             String.Escape),
++            (r'[^\`"\n]+', String), # all other characters
++        ],
++    }
