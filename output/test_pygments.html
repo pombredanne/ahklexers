@@ -77,132 +77,178 @@ body .il { color: #666666 } /* Literal.Number.Integer.Long */
 <body>
 <h2></h2>
 
-<div class="highlight"><pre><span class="k">#IfWinActive</span>
-<span class="k">#Persistent</span>
-<span class="c1">; comment1</span>
-<span class="cm">/*</span>
+<div class="highlight"><pre><span class="cm">/*</span>
 <span class="cm">multiline comment</span>
 <span class="cm">msgbox(comment)</span>
 <span class="cm">*/</span>
-  
-<span class="nl">F2::</span>     <span class="c1">;; hotkey</span>
-<span class="nl">start:</span>   <span class="c1">;; label</span>
-<span class="nl">start2:</span>   <span class="c1">; label</span>
-  <span class="n">ppm</span> <span class="o">:=</span> <span class="n">ppm_new</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>    
-  <span class="n">ppm_fill</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span>      
-  <span class="k">msgbox</span> <span class="o">%</span> <span class="n">getPixel</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>    
-  <span class="n">setPixel</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="n">ppm</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-  <span class="k">msgbox</span> <span class="o">%</span> <span class="n">getPixel</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-  <span class="k">ListVars</span>  <span class="c1">; command</span>
-  <span class="k">msgbox</span> <span class="o">%</span> <span class="n">ppm</span>
-  <span class="k">return</span>
-  
-  
-  <span class="n">ppm_read</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-  <span class="p">{</span>
-	<span class="k">fileread</span><span class="p">,</span> <span class="n">ppm</span><span class="p">,</span> <span class="o">%</span> <span class="n">file</span>
- <span class="k">return</span> <span class="n">ppm</span>
+<span class="k">send</span><span class="p">,</span><span class="w"> </span>key<span class="k">[pgdn]</span>
+string<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>x<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;world!&quot;</span>
+string<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;hello &quot;&quot;world&quot;&quot;! &quot;</span>
+string<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;hello </span><span class="se">`&quot;</span><span class="s">world&quot;&quot;! &quot;</span>
+<span class="c1">; single line comment1</span>
+<span class="c1">;;;  single line comment2</span>
+
+<span class="nl">::stopi::</span><span class="nf">viper_off</span><span class="p">()</span><span class="w">  </span>
+
+<span class="nl">a::</span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">^</span>a
+<span class="nl">mylabel:</span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">^</span><span class="p">{</span>space<span class="p">}</span><span class="w">  </span><span class="c1">;; set mark</span>
+<span class="nl">e::</span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">^</span>e
+<span class="nl">n::</span>
+<span class="w">  </span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">^</span>n
+<span class="w">  </span><span class="k">return</span>
+<span class="nl">!i::</span><span class="w">     </span>
+<span class="nf">viper</span><span class="p">(</span><span class="s">&quot;iviper&quot;</span><span class="p">)</span><span class="w">   </span><span class="c1">; stdlib</span>
+<span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;viper&quot;&quot; &quot;</span><span class="w">  </span><span class="c1">; escaped quote</span>
+<span class="k">Return</span>
+<span class="k">#If </span><span class="nf">WinExist</span><span class="p">(</span><span class="s">&quot;iviper&quot;</span><span class="w"> </span><span class="p">)</span>
+<span class="n">indexdir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="p">\</span><span class="nv">%dir%</span>
+<span class="k">FileCreateDir</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>indexdir
+<span class="n">fileindex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%indexdir%</span><span class="p">\</span>_files
+<span class="k">FileSelectFile</span><span class="p">,</span><span class="w"> </span>file<span class="p">,,,</span><span class="w"> </span>Select<span class="w"> </span>an<span class="w"> </span>image<span class="o">:</span><span class="p">,</span><span class="w"> </span>Images<span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">.</span>gif<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>jpg<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>bmp<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>png<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>tif<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>ico<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>cur<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>ani<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>exe<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>dll<span class="p">)</span>
+
+<span class="c1">; viper</span>
+
+
+<span class="nl">i::</span><span class="nf">viper_off</span><span class="p">()</span><span class="w"> </span>
+<span class="k">#If</span>
+
+<span class="c1">;; keybindings</span>
+<span class="k">#If </span><span class="nf">WinExist</span><span class="p">(</span><span class="s">&quot;iviper&quot;</span><span class="p">)</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span><span class="nf">WinActive</span><span class="p">(</span><span class="s">&quot;ahk_class Emacs&quot;</span><span class="p">)</span>
+
+<span class="nl">p::</span>
+<span class="nl">k::</span>
+<span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">^</span>p
+<span class="k">return</span>
+<span class="nl">,::</span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">+!</span><span class="p">,</span><span class="w">  </span><span class="c1">;; beginning of page</span>
+<span class="nl">.::</span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">+!</span><span class="p">.</span><span class="w">  </span><span class="c1">;; end of page</span>
+<span class="nl">[::</span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">!</span>a
+<span class="nl">]::</span><span class="k">send</span><span class="p">,</span><span class="w"> </span><span class="o">!</span>e<span class="w">  </span>
+<span class="nl">d::</span><span class="w"> </span><span class="o">^</span>k<span class="w">  </span><span class="c1">;; kill line</span>
+<span class="nl">x::</span><span class="w"> </span><span class="k">send</span><span class="w"> </span><span class="o">^</span>d
+<span class="nl">\::</span><span class="w"> </span><span class="o">^!</span>k<span class="w">  </span><span class="c1">;; kill next word or sexp</span>
+
+
+<span class="k">#IfWinActive</span>
+<span class="k">#Persistent</span>
+<span class="w">  </span>
+<span class="nl">F2::</span><span class="w">     </span><span class="c1">;; hotkey</span>
+<span class="nl">start:</span><span class="w">   </span><span class="c1">;; label</span>
+<span class="nl">start2:</span><span class="w">   </span><span class="c1">; label</span>
+<span class="w">  </span>ppm<span class="w"> </span><span class="o">:=</span><span class="w"> </span>ppm_new<span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">255</span><span class="p">)</span><span class="w">    </span>
+<span class="w">  </span><span class="nf">ppm_fill</span><span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">)</span><span class="w">      </span>
+<span class="w">  </span><span class="k">msgbox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>getPixel<span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">    </span>
+<span class="w">  </span><span class="nf">setPixel</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w"> </span>ppm<span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="k">msgbox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>getPixel<span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="k">ListVars</span><span class="w">  </span><span class="c1">; command</span>
+<span class="w">  </span><span class="k">msgbox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>ppm
+<span class="w">  </span><span class="k">return</span>
+<span class="w">  </span>
+<span class="w">  </span>
+<span class="w">  </span><span class="nf">ppm_read</span><span class="p">(</span>file<span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">	</span><span class="k">fileread</span><span class="p">,</span><span class="w"> </span>ppm<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>file
+<span class="w"> </span><span class="k">return</span><span class="w"> </span>ppm
 <span class="p">}</span>
 
 <span class="nl">::hotstring::</span>
 <span class="nl">::hot3::</span>
-<span class="n">ppm_width</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>
+<span class="nf">ppm_width</span><span class="p">(</span>ppm<span class="p">)</span>
 <span class="p">{</span>
- <span class="k">regexmatch</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="s">&quot;\R(\d+)\s(\d+)&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
- <span class="k">return</span> <span class="n">dim1</span>
+<span class="w"> </span><span class="nf">regexmatch</span><span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="s">&quot;\R(\d+)\s(\d+)&quot;</span><span class="p">,</span><span class="w"> </span>dim<span class="p">)</span>
+<span class="w"> </span><span class="k">return</span><span class="w"> </span>dim1
 <span class="p">}</span>
-<span class="n">ppm_height</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>
+<span class="nf">ppm_height</span><span class="p">(</span>ppm<span class="p">)</span>
 <span class="p">{</span>
- <span class="k">regexmatch</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="s">&quot;\R(\d+)\s(\d+)&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dim2</span>
-<span class="p">}</span> 
+<span class="w"> </span><span class="nf">regexmatch</span><span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="s">&quot;\R(\d+)\s(\d+)&quot;</span><span class="p">,</span><span class="w"> </span>dim<span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span>dim2
+<span class="p">}</span><span class="w"> </span>
 
-<span class="n">ppm_colors</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>
+<span class="nf">ppm_colors</span><span class="p">(</span>ppm<span class="p">)</span>
 <span class="p">{</span>
-<span class="k">regexmatch</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="s">&quot;\R(\d+)\D*\R&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>  <span class="c1">; \R stands for any</span>
-<span class="k">return</span> <span class="n">colors1</span>
-<span class="p">}</span>
-
-<span class="n">ppm_data</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="n">pos</span> <span class="o">:=</span>  <span class="k">regexmatch</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="s">&quot;\R(\d+)\D*\R&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>  <span class="c1">; \R stands for any newline</span>
-<span class="k">stringtrimleft</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">ppm</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">strlen</span><span class="p">(</span><span class="n">colors1</span><span class="p">)</span>
-<span class="k">return</span> <span class="n">data</span>
-<span class="p">}</span>
-<span class="n">ppm_header</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="n">pos</span> <span class="o">:=</span>  <span class="k">regexmatch</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="s">&quot;\R(\d+)\D*\R&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>  <span class="c1">; \R stands for any newline</span>
-<span class="k">stringleft</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">ppm</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">strlen</span><span class="p">(</span><span class="n">colors1</span><span class="p">)</span>
-<span class="k">return</span> <span class="n">header</span>
+<span class="nf">regexmatch</span><span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="s">&quot;\R(\d+)\D*\R&quot;</span><span class="p">,</span><span class="w"> </span>colors<span class="p">)</span><span class="w">  </span><span class="c1">; \R stands for any</span>
+<span class="k">return</span><span class="w"> </span>colors1
 <span class="p">}</span>
 
-<span class="n">ppm_fill</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">ppm</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="nf">ppm_data</span><span class="p">(</span>ppm<span class="p">)</span>
 <span class="p">{</span>
-  <span class="n">width</span> <span class="o">:=</span> <span class="n">ppm_width</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>	
-  <span class="n">height</span> <span class="o">:=</span> <span class="n">ppm_height</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>
-  <span class="n">header</span> <span class="o">:=</span> <span class="n">ppm_header</span><span class="p">(</span><span class="n">ppm</span><span class="p">)</span>
-  <span class="n">headerLength</span> <span class="o">:=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> 
-  <span class="k">varsetcapacity</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-  <span class="k">loop</span><span class="p">,</span> <span class="o">%</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span>
-  <span class="p">{</span>
-	<span class="n">if</span> <span class="n">r</span>
-   <span class="n">numput</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">A_Index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&quot;uchar&quot;</span><span class="p">)</span>
- <span class="n">if</span> <span class="n">g</span>
-   <span class="n">numput</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">A_Index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uchar&quot;</span><span class="p">)</span>
- <span class="n">if</span> <span class="n">b</span>
-   <span class="n">numput</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">A_Index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;uchar&quot;</span><span class="p">)</span>
+pos<span class="w"> </span><span class="o">:=</span><span class="w">  </span>regexmatch<span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="s">&quot;\R(\d+)\D*\R&quot;</span><span class="p">,</span><span class="w"> </span>colors<span class="p">)</span><span class="w">  </span><span class="c1">; \R stands for any newline</span>
+<span class="k">stringtrimleft</span><span class="p">,</span><span class="w"> </span>data<span class="p">,</span><span class="w"> </span>ppm<span class="p">,</span><span class="w"> </span>pos<span class="w"> </span><span class="o">+</span><span class="w"> </span>strlen<span class="p">(</span>colors1<span class="p">)</span>
+<span class="k">return</span><span class="w"> </span>data
 <span class="p">}</span>
-<span class="n">VarCopy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ppm</span> <span class="o">+</span> <span class="n">headerLength</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span>
-
-<span class="p">}</span>
-
-<span class="n">ppm_new</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+<span class="nf">ppm_header</span><span class="p">(</span>ppm<span class="p">)</span>
 <span class="p">{</span>
-  <span class="n">header</span> <span class="o">=</span> <span class="n">P6</span><span class="p">`</span><span class="n">n</span><span class="o">%</span><span class="n">width</span><span class="o">%</span> <span class="o">%</span><span class="n">height</span><span class="o">%</span><span class="p">`</span><span class="n">n</span><span class="o">%</span><span class="n">colors</span><span class="o">%</span><span class="p">`</span><span class="n">n</span>
-  <span class="n">headerLength</span> <span class="o">:=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-  <span class="k">varsetcapacity</span><span class="p">(</span><span class="n">ppm</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span> <span class="o">+</span> <span class="n">headerLength</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-  <span class="k">varsetcapacity</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-  <span class="n">VarCopy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ppm</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">header</span><span class="p">,</span> <span class="n">headerLength</span><span class="p">)</span>
-  <span class="n">VarCopy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ppm</span> <span class="o">+</span> <span class="n">headerLength</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span>
-  <span class="k">return</span> <span class="n">ppm</span>
+pos<span class="w"> </span><span class="o">:=</span><span class="w">  </span>regexmatch<span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span><span class="s">&quot;\R(\d+)\D*\R&quot;</span><span class="p">,</span><span class="w"> </span>colors<span class="p">)</span><span class="w">  </span><span class="c1">; \R stands for any newline</span>
+<span class="k">stringleft</span><span class="p">,</span><span class="w"> </span>header<span class="p">,</span><span class="w"> </span>ppm<span class="p">,</span><span class="w"> </span>pos<span class="w"> </span><span class="o">+</span><span class="w"> </span>strlen<span class="p">(</span>colors1<span class="p">)</span>
+<span class="k">return</span><span class="w"> </span>header
 <span class="p">}</span>
 
-<span class="n">heredoc</span> <span class="o">=</span> 
-<span class="p">(</span>
-  <span class="n">P6</span>
-  # <span class="n">lasdjkf</span>
-  <span class="mi">87</span> <span class="mi">09</span>
-  <span class="mi">255</span>
-  <span class="n">color</span> <span class="n">data</span><span class="p">...</span>
+<span class="nf">ppm_fill</span><span class="p">(</span>ByRef<span class="w"> </span>ppm<span class="p">,</span><span class="w"> </span>r<span class="p">,</span><span class="w"> </span>g<span class="p">,</span><span class="w"> </span>b<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span>width<span class="w"> </span><span class="o">:=</span><span class="w"> </span>ppm_width<span class="p">(</span>ppm<span class="p">)</span><span class="w">	</span>
+<span class="w">  </span>height<span class="w"> </span><span class="o">:=</span><span class="w"> </span>ppm_height<span class="p">(</span>ppm<span class="p">)</span>
+<span class="w">  </span>header<span class="w"> </span><span class="o">:=</span><span class="w"> </span>ppm_header<span class="p">(</span>ppm<span class="p">)</span>
+<span class="w">  </span>headerLength<span class="w"> </span><span class="o">:=</span><span class="w"> </span>strlen<span class="p">(</span>header<span class="p">)</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">varsetcapacity</span><span class="p">(</span>data<span class="p">,</span><span class="w"> </span>width<span class="w"> </span><span class="o">*</span><span class="w"> </span>height<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="k">loop</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span>width<span class="w"> </span><span class="o">*</span><span class="w"> </span>height<span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">	</span><span class="kr">if</span><span class="w"> </span>r
+<span class="w">   </span><span class="nf">numput</span><span class="p">(</span>r<span class="p">,</span><span class="w"> </span>data<span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nb">A_Index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uchar&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="kr">if</span><span class="w"> </span>g
+<span class="w">   </span><span class="nf">numput</span><span class="p">(</span>g<span class="p">,</span><span class="w"> </span>data<span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nb">A_Index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uchar&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="kr">if</span><span class="w"> </span>b
+<span class="w">   </span><span class="nf">numput</span><span class="p">(</span>b<span class="p">,</span><span class="w"> </span>data<span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nb">A_Index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uchar&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nf">VarCopy</span><span class="p">(</span><span class="o">&amp;</span>ppm<span class="w"> </span><span class="o">+</span><span class="w"> </span>headerLength<span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>data<span class="p">,</span><span class="w"> </span>width<span class="w"> </span><span class="o">*</span><span class="w"> </span>height<span class="p">)</span>
+
+<span class="p">}</span>
+
+<span class="nf">ppm_new</span><span class="p">(</span>width<span class="p">,</span><span class="w"> </span>height<span class="p">,</span><span class="w"> </span>colors<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span>header<span class="w"> </span><span class="o">=</span><span class="w"> </span>P6<span class="p">`</span>n<span class="nv">%width%</span><span class="w"> </span><span class="nv">%height%</span><span class="p">`</span>n<span class="nv">%colors%</span><span class="p">`</span>n
+<span class="w">  </span>headerLength<span class="w"> </span><span class="o">:=</span><span class="w"> </span>strlen<span class="p">(</span>header<span class="p">)</span>
+<span class="w">  </span><span class="nf">varsetcapacity</span><span class="p">(</span>ppm<span class="p">,</span><span class="w"> </span>width<span class="w"> </span><span class="o">*</span><span class="w"> </span>height<span class="w"> </span><span class="o">+</span><span class="w"> </span>headerLength<span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="nf">varsetcapacity</span><span class="p">(</span>data<span class="p">,</span><span class="w"> </span>width<span class="w"> </span><span class="o">*</span><span class="w"> </span>height<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="nf">VarCopy</span><span class="p">(</span><span class="o">&amp;</span>ppm<span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>header<span class="p">,</span><span class="w"> </span>headerLength<span class="p">)</span>
+<span class="w">  </span><span class="nf">VarCopy</span><span class="p">(</span><span class="o">&amp;</span>ppm<span class="w"> </span><span class="o">+</span><span class="w"> </span>headerLength<span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>data<span class="p">,</span><span class="w"> </span>width<span class="w"> </span><span class="o">*</span><span class="w"> </span>height<span class="p">)</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span>ppm
+<span class="p">}</span>
+
+<span class="n">heredoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="s">(</span>
+<span class="s">  P6</span>
+<span class="s">  # lasdjkf</span>
+<span class="s">  87 09</span>
+<span class="s">  255</span>
+<span class="s">  color data...</span><span class="p"></span>
 <span class="p">)</span>
 
 <span class="c1">; Example: Simple image viewer:</span>
 
-<span class="k">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">Resize</span>
-<span class="k">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Load</span> <span class="n">New</span> <span class="n">Image</span>
-<span class="k">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Radio</span><span class="p">,</span> <span class="n">ym</span><span class="o">+</span><span class="mi">5</span> <span class="n">x</span><span class="o">+</span><span class="mi">10</span> <span class="n">vRadio</span> <span class="n">checked</span><span class="p">,</span> <span class="n">Load</span> <span class="o">&amp;</span><span class="n">actual</span> <span class="n">size</span>
-<span class="k">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Radio</span><span class="p">,</span> <span class="n">ym</span><span class="o">+</span><span class="mi">5</span> <span class="n">x</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span> <span class="n">Load</span> <span class="n">to</span> <span class="o">&amp;</span><span class="n">fit</span> <span class="n">screen</span>
-<span class="k">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Pic</span><span class="p">,</span> <span class="n">xm</span> <span class="n">vPic</span>
-<span class="k">Gui</span><span class="p">,</span> <span class="n">Show</span>
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="o">+</span>Resize
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span>Add<span class="p">,</span><span class="w"> </span>Button<span class="p">,</span><span class="w"> </span>default<span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>Load<span class="w"> </span>New<span class="w"> </span>Image
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span>Add<span class="p">,</span><span class="w"> </span>Radio<span class="p">,</span><span class="w"> </span>ym<span class="o">+</span><span class="mi">5</span><span class="w"> </span>x<span class="o">+</span><span class="mi">10</span><span class="w"> </span>vRadio<span class="w"> </span>checked<span class="p">,</span><span class="w"> </span>Load<span class="w"> </span><span class="o">&amp;</span>actual<span class="w"> </span>size
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span>Add<span class="p">,</span><span class="w"> </span>Radio<span class="p">,</span><span class="w"> </span>ym<span class="o">+</span><span class="mi">5</span><span class="w"> </span>x<span class="o">+</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span>Load<span class="w"> </span>to<span class="w"> </span><span class="o">&amp;</span>fit<span class="w"> </span>screen
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span>Add<span class="p">,</span><span class="w"> </span>Pic<span class="p">,</span><span class="w"> </span>xm<span class="w"> </span>vPic
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span>Show
 <span class="k">return</span>
 
 <span class="nl">ButtonLoadNewImage:</span>
-<span class="k">FileSelectFile</span><span class="p">,</span> <span class="n">file</span><span class="p">,,,</span> <span class="n">Select</span> <span class="n">an</span> <span class="nl">image:</span><span class="p">,</span> <span class="n">Images</span> <span class="p">(</span><span class="o">*</span><span class="p">.</span><span class="n">gif</span><span class="c1">; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)</span>
-<span class="n">if</span> <span class="n">file</span> <span class="o">=</span>
-    <span class="k">return</span>
-<span class="k">Gui</span><span class="p">,</span> <span class="n">Submit</span><span class="p">,</span> <span class="n">NoHide</span> <span class="c1">; Save the values of the radio buttons.</span>
-<span class="n">if</span> <span class="n">Radio</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1">; Display image at its actual size.</span>
+<span class="k">FileSelectFile</span><span class="p">,</span><span class="w"> </span>file<span class="p">,,,</span><span class="w"> </span>Select<span class="w"> </span>an<span class="w"> </span>image<span class="o">:</span><span class="p">,</span><span class="w"> </span>Images<span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">.</span>gif<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>jpg<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>bmp<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>png<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>tif<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>ico<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>cur<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>ani<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>exe<span class="p">;</span><span class="w"> </span><span class="o">*</span><span class="p">.</span>dll<span class="p">)</span>
+<span class="kr">if</span><span class="w"> </span>file<span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="k">return</span>
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span>Submit<span class="p">,</span><span class="w"> </span>NoHide<span class="w"> </span><span class="c1">; Save the values of the radio buttons.</span>
+<span class="kr">if</span><span class="w"> </span>Radio<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="c1">; Display image at its actual size.</span>
 <span class="p">{</span>
-    <span class="n">Width</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">Height</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span>Width<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span>Height<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
 <span class="p">}</span>
-<span class="k">else</span> <span class="c1">; Second radio is selected: Resize the image to fit the screen.</span>
+<span class="k">else</span><span class="w"> </span><span class="c1">; Second radio is selected: Resize the image to fit the screen.</span>
 <span class="p">{</span>
-    <span class="n">Width</span> <span class="o">:=</span> <span class="n">A_ScreenWidth</span> <span class="o">-</span> <span class="mi">28</span>  <span class="c1">; Minus 28 to allow room for borders and margins inside.</span>
-    <span class="n">Height</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1">; &quot;Keep aspect ratio&quot; seems best.</span>
+<span class="w">    </span>Width<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_ScreenWidth</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">28</span><span class="w">  </span><span class="c1">; Minus 28 to allow room for borders and margins inside.</span>
+<span class="w">    </span>Height<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w">  </span><span class="c1">; &quot;Keep aspect ratio&quot; seems best.</span>
 <span class="p">}</span>
-<span class="k">GuiControl</span><span class="p">,,</span> <span class="n">Pic</span><span class="p">,</span> <span class="o">*</span><span class="n">w</span><span class="o">%</span><span class="n">width</span><span class="o">%</span> <span class="o">*</span><span class="n">h</span><span class="o">%</span><span class="n">height</span><span class="o">%</span> <span class="o">%</span><span class="n">file</span><span class="o">%</span>  <span class="c1">; Load the image.</span>
-<span class="k">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">xCenter</span> <span class="n">y0</span> <span class="n">AutoSize</span><span class="p">,</span> <span class="o">%</span><span class="n">file</span><span class="o">%</span>  <span class="c1">; Resize the window to match the picture size.</span>
+<span class="k">GuiControl</span><span class="p">,,</span><span class="w"> </span>Pic<span class="p">,</span><span class="w"> </span><span class="o">*</span>w<span class="nv">%width%</span><span class="w"> </span><span class="o">*</span>h<span class="nv">%height%</span><span class="w"> </span><span class="nv">%file%</span><span class="w">  </span><span class="c1">; Load the image.</span>
+<span class="k">Gui</span><span class="p">,</span><span class="w"> </span>Show<span class="p">,</span><span class="w"> </span>xCenter<span class="w"> </span>y0<span class="w"> </span>AutoSize<span class="p">,</span><span class="w"> </span><span class="nv">%file%</span><span class="w">  </span><span class="c1">; Resize the window to match the picture size.</span>
 <span class="k">return</span>
 
 <span class="nl">GuiClose:</span>
@@ -210,7 +256,7 @@ body .il { color: #666666 } /* Literal.Number.Integer.Long */
 <span class="c1">; Example: Simple text editor with menu bar.</span>
 
 <span class="c1">; Create the sub-menus for the menu bar:</span>
-<span class="k">Menu</span><span class="p">,</span> <span class="n">FileMenu</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">New</span><span class="p">,</span> <span class="n">FileNew</span>
+<span class="k">Menu</span><span class="p">,</span><span class="w"> </span>FileMenu<span class="p">,</span><span class="w"> </span>Add<span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>New<span class="p">,</span><span class="w"> </span>FileNew
 </pre></div>
 </body>
 </html>

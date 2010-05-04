@@ -32,48 +32,47 @@ class autohotkeyLexer(RegexLexer):
     tokens = {
         'root': [
             include('whitespace'),
-            include('comments'),
             (r'^\(', String, 'continuation'),
+            include('comments'),
             (r'(^\s*)(\w+)(\s*)(=)', 
              bygroups(Whitespace, Name, Whitespace, Operator),
              'command'),
-            (r'([]\w#@$?[]+)(\s*)(\()', 
+            (r'([\w#@$?\[\]]+)(\s*)(\()', 
              bygroups(Name.Function, Whitespace, Punctuation),
              'parameters'),
             include('directives'),
             include('labels'),
             include('commands'),
             include('expressions'),
-            include('literals'),
             include('numbers'),
+            include('literals'),
+            include('keynames'),
+            include('keywords'),
         ],
         'command': [
             include('comments'),
             include('whitespace'),
-            (r'[^\n]*?(?=;*|$)', String, '#pop'),
             (r'^\(', String, 'continuation'),
+            (r'[^\n]*?(?=;*|$)', String, '#pop'),
             include('numbers'),
             include('literals'),
-
         ],
 
         'expressions': [
             include('comments'),
             include('whitespace'),
+            include('numbers'),
             include('literals'),
             (r'([]\w#@$?[]+)(\s*)(\()', 
              bygroups(Name.Function, Whitespace, Punctuation),
              'parameters'),
-            (r'"', String, 'string'),
             (r'A_\w+', Name.Builtin),
             (r'%[]\w#@$?[]+?%', Name.Variable),
             # blocks: if, else, function definitions
             (r'{', Punctuation, 'block'),
-            include('numbers'),
             # parameters in function calls
             ],
         'literals': [
-            include('keywords'),
             (r'"', String, 'string'),
             (r'A_\w+', Name.Builtin),
             (r'%[]\w#@$?[]+?%', Name.Variable),
@@ -81,6 +80,7 @@ class autohotkeyLexer(RegexLexer):
             (r'==', Operator, 'expressions'),
             ('[{()},.%#`;]', Punctuation),
             (r'\\', Punctuation),
+            include('keywords'),
             (r'\w+', Text),
             ],
         'string': [
@@ -90,20 +90,16 @@ class autohotkeyLexer(RegexLexer):
         ],
         'block': [
             include('root'),
-            include('keywords'),
             ('{', Punctuation, '#push'),
             ('}', Punctuation, '#pop'),
         ],
         'parameters': [
-            (r'\d+', Number.Integer),
-            (r'\d+L', Number.Integer.Long),
-            (r'0[xX][a-fA-F0-9]+', Number.Hex),
-            (r'(\d+\.?\d*|\d*\.\d+)([eE][+-]?[0-9]+)?', Number.Float),
+            (r'\)', Punctuation, '#pop'),
+            (r'\(', Punctuation, '#push'),
+            include('numbers'),
             include('literals'),
             include('whitespace'),
 #            (r'=', Operator, 'expressions'),
-            (r'\(', Punctuation, '#push'),
-            (r'\)', Punctuation, '#pop'),
         ],
         'keywords': [
             (r'(static|global|local)\b', Keyword.Type),
@@ -129,14 +125,19 @@ class autohotkeyLexer(RegexLexer):
             (r'[ \t]', Whitespace),
             ],
         'numbers': [
-            (r'\d+', Number.Integer),
-            (r'\d+L', Number.Integer.Long),
+            (r'(\d+\.\d*|\d*\.\d+)([eE][+-]?[0-9]+)?', Number.Float),
+            (r'\d+[eE][+-]?[0-9]+', Number.Float),
+            (r'0\d+', Number.Oct),
             (r'0[xX][a-fA-F0-9]+', Number.Hex),
-            (r'(\d+\.?\d*|\d*\.\d+)([eE][+-]?[0-9]+)?', Number.Float),
+            (r'\d+L', Number.Integer.Long),
+            (r'\d+', Number.Integer)
         ],
         'continuation': [
             (r'\n\)', Punctuation, '#pop'),
-            (r'\s[^\n\)]*$', String),
+            (r'\s[^\n\)]+', String),
+        ],
+        'keynames': [
+            (r'\[[^\]]+\]', Keyword, 'keynames')
         ],
         'commands': [
             (r'(autotrim|blockinput|break|click|'
