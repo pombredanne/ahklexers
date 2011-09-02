@@ -20,7 +20,7 @@ from pygments.token import *
 
 __all__ = ['autohotkeyLexer']
 
-class autohotkeyLexer(RegexLexer):
+class autohotkeyLexer(ExtendedRegexLexer):
     """
     For autohotkey source code
     """
