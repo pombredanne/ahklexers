@@ -30,6 +30,7 @@ class AhkLexer(ExtendedRegexLexer):
             (r'^;.*?$', Comment.Singleline),
             (r'[]{}(),;[]', Punctuation),
             (r'(in|is|and|or|not)\b', Operator.Word),
+            ('\%[a-zA-Z_][a-zA-Z0-9_]*\%', Name.Variable), 
             (r'!=|==|<<|>>|[-~+/*%=<>&^|.]', Operator),            
             include('commands'),
             include('labels'),

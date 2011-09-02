@@ -6,6 +6,7 @@ k::
 label:
   Msgbox % "hello" . A_UserName
 Msgbox % "hello escaped "" quotes."
+tooltip %mytip%
 foo := regexmatch(bar, "reg")
 Return
 /*  multiline
