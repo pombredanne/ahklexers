@@ -4,7 +4,8 @@
 k::
 ::sdf::
 label:
-Msgbox
+Msgbox % "hello"
+Msgbox % "hello escaped "" quotes."
 Return
 /*  multiline
 comment

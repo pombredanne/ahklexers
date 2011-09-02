@@ -1,4 +1,5 @@
-from pygments.lexer import RegexLexer, bygroups, using, include
+from pygments.lexer import ExtendedRegexLexer, RegexLexer, \
+     bygroups, using, include, combined
 from pygments.token import *   
 import re
 from pygments.styles import get_style_by_name
@@ -7,7 +8,7 @@ f = open(ahkcommandsFile)
 ahkcommands = f.read()
 f.close()
 
-class AhkLexer(RegexLexer):    	    
+class AhkLexer(ExtendedRegexLexer):    	    
     name = 'AHK'	       	    
     aliases = ['ahk']	       	
     filenames = ['*.ahk', '*.ahk2']
@@ -19,8 +20,10 @@ class AhkLexer(RegexLexer):
 	    (r'^(\s*)(\()', bygroups(Whitespace, Generic), 'incontinuation'),
             (r'\s+;.*?$', Comment.Singleline),
             (r'^;.*?$', Comment.Singleline),
+            (r'[]{}%:(),;[]', Punctuation),           
             include('commands'),
             include('labels'),
+            ('"', String, combined('stringescape', 'dqs')),
             include('numbers'),
             include('garbage'),
         ],		       
@@ -51,6 +54,16 @@ class AhkLexer(RegexLexer):
             (r'0[xX][a-fA-F0-9]+', Number.Hex),
             (r'\d+L', Number.Integer.Long),
             (r'\d+', Number.Integer)
+        ],
+        'stringescape': [
+            (r'\"\"', String.Escape),
+        ],
+        'strings': [
+            (r'[^"\n]+', String),
+        ],
+        'dqs': [
+            (r'"', String, '#pop'),
+            include('strings')
         ],        
         'garbage': [
             (r'[^\S\n]', Text),
