@@ -4,8 +4,9 @@
 k::
 ::sdf::
 label:
-Msgbox % "hello"
+  Msgbox % "hello" . A_UserName
 Msgbox % "hello escaped "" quotes."
+foo := regexmatch(bar, "reg")
 Return
 /*  multiline
 comment
