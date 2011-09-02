@@ -1,0 +1,19 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; Generating unique random integers by Laszlo</span>
+<span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=30664#30664</span>
+<span class="n">RandomUniqNum</span><span class="p">(</span><span class="n">Min</span><span class="p">,</span><span class="n">Max</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">If</span> <span class="p">(</span><span class="n">Max</span> <span class="o">-</span> <span class="n">Min</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">MsgBox</span> <span class="n">Cannot</span> <span class="n">have</span> <span class="nv">%N%</span> <span class="n">different</span> <span class="n">numbers</span> <span class="n">between</span> <span class="nv">%MIN%</span> <span class="ow">and</span> <span class="nv">%MAX%</span>
+<span class="w">   </span><span class="nb">Else</span> <span class="n">Loop</span> <span class="nv">%N%</span>
+<span class="w">     </span><span class="nb">Loop</span>
+     <span class="p">{</span>
+<span class="w">       </span><span class="nb">Random</span> <span class="n">R</span><span class="p">,</span> <span class="nv">%MIN%</span><span class="p">,</span> <span class="nv">%MAX%</span><span class="c-Singleline">     ; R = random number</span>
+<span class="w">       </span><span class="nb">IfNotEqual</span> <span class="n">i</span><span class="nv">%R%</span><span class="p">,,</span><span class="n">Continue</span><span class="c-Singleline">  ; repetition found, try again</span>
+       <span class="n">i</span><span class="nv">%R%</span> <span class="o">=</span> <span class="mi">1</span><span class="c-Singleline">                   ; note occurrence</span>
+       <span class="n">RNList</span> <span class="o">=</span> <span class="nv">%RNList%</span><span class="p">,</span><span class="nv">%R%</span>
+<span class="w">       </span><span class="nb">break</span><span class="c-Singleline">                      ; different number</span>
+     <span class="p">}</span>
+<span class="w">   </span><span class="nb">StringTrimLeft</span> <span class="n">RNList</span><span class="p">,</span><span class="n">RNList</span><span class="p">,</span><span class="mi">1</span><span class="c-Singleline"> ; remove leading &quot;,&quot;</span>
+<span class="w">   </span><span class="nb">Return</span> <span class="n">RNList</span>
+<span class="p">}</span>
+</pre></div>

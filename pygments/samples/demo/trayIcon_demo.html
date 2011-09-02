@@ -1,0 +1,12 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include TrayIcon.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">#NoTrayIcon</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="n">On</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Get list of information about all icons in the system tray in following format:</span>
+<span class="c-Singleline">; idx: 0 | idn: 10 | Pid: 4508 | uID: 1028 | MessageID: 1028 | hWnd: 4719526 | Class: AutoHotkey | Process: AutoHotkey.exe`n   | Tooltip: LibraryExplorer.ahk`n</span>
+<span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">TrayIcon</span><span class="p">()</span>
+<span class="nb">Return</span>
+</pre></div>

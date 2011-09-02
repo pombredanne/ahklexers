@@ -1,0 +1,16 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include SB.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="n">add</span><span class="p">,</span><span class="n">text</span><span class="p">,</span><span class="n">w280</span> <span class="n">center</span><span class="p">,</span><span class="n">Some</span> <span class="n">text</span> <span class="n">for</span> <span class="n">the</span> <span class="n">gui</span>!
+<span class="nb">Gui</span><span class="p">,</span><span class="n">add</span><span class="p">,</span><span class="n">statusbar</span>
+<span class="nb">Gui</span><span class="p">,</span><span class="n">show</span><span class="p">,</span><span class="n">w300</span><span class="p">,</span><span class="n">Statusbar</span> <span class="n">with</span> <span class="n">Progress</span>
+
+<span class="nf">SB_SetParts(</span><span class="mi">20</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span><span class="c-Singleline"> ; Make 3 different parts</span>
+<span class="nf">SB_SetText(</span><span class="s">&quot;demotext&quot;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; Set a text segment 2</span>
+<span class="nf">SB_SetIcon(</span><span class="nv">A_AhkPath</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; Set an Icon to 1st segment</span>
+<span class="c-Singleline">; create a 50% progressbar with yellow background and blue bar</span>
+<span class="n">hwnd</span> :<span class="o">=</span> <span class="n">SB_SetProgress</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&quot;BackgroundYellow cBlue&quot;</span><span class="p">)</span>
+<span class="nb">return</span>
+</pre></div>

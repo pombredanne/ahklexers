@@ -1,0 +1,20 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include QPX.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">SetBatchLines</span> <span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;;** Basic Usage **</span>
+<span class="n">QPX</span><span class="p">(</span> <span class="nv">True</span> <span class="p">)</span><span class="c-Singleline">         ; Initialise Counter</span>
+<span class="nb">Sleep</span> <span class="mi">1000</span>
+<span class="n">Ti</span> :<span class="o">=</span> <span class="n">QPX</span><span class="p">(</span> <span class="nv">False</span> <span class="p">)</span><span class="c-Singleline">  ; Retrieve Time consumed ( &amp; reset internal vars )</span>
+
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Sleep</span> <span class="mi">1000</span><span class="p">,</span> <span class="nv">%Ti%</span> <span class="n">seconds</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;;** Extended Usage **</span>
+<span class="nb">While</span> <span class="n">QPX</span><span class="p">(</span> <span class="mi">1000</span> <span class="p">)</span><span class="c-Singleline">   ; Loops 1000 times and keeps internal track of the total time</span>
+<span class="w"> </span><span class="nb">Tooltip</span> <span class="nv">%A_Index%</span>
+<span class="n">Ti</span> :<span class="o">=</span> <span class="n">QPX</span><span class="p">()</span><span class="c-Singleline">      ; Retrieve Avg time consumed per iteration ( &amp; reset internal vars )</span>
+
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Avg</span> <span class="n">Time</span> <span class="n">Taken</span> <span class="n">for</span> <span class="n">ToolTip</span><span class="p">,</span> <span class="nv">%Ti%</span> <span class="n">Seconds</span> <span class="o">/</span> <span class="n">Iteration</span>
+</pre></div>

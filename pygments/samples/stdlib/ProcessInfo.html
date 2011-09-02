@@ -1,0 +1,86 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">;?add 2010 Added prefix ProcessInfo_ to all functions by Tuncay.</span>
+<span class="c-Singleline">;?mod small fix, http://www.autohotkey.com/forum/viewtopic.php?p=339999#339999</span>
+<span class="c-Singleline">; ProcessInfo.ahk - Function library to retrieve various application process informations:</span>
+<span class="c-Singleline">; - Script&#39;s own process identifier</span>
+<span class="c-Singleline">; - Parent process ID of a process (the caller application)</span>
+<span class="c-Singleline">; - Process name by process ID (filename without path)</span>
+<span class="c-Singleline">; - Thread count by process ID (number of threads created by process)</span>
+<span class="c-Singleline">; - Full filename by process ID (ProcessInfo_GetModuleFileNameEx() function)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Tested with AutoHotkey 1.0.46.10</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Created by HuBa</span>
+<span class="c-Singleline">; Contact: http://www.autohotkey.com/forum/profile.php?mode=viewprofile&amp;u=4693</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Portions of the script are based upon the ProcessInfo_GetProcessList() function by wOxxOm</span>
+<span class="c-Singleline">; (http://www.autohotkey.com/forum/viewtopic.php?p=65983#65983)</span>
+
+<span class="n">ProcessInfo_GetCurrentProcessID</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="nf">DllCall(</span><span class="s">&quot;GetCurrentProcessId&quot;</span><span class="p">)</span><span class="c-Singleline">  ; http://msdn2.microsoft.com/ms683180.aspx</span>
+<span class="p">}</span>
+
+<span class="n">ProcessInfo_GetCurrentParentProcessID</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="n">ProcessInfo_GetParentProcessID</span><span class="p">(</span><span class="n">ProcessInfo_GetCurrentProcessID</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="n">ProcessInfo_GetProcessName</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="n">ProcessInfo_GetProcessInformation</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span><span class="c-Singleline">  ; TCHAR szExeFile[MAX_PATH]</span>
+<span class="p">}</span>
+
+<span class="n">ProcessInfo_GetParentProcessID</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="n">ProcessInfo_GetProcessInformation</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">,</span> <span class="s">&quot;UInt *&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="c-Singleline">  ; DWORD th32ParentProcessID</span>
+<span class="p">}</span>
+
+<span class="n">ProcessInfo_GetProcessThreadCount</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="n">ProcessInfo_GetProcessInformation</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">,</span> <span class="s">&quot;UInt *&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline">  ; DWORD cntThreads</span>
+<span class="p">}</span>
+
+<span class="n">ProcessInfo_GetProcessInformation</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">,</span> <span class="n">CallVariableType</span><span class="p">,</span> <span class="n">VariableCapacity</span><span class="p">,</span> <span class="n">DataOffset</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">hSnapshot</span> :<span class="o">=</span> <span class="nf">DLLCall(</span><span class="s">&quot;CreateToolhelp32Snapshot&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">  ; TH32CS_SNAPPROCESS = 2</span>
+  <span class="n">if</span> <span class="p">(</span><span class="n">hSnapshot</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="nf">VarSetCapacity(</span><span class="n">PE32</span><span class="p">,</span> <span class="mi">304</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">  ; PROCESSENTRY32 structure -&gt; http://msdn2.microsoft.com/ms684839.aspx</span>
+    <span class="nf">DllCall(</span><span class="s">&quot;ntdll.dll\RtlFillMemoryUlong&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PE32</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">304</span><span class="p">)</span><span class="c-Singleline">  ; Set dwSize</span>
+    <span class="nf">VarSetCapacity(</span><span class="n">th32ProcessID</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">if</span> <span class="p">(</span><span class="nf">DllCall(</span><span class="s">&quot;Process32First&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hSnapshot</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PE32</span><span class="p">))</span><span class="c-Singleline">  ; http://msdn2.microsoft.com/ms684834.aspx</span>
+<span class="w">      </span><span class="nb">Loop</span>
+      <span class="p">{</span>
+        <span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;UInt *&quot;</span><span class="p">,</span> <span class="n">th32ProcessID</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PE32</span> <span class="o">+</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline">  ; http://msdn2.microsoft.com/ms803004.aspx</span>
+        <span class="n">if</span> <span class="p">(</span><span class="n">ProcessID</span> <span class="o">=</span> <span class="n">th32ProcessID</span><span class="p">)</span>
+        <span class="p">{</span>
+          <span class="nf">VarSetCapacity(</span><span class="n">th32DataEntry</span><span class="p">,</span> <span class="n">VariableCapacity</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+          <span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="n">CallVariableType</span><span class="p">,</span> <span class="n">th32DataEntry</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PE32</span> <span class="o">+</span> <span class="n">DataOffset</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">VariableCapacity</span><span class="p">)</span>
+          <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hSnapshot</span><span class="p">)</span><span class="c-Singleline">  ; http://msdn2.microsoft.com/ms724211.aspx</span>
+<span class="w">          </span><span class="nb">Return</span> <span class="n">th32DataEntry</span><span class="c-Singleline">  ; Process data found</span>
+        <span class="p">}</span>
+<span class="w">        </span><span class="nb">if </span><span class="ow">not</span> <span class="nf">DllCall(</span><span class="s">&quot;Process32Next&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hSnapshot</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PE32</span><span class="p">)</span><span class="c-Singleline">  ; http://msdn2.microsoft.com/ms684836.aspx</span>
+<span class="w">          </span><span class="nb">Break</span>
+      <span class="p">}</span>
+    <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hSnapshot</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="w">  </span><span class="nb">Return</span><span class="c-Singleline">  ; Cannot find process</span>
+<span class="p">}</span>
+
+<span class="n">ProcessInfo_GetModuleFileNameEx</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">)</span><span class="c-Singleline">  ; modified version of shimanov&#39;s function</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nb">if </span><span class="nv">A_OSVersion</span> <span class="ow">in</span> <span class="n">WIN_95</span><span class="p">,</span> <span class="n">WIN_98</span><span class="p">,</span> <span class="n">WIN_ME</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">ProcessInfo_GetProcessName</span><span class="p">(</span><span class="n">ProcessID</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">  </span>
+<span class="c-Singleline">  ; #define PROCESS_VM_READ           (0x0010)</span>
+<span class="c-Singleline">  ; #define PROCESS_QUERY_INFORMATION (0x0400)</span>
+  <span class="n">hProcess</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;OpenProcess&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mh">0x10</span><span class="o">|</span><span class="mh">0x400</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="nv">False</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">ProcessID</span><span class="p">)</span>
+  <span class="n">if</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="n">hProcess</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span>
+  <span class="n">FileNameSize</span> :<span class="o">=</span> <span class="mi">260</span>
+  <span class="nf">VarSetCapacity(</span><span class="n">ModuleFileName</span><span class="p">,</span> <span class="n">FileNameSize</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">CallResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Psapi.dll\GetModuleFileNameExA&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hProcess</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="n">ModuleFileName</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">FileNameSize</span><span class="p">)</span>
+  <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hProcess</span><span class="p">)</span><span class="c-Singleline"> ;?mod http://www.autohotkey.com/forum/viewtopic.php?p=339999#339999</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="n">ModuleFileName</span>
+<span class="p">}</span>
+</pre></div>

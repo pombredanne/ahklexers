@@ -1,0 +1,157 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">;	Title:	Remote Buffer</span>
+<span class="c-Singleline">;			*Read and write process memory*</span>
+<span class="c-Singleline">;</span>
+
+<span class="cm">/*-------------------------------------------------------------------------------</span>
+<span class="cm">	Function: Open</span>
+<span class="cm">			  Open remote buffer</span>
+
+<span class="cm">	Parameters:</span>
+<span class="cm">			H		- Reference to variable to receive remote buffer handle</span>
+<span class="cm">			hwnd    - HWND of the window that belongs to the process</span>
+<span class="cm">			size    - Size of the buffer</span>
+
+<span class="cm">	Returns:</span>
+<span class="cm">			Error message on failure</span>
+<span class="cm"> */</span>
+<span class="n">RemoteBuf_Open</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">H</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">MEM_COMMIT</span><span class="o">=</span><span class="mh">0x1000</span><span class="p">,</span> <span class="n">PAGE_READWRITE</span><span class="o">=</span><span class="mi">4</span>
+
+<span class="w">	</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">PID</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>
+	<span class="n">hProc</span>   :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;OpenProcess&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0x38</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="p">)</span><span class="c-Singleline"> ;0x38 = PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">hProc</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Unable to open process (&quot;</span> <span class="nv">A_LastError</span> <span class="s">&quot;)&quot;</span>
+      
+	<span class="n">bufAdr</span>  :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;VirtualAllocEx&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hProc</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">MEM_COMMIT</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">PAGE_READWRITE</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">bufAdr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Unable to allocate memory (&quot;</span> <span class="nv">A_LastError</span> <span class="s">&quot;)&quot;</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	; Buffer handle structure:</span>
+<span class="c-Singleline">	 ;	@0: hProc</span>
+<span class="c-Singleline">	 ;	@4: size</span>
+<span class="c-Singleline">	 ;	@8: bufAdr</span>
+	<span class="nf">VarSetCapacity(</span><span class="n">H</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+	<span class="nf">NumPut(</span> <span class="n">hProc</span><span class="p">,</span>	<span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+	<span class="nf">NumPut(</span> <span class="n">size</span><span class="p">,</span>	<span class="n">H</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+	<span class="nf">NumPut(</span> <span class="n">bufAdr</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*----------------------------------------------------</span>
+<span class="cm">	Function: Close</span>
+<span class="cm">			  Close the remote buffer</span>
+
+<span class="cm">	Parameters:</span>
+<span class="cm">			  H - Remote buffer handle</span>
+<span class="cm"> */</span>
+<span class="n">RemoteBuf_Close</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">H</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">MEM_RELEASE</span> <span class="o">=</span> <span class="mh">0x8000</span>
+	
+	<span class="n">handle</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Invalid remote buffer handle&quot;</span>
+	<span class="n">adr</span>    :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">H</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+	<span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;VirtualFreeEx&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">adr</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">MEM_RELEASE</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Unable to free memory (&quot;</span> <span class="nv">A_LastError</span> <span class="s">&quot;)&quot;</span>
+	<span class="nf">DllCall(</span> <span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">handle</span> <span class="p">)</span>
+	<span class="nf">VarSetCapacity(</span><span class="n">H</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*----------------------------------------------------</span>
+<span class="cm">	Function:   Read </span>
+<span class="cm">				Read from the remote buffer into local buffer</span>
+
+<span class="cm">	Parameters: </span>
+<span class="cm">         H			- Remote buffer handle</span>
+<span class="cm">         pLocal		- Reference to the local buffer</span>
+<span class="cm">         pSize		- Size of the local buffer</span>
+<span class="cm">         pOffset	- Optional reading offset, by default 0</span>
+
+<span class="cm">Returns:</span>
+<span class="cm">         TRUE on success or FALSE on failure. ErrorMessage on bad remote buffer handle</span>
+<span class="cm"> */</span>
+<span class="n">RemoteBuf_Read</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">H</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">pLocal</span><span class="p">,</span> <span class="n">pSize</span><span class="p">,</span> <span class="n">pOffset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">){</span>
+	<span class="n">handle</span> :<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>   <span class="n">size</span>:<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">H</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>   <span class="n">adr</span> :<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">H</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Invalid remote buffer handle&quot;</span>	
+<span class="w">	</span><span class="nb">IfGreaterOrEqual</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nv">%size%</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Offset is bigger then size&quot;</span>
+
+	<span class="nf">VarSetCapacity(</span> <span class="n">pLocal</span><span class="p">,</span> <span class="n">pSize</span> <span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span> <span class="s">&quot;ReadProcessMemory&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">adr</span> <span class="o">+</span> <span class="n">pOffset</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pLocal</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">),</span> <span class="nf">VarSetCapacity(</span><span class="n">pLocal</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*----------------------------------------------------</span>
+<span class="cm">	Function:   Write </span>
+<span class="cm">				Write local buffer into remote buffer</span>
+
+<span class="cm">	Parameters: </span>
+<span class="cm">         H			- Remote buffer handle</span>
+<span class="cm">         pLocal		- Reference to the local buffer</span>
+<span class="cm">         pSize		- Size of the local buffer</span>
+<span class="cm">         pOffset	- Optional writting offset, by default 0</span>
+
+<span class="cm">	Returns:</span>
+<span class="cm">         TRUE on success or FALSE on failure. ErrorMessage on bad remote buffer handle</span>
+<span class="cm"> */</span>
+
+<span class="n">RemoteBuf_Write</span><span class="p">(</span><span class="n">Byref</span> <span class="n">H</span><span class="p">,</span> <span class="n">byref</span> <span class="n">pLocal</span><span class="p">,</span> <span class="n">pSize</span><span class="p">,</span> <span class="n">pOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nl">handle:</span><span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>   <span class="n">size</span> :<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">H</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>   <span class="n">adr</span> :<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">H</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Invalid remote buffer handle&quot;</span>	
+<span class="w">	</span><span class="nb">IfGreaterOrEqual</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nv">%size%</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;   Offset is bigger then size&quot;</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span> <span class="s">&quot;WriteProcessMemory&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">adr</span> <span class="o">+</span> <span class="n">pOffset</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pLocal</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">pSize</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*----------------------------------------------------</span>
+<span class="cm">	Function:   Get</span>
+<span class="cm">				Get address or size of the remote buffer</span>
+
+<span class="cm">	Parameters: </span>
+<span class="cm">         H		- Remote buffer handle</span>
+<span class="cm">         pQ     - Query parameter: set to &quot;adr&quot; to get address (default), to &quot;size&quot; to get the size or to &quot;handle&quot; to get Windows API handle of the remote buffer.</span>
+
+<span class="cm">	Returns:</span>
+<span class="cm">         Address or size of the remote buffer</span>
+<span class="cm"> */</span>
+<span class="n">RemoteBuf_Get</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">H</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;adr&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;adr&quot;</span> ? <span class="nf">NumGet(</span><span class="n">H</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> : <span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;size&quot;</span> ? <span class="nf">NumGet(</span><span class="n">H</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> : <span class="nf">NumGet(</span><span class="n">H</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*---------------------------------------------------------------------------------------</span>
+<span class="cm">Group: Example</span>
+<span class="cm">(start code)</span>
+<span class="cm">	;get the handle of the Explorer window</span>
+<span class="cm">	   WinGet, hw, ID, ahk_class ExploreWClass</span>
+
+<span class="cm">	;open two buffers</span>
+<span class="cm">	   RemoteBuf_Open( hBuf1, hw, 128 ) 		</span>
+<span class="cm">	   RemoteBuf_Open( hBuf2, hw, 16  ) </span>
+
+<span class="cm">	;write something</span>
+<span class="cm">	   str := &quot;1234&quot; </span>
+<span class="cm">	   RemoteBuf_Write( hBuf1, str, strlen(str) ) </span>
+
+<span class="cm">	   str := &quot;_5678&quot; </span>
+<span class="cm">	   RemoteBuf_Write( hBuf1, str, strlen(str), 4) </span>
+
+<span class="cm">	   str := &quot;_testing&quot; </span>
+<span class="cm">	   RemoteBuf_Write( hBuf2, str, strlen(str)) </span>
+
+
+<span class="cm">	;read </span>
+<span class="cm">	   RemoteBuf_Read( hBuf1, str, 10 ) </span>
+<span class="cm">	   out = %str% </span>
+<span class="cm">	   RemoteBuf_Read( hBuf2, str, 10 ) </span>
+<span class="cm">	   out = %out%%str% </span>
+
+<span class="cm">	   MsgBox %out% </span>
+
+<span class="cm">	;close </span>
+<span class="cm">	   RemoteBuf_Close( hBuf1 ) </span>
+<span class="cm">	   RemoteBuf_Close( hBuf2 ) </span>
+<span class="cm">(end code)</span>
+<span class="cm"> */</span>
+
+<span class="cm">/*-------------------------------------------------------------------------------------------------------------------</span>
+<span class="cm">	Group: About</span>
+<span class="cm">	o Ver 2.0 by majkinetor. See http://www.autohotkey.com/forum/topic12251.html</span>
+<span class="cm">	o Code updates by infogulch</span>
+<span class="cm">	o Licenced under Creative Commons Attribution-Noncommercial &lt;http://creativecommons.org/licenses/by-nc/3.0/&gt;.  </span>
+<span class="cm"> */</span>
+</pre></div>

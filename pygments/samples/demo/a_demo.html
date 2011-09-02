@@ -1,0 +1,19 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include a.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="nb">Loop</span><span class="p">,</span> <span class="mi">5</span><span class="c-Singleline"> ; Add 5 elements to Array</span>
+<span class="p">{</span>
+   <span class="nf">VarSetCapacity(</span><span class="n">t</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="nf">asc(</span><span class="s">&quot;0&quot;</span><span class="p">)</span><span class="o">+</span><span class="nv">A_Index</span><span class="p">)</span>
+   <span class="n">A_Put</span><span class="p">(</span><span class="n">MyArray</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">Data</span> :<span class="o">=</span> <span class="s">&quot;1234567890abcdefghijklmnopqrstuvwxyz&quot;</span>
+<span class="n">A_Put</span><span class="p">(</span><span class="n">MyArray</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; Change fifth entry in variable.</span>
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="p">,</span> <span class="n">Array</span> <span class="n">Dump</span><span class="p">,</span> <span class="o">%</span> <span class="n">A_Dump</span><span class="p">(</span><span class="n">MyArray</span><span class="p">)</span>
+<span class="nb">Loop</span><span class="p">,</span> <span class="mi">5</span><span class="c-Singleline"> ; Retrieve all elements via loop</span>
+<span class="p">{</span>
+   <span class="n">ArrayElements</span> <span class="o">.=</span> <span class="s">&quot;ArrayElement #&quot;</span> <span class="nv">A_Index</span> <span class="s">&quot;: &quot;</span> <span class="o">.</span> <span class="n">A_Get</span><span class="p">(</span><span class="n">MyArray</span><span class="p">,</span><span class="nv">A_Index</span><span class="p">)</span> <span class="s">&quot;`n&quot;</span>
+<span class="p">}</span>
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="p">,</span> <span class="n">Via</span> <span class="n">Loop</span> <span class="n">retrieved</span><span class="p">,</span> <span class="nv">%ArrayElements%</span>
+</pre></div>

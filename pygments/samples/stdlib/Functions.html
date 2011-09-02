@@ -1,0 +1,236 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">	Title: Command Functions</span>
+<span class="cm">		A wrapper set of functions for commands which have an output variable.</span>
+
+<span class="cm">	License: http://www.autohotkey.net/~Titan/license.txt</span>
+<span class="cm">*/</span>
+
+<span class="n">Functions</span><span class="p">()</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+
+<span class="n">IfBetween</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">LowerBound</span><span class="p">,</span> <span class="n">UpperBound</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="n">between</span> <span class="nv">%LowerBound%</span> <span class="ow">and</span> <span class="nv">%UpperBound%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+<span class="n">IfNotBetween</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">LowerBound</span><span class="p">,</span> <span class="n">UpperBound</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="ow">not</span> <span class="n">between</span> <span class="nv">%LowerBound%</span> <span class="ow">and</span> <span class="nv">%UpperBound%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+<span class="n">IfIn</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">MatchList</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="ow">in</span> <span class="nv">%MatchList%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+<span class="n">IfNotIn</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">MatchList</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nv">%MatchList%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+<span class="n">IfContains</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">MatchList</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="n">contains</span> <span class="nv">%MatchList%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+<span class="n">IfNotContains</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">MatchList</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="ow">not</span> <span class="n">contains</span> <span class="nv">%MatchList%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+<span class="n">IfIs</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="ow">is</span> <span class="nv">%type%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+<span class="n">IfIsNot</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">var</span><span class="p">,</span> <span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nv">%type%</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span>
+<span class="p">}</span>
+
+<span class="nb">ControlGet</span><span class="p">(</span><span class="n">Cmd</span><span class="p">,</span> <span class="n">Value</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Control</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">ControlGet</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Cmd%</span><span class="p">,</span> <span class="nv">%Value%</span><span class="p">,</span> <span class="nv">%Control%</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">ControlGetFocus</span><span class="p">(</span><span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">ControlGetFocus</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">ControlGetText</span><span class="p">(</span><span class="n">Control</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">ControlGetText</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Control%</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">DriveGet</span><span class="p">(</span><span class="n">Cmd</span><span class="p">,</span> <span class="n">Value</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">DriveGet</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Cmd%</span><span class="p">,</span> <span class="nv">%Value%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">DriveSpaceFree</span><span class="p">(</span><span class="n">Path</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">DriveSpaceFree</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Path%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">EnvGet</span><span class="p">(</span><span class="n">EnvVarName</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">EnvGet</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%EnvVarName%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileGetAttrib</span><span class="p">(</span><span class="n">Filename</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileGetAttrib</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Filename%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileGetShortcut</span><span class="p">(</span><span class="n">LinkFile</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutTarget</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutDir</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutArgs</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutDescription</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutIcon</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutIconNum</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutRunState</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileGetShortcut</span><span class="p">,</span> <span class="nv">%LinkFile%</span><span class="p">,</span> <span class="n">OutTarget</span><span class="p">,</span> <span class="n">OutDir</span><span class="p">,</span> <span class="n">OutArgs</span><span class="p">,</span> <span class="n">OutDescription</span><span class="p">,</span> <span class="n">OutIcon</span><span class="p">,</span> <span class="n">OutIconNum</span><span class="p">,</span> <span class="n">OutRunState</span>
+<span class="p">}</span>
+<span class="nb">FileGetSize</span><span class="p">(</span><span class="n">Filename</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Units</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileGetSize</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Filename%</span><span class="p">,</span> <span class="nv">%Units%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileGetTime</span><span class="p">(</span><span class="n">Filename</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WhichTime</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileGetTime</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Filename%</span><span class="p">,</span> <span class="nv">%WhichTime%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileGetVersion</span><span class="p">(</span><span class="n">Filename</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileGetVersion</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Filename%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileRead</span><span class="p">(</span><span class="n">Filename</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileRead</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Filename%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileReadLine</span><span class="p">(</span><span class="n">Filename</span><span class="p">,</span> <span class="n">LineNum</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileReadLine</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Filename%</span><span class="p">,</span> <span class="nv">%LineNum%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileSelectFile</span><span class="p">(</span><span class="n">Options</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">RootDir</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Prompt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Filter</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileSelectFile</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Options%</span><span class="p">,</span> <span class="nv">%RootDir%</span><span class="p">,</span> <span class="nv">%Prompt%</span><span class="p">,</span> <span class="nv">%Filter%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FileSelectFolder</span><span class="p">(</span><span class="n">StartingFolder</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Options</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Prompt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FileSelectFolder</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%StartingFolder%</span><span class="p">,</span> <span class="nv">%Options%</span><span class="p">,</span> <span class="nv">%Prompt%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">FormatTime</span><span class="p">(</span><span class="n">YYYYMMDDHH24MISS</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Format</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">FormatTime</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%YYYYMMDDHH24MISS%</span><span class="p">,</span> <span class="nv">%Format%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">GetKeyState</span><span class="p">(</span><span class="n">WhichKey</span> <span class="p">,</span> <span class="n">Mode</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">GetKeyState</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%WhichKey%</span><span class="p">,</span> <span class="nv">%Mode%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">GuiControlGet</span><span class="p">(</span><span class="n">Subcommand</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ControlID</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Param4</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">GuiControlGet</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Subcommand%</span><span class="p">,</span> <span class="nv">%ControlID%</span><span class="p">,</span> <span class="nv">%Param4%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">ImageSearch</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">OutputVarX</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutputVarY</span><span class="p">,</span> <span class="n">X1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">Y2</span><span class="p">,</span> <span class="n">ImageFile</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">ImageSearch</span><span class="p">,</span> <span class="n">OutputVarX</span><span class="p">,</span> <span class="n">OutputVarY</span><span class="p">,</span> <span class="nv">%X1%</span><span class="p">,</span> <span class="nv">%Y1%</span><span class="p">,</span> <span class="nv">%X2%</span><span class="p">,</span> <span class="nv">%Y2%</span><span class="p">,</span> <span class="nv">%ImageFile%</span>
+<span class="p">}</span>
+<span class="nb">IniRead</span><span class="p">(</span><span class="n">Filename</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Key</span><span class="p">,</span> <span class="n">Default</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">IniRead</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Filename%</span><span class="p">,</span> <span class="nv">%Section%</span><span class="p">,</span> <span class="nv">%Key%</span><span class="p">,</span> <span class="nv">%Default%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">Input</span><span class="p">(</span><span class="n">Options</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">EndKeys</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">MatchList</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">Input</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Options%</span><span class="p">,</span> <span class="nv">%EndKeys%</span><span class="p">,</span> <span class="nv">%MatchList%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">InputBox</span><span class="p">(</span><span class="n">Title</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Prompt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">HIDE</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Width</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Height</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Font</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Timeout</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Default</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">InputBox</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Title%</span><span class="p">,</span> <span class="nv">%Prompt%</span><span class="p">,</span> <span class="nv">%HIDE%</span><span class="p">,</span> <span class="nv">%Width%</span><span class="p">,</span> <span class="nv">%Height%</span><span class="p">,</span> <span class="nv">%X%</span><span class="p">,</span> <span class="nv">%Y%</span><span class="p">,</span> <span class="p">,</span> <span class="nv">%Timeout%</span><span class="p">,</span> <span class="nv">%Default%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">MouseGetPos</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">OutputVarX</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutputVarY</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutputVarWin</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutputVarControl</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Mode</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">MouseGetPos</span><span class="p">,</span> <span class="n">OutputVarX</span><span class="p">,</span> <span class="n">OutputVarY</span><span class="p">,</span> <span class="n">OutputVarWin</span><span class="p">,</span> <span class="n">OutputVarControl</span><span class="p">,</span> <span class="nv">%Mode%</span>
+<span class="p">}</span>
+<span class="nb">PixelGetColor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">RGB</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">PixelGetColor</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%X%</span><span class="p">,</span> <span class="nv">%Y%</span><span class="p">,</span> <span class="nv">%RGB%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">PixelSearch</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">OutputVarX</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutputVarY</span><span class="p">,</span> <span class="n">X1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">Y2</span><span class="p">,</span> <span class="n">ColorID</span><span class="p">,</span> <span class="n">Variation</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Mode</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">PixelSearch</span><span class="p">,</span> <span class="n">OutputVarX</span><span class="p">,</span> <span class="n">OutputVarY</span><span class="p">,</span> <span class="nv">%X1%</span><span class="p">,</span> <span class="nv">%Y1%</span><span class="p">,</span> <span class="nv">%X2%</span><span class="p">,</span> <span class="nv">%Y2%</span><span class="p">,</span> <span class="nv">%ColorID%</span><span class="p">,</span> <span class="nv">%Variation%</span><span class="p">,</span> <span class="nv">%Mode%</span>
+<span class="p">}</span>
+<span class="nb">Random</span><span class="p">(</span><span class="n">Min</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Max</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">Random</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Min%</span><span class="p">,</span> <span class="nv">%Max%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">RegRead</span><span class="p">(</span><span class="n">RootKey</span><span class="p">,</span> <span class="n">SubKey</span><span class="p">,</span> <span class="n">ValueName</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">RegRead</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%RootKey%</span><span class="p">,</span> <span class="nv">%SubKey%</span><span class="p">,</span> <span class="nv">%ValueName%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">Run</span><span class="p">(</span><span class="n">Target</span><span class="p">,</span> <span class="n">WorkingDir</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Mode</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">Run</span><span class="p">,</span> <span class="nv">%Target%</span><span class="p">,</span> <span class="nv">%WorkingDir%</span><span class="p">,</span> <span class="nv">%Mode%</span><span class="p">,</span> <span class="nv">%v%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>	
+<span class="p">}</span>
+<span class="nb">SoundGet</span><span class="p">(</span><span class="n">ComponentType</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ControlType</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">DeviceNumber</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">SoundGet</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%ComponentType%</span><span class="p">,</span> <span class="nv">%ControlType%</span><span class="p">,</span> <span class="nv">%DeviceNumber%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">SoundGetWaveVolume</span><span class="p">(</span><span class="n">DeviceNumber</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">SoundGetWaveVolume</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%DeviceNumber%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StatusBarGetText</span><span class="p">(</span><span class="n">Part</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StatusBarGetText</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Part%</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">SplitPath</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutFileName</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutDir</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutExtension</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutNameNoExt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">OutDrive</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">SplitPath</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">OutFileName</span><span class="p">,</span> <span class="n">OutDir</span><span class="p">,</span> <span class="n">OutExtension</span><span class="p">,</span> <span class="n">OutNameNoExt</span><span class="p">,</span> <span class="n">OutDrive</span>
+<span class="p">}</span>
+<span class="nb">StringGetPos</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">,</span> <span class="n">Mode</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Offset</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%SearchText%</span><span class="p">,</span> <span class="nv">%Mode%</span><span class="p">,</span> <span class="nv">%Offset%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringLeft</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">Count</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%Count%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringLen</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringLower</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringLower</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%T%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringMid</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">StartChar</span><span class="p">,</span> <span class="n">Count</span> <span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%StartChar%</span><span class="p">,</span> <span class="nv">%Count%</span><span class="p">,</span> <span class="nv">%L%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringReplace</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">,</span> <span class="n">ReplaceText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">All</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%SearchText%</span><span class="p">,</span> <span class="nv">%ReplaceText%</span><span class="p">,</span> <span class="nv">%All%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringRight</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">Count</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringRight</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%Count%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringTrimLeft</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">Count</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%Count%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringTrimRight</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">Count</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%Count%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">StringUpper</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">InputVar</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringUpper</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">InputVar</span><span class="p">,</span> <span class="nv">%T%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">SysGet</span><span class="p">(</span><span class="n">Subcommand</span><span class="p">,</span> <span class="n">Param3</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">SysGet</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Subcommand%</span><span class="p">,</span> <span class="nv">%Param3%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">Transform</span><span class="p">(</span><span class="n">Cmd</span><span class="p">,</span> <span class="n">Value1</span><span class="p">,</span> <span class="n">Value2</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">Transform</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Cmd%</span><span class="p">,</span> <span class="nv">%Value1%</span><span class="p">,</span> <span class="nv">%Value2%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">WinGet</span><span class="p">(</span><span class="n">Cmd</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%Cmd%</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">WinGetActiveTitle</span><span class="p">()</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">WinGetActiveTitle</span><span class="p">,</span> <span class="n">v</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">WinGetClass</span><span class="p">(</span><span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">WinGetClass</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">WinGetText</span><span class="p">(</span><span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">WinGetText</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+<span class="nb">WinGetTitle</span><span class="p">(</span><span class="n">WinTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WinText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeTitle</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ExcludeText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">WinGetTitle</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">%WinTitle%</span><span class="p">,</span> <span class="nv">%WinText%</span><span class="p">,</span> <span class="nv">%ExcludeTitle%</span><span class="p">,</span> <span class="nv">%ExcludeText%</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">v</span>
+<span class="p">}</span>
+</pre></div>

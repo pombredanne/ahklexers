@@ -1,0 +1,31 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ILButton.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">#SingleInstance</span> <span class="n">force</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Example by tkoi at http://www.autohotkey.com/forum/viewtopic.php?p=247168#247168</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">ToolWindow</span> <span class="o">+</span><span class="n">AlwaysOnTop</span>
+<span class="nb">Loop</span> <span class="mi">5</span> <span class="p">{</span>
+<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">w64</span> <span class="n">h32</span> <span class="n">xm</span> <span class="n">hwndhBtn</span>
+      <span class="n">ILButton</span><span class="p">(</span><span class="n">hBtn</span><span class="p">,</span> <span class="s">&quot;user32.dll:&quot;</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">w100</span> <span class="n">h32</span> <span class="n">x</span><span class="o">+</span><span class="mi">10</span> <span class="n">hwndhBtn</span><span class="p">,</span> <span class="n">text</span>
+      <span class="n">ILButton</span><span class="p">(</span><span class="n">hBtn</span><span class="p">,</span> <span class="s">&quot;user32.dll:&quot;</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+   <span class="p">}</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">xm</span> <span class="n">w174</span> <span class="n">h48</span> <span class="n">vStates</span> <span class="n">hwndhBtn</span><span class="p">,</span> <span class="n">pushbuttonstates</span>
+   <span class="n">ILButton</span><span class="p">(</span><span class="n">hBtn</span><span class="p">,</span> <span class="s">&quot;user32.dll:0|:1|:2|:3|:4|:5&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;16,1,-16,1&quot;</span><span class="p">)</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">w100</span> <span class="n">h26</span> <span class="n">xm</span><span class="o">+</span><span class="mi">74</span> <span class="n">gToggle</span><span class="p">,</span> <span class="n">Enable</span><span class="o">/</span><span class="n">disable</span>
+
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="p">,</span> <span class="n">ILButton</span> <span class="n">demo</span>
+<span class="nb">return</span>
+
+<span class="nl">Toggle:</span>
+<span class="w">   </span><span class="nb">GuiControlGet</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Enabled</span><span class="p">,</span> <span class="n">States</span>
+<span class="w">   </span><span class="nb">GuiControl</span><span class="p">,</span> <span class="n">Disable</span><span class="nv">%s%</span><span class="p">,</span> <span class="n">States</span>
+<span class="w">   </span><span class="nb">return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nl">GuiEscape:</span>
+<span class="w">   </span><span class="nb">ExitApp</span>
+<span class="w">   </span><span class="nb">return</span>
+</pre></div>

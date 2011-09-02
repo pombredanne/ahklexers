@@ -1,0 +1,37 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Toolbar.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
+   <span class="n">hGui</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span> <span class="p">,</span> <span class="n">w500</span> <span class="n">h100</span> <span class="n">Hide</span><span class="c-Singleline">                              ;set gui width &amp; height prior to adding toolbar (mandatory)</span>
+
+   <span class="n">hCtrl</span> :<span class="o">=</span> <span class="n">Toolbar_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="s">&quot;OnToolbar&quot;</span><span class="p">,</span> <span class="s">&quot;FLAT TOOLTIPS&quot;</span><span class="p">,</span> <span class="s">&quot;1L&quot;</span><span class="p">)</span><span class="c-Singleline">    ;add the toolbar</span>
+
+   <span class="n">btns</span> <span class="o">=</span>
+<span class="w">    </span><span class="g">(LTrim</span>
+<span class="g">       new,  7,            ,dropdown showtext</span>
+<span class="g">       open, 8</span>
+<span class="g">       save, 9, disabled</span>
+<span class="g">       -</span>
+<span class="g">       undo, 4,            ,dropdown</span>
+<span class="g">       redo, 5,            ,dropdown</span>
+<span class="g">       -----</span>
+<span class="g">       state, 11, checked  ,check</span>
+<span class="g">    )</span>
+
+    <span class="n">Toolbar_Insert</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">btns</span><span class="p">)</span>
+    <span class="n">Toolbar_SetButtonWidth</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span><span class="c-Singleline">                   ;set button width &amp; height to 50 pixels</span>
+
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span>
+<span class="nb">return</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;toolbar event handler</span>
+<span class="n">OnToolbar</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Txt</span><span class="p">,</span> <span class="n">Pos</span><span class="p">){</span>
+<span class="w">       </span><span class="nb">tooltip</span> <span class="nv">%Event%</span> <span class="nv">%Txt%</span> <span class="p">(</span><span class="nv">%Pos%</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nb">ExitApp</span>
+</pre></div>

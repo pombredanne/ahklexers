@@ -1,0 +1,98 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; HttpQueryInfo - Get HTTP headers by olfen</span>
+<span class="c-Singleline">; http://www.autohotkey.com/forum/topic10510.html</span>
+<span class="cm">/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; HttpQueryInfo ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+<span class="cm">QueryInfoFlag:</span>
+
+<span class="cm">HTTP_QUERY_RAW_HEADERS = 21</span>
+<span class="cm">Receives all the headers returned by the server.</span>
+<span class="cm">Each header is terminated by &quot;\0&quot;. An additional &quot;\0&quot; terminates the list of headers.</span>
+
+<span class="cm">HTTP_QUERY_CONTENT_LENGTH = 5</span>
+<span class="cm">Retrieves the size of the resource, in bytes.</span>
+
+<span class="cm">HTTP_QUERY_CONTENT_TYPE = 1</span>
+<span class="cm">Receives the content type of the resource (such as text/html).</span>
+
+<span class="cm">Find more at: http://msdn.microsoft.com/library/en-us/wininet/wininet/query_info_flags.asp</span>
+
+<span class="cm">Proxy Settings:</span>
+
+<span class="cm">INTERNET_OPEN_TYPE_PRECONFIG                    0   // use registry configuration</span>
+<span class="cm">INTERNET_OPEN_TYPE_DIRECT                       1   // direct to net</span>
+<span class="cm">INTERNET_OPEN_TYPE_PROXY                        3   // via named proxy</span>
+<span class="cm">INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY  4   // prevent using java/script/INS</span>
+
+<span class="cm">*/</span><span class="c-Singleline"> ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+
+<span class="n">HttpQueryInfo</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">QueryInfoFlag</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">Proxy</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ProxyBypass</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">hModule</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;wininet.dll&quot;</span><span class="p">)</span>
+
+<span class="n">If</span> <span class="p">(</span><span class="n">Proxy</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="n">AccessType</span><span class="o">=</span><span class="mi">3</span>
+<span class="nb">Else</span>
+<span class="n">AccessType</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="n">io_hInternet</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;wininet\InternetOpenA&quot;</span>
+<span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="c-Singleline"> ;lpszAgent</span>
+<span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">AccessType</span>
+<span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Proxy</span>
+<span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">ProxyBypass</span>
+<span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwFlags</span>
+<span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">io_hInternet</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="nf">DllCall(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hModule</span><span class="p">)</span>
+<span class="nb">return</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="n">iou_hInternet</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;wininet\InternetOpenUrlA&quot;</span>
+<span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">io_hInternet</span>
+<span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">url</span>
+<span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="c-Singleline"> ;lpszHeaders</span>
+<span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="c-Singleline"> ;dwHeadersLength</span>
+<span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0x80000000</span><span class="c-Singleline"> ;dwFlags: INTERNET_FLAG_RELOAD = 0x80000000 // retrieve the original item</span>
+<span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwContext</span>
+<span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">iou_hInternet</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="nf">DllCall(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hModule</span><span class="p">)</span>
+<span class="nb">return</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="nf">VarSetCapacity(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nf">VarSetCapacity(</span><span class="n">buffer_len</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="nb">Loop</span><span class="p">,</span> <span class="mi">5</span>
+<span class="p">{</span>
+  <span class="n">hqi</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;wininet\HttpQueryInfoA&quot;</span>
+  <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iou_hInternet</span>
+  <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">QueryInfoFlag</span><span class="c-Singleline"> ;dwInfoLevel</span>
+  <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buffer</span>
+  <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buffer_len</span>
+  <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;lpdwIndex</span>
+  <span class="n">If</span> <span class="p">(</span><span class="n">hqi</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">hqi</span><span class="o">=</span><span class="n">success</span>
+<span class="w">    </span><span class="nb">break</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nb">IfNotEqual</span><span class="p">,</span> <span class="n">hqi</span><span class="p">,</span> <span class="n">success</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">timeout</span>
+
+<span class="n">If</span> <span class="p">(</span><span class="n">hqi</span> <span class="o">=</span> <span class="s">&quot;success&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">p</span> :<span class="o">=</span> <span class="o">&amp;</span><span class="n">buffer</span>
+<span class="nb">Loop</span>
+<span class="p">{</span>
+  <span class="n">l</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;lstrlen&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+  <span class="nf">VarSetCapacity(</span><span class="n">tmp_var</span><span class="p">,</span> <span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="nf">DllCall(</span><span class="s">&quot;lstrcpy&quot;</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="n">tmp_var</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+  <span class="n">p</span> <span class="o">+=</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span> 
+  <span class="n">res</span> :<span class="o">=</span> <span class="n">res</span>  <span class="o">.</span> <span class="s">&quot;`n&quot;</span> <span class="o">.</span> <span class="n">tmp_var</span>
+  <span class="n">If</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">Break</span>
+<span class="p">}</span>
+<span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="nf">DllCall(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iou_hInternet</span><span class="p">)</span>
+<span class="nf">DllCall(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">io_hInternet</span><span class="p">)</span>
+<span class="nf">DllCall(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hModule</span><span class="p">)</span>
+
+<span class="nb">return</span><span class="p">,</span> <span class="n">res</span>
+<span class="p">}</span>
+</pre></div>

@@ -1,0 +1,40 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include HtmDlg.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">#SingleInstance</span><span class="p">,</span> <span class="n">Force</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span> 
+
+<span class="n">bgcolor</span> :<span class="o">=</span> <span class="n">GetSysColor</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span><span class="c-Singleline">  ; Window Background color for the current desktop theme</span>
+
+<span class="nb">FileDelete</span><span class="p">,</span> <span class="n">demo</span><span class="o">.</span><span class="n">htm</span>
+<span class="nb">FileAppend</span><span class="p">,</span>
+<span class="g">( Join</span>
+<span class="g">&lt;html&gt;&lt;body bgcolor=&quot;#%bgcolor%&quot; leftmargin=&quot;10&quot; topmargin=&quot;10&quot;&gt;&lt;div align=&quot;left&quot;&gt;&lt;p&gt;&lt;font</span>
+<span class="g"> face=&quot;Arial&quot; size=&quot;2&quot;&gt;This area of this Dialogbox uses HTM which means you can format you</span>
+<span class="g">r message using &lt;i&gt;Italics, &lt;/i&gt;&lt;b&gt;Bold&lt;/b&gt;, &lt;font color=&quot;#3366CC&quot;&gt;&lt;b&gt;&lt;font color=&quot;#FF0033</span>
+<span class="g">&quot;&gt;Colors&lt;/font&gt;&lt;/b&gt;&lt;/font&gt; and all other formatting HTML permits.&lt;br&gt;&lt;br&gt;Please note that</span>
+<span class="g"> this webcontrol mimics a static control using these workarounds:&lt;br&gt;&lt;b&gt;1)&lt;/b&gt; Your comput</span>
+<span class="g">er system&#39;s window color is &lt;b&gt;%bgcolor%&lt;/b&gt;, and is being used as the bgcolor of HTM so a</span>
+<span class="g">s to simulate transparency. &lt;b&gt;&lt;br&gt;2)&lt;/b&gt; This control has been disabled and so you cannot</span>
+<span class="g"> select/copy text.&lt;b&gt;&lt;br&gt;3)&lt;/b&gt; The vertical scrollbar is just outside the client-area of</span>
+<span class="g"> this dialog.&lt;br&gt;&lt;br&gt;Do you like this MessageBox?&lt;/font&gt;&lt;font face=&quot;Arial&quot; size=&quot;2&quot;&gt;&lt;/font</span>
+<span class="g">&gt;&lt;font color=&quot;#3333CC&quot; face=&quot;Arial&quot; size=&quot;2&quot;&gt; &lt;/font&gt;&lt;/p&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</span>
+<span class="g">)</span>
+<span class="p">,</span> <span class="n">demo</span><span class="o">.</span><span class="n">htm</span>
+
+
+<span class="nl">URL=file:</span><span class="o">///</span><span class="nv">%A_ScriptDir%</span>\<span class="n">demo</span><span class="o">.</span><span class="n">htm</span>
+<span class="n">Options</span> :<span class="o">=</span> <span class="s">&quot;Buttons=Yes/No/50-50, HtmW=360, HtmH=260, BEsc=3&quot;</span>
+
+<span class="n">Sel</span> :<span class="o">=</span> <span class="n">HtmDlg</span><span class="p">(</span> <span class="n">URL</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Options</span> <span class="p">)</span>
+
+<span class="nb">Return</span><span class="c-Singleline">                                                 ; // end of auto-execute section //</span>
+
+
+<span class="n">GetSysColor</span><span class="p">(</span> <span class="n">DisplayElement</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
+ <span class="nf">VarSetCapacity(</span> <span class="n">HexClr</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span> <span class="p">),</span> <span class="n">SClr</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;GetSysColor&quot;</span><span class="p">,</span> <span class="n">UInt</span><span class="p">,</span><span class="n">DisplayElement</span> <span class="p">)</span>
+ <span class="n">RGB</span> :<span class="o">=</span> <span class="p">(</span> <span class="p">(</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF00</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF0000</span> <span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span> <span class="p">)</span> <span class="p">)</span>
+ <span class="nf">DllCall(</span> <span class="s">&quot;msvcrt\sprintf&quot;</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span><span class="n">HexClr</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span><span class="s">&quot;%06X&quot;</span><span class="p">,</span> <span class="n">UInt</span><span class="p">,</span><span class="n">RGB</span> <span class="p">)</span>
+<span class="nb">Return</span> <span class="n">HexClr</span>
+<span class="p">}</span>
+</pre></div>

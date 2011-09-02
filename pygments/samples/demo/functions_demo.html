@@ -1,0 +1,10 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Functions.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Call this once, if the library is not explicitly included.</span>
+<span class="n">Functions</span><span class="p">()</span> 
+
+<span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">StringReplace</span><span class="p">(</span><span class="n">var</span> :<span class="o">=</span> <span class="s">&quot;helloworld&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">,</span> <span class="s">&quot;?&quot;</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span>
+</pre></div>

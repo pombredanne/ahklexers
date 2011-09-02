@@ -1,0 +1,1126 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/* Title:    Toolbar</span>
+<span class="cm">			Toolbar control.</span>
+<span class="cm">			(see toolbar.png)</span>
+<span class="cm">			The module is designed with following goals in mind :</span>
+<span class="cm">			* To allow programmers to quickly create toolbars in intuitive way.</span>
+<span class="cm">			* To allow advanced (non-typical) use, such as dynamic toolbar creation in such way that it doesn&#39;t complicate typical toolbar usage.</span>
+<span class="cm">			* To allow users to customize toolbar and programmer to save changed toolbar state.</span>
+<span class="cm">			* Not to have any side effects on your script.</span>
+
+<span class="cm"> */</span>
+
+<span class="cm">/* Function:  Add</span>
+<span class="cm">			Add a Toolbar to the GUI</span>
+
+<span class="cm"> Parameters:</span>
+<span class="cm">			hGui		- HWND of the GUI. GUI must have defined size.</span>
+<span class="cm">			Handler		- User function that handles Toolbar events. See below.</span>
+<span class="cm">			Style		- Styles to apply to the toolbar control, see list of styles bellow.</span>
+<span class="cm">			ImageList	- Handle of the image list that contains button images. Otherwise it specifies number and icon size of the one of the 3 system catalogs (see Toolbar_catalogs.png).</span>
+<span class="cm">						  Each catalog contains number of common icons in large and small size -- S or L (default). Defaults to &quot;1L&quot; (first catalog, large icons)</span>
+<span class="cm">			Pos			- Position of the toolbar specified - any space separated combination of the x y w h keywords followed by the size.</span>
+
+<span class="cm"> Control Styles:</span>
+<span class="cm">			adjustable	- Allows users to change a toolbar button&#39;s position by dragging it while holding down the SHIFT key and to open customization dialog by double clicking Toolbar empty area, or separator.</span>
+<span class="cm">			border		- Creates a Toolbar that has a thin-line border.</span>
+<span class="cm">			bottom		- Causes the control to position itself at the bottom of the parent window&#39;s client area.</span>
+<span class="cm">			flat		- Creates a flat toolbar. In a flat toolbar, both the toolbar and the buttons are transparent and hot-tracking is enabled. Button text appears under button bitmaps. To prevent repainting problems, this style should be set before the toolbar control becomes visible.</span>
+<span class="cm">			list		- Creates a flat toolbar with button text to the right of the bitmap. Otherwise, this style is identical to FLAT style. To prevent repainting problems, this style should be set before the toolbar control becomes visible.</span>
+<span class="cm">			tooltips	- Creates a ToolTip control that an application can use to display descriptive text for the buttons in the toolbar.</span>
+<span class="cm">			nodivider	- Prevents a two-pixel highlight from being drawn at the top of the control.</span>
+<span class="cm">			tabstop		- Specifies that a control can receive the keyboard focus when the user presses the TAB key.</span>
+<span class="cm">			wrapable	- Creates a toolbar that can have multiple lines of buttons. Toolbar buttons can &quot;wrap&quot; to the next line when the toolbar becomes too narrow to include all buttons on the same line. When the toolbar is wrapped, the break will occur on either the rightmost separator or the rightmost button if there are no separators on the bar. This style must be set to display a vertical toolbar control when the toolbar is part of a vertical rebar control.</span>
+<span class="cm">			vertical	- Creates vertical toolbar.</span>
+<span class="cm">			menu		- Creates a toolbar that simulates Windows menu.</span>
+
+<span class="cm"> Handler:</span>
+
+<span class="cm"> &gt; Handler(Hwnd, Event, Txt, Pos, Id)</span>
+
+<span class="cm">			Hwnd	- Handle of the Toolbar control sending the message.</span>
+<span class="cm">			Event	- Event name. See bellow.</span>
+<span class="cm">			Txt		- Button caption.</span>
+<span class="cm">			Pos		- Button position.</span>
+<span class="cm">			Id		- Button ID.</span>
+
+<span class="cm"> Events:</span>
+<span class="cm">			click	- User has clicked on the button. </span>
+<span class="cm">			rclick  - User has clicked the right button.</span>
+<span class="cm">			menu	- User has clicked on the dropdown icon.</span>
+<span class="cm">			hot		- User is hovering the button with the mouse.</span>
+<span class="cm">			change	- User has dragged the button using SHIFT + drag.			</span>
+<span class="cm">			adjust	- User has finished customizing the toolbar.</span>
+
+<span class="cm"> Returns: </span>
+<span class="cm">			Control&#39;s handle or error message.</span>
+
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			To avoid lost messages and/or script lockup, events triggered by the toolbar buttons should complete quickly. </span>
+<span class="cm">			If an event takes more than a few milliseconds to complete, consider creating an independent thread to accomplish the task:</span>
+
+<span class="cm"> (start code)</span>
+<span class="cm">			if event=click</span>
+<span class="cm">			    if button=BigFatRoutine </span>
+<span class="cm">			    { </span>
+<span class="cm">			        SetTimer MyBigFatRoutine,0 </span>
+<span class="cm">			        return </span>
+<span class="cm">				}</span>
+<span class="cm"> (end code)</span>
+
+<span class="cm">			If you happen to have unusual control behavior-missing events, redrawing issues etc... try adding _Critical_ command (or better Critical N) at the start of the Toolbar_onNotify function.</span>
+<span class="cm">			It helps to improve the odds that no messages are dropped. The drawback of using the command is that the function refuses to be interrupted. </span>
+<span class="cm">			This is not a problem if the developer is very careful not to call any routines or functions that use anything more than a few milliseconds. </span>
+<span class="cm">			However, any little mistake -- an unexpected menu, prompt, MsgBox, etc., and the script will lock up. </span>
+<span class="cm">			Without the Critical command, the function is a lot more forgiving. </span>
+<span class="cm">			The developer should still be careful but the script won&#39;t shut down if something unexpected happens.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="n">Handler</span><span class="p">,</span> <span class="n">Style</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ImageList</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Pos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">MODULEID</span>
+	<span class="n">static</span> <span class="n">WS_CHILD</span> :<span class="o">=</span> <span class="mh">0x40000000</span><span class="p">,</span> <span class="n">WS_VISIBLE</span> :<span class="o">=</span> <span class="mh">0x10000000</span><span class="p">,</span> <span class="n">WS_CLIPSIBLINGS</span> <span class="o">=</span> <span class="mh">0x4000000</span><span class="p">,</span> <span class="n">WS_CLIPCHILDREN</span> <span class="o">=</span> <span class="mh">0x2000000</span><span class="p">,</span> <span class="n">TBSTYLE_THICKFRAME</span><span class="o">=</span><span class="mh">0x40000</span><span class="p">,</span> <span class="n">TBSTYLE_TABSTOP</span> <span class="o">=</span> <span class="mh">0x10000</span>
+    <span class="n">static</span> <span class="n">TBSTYLE_WRAPABLE</span> <span class="o">=</span> <span class="mh">0x200</span><span class="p">,</span> <span class="n">TBSTYLE_FLAT</span> <span class="o">=</span> <span class="mh">0x800</span><span class="p">,</span> <span class="n">TBSTYLE_LIST</span><span class="o">=</span><span class="mh">0x1000</span><span class="p">,</span> <span class="n">TBSTYLE_TOOLTIPS</span><span class="o">=</span><span class="mh">0x100</span><span class="p">,</span> <span class="n">TBSTYLE_TRANSPARENT</span> <span class="o">=</span> <span class="mh">0x8000</span><span class="p">,</span> <span class="n">TBSTYLE_ADJUSTABLE</span> <span class="o">=</span> <span class="mh">0x20</span><span class="p">,</span> <span class="n">TBSTYLE_VERTICAL</span><span class="o">=</span><span class="mh">0x80</span>
+	<span class="n">static</span> <span class="n">TBSTYLE_EX_DRAWDDARROWS</span> <span class="o">=</span> <span class="mh">0x1</span><span class="p">,</span> <span class="n">TBSTYLE_EX_HIDECLIPPEDBUTTONS</span><span class="o">=</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">TBSTYLE_EX_MIXEDBUTTONS</span><span class="o">=</span><span class="mh">0x8</span>
+	<span class="n">static</span> <span class="n">TB_BUTTONSTRUCTSIZE</span><span class="o">=</span><span class="mh">0x41E</span><span class="p">,</span> <span class="n">TB_SETEXTENDEDSTYLE</span> :<span class="o">=</span> <span class="mh">0x454</span><span class="p">,</span> <span class="n">TB_SETUNICODEFORMAT</span> :<span class="o">=</span> <span class="mh">0x2005</span>
+	<span class="n">static</span> <span class="n">TBSTYLE_NODIVIDER</span><span class="o">=</span><span class="mh">0x40</span><span class="p">,</span> <span class="n">CCS_NOPARENTALIGN</span><span class="o">=</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">CCS_NORESIZE</span> <span class="o">=</span> <span class="mh">0x4</span><span class="p">,</span> <span class="n">TBSTYLE_BOTTOM</span> <span class="o">=</span> <span class="mh">0x3</span><span class="p">,</span> <span class="n">TBSTYLE_MENU</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">TBSTYLE_BORDER</span><span class="o">=</span><span class="mh">0x800000</span>
+
+	<span class="n">if</span> !<span class="n">MODULEID</span> <span class="p">{</span> 
+		<span class="n">old</span> :<span class="o">=</span> <span class="nf">OnMessage(</span><span class="mh">0x4E</span><span class="p">,</span> <span class="s">&quot;Toolbar_onNotify&quot;</span><span class="p">),</span>	<span class="n">MODULEID</span> :<span class="o">=</span> <span class="mi">80609</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">old</span> <span class="o">!=</span> <span class="n">Toolbar_onNotify</span>
+			<span class="n">Toolbar</span><span class="p">(</span><span class="s">&quot;oldNotify&quot;</span><span class="p">,</span> <span class="nf">RegisterCallback(</span><span class="n">old</span><span class="p">))</span>
+	<span class="p">}</span>
+
+	<span class="n">Style</span> <span class="o">.=</span> <span class="n">Style</span><span class="o">=</span><span class="s">&quot;&quot;</span> ? <span class="s">&quot;WRAPABLE&quot;</span> : <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ImageList</span> <span class="o">.=</span> <span class="n">ImageList</span><span class="o">=</span><span class="s">&quot;&quot;</span> ? <span class="s">&quot;1L&quot;</span> : <span class="s">&quot;&quot;</span>
+
+  	<span class="n">hStyle</span> :<span class="o">=</span> <span class="mi">0</span>
+	<span class="n">hExStyle</span> :<span class="o">=</span> <span class="n">TBSTYLE_EX_MIXEDBUTTONS</span><span class="c-Singleline"> ; TBSTYLE_EX_HIDECLIPPEDBUTTONS</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">bMenu</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">Style</span><span class="p">,</span> <span class="s">&quot;MENU&quot;</span><span class="p">)</span>
+		 <span class="n">hStyle</span> <span class="o">|=</span> <span class="n">TBSTYLE_FLAT</span> <span class="o">|</span> <span class="n">TBSTYLE_LIST</span> <span class="o">|</span> <span class="n">WS_CLIPSIBLINGS</span><span class="c-Singleline">		;set this style only if custom flag MENU is set. It serves only as a mark later</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">hExStyle</span> <span class="o">|=</span> <span class="n">TBSTYLE_EX_DRAWDDARROWS</span>
+
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,,</span><span class="n">continue</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">hStyle</span> <span class="o">|=</span> <span class="nv">A_LoopField</span><span class="o">+</span><span class="mi">0</span> ? <span class="nv">A_LoopField</span> : <span class="n">TBSTYLE_</span><span class="nv">%A_LoopField%</span>
+
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hStyle</span><span class="p">,</span> <span class="p">,</span><span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Some of the styles are invalid.&quot;</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">Pos</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">){</span>
+		<span class="n">x</span> :<span class="o">=</span> <span class="n">y</span> :<span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">w</span> :<span class="o">=</span> <span class="n">h</span> :<span class="o">=</span> <span class="mi">100</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Pos</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="p">,</span> <span class="n">continue</span>
+			<span class="n">p</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">if </span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span>
+<span class="w">				</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;  Invalid position specifier&quot;</span>
+			<span class="nv">%p%</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="n">hStyle</span> <span class="o">|=</span> <span class="n">CCS_NOPARENTALIGN</span> <span class="o">|</span> <span class="n">TBSTYLE_NODIVIDER</span> <span class="o">|</span> <span class="n">CCS_NORESIZE</span>
+	<span class="p">}</span>
+
+    <span class="n">hCtrl</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;CreateWindowEx&quot;</span> 
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span>
+             <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span>  <span class="s">&quot;ToolbarWindow32&quot;</span> 
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span> 
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">WS_CHILD</span> <span class="o">|</span> <span class="n">WS_VISIBLE</span> <span class="o">|</span> <span class="n">WS_CLIPCHILDREN</span> <span class="o">|</span> <span class="n">hStyle</span>
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">h</span>
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hGui</span> 
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">MODULEID</span>
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span> 
+             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">)</span> 
+<span class="w">    </span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hCtrl</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="mi">0</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_BUTTONSTRUCTSIZE</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETEXTENDEDSTYLE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hExStyle</span><span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span> 
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETUNICODEFORMAT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline">		  ;set to ANSI</span>
+
+	<span class="n">if</span><span class="p">(</span><span class="n">ImageList</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+		<span class="n">Toolbar_SetImageList</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">ImageList</span><span class="p">)</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">if </span><span class="nf">IsFunc(</span><span class="n">Handler</span><span class="p">)</span>
+		<span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;Handler&quot;</span><span class="p">,</span> <span class="n">Handler</span><span class="p">)</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">hCtrl</span> 
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  AutoSize</span>
+<span class="cm"> 			Causes a toolbar to be resized.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			Align	 - How toolbar is aligned to its parent. bottom left (bl), bottom right (br), top right (tr), top left (tl) or fit (doesn&#39;t reposition control</span>
+<span class="cm"> 					   resizes it so it takes minimum possible space with all buttons visible)	</span>
+<span class="cm">  </span>
+<span class="cm"> Remarks:</span>
+<span class="cm"> 			An application calls the AutoSize function after causing the size of a toolbar to </span>
+<span class="cm"> 			change either by setting the button or bitmap size or by adding strings for the first time.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_AutoSize</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Align</span><span class="o">=</span><span class="s">&quot;fit&quot;</span><span class="p">){</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">align</span> <span class="o">!=</span>
+	<span class="p">{</span>
+		<span class="n">dhw</span> :<span class="o">=</span> <span class="nv">A_DetectHiddenWindows</span>
+<span class="w">		</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span><span class="n">on</span>
+		<span class="n">Toolbar_GetMaxSize</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+
+<span class="w">		</span><span class="nb">SysGet</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="mi">8</span><span class="c-Singleline">		;SM_CYFIXEDFRAME , Thickness of the frame around the perimeter of a window that has a caption but is not sizable</span>
+<span class="w">		</span><span class="nb">SysGet</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">4</span><span class="c-Singleline">		;SM_CYCAPTION: Height of a caption area, in pixels.</span>
+		
+		<span class="n">hParent</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetParent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hCtrl</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">WinGetPos</span><span class="p">,</span> <span class="p">,,</span><span class="n">pw</span><span class="p">,</span><span class="n">ph</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hParent%</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">Align</span> <span class="o">=</span> <span class="n">fit</span>
+<span class="w">			</span><span class="nb">ControlMove</span><span class="p">,,,,</span><span class="nv">%w%</span><span class="p">,</span><span class="nv">%h%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">if</span> <span class="n">Align</span> <span class="o">=</span> <span class="n">tr</span>
+<span class="w">			</span><span class="nb">ControlMove</span><span class="p">,,</span><span class="n">pw</span><span class="o">-</span><span class="n">w</span><span class="o">-</span><span class="n">f</span><span class="p">,</span><span class="n">c</span><span class="o">+</span><span class="n">f</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="nv">%w%</span><span class="p">,</span><span class="nv">%h%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">if</span> <span class="n">Align</span> <span class="o">=</span> <span class="n">tl</span>
+<span class="w">			</span><span class="nb">ControlMove</span><span class="p">,,</span><span class="n">f</span><span class="p">,</span><span class="n">c</span><span class="o">+</span><span class="n">f</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="nv">%w%</span><span class="p">,</span><span class="nv">%h%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">if</span> <span class="n">Align</span> <span class="o">=</span> <span class="n">br</span>
+<span class="w">			</span><span class="nb">ControlMove</span><span class="p">,,</span><span class="n">pw</span><span class="o">-</span><span class="n">w</span><span class="o">-</span><span class="n">f</span><span class="p">,</span><span class="n">ph</span><span class="o">-</span><span class="n">h</span><span class="o">-</span><span class="n">f</span><span class="p">,</span><span class="nv">%w%</span><span class="p">,</span><span class="nv">%h%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">if</span> <span class="n">Align</span> <span class="o">=</span> <span class="n">bl</span>
+<span class="w">			</span><span class="nb">ControlMove</span><span class="p">,,,</span><span class="n">ph</span><span class="o">-</span><span class="n">h</span><span class="o">-</span><span class="n">f</span><span class="p">,</span><span class="nv">%w%</span><span class="p">,</span><span class="nv">%h%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="nv">%dhw%</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">SendMessage</span><span class="p">,</span><span class="mh">0x421</span><span class="p">,,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  Clear</span>
+<span class="cm"> 			Removes all buttons from the toolbar, both current and available</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_Clear</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">){</span>
+<span class="w">	</span><span class="nb">loop</span> <span class="o">%</span> <span class="n">Toolbar_Count</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="mh">0x416</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline">		;TB_DELETEBUTTON</span>
+
+	<span class="n">Toolbar_mfree</span><span class="p">(</span> <span class="n">Toolbar</span><span class="p">(</span> <span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="p">)</span>
+<span class="w"> 	</span><span class="nb">SendMessage</span><span class="p">,</span><span class="mh">0x421</span><span class="p">,,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline">				;Autosize</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  Count</span>
+<span class="cm"> 			Get count of buttons on the toolbar</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			pQ			- Query parameter, set to &quot;c&quot; to get the number of current buttons (default)</span>
+<span class="cm"> 						  Set to &quot;a&quot; to get the number of available buttons. Set to empty string to return both.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm">			if pQ is empty function returns rational number in the form cntC.cntA otherwise  requested count</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_Count</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;c&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_BUTTONCOUNT</span> <span class="o">=</span> <span class="mh">0x418</span>
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_BUTTONCOUNT</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+	<span class="n">c</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>	
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">return</span> <span class="n">c</span>
+
+	<span class="n">a</span> :<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">)</span> <span class="p">)</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">return</span> <span class="n">a</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="n">c</span> <span class="s">&quot;.&quot;</span> <span class="n">a</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  CommandToIndex</span>
+<span class="cm"> 			Retrieves the button position given the ID.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			ID	- Button ID, number &gt; 0.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			0 if button with that ID doesn&#39;t exist, pos &gt; 0 otherwise.</span>
+<span class="cm"> */</span>
+
+<span class="n">Toolbar_CommandToIndex</span><span class="p">(</span> <span class="n">hCtrl</span><span class="p">,</span> <span class="n">ID</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_COMMANDTOINDEX</span><span class="o">=</span><span class="mh">0x419</span>
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_COMMANDTOINDEX</span><span class="p">,</span> <span class="n">ID</span><span class="p">,,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">ErrorLevel</span><span class="p">,</span> <span class="mi">4294967295</span><span class="p">,</span> <span class="n">return</span> <span class="mi">0</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nv">ErrorLevel</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  Customize</span>
+<span class="cm"> 			Launches customization dialog</span>
+<span class="cm"> 			(see Toolbar_customize.png)</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_Customize</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_CUSTOMIZE</span><span class="o">=</span><span class="mh">0x41B</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_CUSTOMIZE</span><span class="p">,,,,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  CheckButton</span>
+<span class="cm">			Get button information</span>
+
+<span class="cm"> Parameters:</span>
+<span class="cm">			WhichButtton - One of the ways to identify the button: 1-based button position or button ID.</span>
+<span class="cm">						  If WhichButton is negative, the information about available (*) button on position -WhichButton will be returned.	</span>
+<span class="cm">			bCheck		 - Set to 1 to check the button (default). </span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			Returns TRUE if successful, or FALSE otherwise.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			With groupcheck use this function to check button. Using &lt;SetButton&gt; function will not uncheck other buttons in the group.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_CheckButton</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,</span> <span class="n">bCheck</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_CHECKBUTTON</span> <span class="o">=</span> <span class="mh">0x402</span>
+
+    <span class="n">if</span> <span class="p">(</span><span class="n">WhichButton</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">){</span>
+		<span class="nf">VarSetCapacity(</span><span class="n">TBB</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETBUTTON</span><span class="p">,</span> <span class="o">--</span><span class="n">WhichButton</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TBB</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+		<span class="n">WhichButton</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="o">&amp;</span><span class="n">TBB</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+	<span class="p">}</span> <span class="n">else</span> <span class="n">WhichButton</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">WhichButton</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_CHECKBUTTON</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,</span> <span class="n">bCheck</span><span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  Define</span>
+<span class="cm"> 			Get the toolbar definition list.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			pQ	- Query parameter. Specify &quot;c&quot; to get only current buttons, &quot;a&quot; to get only available buttons.</span>
+<span class="cm"> 				  Leave empty to get all buttons.</span>
+<span class="cm"> Returns:</span>
+<span class="cm">			Button definition list. You can use the list directly with &lt;Insert&gt; function.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_Define</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">pQ</span> <span class="o">!=</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">pQ</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">a</span><span class="p">,</span><span class="n">c</span>
+<span class="w">			</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Invalid query parameter: &quot;</span> <span class="n">pQ</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;c&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Toolbar_Count</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">)</span>
+			<span class="n">btns</span> <span class="o">.=</span> <span class="n">Toolbar_GetButton</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="nv">A_Index</span><span class="p">)</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">return</span> <span class="nf">SubStr(</span><span class="n">btns</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">pQ</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;a&quot;</span><span class="p">){</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">btns</span><span class="p">,</span> <span class="nv">%btns%</span>`<span class="n">n</span>
+
+		<span class="n">cnta</span> :<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">)</span> <span class="p">)</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="nv">%cnta%</span>
+			<span class="n">btns</span> <span class="o">.=</span> <span class="n">Toolbar_GetButton</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="o">-</span><span class="nv">A_Index</span><span class="p">)</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">	</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nf">SubStr(</span><span class="n">btns</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function:  DeleteButton</span>
+<span class="cm"> 			Delete button from the toolbar.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			Pos		- 1-based position of the button, by default 1.</span>
+<span class="cm"> 					  To delete one of the available buttons, specify &quot;*&quot; before the position.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			TRUE if successful.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_DeleteButton</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Pos</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_DELETEBUTTON</span> <span class="o">=</span> <span class="mh">0x416</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">Pos</span><span class="p">,</span> <span class="s">&quot;*&quot;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">Pos</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">Pos</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>  <span class="n">aBTN</span> :<span class="o">=</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">),</span>  <span class="n">cnta</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">aBTN</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">Pos</span> <span class="o">&gt;</span> <span class="n">cnta</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">return</span> <span class="nv">FALSE</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">Pos</span> <span class="o">&lt;</span> <span class="n">cnta</span><span class="p">)</span>
+			<span class="n">Toolbar_memmove</span><span class="p">(</span> <span class="n">aBTN</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="p">(</span><span class="n">Pos</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">aBTN</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="n">Pos</span> <span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">aBTN</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="n">Pos</span> <span class="o">+</span><span class="mi">4</span><span class="p">)</span>
+
+		<span class="nf">NumPut(</span><span class="n">cnta</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">aBTN</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">TRUE</span>
+	<span class="p">}</span>
+
+<span class="w">    </span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_DELETEBUTTON</span><span class="p">,</span> <span class="n">Pos</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nv">ErrorLevel</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">	Function:  GetButton</span>
+<span class="cm">			Get button information</span>
+
+<span class="cm">	Parameters:</span>
+<span class="cm">			WhichButtton - One of the ways to identify the button: 1-based button position or button ID.</span>
+<span class="cm">						  If WhichButton is negative, the information about available (*) button on position -WhichButton will be returned.	</span>
+<span class="cm">			pQ			- Query parameter, can be C (Caption) I (Icon number), S (State), L (styLe) or ID.</span>
+<span class="cm">						  If omitted, all information will be returned in the form of button definition.</span>
+
+<span class="cm">	Returns:</span>
+<span class="cm">			If pQ is omitted, button definition, otherwise requested button information.</span>
+
+<span class="cm">	Examples:</span>
+<span class="cm">	(start code)</span>
+<span class="cm">		   s := GetButton(hCtrl, 3)			 ;returns button definition for the third button.</span>
+<span class="cm">		   c := GetButton(hCtrl, 3, &quot;c&quot;)	 ;returns only caption of that button.</span>
+<span class="cm">		   d := GetButton(hCtrl,-2, &quot;id&quot;)	 ;returns only id of the 2nd button from the group of available (*) buttons.</span>
+<span class="cm">	       s := GetButton(hCtrl, .101, &quot;s&quot;)	 ;returns the state of the button with ID=101.</span>
+<span class="cm">	(end code)</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_GetButton</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_GETBUTTON</span> <span class="o">=</span> <span class="mh">0x417</span><span class="p">,</span> <span class="n">TB_GETBUTTONTEXT</span><span class="o">=</span><span class="mh">0x42D</span><span class="p">,</span> <span class="n">TB_GETSTRING</span><span class="o">=</span><span class="mh">0x45C</span><span class="p">,</span> <span class="n">TB_COMMANDTOINDEX</span><span class="o">=</span><span class="mh">0x419</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">WhichButton</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">number</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Invalid button position or ID: &quot;</span> <span class="n">WhichButton</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">WhichButton</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+		<span class="n">a</span> :<span class="o">=</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">),</span> <span class="n">aBtn</span> :<span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span>  <span class="n">cnta</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">a</span><span class="o">+</span><span class="mi">0</span><span class="p">),</span>  <span class="n">WhichButton</span> :<span class="o">=</span> <span class="o">-</span><span class="n">WhichButton</span><span class="p">,</span>   <span class="n">a</span> :<span class="o">=</span> <span class="nv">true</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">WhichButton</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">){</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; 0 is invalid position and ID&quot;</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_COMMANDTOINDEX</span><span class="p">,</span> <span class="nf">SubStr(</span><span class="n">WhichButton</span><span class="p">,</span> <span class="mi">2</span><span class="p">),,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">ErrorLevel</span><span class="p">,</span> <span class="mi">4294967295</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; No such ID &quot;</span> <span class="nf">SubStr(</span><span class="n">WhichButton</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="n">WhichButton</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="p">}</span> 
+	<span class="n">WhichButton</span><span class="o">--</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">a</span> <span class="n">AND</span> <span class="p">(</span><span class="n">cnta</span> <span class="o">&lt;</span> <span class="n">WhichButton</span><span class="p">))</span> <span class="n">OR</span> <span class="p">(</span>!<span class="n">a</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Toolbar_Count</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">WhichButton</span><span class="p">)</span> <span class="p">)</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Button position is too large: &quot;</span> <span class="n">WhichButton</span><span class="c-Singleline">	</span>
+
+<span class="c-Singleline"> ;get TBB structure</span>
+	<span class="nf">VarSetCapacity(</span><span class="n">TBB</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">aTBB</span> :<span class="o">=</span> <span class="o">&amp;</span><span class="n">TBB</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">a</span>
+		 <span class="n">aTBB</span> :<span class="o">=</span> <span class="n">aBtn</span> <span class="o">+</span> <span class="n">WhichButton</span><span class="o">*</span><span class="mi">20</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">SendMessage</span><span class="p">,</span> <span class="n">TB_GETBUTTON</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,</span> <span class="n">aTBB</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+
+	<span class="n">id</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">aTBB</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="n">return</span> <span class="n">id</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline"> ;check for separator</span>
+<span class="w">	</span><span class="nb">if </span><span class="nf">NumGet(</span><span class="n">aTBB</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>  <span class="p">{</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="nf">NumGet(</span><span class="n">TBB</span><span class="p">)</span><span class="o">//</span><span class="mi">10</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="n">buf</span> <span class="o">.=</span> <span class="s">&quot;-&quot;</span>
+<span class="w">		</span><span class="nb">return</span> <span class="n">buf</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline"> ;get caption</span>
+	<span class="nf">VarSetCapacity(</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">128</span> <span class="p">),</span> <span class="n">sIdx</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">aTBB</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETSTRING</span><span class="p">,</span> <span class="p">(</span><span class="n">sIdx</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="p">)</span><span class="o">|</span><span class="mi">128</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline">			;SendMessage, TB_GETBUTTONTEXT,id,&amp;buf,,ahk_id %hCtrl%</span>
+	<span class="nf">VarSetCapacity(</span> <span class="n">buf</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">a</span>
+		<span class="n">buf</span> :<span class="o">=</span> <span class="s">&quot;*&quot;</span> <span class="n">buf</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">return</span> <span class="n">buf</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline"> ;get other data</span>
+	<span class="n">state</span> :<span class="o">=</span> <span class="n">Toolbar_getStateName</span><span class="p">(</span><span class="nf">NumGet(</span><span class="n">aTBB</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">))</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">return</span> <span class="n">state</span>
+
+	<span class="n">icon</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">aTBB</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">return</span> <span class="n">icon</span>
+
+	<span class="n">style</span> :<span class="o">=</span> <span class="n">Toolbar_getStyleName</span><span class="p">(</span><span class="nf">NumGet(</span><span class="n">aTBB</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">))</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">return</span> <span class="n">style</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline"> ;make string</span>
+	<span class="n">buf</span> :<span class="o">=</span>  <span class="n">buf</span> <span class="s">&quot;, &quot;</span> <span class="n">icon</span> <span class="s">&quot;, &quot;</span> <span class="n">state</span> <span class="s">&quot;, &quot;</span> <span class="n">style</span> <span class="p">(</span><span class="n">id</span> <span class="o">&lt;</span> <span class="mi">10000</span> ? <span class="s">&quot;, &quot;</span> <span class="n">id</span> : <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">buf</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">	Function:	GetButtonSize</span>
+<span class="cm"> 				Gets the size of buttons.</span>
+<span class="cm"> </span>
+<span class="cm">	Parameters:</span>
+<span class="cm"> 				W, H - Output width &amp; height.</span>
+<span class="cm"> </span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_GetButtonSize</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">W</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">H</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_GETBUTTONSIZE</span><span class="o">=</span><span class="mi">1082</span>
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETBUTTONSIZE</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+	<span class="n">W</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">,</span> <span class="n">H</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  GetMaxSize</span>
+<span class="cm"> 			Retrieves the total size of all of the visible buttons and separators in the toolbar.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			Width, Height		- Variables which will receive size.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			Returns TRUE if successful.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_GetMaxSize</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Width</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Height</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">TB_GETMAXSIZE</span> <span class="o">=</span> <span class="mh">0x453</span>
+
+	<span class="nf">VarSetCapacity(</span><span class="n">SIZE</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETMAXSIZE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">SIZE</span><span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+	<span class="n">res</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span><span class="p">,</span> 	<span class="n">Width</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">SIZE</span><span class="p">),</span> <span class="n">Height</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">SIZE</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">res</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  GetRect</span>
+<span class="cm"> 			Get button rectangle</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			pPos		- Button position. Leave blank to get dimensions of the toolbar control itself.</span>
+<span class="cm"> 			pQ			- Query parameter: set x,y,w,h to return appropriate value, or leave blank to return all in single line.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			String with 4 values separated by space or requested information</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_GetRect</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Pos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_GETITEMRECT</span><span class="o">=</span><span class="mh">0x41D</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">pPos</span> <span class="o">!=</span>
+<span class="w">		</span><span class="nb">ifLessOrEqual</span><span class="p">,</span> <span class="n">Pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="s">&quot;Err: Invalid button position&quot;</span>
+
+	<span class="nf">VarSetCapacity(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETITEMRECT</span><span class="p">,</span> <span class="n">Pos</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">&amp;</span><span class="n">RECT</span><span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="nv">ErrorLevel</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Can&#39;t get rect&quot;</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">Pos</span> <span class="o">=</span>
+		<span class="nf">DllCall(</span><span class="s">&quot;GetClientRect&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hCtrl</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">RECT</span><span class="p">)</span>
+
+	<span class="n">x</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">y</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">r</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">b</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;x&quot;</span><span class="p">)</span> ? <span class="n">x</span> : <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;y&quot;</span><span class="p">)</span> ? <span class="n">y</span> : <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> ? <span class="n">r</span><span class="o">-</span><span class="n">x</span> : <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;h&quot;</span><span class="p">)</span> ? <span class="n">b</span><span class="o">-</span><span class="n">y</span> : <span class="n">x</span> <span class="s">&quot; &quot;</span> <span class="n">y</span> <span class="s">&quot; &quot;</span> <span class="n">r</span><span class="o">-</span><span class="n">x</span> <span class="s">&quot; &quot;</span> <span class="n">b</span><span class="o">-</span><span class="n">y</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  Insert</span>
+<span class="cm"> 			Insert button(s) on the Toolbar. </span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			Btns		- The button definition list. Each button to be added is specified on separate line</span>
+<span class="cm"> 						  using button definition string. Empty lines will be skipped.</span>
+<span class="cm"> 			Pos			- Optional 1-based index of a button, to insert the new buttons to the left of this button.</span>
+<span class="cm"> 						  This doesn&#39;t apply to the list of available buttons.</span>
+<span class="cm"> </span>
+<span class="cm"> Button Definition:</span>
+<span class="cm"> 			Button is defined by set of its characteristics separated by comma:</span>
+<span class="cm"> </span>
+<span class="cm"> 			caption		- Button caption. All printable letters are valid except comma. </span>
+<span class="cm"> 						  &quot;-&quot; can be used to add separator. Add more &quot;-&quot; to set the separator width. Each &quot;-&quot; adds 10px to the separator.</span>
+<span class="cm"> 			iconNumber  - Number of icon in the image list</span>
+<span class="cm"> 			states		- Space separated list of button states. See bellow list of possible states.</span>
+<span class="cm"> 			styles		- Space separated list of button styles. See bellow list of possible styles.</span>
+<span class="cm"> 			ID			- Button ID, unique number you choose to identify button. On customizable toolbars position can&#39;t be used to set button information.</span>
+<span class="cm"> 						  If you need to setup button information using &lt;SetButton&gt; function or obtain information using &lt;GetButton&gt;, you need to use button ID </span>
+<span class="cm"> 						  as user can change button position any time.</span>
+<span class="cm"> 						  It can by any number. Numbers &gt; 10,000 are choosen by module as auto ID feature, that module does on its own when you don&#39;t use this option. </span>
+<span class="cm">						  In most typical scenarios you don&#39;t need to use ID or think about them to identify the button. To specify ID in functions that accept it</span>
+<span class="cm">						  put dot infront of it, for instance .427 represents ID=427. This must be done in order to differentiate IDs from button position.</span>
+<span class="cm"> </span>
+<span class="cm"> Button Styles:</span>
+<span class="cm"> 			AUTOSIZE	- Specifies that the toolbar control should not assign the standard width to the button. Instead, the button&#39;s width will be calculated based on the width of the text plus the image of the button. </span>
+<span class="cm"> 			CHECK		- Creates a dual-state push button that toggles between the pressed and nonpressed states each time the user clicks it.</span>
+<span class="cm"> 			CHECKGROUP	- Creates a button that stays pressed until another button in the group is pressed, similar to option buttons (also known as radio buttons).</span>
+<span class="cm"> 			DROPDOWN	- Creates a drop-down style button that can display a list when the button is clicked.</span>
+<span class="cm"> 			NOPREFIX	- Specifies that the button text will not have an accelerator prefix associated with it.</span>
+<span class="cm"> 			SHOWTEXT	- Specifies that button text should be displayed. All buttons can have text, but only those buttons with the SHOWTEXT button style will display it. </span>
+<span class="cm"> 						  This button style must be used with the LIST style. If you set text for buttons that do not have the SHOWTEXT style, the toolbar control will </span>
+<span class="cm"> 						  automatically display it as a ToolTip when the cursor hovers over the button. For this to work you must create the toolbar with TOOLTIPS style.</span>
+<span class="cm"> 						  You can create multiline tooltips by using `r in the tooltip caption. Each `r will be replaced with new line.</span>
+<span class="cm"> </span>
+<span class="cm"> Button States:</span>
+<span class="cm"> 			CHECKED		- The button has the CHECK style and is being clicked.</span>
+<span class="cm"> 			DISABLED	- The button does not accept user input.</span>
+<span class="cm"> 			HIDDEN		- The button is not visible and cannot receive user input.</span>
+<span class="cm"> 			WRAP		- The button is followed by a line break. Toolbar must not have WRAPABLE style.</span>
+<span class="cm"> </span>
+<span class="cm"> Remarks:</span>
+<span class="cm"> 		Using this function you can insert one or more buttons on the toolbar. Furthermore, adding group of buttons to the end (omiting pPos) is the </span>
+<span class="cm"> 		fastest way of adding set of buttons to the toolbar and it also allows you to use some automatic features that are not available when you add button by button.</span>
+<span class="cm"> 		If you omit some parameter in button definition it will receive default value. Button that has no icon defined will get the icon with index that is equal to </span>
+<span class="cm"> 		the line number of its defintion list. Buttons without ID will get ID automaticaly, starting from 10 000. </span>
+<span class="cm"> 		You can use `r instead `n to create multiline button captions. This make sense only for toolbars that have LIST TOOLTIP toolbar style and no SHOWTEXT button style</span>
+<span class="cm"> 	    (i.e. their captions are seen as tooltips and are not displayed.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_Insert</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Btns</span><span class="p">,</span> <span class="n">Pos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">TB_INSERTA</span> <span class="o">=</span> <span class="mh">0x414</span><span class="p">,</span> <span class="n">TB_INSERTBUTTONA</span><span class="o">=</span><span class="mh">0x415</span>
+
+	<span class="n">cnt</span> :<span class="o">=</span> <span class="n">Toolbar_compileButtons</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Btns</span><span class="p">,</span> <span class="n">cBTN</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">Pos</span> <span class="o">=</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_INSERTA</span><span class="p">,</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">cBTN</span> <span class="p">,,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">loop</span><span class="p">,</span> <span class="nv">%cnt%</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_INSERTBUTTONA</span><span class="p">,</span> <span class="n">Pos</span><span class="o">+</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">cBTN</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">,,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+
+	<span class="n">Toolbar_mfree</span><span class="p">(</span><span class="n">cBTN</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">   ;for some reason, you need to call this 2 times for proper results in some scenarios .... !?</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span><span class="mh">0x421</span><span class="p">,,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline">	;autosize</span>
+<span class="w"> 	</span><span class="nb">SendMessage</span><span class="p">,</span><span class="mh">0x421</span><span class="p">,,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline">	;autosize</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  MoveButton</span>
+<span class="cm"> 			Moves a button from one position to another.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			Pos		- 1-based position of the button to be moved.</span>
+<span class="cm"> 			NewPos	- 1-based position where the button will be moved.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			Returns nonzero if successful, or zero otherwise.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_MoveButton</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">NewPos</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_MOVEBUTTON</span> <span class="o">=</span> <span class="mh">0x452</span>
+<span class="w">    </span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_MOVEBUTTON</span><span class="p">,</span> <span class="n">Pos</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">NewPos</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nv">ErrorLevel</span>
+<span class="p">}</span>
+
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  SetBitmapSize</span>
+<span class="cm"> 			Sets the size of the bitmapped images to be added to a toolbar.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			Width, Height - Width &amp; heightin pixels, of the bitmapped images. Defaults to 0,0</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			TRUE if successful, or FALSE otherwise.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			The size can be set only before adding any bitmaps to the toolbar. </span>
+<span class="cm">			If an application does not explicitly set the bitmap size, the size defaults to 16 by 15 pixels. </span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_SetBitmapSize</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Width</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Height</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_SETBITMAPSIZE</span><span class="o">=</span><span class="mi">1056</span>
+<span class="w">    </span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETBITMAPSIZE</span><span class="p">,</span> <span class="n">Width</span><span class="p">,</span><span class="n">Height</span><span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  SetButton</span>
+<span class="cm"> 			Set button information</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			WhichButton	- One of the 2 ways to identify the button: 1-based button position or button ID</span>
+<span class="cm"> 			State		- List of button states to set, separated by white space.</span>
+<span class="cm"> 			Width		- Button width (can&#39;t be used with LIST style)</span>
+<span class="cm"> </span>
+<span class="cm">  Returns:</span>
+<span class="cm"> 			Nonzero if successful, or zero otherwise.</span>
+<span class="cm"> </span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_SetButton</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,</span> <span class="n">State</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Width</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">TBIF_TEXT</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">TBIF_STATE</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">TBIF_SIZE</span><span class="o">=</span><span class="mh">0x40</span><span class="p">,</span> 
+	<span class="n">static</span> <span class="n">TB_SETBUTTONINFO</span><span class="o">=</span><span class="mh">0x442</span><span class="p">,</span> <span class="n">TB_GETSTATE</span><span class="o">=</span><span class="mh">0x412</span><span class="p">,</span> <span class="n">TB_GETBUTTON</span> <span class="o">=</span> <span class="mh">0x417</span>
+	<span class="n">static</span> <span class="n">TBSTATE_CHECKED</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">TBSTATE_ENABLED</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">TBSTATE_HIDDEN</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">TBSTATE_ELLIPSES</span><span class="o">=</span><span class="mh">0x40</span><span class="p">,</span> <span class="n">TBSTATE_DISABLED</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">WhichButton</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">number</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Invalid button position or ID: &quot;</span> <span class="n">WhichButton</span>
+
+    <span class="n">if</span> <span class="p">(</span><span class="n">WhichButton</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">){</span>
+		<span class="nf">VarSetCapacity(</span><span class="n">TBB</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETBUTTON</span><span class="p">,</span> <span class="o">--</span><span class="n">WhichButton</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TBB</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+		<span class="n">WhichButton</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="o">&amp;</span><span class="n">TBB</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+	<span class="p">}</span> <span class="n">else</span> <span class="n">WhichButton</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">WhichButton</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETSTATE</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+	<span class="n">hState</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
+
+	<span class="n">mask</span> :<span class="o">=</span> <span class="mi">0</span>
+	 <span class="p">,</span><span class="n">mask</span> <span class="o">|=</span> <span class="n">State</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> ?  <span class="n">TBIF_STATE</span> : <span class="mi">0</span>
+	 <span class="p">,</span><span class="n">mask</span> <span class="o">|=</span> <span class="n">Width</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> ?  <span class="n">TBIF_SIZE</span>  : <span class="mi">0</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">State</span><span class="p">,</span> <span class="s">&quot;-disabled&quot;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">hState</span> <span class="o">|=</span> <span class="n">TBSTATE_ENABLED</span> 
+<span class="w">		</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="o">-</span><span class="n">disabled</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">if</span> <span class="nf">InStr(</span><span class="n">State</span><span class="p">,</span> <span class="s">&quot;disabled&quot;</span><span class="p">)</span>
+		<span class="n">hState</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">TBSTATE_ENABLED</span>
+
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span>
+	<span class="p">{</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,,</span><span class="n">continue</span>
+<span class="w">		</span><span class="nb">if </span><span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;-&quot;</span>
+		 	  <span class="n">hState</span> <span class="o">|=</span> <span class="n">TBSTATE_</span><span class="nv">%A_LOOPFIELD%</span>
+<span class="w">		</span><span class="nb">else</span>  <span class="n">k</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>    <span class="n">k</span> :<span class="o">=</span> <span class="n">TBSTATE_</span><span class="nv">%k%</span><span class="p">,</span> 	<span class="n">hState</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">k</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hState</span><span class="p">,</span> <span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Some of the states are invalid: &quot;</span> <span class="n">State</span>
+
+	<span class="nf">VarSetCapacity(</span><span class="n">BI</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="nf">NumPut(</span><span class="mi">32</span><span class="p">,</span>		<span class="n">BI</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="nf">NumPut(</span><span class="n">mask</span><span class="p">,</span>	<span class="n">BI</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+	<span class="nf">NumPut(</span><span class="n">hState</span><span class="p">,</span>	<span class="n">BI</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">)</span>
+	<span class="nf">NumPut(</span><span class="n">Width</span><span class="p">,</span>	<span class="n">BI</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="s">&quot;Short&quot;</span><span class="p">)</span>
+<span class="w">   </span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETBUTTONINFO</span><span class="p">,</span> <span class="n">WhichButton</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">BI</span><span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+	<span class="n">res</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="mh">0x421</span><span class="p">,</span> <span class="p">,</span> <span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline">	;autosize</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">res</span>
+<span class="p">}</span>
+<span class="cm">/*</span>
+<span class="cm"> Function:  SetButtonWidth</span>
+<span class="cm"> 			Sets button width.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			Min, Max - Minimum and maximum button width. If you omit pMax it defaults to pMin.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			TRUE if successful.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_SetButtonWidth</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span> <span class="n">Max</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">TB_SETBUTTONWIDTH</span><span class="o">=</span><span class="mh">0x43B</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">Max</span><span class="p">,</span> <span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">Max</span><span class="p">,</span> <span class="nv">%Min%</span>
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETBUTTONWIDTH</span><span class="p">,</span> <span class="mi">0</span><span class="p">,(</span><span class="n">Max</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="n">Min</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nv">ErrorLevel</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  SetDrawTextFlags</span>
+<span class="cm"> 			Sets the text drawing flags for the toolbar.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			Mask  - One or more of the DT_ flags, specified in DrawText, that indicate which bits in dwDTFlags will be used when drawing the text.</span>
+<span class="cm">			Flags - One or more of the DT_ flags, specified in DrawText, that indicate how the button text will be drawn. </span>
+<span class="cm">					This value will be passed to the DrawText API when the button text is drawn. </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			Returns the previous text drawing flags.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			See &lt;http://msdn.microsoft.com/en-us/library/bb787425(VS.85).aspx&gt; for more info.</span>
+
+<span class="cm"> Example:</span>
+<span class="cm">			Toolbar_SetDrawTextFlags(hToolbar, 3, 2) ;right align text</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_SetDrawTextFlags</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">Flags</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_SETDRAWTEXTFLAGS</span> <span class="o">=</span> <span class="mi">1094</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETDRAWTEXTFLAGS</span><span class="p">,</span> <span class="n">Mask</span><span class="p">,</span><span class="n">Flags</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nv">ErrorLevel</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">	Function:	SetButtonSize</span>
+<span class="cm"> 				Sets the size of buttons.</span>
+<span class="cm"> </span>
+<span class="cm">	Parameters:</span>
+<span class="cm"> 				W, H	- Width &amp; Height. If you omit height, it defaults to width.</span>
+<span class="cm"> </span>
+<span class="cm">	Remarks:</span>
+<span class="cm">				With LIST style, you can only set the height.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_SetButtonSize</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_SETBUTTONSIZE</span> <span class="o">=</span> <span class="mh">0x41F</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="p">,</span><span class="n">SetEnv</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="nv">%W%</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETBUTTONSIZE</span><span class="p">,</span> <span class="p">,(</span><span class="n">H</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="p">)</span><span class="o">|</span><span class="n">W</span> <span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline"></span>
+<span class="c-Singleline">;	SendMessage, 0x421,,,,ahk_id %hCtrl%	;autosize</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  SetImageList</span>
+<span class="cm"> 			Set toolbar image list.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			hIL	- Image list handle.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm"> 			Handle of the previous image list.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_SetImageList</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">hIL</span><span class="o">=</span><span class="s">&quot;1S&quot;</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">TB_SETIMAGELIST</span> <span class="o">=</span> <span class="mh">0x430</span><span class="p">,</span> <span class="n">TB_LOADIMAGES</span><span class="o">=</span><span class="mh">0x432</span><span class="p">,</span> <span class="n">TB_SETBITMAPSIZE</span><span class="o">=</span><span class="mh">0x420</span>
+
+	<span class="n">hIL</span> <span class="o">.=</span> 	<span class="n">if</span> <span class="nf">StrLen(</span><span class="n">hIL</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span> ? <span class="s">&quot;S&quot;</span> : <span class="s">&quot;&quot;</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">hIL</span> <span class="ow">is</span> <span class="n">Integer</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETIMAGELIST</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hIL</span><span class="p">,</span> <span class="p">,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">	</span><span class="nb">else</span> <span class="p">{</span>
+		<span class="n">size</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">hIL</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;L&quot;</span> ? <span class="mi">24</span>:<span class="mi">16</span><span class="p">,</span>  <span class="n">cat</span> :<span class="o">=</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">hIL</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span> <span class="o">+</span> <span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span> ? <span class="mi">0</span>:<span class="mi">1</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETBITMAPSIZE</span><span class="p">,</span><span class="mi">0</span><span class="p">,(</span><span class="n">size</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="p">)</span><span class="o">+</span><span class="n">size</span><span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_LOADIMAGES</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span> 
+	<span class="p">}</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="nv">ErrorLevel</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  SetMaxTextRows</span>
+<span class="cm"> 			Sets the maximum number of text rows displayed on a toolbar button.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			iMaxRows	- Maximum number of rows of text that can be displayed.</span>
+<span class="cm"> </span>
+<span class="cm"> Remarks:</span>
+<span class="cm"> 			Returns nonzero if successful, or zero otherwise. To cause text to wrap, you must set the maximum </span>
+<span class="cm"> 			button width by using &lt;SetButtonWidth&gt;. The text wraps at a word break. Text in LIST styled toolbars is always shown on a single line.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_SetMaxTextRows</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">iMaxRows</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_SETMAXTEXTROWS</span> <span class="o">=</span> <span class="mh">0x43C</span>
+<span class="w">    </span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_SETMAXTEXTROWS</span><span class="p">,</span><span class="n">iMaxRows</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+	<span class="n">res</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span><span class="c-Singleline"></span>
+<span class="c-Singleline">; 	SendMessage,0x421,,,,ahk_id %hCtrl% ;autosize</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">res</span>
+<span class="p">}</span>
+
+
+<span class="cm">/*	Function:	ToggleStyle</span>
+<span class="cm">				Toggle specific toolbar creation style</span>
+
+<span class="cm">	Parameters:</span>
+<span class="cm">				Style	- Style to toggle, by default &quot;LIST&quot;. You can also specify numeric style value.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_ToggleStyle</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Style</span><span class="o">=</span><span class="s">&quot;LIST&quot;</span><span class="p">){</span>
+    <span class="n">static</span> <span class="n">TBSTYLE_WRAPABLE</span> <span class="o">=</span> <span class="mh">0x200</span><span class="p">,</span> <span class="n">TBSTYLE_FLAT</span> <span class="o">=</span> <span class="mh">0x800</span><span class="p">,</span> <span class="n">TBSTYLE_LIST</span><span class="o">=</span><span class="mh">0x1000</span><span class="p">,</span> <span class="n">TBSTYLE_TOOLTIPS</span><span class="o">=</span><span class="mh">0x100</span><span class="p">,</span> <span class="n">TBSTYLE_TRANSPARENT</span> <span class="o">=</span> <span class="mh">0x8000</span><span class="p">,</span> <span class="n">TBSTYLE_ADJUSTABLE</span> <span class="o">=</span> <span class="mh">0x20</span><span class="p">,</span>  <span class="n">TBSTYLE_BORDER</span><span class="o">=</span><span class="mh">0x800000</span><span class="p">,</span> <span class="n">TBSTYLE_THICKFRAME</span><span class="o">=</span><span class="mh">0x40000</span><span class="p">,</span> <span class="n">TBSTYLE_TABSTOP</span> <span class="o">=</span> <span class="mh">0x10000</span>
+	<span class="n">static</span> <span class="n">TB_SETSTYLE</span><span class="o">=</span><span class="mi">1080</span><span class="p">,</span> <span class="n">TB_GETSTYLE</span><span class="o">=</span><span class="mi">1081</span>
+
+	<span class="n">s</span> :<span class="o">=</span> <span class="n">Style</span><span class="o">+</span><span class="mi">0</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> ? <span class="n">Style</span> : <span class="n">TBSTYLE_</span><span class="nv">%Style%</span>	
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Invalid style: &quot;</span> <span class="n">Style</span>
+
+<span class="w">	</span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="o">^</span><span class="nv">%s%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	; This didn&#39;t work...</span>
+<span class="c-Singleline">	 ;	SendMessage, TB_GETSTYLE, ,,, ahk_id %hCtrl%</span>
+<span class="c-Singleline">	 ;	style := (ErrorLevel &amp; style) ? ErrorLevel &amp; !style : ErrorLevel | style</span>
+<span class="c-Singleline">	 ;	SendMessage, TB_SETSTYLE, 0, style,, ahk_id %hCtrl%</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">=</span> <span class="n">TBSTYLE_LIST</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">		;somehow, text doesn&#39;t return without this, when you switch from ON to OFF</span>
+		<span class="n">Toolbar_SetMaxTextRows</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+		<span class="n">Toolbar_SetMaxTextRows</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>	
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; 	SendMessage,0x421,,,,ahk_id %hCtrl%	;autosize</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Parse button definition list and compile it the into binary array. Add strings to pull. Return number of current buttons.</span>
+<span class="cm">   cBTN	- Pointer to the compiled button array of current buttons</span>
+<span class="cm">   Btns - Button definition list</span>
+<span class="cm">   aBTN - Pointer to the compiled button array of available buttons</span>
+<span class="cm">  </span>
+<span class="cm">Button definition:</span>
+<span class="cm">	[*]caption, icon, state, style, id</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_compileButtons</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Btns</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">cBTN</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">BTNS_SEP</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">BTNS_CHECK</span> <span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">BTNS_CHECKGROUP</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">BTNS_DROPDOWN</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">BTNS_A</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">BTNS_AUTOSIZE</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">BTNS_NOPREFIX</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">BTNS_SHOWTEXT</span> <span class="o">=</span> <span class="mi">64</span>
+	<span class="n">static</span> <span class="n">TBSTATE_CHECKED</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">TBSTATE_ENABLED</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">TBSTATE_HIDDEN</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">TBSTATE_DISABLED</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">TBSTATE_WRAP</span> <span class="o">=</span> <span class="mh">0x20</span>
+	<span class="n">static</span> <span class="n">TB_ADDSTRING</span> <span class="o">=</span> <span class="mh">0x41C</span><span class="p">,</span> <span class="n">WS_CLIPSIBLINGS</span> <span class="o">=</span> <span class="mh">0x4000000</span>
+	<span class="n">static</span> <span class="n">id</span><span class="o">=</span><span class="mi">10000</span><span class="c-Singleline">								;automatic IDing starts form 10000,     1 &lt;= userID &lt; 10 000</span>
+
+<span class="w">	</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">bMenu</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+	<span class="n">bMenu</span> :<span class="o">=</span> <span class="n">bMenu</span> <span class="o">&amp;</span> <span class="n">WS_CLIPSIBLINGS</span>		
+
+	<span class="n">aBTN</span> :<span class="o">=</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">)</span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">aBTN</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+		<span class="n">aBTN</span> :<span class="o">=</span> <span class="n">Toolbar_malloc</span><span class="p">(</span> <span class="mi">50</span> <span class="o">*</span> <span class="mi">20</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span>  <span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">,</span> <span class="n">aBTN</span><span class="p">)</span><span class="c-Singleline">	 ;if space for array of * buttons isn&#39;t reserved and there are definitions of * buttons reserve it for 50 buttons + some more so i can keep some data there...</span>
+
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">Btns</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">UseErrorLevel</span>
+	<span class="n">btnNo</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="n">cBTN</span> :<span class="o">=</span> <span class="n">Toolbar_malloc</span><span class="p">(</span> <span class="n">btnNo</span> <span class="o">*</span> <span class="mi">20</span> <span class="p">)</span>
+
+	<span class="n">a</span> :<span class="o">=</span> <span class="n">cnt</span> :<span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 	<span class="n">cnta</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">aBTN</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">		;get number of buttons in the array</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Btns</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="nv">%A_Space%%A_Tab%</span>	
+	<span class="p">{</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="p">,</span><span class="n">continue</span><span class="c-Singleline">			;skip emtpy lines</span>
+
+<span class="w">		</span><span class="nl">a1:</span><span class="o">=</span><span class="n">a2</span>:<span class="o">=</span><span class="n">a3</span>:<span class="o">=</span><span class="n">a4</span>:<span class="o">=</span><span class="n">a5</span>:<span class="o">=</span><span class="s">&quot;&quot;</span><span class="c-Singleline">					;a1-caption;  a2-icon_num;  a3-state;  a4-style;	a5-id;</span>
+<span class="w">		</span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> `<span class="p">,,</span><span class="nv">%A_Space%%A_Tab%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ;check icon</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">bMenu</span> <span class="n">AND</span> <span class="n">a2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">a2</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+			<span class="n">a2</span> :<span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="c-Singleline">		;so to become I_IMAGENONE = -2</span>
+
+<span class="c-Singleline">	 ;check for available button</span>
+		<span class="n">a</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">a1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">a</span>
+			<span class="n">a1</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">a1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">o</span> :<span class="o">=</span> <span class="n">aBTN</span> <span class="o">+</span> <span class="mi">4</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">o</span> :<span class="o">=</span> <span class="n">cBTN</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ;parse states</span>
+		<span class="n">hState</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">a3</span><span class="p">,</span> <span class="s">&quot;disabled&quot;</span><span class="p">)</span> ? <span class="mi">0</span> : <span class="n">TBSTATE_ENABLED</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,,</span><span class="n">continue</span>
+			<span class="n">hState</span> <span class="o">|=</span> <span class="n">TBSTATE_</span><span class="nv">%A_LOOPFIELD%</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hState</span><span class="p">,</span> <span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Some of the states are invalid: &quot;</span> <span class="n">a3</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ;parse styles</span>
+
+		<span class="n">hStyle</span> :<span class="o">=</span> <span class="n">bMenu</span> ? <span class="n">BTNS_SHOWTEXT</span> <span class="o">|</span> <span class="n">BTNS_DROPDOWN</span> : <span class="mi">0</span>
+		<span class="n">hstyle</span> <span class="o">|=</span> <span class="p">(</span><span class="nv">A_LoopField</span> <span class="o">&gt;=</span> <span class="s">&quot;-&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nv">A_LoopField</span> <span class="o">&lt;=</span> <span class="s">&quot;-------------------&quot;</span><span class="p">)</span> ? <span class="n">BTNS_SEP</span> : <span class="mi">0</span>
+		<span class="n">sep</span> <span class="o">+=</span> <span class="p">(</span><span class="n">hStyle</span> <span class="o">=</span> <span class="n">BTNS_SEP</span><span class="p">)</span> ? <span class="mi">1</span> : <span class="mi">0</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">a4</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,,</span><span class="n">continue</span>
+			<span class="n">hstyle</span> <span class="o">|=</span> <span class="n">BTNS_</span><span class="nv">%A_LOOPFIELD%</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hStyle</span><span class="p">,</span> <span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Some of the styles are invalid: &quot;</span> <span class="n">a4</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ;calculate icon</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">a2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Integer</span><span class="c-Singleline">					;if user didn&#39;t specify icon, use button number as icon index (don&#39;t count separators)</span>
+			<span class="n">a2</span> :<span class="o">=</span> <span class="n">cnt</span><span class="o">+</span><span class="n">cnta</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">sep</span>
+		<span class="n">o</span> <span class="o">+=</span> <span class="mi">20</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> ? <span class="n">cnta</span> : <span class="n">cnt</span><span class="p">)</span><span class="c-Singleline">				;calculate offset o of this structure in array of TBBUTON structures.</span>
+<span class="c-Singleline">												; only A buttons (* marked) are remembered, current buttons will temporary use</span>
+<span class="c-Singleline">	 ;add caption to the string pool</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">hStyle</span> <span class="o">!=</span> <span class="n">BTNS_SEP</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">			</span><span class="nb">StringReplace</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="n">A</span><span class="c-Singleline">		;replace `r with new lines (for multiline tooltips)</span>
+			<span class="nf">VarSetCapacity(</span><span class="n">buf</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">a1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">buf</span> :<span class="o">=</span> <span class="n">a1</span><span class="c-Singleline">	 ;Buf must be double-NULL-terminated</span>
+			<span class="n">sIdx</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;SendMessage&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hCtrl</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">TB_ADDSTRING</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span><span class="c-Singleline">  ;returns the new index of the string within the string pool</span>
+		<span class="p">}</span> <span class="n">else</span> <span class="n">sIdx</span> :<span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="n">a2</span> :<span class="o">=</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="mi">1</span><span class="c-Singleline">			;if separator, lentgth of the &quot;-&quot; string determines width of the separation. Each - adds 10 pixels.</span>
+
+<span class="c-Singleline">	 ;TBBUTTON Structure</span>
+		<span class="n">bid</span> :<span class="o">=</span> <span class="n">a5</span> ? <span class="n">a5</span> : <span class="o">++</span><span class="n">id</span><span class="c-Singleline"> 					;user id or auto id makes button id</span>
+
+		<span class="nf">NumPut(</span><span class="n">a2</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>	<span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span><span class="c-Singleline">			;Zero-based index of the button image. If the button is a separator, determines the width of the separator, in pixels</span>
+		<span class="nf">NumPut(</span><span class="n">bid</span><span class="p">,</span>		<span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span><span class="c-Singleline">			;Command identifier associated with the button</span>
+		<span class="nf">NumPut(</span><span class="n">hstate</span><span class="p">,</span>  <span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">)</span><span class="c-Singleline">			;Button state flags</span>
+		<span class="nf">NumPut(</span><span class="n">hStyle</span><span class="p">,</span>  <span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">)</span><span class="c-Singleline">			;Button style</span>
+		<span class="nf">NumPut(</span><span class="mi">0</span><span class="p">,</span>		<span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">				;User data</span>
+		<span class="nf">NumPut(</span><span class="n">sIdx</span><span class="p">,</span>	<span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span><span class="c-Singleline">			;Zero-based index of the button string</span>
+
+<span class="w">		</span><span class="nb">if </span><span class="n">a</span>
+		<span class="p">{</span>
+			<span class="n">if</span> <span class="p">(</span><span class="n">cnta</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+				<span class="n">warning</span> :<span class="o">=</span> <span class="nv">true</span>
+<span class="w">			</span><span class="nb">else</span> <span class="n">cnta</span><span class="o">++</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">cnt</span><span class="o">++</span>
+	<span class="p">}</span>
+
+	<span class="nf">NumPut(</span><span class="n">cnta</span><span class="p">,</span> <span class="n">aBTN</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span>		
+<span class="w">	</span><span class="nb">if </span><span class="n">warning</span>
+<span class="w">		</span><span class="nb">msgbox</span> <span class="n">You</span> <span class="n">exceeded</span> <span class="n">the</span> <span class="n">limit</span> <span class="n">of</span> <span class="n">available</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="n">buttons</span> <span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="n">cnt</span><span class="c-Singleline">									;return number of buttons in the array</span>
+<span class="p">}</span>
+
+<span class="n">Toolbar_onNotify</span><span class="p">(</span><span class="n">Wparam</span><span class="p">,</span><span class="n">Lparam</span><span class="p">,</span><span class="n">Msg</span><span class="p">,</span><span class="n">Hwnd</span><span class="p">)</span> <span class="p">{</span> 
+	<span class="n">static</span> <span class="n">MODULEID</span> <span class="o">=</span> <span class="mi">80609</span><span class="p">,</span> <span class="n">oldNotify</span><span class="o">=</span><span class="s">&quot;*&quot;</span> 
+	<span class="n">static</span> <span class="n">NM_CLICK</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">NM_RCLICK</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">NM_LDOWN</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">TBN_DROPDOWN</span><span class="o">=-</span><span class="mi">710</span><span class="p">,</span> <span class="n">TBN_HOTITEMCHANGE</span><span class="o">=-</span><span class="mi">713</span><span class="p">,</span> <span class="n">TBN_ENDDRAG</span><span class="o">=-</span><span class="mi">702</span><span class="p">,</span> <span class="n">TBN_BEGINADJUST</span><span class="o">=-</span><span class="mi">703</span><span class="p">,</span> <span class="n">TBN_GETBUTTONINFOA</span><span class="o">=-</span><span class="mi">700</span><span class="p">,</span> <span class="n">TBN_QUERYINSERT</span><span class="o">=-</span><span class="mi">706</span><span class="p">,</span> <span class="n">TBN_QUERYDELETE</span><span class="o">=-</span><span class="mi">707</span><span class="p">,</span> <span class="n">TBN_BEGINADJUST</span><span class="o">=-</span><span class="mi">703</span><span class="p">,</span> <span class="n">TBN_ENDADJUST</span><span class="o">=-</span><span class="mi">704</span><span class="p">,</span> <span class="n">TBN_RESET</span><span class="o">=-</span><span class="mi">705</span><span class="p">,</span> <span class="n">TBN_TOOLBARCHANGE</span><span class="o">=-</span><span class="mi">708</span><span class="p">,</span> <span class="n">TB_COMMANDTOINDEX</span><span class="o">=</span><span class="mh">0x419</span>
+	<span class="n">static</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">cnta</span><span class="p">,</span> <span class="n">cBTN</span><span class="p">,</span> <span class="n">inDialog</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="mi">0</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">_</span> :<span class="o">=</span> <span class="p">(</span><span class="nf">NumGet(</span><span class="n">Lparam</span><span class="o">+</span><span class="mi">4</span><span class="p">)))</span> <span class="o">!=</span> <span class="n">MODULEID</span>
+<span class="w">	 </span><span class="nb">ifLess</span> <span class="n">_</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">return</span><span class="c-Singleline">	;if ahk control, return asap (AHK increments control ID starting from 1. Custom controls use IDs &gt; 10000 as its unlikely that u will use more then 10K ahk controls.</span>
+<span class="w">	 </span><span class="nb">else</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">oldNotify</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">oldNotify</span><span class="p">,</span> <span class="o">%</span> <span class="n">Toolbar</span><span class="p">(</span><span class="s">&quot;oldNotify&quot;</span><span class="p">)</span>		
+<span class="w">		</span><span class="nb">if </span><span class="n">oldNotify</span> <span class="o">!=</span>
+<span class="w">			</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="n">oldNotify</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Wparam</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Lparam</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">)</span>
+	 <span class="p">}</span>
+    
+	<span class="n">hw</span> :<span class="o">=</span>  <span class="nf">NumGet(</span><span class="n">Lparam</span><span class="o">+</span><span class="mi">0</span><span class="p">),</span> <span class="n">code</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Lparam</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span>  <span class="n">handler</span> :<span class="o">=</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hw</span> <span class="s">&quot;Handler&quot;</span><span class="p">)</span> 
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">handler</span><span class="p">,,</span> <span class="n">return</span> 
+	<span class="n">iItem</span>  :<span class="o">=</span> <span class="p">(</span><span class="n">code</span> <span class="o">!=</span> <span class="n">TBN_HOTITEMCHANGE</span><span class="p">)</span> ? <span class="nf">NumGet(</span><span class="n">lparam</span><span class="o">+</span><span class="mi">12</span><span class="p">)</span> : <span class="nf">NumGet(</span><span class="n">lparam</span><span class="o">+</span><span class="mi">16</span><span class="p">)</span> 
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_COMMANDTOINDEX</span><span class="p">,</span><span class="n">iItem</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%hw%</span>    
+	<span class="n">pos</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">,</span> <span class="n">txt</span> :<span class="o">=</span> <span class="n">Toolbar_GetButton</span><span class="p">(</span> <span class="n">hw</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="s">&quot;c&quot;</span><span class="p">)</span>
+
+	
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">TBN_ENDDRAG</span><span class="p">)</span> <span class="p">{</span> 		
+<span class="w">		</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="mi">4294967296</span><span class="p">,</span> <span class="n">return</span> 
+		<span class="n">tc</span> :<span class="o">=</span> <span class="nv">A_TickCount</span>
+    <span class="p">}</span> 
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">NM_CLICK</span><span class="p">)</span> <span class="p">{</span> 		
+<span class="w">		</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="mi">4294967296</span><span class="p">,</span> <span class="n">return</span>
+		<span class="n">if</span> !<span class="p">(</span><span class="nv">A_TickCount</span> <span class="o">-</span> <span class="n">tc</span><span class="p">)</span>
+	 		<span class="nv">%handler%</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="s">&quot;click&quot;</span><span class="p">,</span> <span class="n">txt</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">iItem</span><span class="p">)</span>
+    <span class="p">}</span> 
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">NM_RCLICK</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="mi">4294967296</span><span class="p">,</span> <span class="n">return</span>
+<span class="w">        </span><span class="nb">else</span>  <span class="nv">%handler%</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span><span class="s">&quot;rclick&quot;</span><span class="p">,</span> <span class="n">txt</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">iItem</span><span class="p">)</span> 
+
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="n">TBN_DROPDOWN</span><span class="p">)</span>
+		<span class="nv">%handler%</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="s">&quot;menu&quot;</span><span class="p">,</span> <span class="n">txt</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">iItem</span><span class="p">)</span>
+ 
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="n">TBN_HOTITEMCHANGE</span><span class="p">)</span> <span class="p">{</span> 
+<span class="w">      </span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="mi">4294967296</span><span class="p">,</span> <span class="n">return</span>  
+<span class="w">      </span><span class="nb">return</span> <span class="nv">%handler%</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="s">&quot;hot&quot;</span><span class="p">,</span> <span class="n">txt</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span>  <span class="n">iItem</span><span class="p">)</span> 
+   <span class="p">}</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">  ;=================== CUSTOMIZATION NOTIFICATIONS =========================== </span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="n">TBN_BEGINADJUST</span><span class="p">)</span> <span class="p">{</span> 
+		<span class="n">cnta</span> :<span class="o">=</span> <span class="nf">NumGet(</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hw</span> <span class="s">&quot;aBTN&quot;</span><span class="p">)</span> <span class="p">)</span> <span class="p">,</span> <span class="n">cnt</span> :<span class="o">=</span> <span class="n">Toolbar_getButtonArray</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="n">cBTN</span><span class="p">),</span> <span class="n">inDialog</span> :<span class="o">=</span> <span class="nv">true</span> 
+		<span class="n">if</span> <span class="p">(</span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">cnta</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> 
+<span class="w">			</span><span class="nb">Msgbox</span> <span class="n">Nothing</span> <span class="n">to</span> <span class="n">customize</span> 
+<span class="w">		</span><span class="nb">return</span> 
+	<span class="p">}</span> 
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="n">TBN_GETBUTTONINFOA</span><span class="p">)</span>   <span class="p">{</span> 
+		<span class="n">if</span> <span class="p">(</span><span class="n">iItem</span> <span class="o">=</span> <span class="n">cnt</span> <span class="o">+</span> <span class="n">cnta</span><span class="p">)</span><span class="c-Singleline">					;iItem is position, not identifier. Win keeps sending incresing numbers until we say &quot;no more&quot; (return 0) </span>
+<span class="w">			</span><span class="nb">return</span> <span class="mi">0</span> 
+       
+		<span class="n">TBB</span> :<span class="o">=</span> <span class="n">lparam</span> <span class="o">+</span> <span class="mi">16</span><span class="c-Singleline">						;The OS buffer where to put the button structure </span>
+		<span class="n">o</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iItem</span> <span class="o">&lt;</span> <span class="n">cnt</span><span class="p">)</span> ?  <span class="n">cBTN</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="n">iItem</span> : <span class="n">Toolbar</span><span class="p">(</span> <span class="n">hw</span> <span class="s">&quot;aBTN&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="p">(</span><span class="n">iItem</span><span class="o">-</span><span class="n">cnt</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+		<span class="n">Toolbar_memcpy</span><span class="p">(</span> <span class="n">TBB</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline"> ;copy the compiled item into notification struct </span>
+<span class="w">		</span><span class="nb">return</span> <span class="mi">1</span> 
+	<span class="p">}</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">    ;Return at least one TRUE in QueryInsert to show the dialog, if the dialog is openinig. When the dialog is open, QueryInsert affects btn addition. QueryDelete affects deletion. </span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="n">TBN_QUERYINSERT</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="n">TBN_QUERYDELETE</span><span class="p">)</span> <span class="p">{</span> 
+		<span class="n">if</span> <span class="p">(</span><span class="n">cnta</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="ow">or</span> <span class="n">cnta</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="n">AND</span> <span class="p">(</span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> 
+<span class="w">			</span><span class="nb">return</span> <span class="nv">FALSE</span> 
+<span class="w">		</span><span class="nb">return</span> <span class="nv">TRUE</span> 
+	<span class="p">}</span> 
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">TBN_ENDADJUST</span><span class="p">)</span> <span class="p">{</span> 
+		<span class="n">Toolbar_onEndAdjust</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="n">cBTN</span><span class="p">,</span> <span class="n">cnt</span><span class="p">),</span> <span class="n">inDialog</span> :<span class="o">=</span> <span class="nv">false</span> 
+<span class="w">		</span><span class="nb">return</span> <span class="nv">%handler%</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="s">&quot;adjust&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
+	<span class="p">}</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">	;This will fire when user is dragging buttons around with adjustable style</span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="n">TBN_TOOLBARCHANGE</span><span class="p">)</span> <span class="ow">and</span> !<span class="n">inDialog</span> 
+<span class="w">		</span><span class="nb">return</span> <span class="nv">%handler%</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="s">&quot;change&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
+<span class="p">}</span><span class="c-Singleline"></span>
+
+
+<span class="c-Singleline">;I am not keeping current buttons in memory, so I must obtain them if customization dialog is called, to populate it</span>
+<span class="n">Toolbar_getButtonArray</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">cBtn</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">TB_GETBUTTON</span> <span class="o">=</span> <span class="mh">0x417</span>
+
+	<span class="n">cnt</span> :<span class="o">=</span> <span class="n">Toolbar_Count</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">)</span>	
+
+	<span class="n">cBtn</span> :<span class="o">=</span> <span class="n">Toolbar_malloc</span><span class="p">(</span> <span class="n">cnt</span> <span class="o">*</span> <span class="mi">20</span> <span class="p">)</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="nv">%cnt%</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_GETBUTTON</span><span class="p">,</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">cbtn</span> <span class="o">+</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">20</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="n">cnt</span>
+<span class="p">}</span>
+
+<span class="n">Toolbar_getStateName</span><span class="p">(</span> <span class="n">hState</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TBSTATE_HIDDEN</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">TBSTATE_PRESSED</span> <span class="o">=</span> <span class="mh">0x2</span><span class="p">,</span> <span class="n">TBSTATE_CHECKED</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">TBSTATE_ENABLED</span><span class="o">=</span><span class="mh">0x4</span>
+	<span class="n">static</span> <span class="n">states</span><span class="o">=</span><span class="s">&quot;hidden,pressed,checked,enabled&quot;</span>
+
+	<span class="n">if</span> !<span class="p">(</span><span class="n">hState</span> <span class="o">&amp;</span> <span class="n">TBSTATE_ENABLED</span><span class="p">)</span>				
+		<span class="n">state</span> :<span class="o">=</span> <span class="s">&quot;disabled &quot;</span>
+
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span><span class="n">hState</span><span class="p">,</span> <span class="nv">%TBSTATE_ENABLED%</span><span class="p">,</span> <span class="n">return</span>
+
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> `<span class="p">,</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">hState</span> <span class="o">&amp;</span> <span class="n">TBSTATE_</span><span class="nv">%A_LoopField%</span><span class="p">)</span>
+			<span class="n">state</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot; &quot;</span>
+
+<span class="w">	</span><span class="nb">StringReplace</span> <span class="n">state</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nv">%A_Space%</span><span class="n">enabled</span><span class="nv">%A_Space%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">state</span>
+<span class="p">}</span>
+
+<span class="n">Toolbar_getStyleName</span><span class="p">(</span> <span class="n">hStyle</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">BTNS_CHECK</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">BTNS_GROUP</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">BTNS_DROPDOWN</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">BTNS_AUTOSIZE</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">BTNS_NOPREFIX</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">BTNS_SHOWTEXT</span> <span class="o">=</span> <span class="mi">64</span>
+	<span class="n">static</span> <span class="n">styles</span><span class="o">=</span><span class="s">&quot;check,group,dropdown,autosize,noprefix,showtext&quot;</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> `<span class="p">,</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">hStyle</span> <span class="o">&amp;</span> <span class="n">BTNS_</span><span class="nv">%A_LoopField%</span><span class="p">)</span>
+			<span class="n">style</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot; &quot;</span>
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">check</span> <span class="n">group</span><span class="p">,</span> <span class="n">checkgroup</span><span class="c-Singleline">		;I don&#39;t use group flag at all</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">style</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">After the customization dialog finishes, order and placements of buttons of the left and right side is changed.</span>
+<span class="cm">As I keep available buttons as part of the AHK API, I must rebuild array of available buttons; add to it buttons </span>
+<span class="cm"> that are removed from the toolbar and remove buttons that are added to the toolbar.</span>
+<span class="cm"> */</span>
+<span class="n">Toolbar_onEndAdjust</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">cBTN</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">TB_COMMANDTOINDEX</span> <span class="o">=</span> <span class="mh">0x419</span><span class="p">,</span> <span class="n">BTNS_SEP</span><span class="o">=</span><span class="mi">1</span>
+	
+	<span class="n">a</span> :<span class="o">=</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">)</span>
+	<span class="n">aBtn</span> :<span class="o">=</span> <span class="n">a</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">cnta</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">a</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">size</span> :<span class="o">=</span> <span class="n">cnt</span><span class="o">+</span><span class="n">cnta</span><span class="p">,</span>  <span class="n">size</span> :<span class="o">=</span> <span class="n">size</span><span class="o">&lt;</span><span class="mi">50</span> ? <span class="mi">50</span> : <span class="n">size</span><span class="c-Singleline">			;reserve memory for new aBTN array, minimum 50 buttons</span>
+	<span class="n">buf</span> :<span class="o">=</span> <span class="n">Toolbar_malloc</span><span class="p">(</span> <span class="n">size</span> <span class="o">*</span> <span class="mi">20</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">  ;check current button changes</span>
+    <span class="n">cnta2</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="nv">%cnt%</span>
+	<span class="p">{</span>
+		<span class="n">o</span> :<span class="o">=</span> <span class="n">cBTN</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>	<span class="n">id</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_COMMANDTOINDEX</span><span class="p">,</span><span class="n">id</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>		
+<span class="w">		</span><span class="nb">if </span><span class="nv">Errorlevel</span> <span class="o">!=</span> <span class="mi">4294967295</span><span class="c-Singleline">							;if errorlevel = -1 button isn&#39;t on toolbar</span>
+<span class="w">			</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nb">if </span><span class="nf">NumGet(</span><span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="n">BTNS_SEP</span><span class="c-Singleline">				;skip separators</span>
+<span class="w">			</span><span class="nb">continue</span>
+	   <span class="n">Toolbar_memcpy</span><span class="p">(</span> <span class="n">buf</span> <span class="o">+</span> <span class="n">cnta2</span><span class="o">++*</span><span class="mi">20</span> <span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline"> ;copy the button struct into new array</span>
+	<span class="p">}</span>
+	<span class="n">Toolbar_mfree</span><span class="p">(</span><span class="n">cBTN</span><span class="p">)</span><span class="c-Singleline">	</span>
+
+<span class="c-Singleline">  ;check available button changes</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="nv">%cnta%</span>
+	<span class="p">{</span>
+		<span class="n">o</span> :<span class="o">=</span> <span class="n">aBTN</span> <span class="o">+</span> <span class="mi">20</span><span class="o">*</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>	<span class="n">id</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">o</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">TB_COMMANDTOINDEX</span><span class="p">,</span><span class="n">id</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>		
+<span class="w">		</span><span class="nb">if </span><span class="nv">Errorlevel</span> <span class="o">!=</span> <span class="mi">4294967295</span><span class="c-Singleline">							;if errorlevel = -1 button isn&#39;t on toolbar</span>
+<span class="w">			</span><span class="nb">continue</span>
+		<span class="n">Toolbar_memcpy</span><span class="p">(</span><span class="n">buf</span> <span class="o">+</span> <span class="n">cnta2</span><span class="o">++*</span><span class="mi">20</span> <span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline"> ;copy the button struct into new array</span>
+	<span class="p">}</span>
+	<span class="n">Toolbar_mfree</span><span class="p">(</span><span class="n">aBTN</span><span class="p">)</span>
+
+	<span class="nf">NumPut(</span><span class="n">cnta2</span><span class="p">,</span> <span class="n">buf</span><span class="o">+</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">		;save array</span>
+	<span class="n">Toolbar</span><span class="p">(</span> <span class="n">hCtrl</span> <span class="s">&quot;aBTN&quot;</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="n">Toolbar_malloc</span><span class="p">(</span><span class="n">pSize</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">MEM_COMMIT</span><span class="o">=</span><span class="mh">0x1000</span><span class="p">,</span> <span class="n">PAGE_READWRITE</span><span class="o">=</span><span class="mh">0x04</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;VirtualAlloc&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">pSize</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">MEM_COMMIT</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">PAGE_READWRITE</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">Toolbar_mfree</span><span class="p">(</span><span class="n">pAdr</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">MEM_RELEASE</span> <span class="o">=</span> <span class="mh">0x8000</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;VirtualFree&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">pAdr</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">MEM_RELEASE</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">Toolbar_memmove</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;MSVCRT\memmove&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">Toolbar_memcpy</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;MSVCRT\memcpy&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;Required function by Forms framework.</span>
+<span class="n">Toolbar_add2Form</span><span class="p">(</span><span class="n">hParent</span><span class="p">,</span> <span class="n">Txt</span><span class="p">,</span> <span class="n">Opt</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">f</span> :<span class="o">=</span> <span class="s">&quot;Form_Parse&quot;</span>
+	
+	<span class="nv">%f%</span><span class="p">(</span><span class="n">Opt</span><span class="p">,</span> <span class="s">&quot;x# y# w# h# style IL* g*&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">style</span><span class="p">,</span><span class="n">il</span><span class="p">,</span><span class="n">handler</span><span class="p">)</span>
+	<span class="n">pos</span> :<span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">!=</span><span class="s">&quot;&quot;</span> ? <span class="s">&quot; x&quot;</span> <span class="n">x</span> : <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span><span class="o">!=</span><span class="s">&quot;&quot;</span> ? <span class="s">&quot; y&quot;</span> <span class="n">y</span> : <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">(</span><span class="n">w</span><span class="o">!=</span><span class="s">&quot;&quot;</span> ? <span class="s">&quot; w&quot;</span> <span class="n">w</span> : <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">(</span><span class="n">h</span><span class="o">!=</span><span class="s">&quot;&quot;</span> ? <span class="s">&quot; h&quot;</span> <span class="n">h</span> : <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="n">h</span> :<span class="o">=</span> <span class="n">Toolbar_Add</span><span class="p">(</span><span class="n">hParent</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">il</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">Txt</span> <span class="o">!=</span> 
+		<span class="n">Toolbar_Insert</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Txt</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">h</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;Storage</span>
+<span class="n">Toolbar</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;~`a&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o3</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o4</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o5</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o6</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span> 
+	<span class="n">static</span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">var</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="p">){</span>
+		<span class="n">if</span> <span class="p">(</span> <span class="n">_</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">value</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">)</span> <span class="p">)</span>
+			<span class="n">__</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">value</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">value</span><span class="p">,</span> <span class="n">_</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nv">%A_Space%</span>
+			<span class="n">_</span> :<span class="o">=</span> <span class="nv">%__%%A_LoopField%</span><span class="p">,</span>  <span class="n">o</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="n">_</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> ? <span class="n">_</span> : <span class="nv">%A_LoopField%</span>
+<span class="w">		</span><span class="nb">return</span>
+	<span class="p">}</span> <span class="n">else</span> <span class="n">_</span> :<span class="o">=</span> <span class="nv">%var%</span>
+<span class="w">	</span><span class="nb">ifNotEqual</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">~</span>`<span class="n">a</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="nv">%var%</span><span class="p">,</span> <span class="nv">%value%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">_</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Group: Examples</span>
+<span class="cm"> (start code)</span>
+<span class="cm">	   Gui, +LastFound</span>
+<span class="cm">	   hGui := WinExist()</span>
+<span class="cm">	   Gui, Show , w500 h100 Hide                              ;set gui width &amp; height prior to adding toolbar (mandatory)</span>
+<span class="cm">	 </span>
+<span class="cm">	   hCtrl := Toolbar_Add(hGui, &quot;OnToolbar&quot;, &quot;FLAT TOOLTIPS&quot;, &quot;1L&quot;)    ;add the toolbar</span>
+<span class="cm">	 </span>
+<span class="cm">	   btns =</span>
+<span class="cm">		(LTrim</span>
+<span class="cm">		   new,  7,            ,dropdown showtext</span>
+<span class="cm">		   open, 8</span>
+<span class="cm">		   save, 9, disabled</span>
+<span class="cm">		   -</span>
+<span class="cm">		   undo, 4,            ,dropdown</span>
+<span class="cm">		   redo, 5,            ,dropdown</span>
+<span class="cm">		   -----</span>
+<span class="cm">		   state, 11, checked  ,check</span>
+<span class="cm">		)</span>
+<span class="cm">	 </span>
+<span class="cm">		Toolbar_Insert(hCtrl, btns)</span>
+<span class="cm">		Toolbar_SetButtonWidth(hCtrl, 50)                   ;set button width &amp; height to 50 pixels</span>
+<span class="cm">	 </span>
+<span class="cm">		Gui, Show</span>
+<span class="cm">	return</span>
+<span class="cm"> </span>
+<span class="cm">	;toolbar event handler</span>
+<span class="cm">	OnToolbar(hCtrl, Event, Txt, Pos){				</span>
+<span class="cm">		   tooltip %Event% %Txt% (%Pos%), 0, 0</span>
+<span class="cm">	}</span>
+<span class="cm">	(end code)</span>
+<span class="cm"> */</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Group: About</span>
+<span class="cm">	o Ver 2.31 by majkinetor. See http://www.autohotkey.com/forum/topic27382.html</span>
+<span class="cm">	o Parts of code in Toolbar_onNotify by jballi.</span>
+<span class="cm">	o Toolbar Reference at MSDN: &lt;http://msdn2.microsoft.com/en-us/library/bb760435(VS.85).aspx&gt;</span>
+<span class="cm">	o Licensed under GNU GPL &lt;http://creativecommons.org/licenses/GPL/2.0/&gt;</span>
+<span class="cm"> */</span>
+</pre></div>

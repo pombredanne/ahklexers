@@ -1,0 +1,14 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include mcode.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; For example, the following line stores the code of the function swapping </span>
+<span class="c-Singleline">; the bytes of short (16-bit) value.</span>
+<span class="n">MCode</span><span class="p">(</span><span class="n">BSwap16</span><span class="p">,</span><span class="s">&quot;8AE18AC5C3&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; The result is 0x3412 in hex form. These do not involve any external dll&#39;s,</span>
+<span class="c-Singleline">; so swapping bytes is almost as fast as if it was a built-in function.</span>
+<span class="c-Singleline">; We can extend the list of built-in function arbitrarily. </span>
+<span class="nb">MsgBox</span> <span class="o">%</span> <span class="nf">dllcall(</span><span class="o">&amp;</span><span class="n">BSwap16</span><span class="p">,</span> <span class="s">&quot;short&quot;</span><span class="p">,</span><span class="mh">0x1234</span><span class="p">,</span> <span class="s">&quot;cdecl ushort&quot;</span><span class="p">)</span>
+</pre></div>

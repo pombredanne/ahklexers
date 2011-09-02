@@ -1,0 +1,451 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; Binary AHK Array RC2</span>
+<span class="c-Singleline">; (w) by DerRaphael</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Released under the Terms of European Public License (EUPL 1.0)</span>
+<span class="c-Singleline">;    see http://ec.europa.eu/idabc/en/document/7330</span>
+<span class="c-Singleline">;    for translations in your language.</span>
+
+<span class="n">A_Put</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dSize</span><span class="o">=-</span><span class="mi">1</span><span class="p">){</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span><span class="c-Singleline"> ; No Array ? Do an ArrayInit to get a proper Structure</span>
+        <span class="n">A_Init</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span>
+
+    <span class="n">if</span> <span class="p">((</span><span class="n">Index</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="o">=</span><span class="n">Index</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">        </span><span class="nb">Gosub</span><span class="p">,</span> <span class="n">GetArrayStats</span>
+    
+        <span class="n">nSize</span> :<span class="o">=</span> <span class="n">aSize</span><span class="o">+</span><span class="n">dSize</span><span class="o">+</span><span class="mi">8</span><span class="c-Singleline">                         ; calculate new size</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">tmpArray</span><span class="p">,</span> <span class="n">nSize</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span><span class="c-Singleline">            ; create tmpArray for our new data</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmpArray</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Array</span><span class="p">,</span> <span class="n">aSize</span><span class="p">)</span><span class="c-Singleline">            ; Copy entire array to TMP</span>
+    
+        <span class="nf">NumPut(</span><span class="n">nSize</span><span class="p">,</span>       <span class="n">tmpArray</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">              ; Update size of array in total</span>
+        <span class="nf">NumPut(</span><span class="n">tSize</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span>     <span class="n">tmpArray</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline">              ; Update tableLenght</span>
+        <span class="nf">NumPut(</span><span class="n">oSize</span><span class="o">+</span><span class="n">dSize</span><span class="p">,</span> <span class="n">tmpArray</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline">              ; Update length of new ArrayStructure</span>
+        <span class="nf">NumPut(</span><span class="n">ElmCount</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>  <span class="n">tmpArray</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="c-Singleline">              ; Update elementcount</span>
+    
+        <span class="n">A_ArrayMM</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">tmpArray</span> <span class="o">+</span> <span class="n">tSize</span> <span class="o">+</span> <span class="mi">8</span><span class="c-Singleline">               ; Shift ArrayData for 8 bytes</span>
+                    <span class="p">,</span> <span class="o">&amp;</span><span class="n">Array</span> <span class="o">+</span> <span class="n">tSize</span><span class="p">,</span> <span class="n">oSize</span> <span class="p">)</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmpArray</span><span class="o">+</span><span class="n">aSize</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span><span class="o">&amp;</span><span class="n">Data</span><span class="p">,</span><span class="n">dSize</span><span class="p">)</span><span class="c-Singleline">       ; copy data to tmpArray</span>
+    
+        <span class="n">Offset</span> :<span class="o">=</span> <span class="mi">28</span><span class="c-Singleline">                                   ; move offsets for array contents</span>
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">ElmCount</span><span class="o">+</span><span class="mi">1</span>
+            <span class="nf">NumPut(</span> <span class="nf">NumGet(</span><span class="n">tmpArray</span>
+                    <span class="p">,(</span><span class="n">Offset</span><span class="o">+</span><span class="p">(</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">))</span><span class="o">+</span><span class="mi">8</span><span class="c-Singleline">         ; get last known value and </span>
+                    <span class="p">,</span><span class="n">tmpArray</span><span class="p">,(</span><span class="n">Offset</span><span class="o">+</span><span class="p">(</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">))</span><span class="c-Singleline">  ; increment it by 8</span>
+
+        <span class="nf">NumPut(</span><span class="n">aSize</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> <span class="n">tmpArray</span><span class="p">,</span> <span class="n">tSize</span><span class="p">)</span><span class="c-Singleline">               ; Set offsetpointer to new data</span>
+        <span class="nf">NumPut(</span><span class="n">dSize</span><span class="p">,</span> <span class="n">tmpArray</span><span class="p">,</span> <span class="n">tSize</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span><span class="c-Singleline">               ; Set size of new element</span>
+
+        <span class="nf">VarSetCapacity(</span><span class="n">Array</span><span class="p">,</span><span class="n">nSize</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span><span class="c-Singleline">                 ; Resize the array</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Array</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tmpArray</span><span class="p">,</span> <span class="n">nSize</span><span class="p">)</span><span class="c-Singleline">            ; copy tmpArray back to array</span>
+
+<span class="w">        </span><span class="nb">Return</span> <span class="n">ElmCount</span><span class="o">+</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="n">if</span> <span class="p">((</span><span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="o">&gt;=</span><span class="n">Index</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">Index</span><span class="o">!=</span><span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">        </span><span class="nb">Gosub</span><span class="p">,</span> <span class="n">GetArrayStats</span>
+        
+        <span class="n">ElmPtr</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">28</span><span class="o">+</span><span class="p">(</span><span class="n">Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">ElmSize</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">32</span><span class="o">+</span><span class="p">(</span><span class="n">Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span>
+        
+        <span class="n">if</span> <span class="p">((</span><span class="n">dSize</span><span class="o">&gt;</span><span class="n">ElmSize</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">dSize</span><span class="o">&lt;</span><span class="n">ElmSize</span><span class="p">))</span> <span class="p">{</span><span class="c-Singleline">      ; Fix table offsets to new size</span>
+    
+            <span class="n">OffSet</span>  :<span class="o">=</span> <span class="mi">28</span><span class="o">+</span><span class="n">Index</span><span class="o">*</span><span class="mi">8</span><span class="c-Singleline">                      ; GetStarting offset in table</span>
+            <span class="n">ptrDiff</span> :<span class="o">=</span> <span class="n">dSize</span><span class="o">-</span><span class="n">ElmSize</span><span class="c-Singleline">                   ; Get difference</span>
+
+            <span class="n">nSize</span> :<span class="o">=</span> <span class="n">aSize</span><span class="o">+</span><span class="n">ptrDiff</span><span class="c-Singleline">                     ; calculate new size</span>
+            <span class="nf">VarSetCapacity(</span><span class="n">tmpArray</span><span class="p">,</span> <span class="n">nSize</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span><span class="c-Singleline">        ; create tmpArray for our new data</span>
+            <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmpArray</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Array</span><span class="c-Singleline">                ; Copy entire array to TMP</span>
+                <span class="p">,</span> <span class="p">((</span><span class="n">aSize</span><span class="o">&gt;</span><span class="n">nSize</span><span class="p">)</span> ? <span class="n">nSize</span> : <span class="n">aSize</span><span class="p">))</span><span class="c-Singleline">     ; with a correct calculated length</span>
+            <span class="nf">NumPut(</span><span class="n">nSize</span><span class="p">,</span> <span class="n">tmpArray</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">                ; Update size of array in total</span>
+            <span class="nf">NumPut(</span><span class="n">oSize</span><span class="o">+</span><span class="n">ptrDiff</span><span class="p">,</span> <span class="n">tmpArray</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline">        ; Update length of new ArrayStructure</span>
+            <span class="nf">NumPut(</span><span class="n">dSize</span><span class="p">,</span> <span class="n">tmpArray</span><span class="p">,</span> <span class="n">Offset</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span><span class="c-Singleline">          ; Set size of new element</span>
+
+<span class="w">            </span><span class="nb">Loop</span><span class="p">,</span><span class="o">%</span> <span class="n">ElmCount</span><span class="o">-</span><span class="n">Index</span><span class="c-Singleline">                      ; loop remaining elements</span>
+                <span class="nf">NumPut(</span> <span class="nf">NumGet(</span><span class="n">tmpArray</span>
+                    <span class="p">,(</span><span class="n">Offset</span><span class="o">+</span><span class="p">(</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">))</span><span class="o">+</span><span class="n">ptrDiff</span><span class="c-Singleline">   ; get last known value and </span>
+                    <span class="p">,</span><span class="n">tmpArray</span><span class="p">,(</span><span class="n">Offset</span><span class="o">+</span><span class="p">(</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">))</span><span class="c-Singleline">  ; add the difference</span>
+
+            <span class="n">Offset</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">tmpArray</span><span class="p">,</span><span class="n">Offset</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmpArray</span><span class="o">+</span><span class="n">Offset</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Data</span><span class="p">,</span> <span class="n">dSize</span><span class="p">)</span><span class="c-Singleline">  ; Copy new data into tmpArray</span>
+            <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmpArray</span><span class="o">+</span><span class="n">Offset</span><span class="o">+</span><span class="n">dSize</span><span class="c-Singleline">           ; remaining ArrayData to new offset</span>
+                    <span class="p">,</span> <span class="o">&amp;</span><span class="n">Array</span><span class="o">+</span><span class="n">Offset</span><span class="o">+</span><span class="n">ElmSize</span><span class="p">,</span> <span class="n">aSize</span><span class="o">-</span><span class="p">(</span><span class="n">OffSet</span><span class="o">+</span><span class="n">ElmSize</span><span class="p">))</span>
+
+            <span class="nf">VarSetCapacity(</span><span class="n">Array</span><span class="p">,</span><span class="n">nSize</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span><span class="c-Singleline">             ; Resize the array</span>
+            <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Array</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tmpArray</span><span class="p">,</span> <span class="n">nSize</span><span class="p">)</span><span class="c-Singleline">        ; copy tmpArray back to array</span>
+
+        <span class="p">}</span> <span class="n">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">dSize</span><span class="o">=</span><span class="n">ElmSize</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline">                    ; No need to fix tableoffsets</span>
+            <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Array</span><span class="o">+</span><span class="n">ElmPtr</span><span class="p">,</span><span class="o">&amp;</span><span class="n">Data</span><span class="p">,</span><span class="n">dSize</span><span class="p">)</span><span class="c-Singleline">       ; speeeed!</span>
+        <span class="p">}</span> <span class="n">else</span> <span class="p">{</span><span class="c-Singleline">                                       ; THIS SHOULD NEVER HAPPEN</span>
+            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;Internal Binary Array Structure Error / Invalid Binary Array Object&quot;</span>
+<span class="w">            </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">}</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">ElmCount</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;Binary Array Index Mismatch&quot;</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span>
+
+<span class="w">    </span><span class="nl">GetArrayStats:</span>
+        <span class="n">ElmCount</span> :<span class="o">=</span> <span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="c-Singleline">       ; update ElementCount</span>
+        <span class="n">aSize</span>    :<span class="o">=</span> <span class="n">A_Size</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="c-Singleline">        ; current ByteSize of entire Array</span>
+        <span class="n">oSize</span>    :<span class="o">=</span> <span class="n">A_Length</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="c-Singleline">      ; current ByteSize of contained data in Array</span>
+        <span class="n">tSize</span>    :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span><span class="c-Singleline">     ; table size</span>
+        <span class="n">If</span> <span class="p">(</span><span class="n">dSize</span><span class="o">&lt;=-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">                   ; No size given - assume it&#39;s a string and fix it!</span>
+            <span class="nf">RegExReplace(</span><span class="n">Data</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">dSize</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">return</span>
+<span class="p">}</span>
+
+<span class="n">A_Get</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Index</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="n">if</span> <span class="p">((</span><span class="n">Index</span><span class="o">&gt;</span><span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="n">Index</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;Binary Array Index mismatch - no such Index&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">Offset</span>  :<span class="o">=</span> <span class="mi">28</span><span class="o">+</span><span class="p">(</span><span class="n">Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="c-Singleline">                      ; Get starting offset in table</span>
+        <span class="n">ElmPtr</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="n">Offset</span><span class="p">)</span>
+        <span class="n">ElmSize</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="n">Offset</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="nf">VarSetCapacity(</span><span class="n">ArrayElement</span><span class="p">,</span><span class="n">ElmSize</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span><span class="c-Singleline">        ; Initialise the returnbuffer</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ArrayElement</span><span class="p">,</span><span class="o">&amp;</span><span class="n">Array</span><span class="o">+</span><span class="n">ElmPtr</span><span class="p">,</span><span class="n">ElmSize</span><span class="p">)</span><span class="c-Singleline"> ; Copy the binary data</span>
+        
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">ElmSize</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">ArrayElement</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Returns a joined string of given Array and glue parameter</span>
+<span class="c-Singleline">; Length is returned as ErrorLevel</span>
+<span class="n">A_Implode</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span> <span class="n">glue</span><span class="o">=</span><span class="s">&quot; &quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">lGlue</span>      :<span class="o">=</span> <span class="n">glue</span>
+        <span class="n">glueLength</span> :<span class="o">=</span> <span class="nf">StrLen(</span><span class="n">lGlue</span><span class="p">)</span>
+        <span class="n">aSize</span>      :<span class="o">=</span> <span class="n">A_Length</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="c-Singleline">                  ; current DataSize of array</span>
+        <span class="n">elmCount</span>   :<span class="o">=</span> <span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="c-Singleline">                   ; get ElementCount of Array</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="p">(</span><span class="n">elmCount</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">glueLength</span> <span class="o">+</span> <span class="n">aSize</span><span class="c-Singleline">  ; count new Size of returnString</span>
+        <span class="n">Offset</span>     :<span class="o">=</span> <span class="mi">0</span><span class="c-Singleline">                                ; set Offset for A_ArrayMM Loop</span>
+
+        <span class="nf">VarSetCapacity(</span><span class="n">String</span><span class="p">,</span><span class="nv">ErrorLevel</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span><span class="c-Singleline">           ; Allocate space for new return</span>
+
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span><span class="o">%</span> <span class="n">elmCount</span>
+        <span class="p">{</span>
+            <span class="n">elmLength</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">32</span><span class="o">+</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="c-Singleline">  ; current element&#39;s length</span>
+            <span class="n">elmPos</span>     :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">28</span><span class="o">+</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="c-Singleline">  ; current element&#39;s position in Array</span>
+            <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">String</span><span class="o">+</span><span class="n">Offset</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Array</span><span class="o">+</span><span class="n">elmPos</span><span class="p">,</span> <span class="n">elmLength</span><span class="p">)</span><span class="c-Singleline">  ; Move it to ReturnData</span>
+            <span class="n">Offset</span>     <span class="o">+=</span> <span class="n">elmLength</span><span class="c-Singleline">                       ; calculate Offset</span>
+            <span class="n">if</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">!=</span><span class="n">elmCount</span><span class="p">)</span>
+                <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">String</span><span class="o">+</span><span class="n">Offset</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lGlue</span><span class="p">,</span> <span class="n">glueLength</span><span class="p">)</span><span class="c-Singleline"> ; Move Glue to ReturnData</span>
+            <span class="n">Offset</span>     <span class="o">+=</span> <span class="n">glueLength</span><span class="c-Singleline">                      ; calculate Offset again</span>
+        <span class="p">}</span>
+<span class="w">        </span><span class="nb">return</span> <span class="n">String</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Returns an array of strings, each of which is a substring of string formed </span>
+<span class="c-Singleline">; by splitting it on boundaries formed by the string delimiter. </span>
+<span class="c-Singleline">; unlike Stringsplit, multiple chars are allowed in dString</span>
+<span class="n">A_Explode</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span> <span class="n">dString</span><span class="p">,</span> <span class="n">sString</span><span class="p">,</span> <span class="n">Limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">trimChars</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">trimCharsIsRegEx</span><span class="o">=</span><span class="nv">False</span><span class="p">,</span> <span class="n">dStringIsRegEx</span><span class="o">=</span><span class="nv">False</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">if</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span>
+        <span class="n">A_Init</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span>
+
+    <span class="n">oIF</span> :<span class="o">=</span> <span class="nv">A_FormatInteger</span><span class="c-Singleline">            ; Store current Integerformat</span>
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span><span class="n">Integer</span><span class="p">,</span><span class="n">H</span>
+
+    <span class="n">If</span> !<span class="p">(</span><span class="n">trimCharsIsRegEx</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline">          ; Build RegExNeedle for trimming if non given</span>
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">TrimChars</span><span class="c-Singleline">          ; parse each char and build hexescaped needle</span>
+            <span class="n">escTrimChars</span> <span class="o">.=</span>  <span class="s">&quot;|^\&quot;</span> <span class="nf">SubStr(asc(</span><span class="nv">A_LoopField</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot;|\&quot;</span> <span class="nf">SubStr(asc(</span><span class="nv">A_LoopField</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot;$&quot;</span>
+        <span class="n">trimChars</span> :<span class="o">=</span> <span class="s">&quot;(&quot;</span> <span class="nf">SubStr(</span><span class="n">escTrimChars</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot;)&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">gLen</span> :<span class="o">=</span> <span class="nf">StrLen(</span><span class="n">dString</span><span class="p">)</span><span class="c-Singleline">           ; get length of delimiterString</span>
+    <span class="n">sLen</span> :<span class="o">=</span> <span class="nf">StrLen(</span><span class="n">sString</span><span class="p">)</span><span class="c-Singleline">           ; get length of string</span>
+<span class="c-Singleline">                                      ; since this is not a byref parameter,</span>
+<span class="c-Singleline">                                      ; binary values need to be assigned direct in call such as </span>
+<span class="c-Singleline">                                      ; A_Explode(Array,&quot;\x0&quot;,FileGetContent(&quot;myfile.dat&quot;),&quot;&quot;,0,1)</span>
+
+    <span class="n">If</span> !<span class="p">(</span><span class="n">dStringIsRegEx</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline">            ; Build RegExNeedle for matching if non given</span>
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">dString</span><span class="c-Singleline">            ; parse each char and build hexescaped needle</span>
+            <span class="n">escdString</span> <span class="o">.=</span>  <span class="s">&quot;|\&quot;</span> <span class="nf">SubStr(asc(</span><span class="nv">A_LoopField</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">dString</span> :<span class="o">=</span> <span class="s">&quot;(&quot;</span> <span class="nf">SubStr(</span><span class="n">escdString</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot;)&quot;</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span><span class="n">Integer</span><span class="p">,</span><span class="o">%</span> <span class="n">oIF</span>
+
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span>
+        <span class="n">if</span> <span class="p">(</span><span class="n">nPos</span> :<span class="o">=</span> <span class="nf">RegExMatch(</span><span class="n">sString</span><span class="p">,</span><span class="n">dString</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">sLen</span> <span class="o">-=</span> <span class="n">nPos</span><span class="c-Singleline">                                         ; calculate new length</span>
+            <span class="n">data</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">sString</span><span class="p">,</span><span class="s">&quot;(.{&quot;</span> <span class="n">sLen</span><span class="o">+</span><span class="n">gLen</span> <span class="s">&quot;}$)&quot;</span><span class="p">)</span><span class="c-Singleline">  ; generate data to store in Array</span>
+            <span class="n">_tmp</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">data</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">dLen</span><span class="p">)</span><span class="c-Singleline">               ; fix length for data</span>
+            <span class="n">sString</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">sString</span><span class="p">,</span><span class="s">&quot;(^.{&quot;</span> <span class="n">nPos</span> <span class="s">&quot;})&quot;</span><span class="p">)</span><span class="c-Singleline">    ; generate new sourceString</span>
+            <span class="n">_tmp</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">sString</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">sLen</span><span class="p">)</span><span class="c-Singleline">            ; fix length for binary Arrays</span>
+            <span class="n">A_Put</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">Data</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">dLen</span><span class="p">)</span><span class="c-Singleline">                            ; store to Array</span>
+        <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+            <span class="n">A_Put</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">sString</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">sLen</span><span class="p">)</span>
+<span class="w">            </span><span class="nb">Break</span>
+        <span class="p">}</span>
+<span class="w">    </span><span class="nb">return</span> <span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Deletes ItemIndex of given Array</span>
+<span class="n">A_Del</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Item</span><span class="o">=-</span><span class="mi">1</span><span class="p">){</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="n">if</span> <span class="p">((</span><span class="n">Item</span><span class="o">+</span><span class="mi">0</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">Item</span><span class="o">&gt;</span><span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid Index&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">aSize</span>      :<span class="o">=</span> <span class="n">A_Size</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="c-Singleline">                    ; current DataSize of Array</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">tmpArray</span><span class="p">,</span> <span class="n">aSize</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmpArray</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Array</span><span class="p">,</span> <span class="n">aSize</span><span class="p">)</span><span class="c-Singleline">            ; copy Array</span>
+
+        <span class="nf">VarSetCapacity(</span><span class="n">Array</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">                        ; delete Old Array</span>
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span><span class="o">%</span> <span class="n">A_Count</span><span class="p">(</span><span class="n">tmpArray</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">elmData</span>   :<span class="o">=</span> <span class="n">A_Get</span><span class="p">(</span><span class="n">tmpArray</span><span class="p">,</span><span class="nv">A_Index</span><span class="p">)</span>
+            <span class="n">if</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">!=</span><span class="n">Item</span><span class="p">)</span>
+                <span class="n">A_Put</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">elmData</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nv">ErrorLevel</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="n">data</span>  :<span class="o">=</span> <span class="n">A_Get</span><span class="p">(</span><span class="n">tmpArray</span><span class="p">,</span><span class="n">Item</span><span class="p">)</span><span class="c-Singleline">                  ; Get return data</span>
+        <span class="n">size</span>  :<span class="o">=</span> <span class="nv">ErrorLevel</span><span class="c-Singleline">                            ; store size for reuse</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">out</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">                          ; prepare element</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">out</span><span class="p">,</span><span class="n">size</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="c-Singleline">                   ; copy data to return var</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">size</span><span class="c-Singleline">                             ; update ErrorLevel</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">out</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Returns the element off the end of array and removes it</span>
+<span class="c-Singleline">; Length is returned as ErrorLevel</span>
+<span class="n">A_Pop</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">){</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">Item</span> :<span class="o">=</span> <span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span>
+        <span class="n">data</span>  :<span class="o">=</span> <span class="n">A_Del</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">Item</span><span class="p">)</span><span class="c-Singleline">                     ; Get return data</span>
+        <span class="n">size</span>  :<span class="o">=</span> <span class="nv">ErrorLevel</span><span class="c-Singleline">                            ; store size for reuse</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">out</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">                          ; prepare element</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">out</span><span class="p">,</span><span class="n">size</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="c-Singleline">                   ; copy data to return var</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">size</span><span class="c-Singleline">                             ; update ErrorLevel</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">out</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Shift an element off the beginning of array and returns it</span>
+<span class="c-Singleline">; Length is returned as ErrorLevel</span>
+<span class="n">A_Shift</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">){</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">Item</span> :<span class="o">=</span> <span class="mi">1</span>
+        <span class="n">data</span>  :<span class="o">=</span> <span class="n">A_Del</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">Item</span><span class="p">)</span><span class="c-Singleline">                     ; Get return data</span>
+        <span class="n">size</span>  :<span class="o">=</span> <span class="nv">ErrorLevel</span><span class="c-Singleline">                            ; store size for reuse</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">out</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">                          ; prepare element</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">out</span><span class="p">,</span><span class="n">size</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+        <span class="n">A_ArrayMM</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="c-Singleline">                   ; copy data to return var</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">size</span><span class="c-Singleline">                             ; update ErrorLevel</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">out</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Swaps element IdxA with element IdxB in given Array</span>
+<span class="n">A_Swap</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span> <span class="n">IdxA</span><span class="p">,</span> <span class="n">IdxB</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">elmA</span>  :<span class="o">=</span> <span class="n">A_Get</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">IdxA</span><span class="p">),</span> <span class="n">sizeA</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
+        <span class="n">elmB</span>  :<span class="o">=</span> <span class="n">A_Get</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">IdxB</span><span class="p">),</span> <span class="n">sizeB</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
+        <span class="n">A_Put</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">elmB</span><span class="p">,</span><span class="n">idxA</span><span class="p">,</span><span class="n">sizeB</span><span class="p">)</span>
+        <span class="n">A_Put</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">elmA</span><span class="p">,</span><span class="n">idxB</span><span class="p">,</span><span class="n">sizeA</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">return</span> <span class="nv">true</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; sArray&#39;s given intersection Elements are appended to Array, which</span>
+<span class="c-Singleline">; will be created at runtime if neccessary</span>
+<span class="n">A_Slice</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">sArray</span><span class="p">,</span> <span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">sArray</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid source Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="n">if</span> <span class="p">((</span><span class="n">cnt</span> :<span class="o">=</span> <span class="n">A_Count</span><span class="p">(</span><span class="n">sArray</span><span class="p">))</span> 
+                    <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">Start</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">cnt</span><span class="o">&lt;</span><span class="n">Start</span><span class="p">)</span>
+                    <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">End</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">cnt</span><span class="o">&lt;</span><span class="n">End</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;Wrong Start or End of sArray&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span>
+            <span class="n">A_Init</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span>
+        <span class="n">startIndex</span> :<span class="o">=</span> <span class="p">(</span><span class="n">Start</span> <span class="o">&gt;</span> <span class="n">End</span><span class="p">)</span>? <span class="n">End</span> : <span class="n">Start</span>
+        <span class="n">endIndex</span>   :<span class="o">=</span> <span class="p">(</span><span class="n">start</span><span class="o">==</span><span class="n">startIndex</span><span class="p">)</span> ? <span class="n">End</span> : <span class="n">Start</span>
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">endIndex</span> <span class="o">-</span> <span class="n">StartIndex</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">{</span>
+            <span class="n">elm</span>  :<span class="o">=</span> <span class="n">A_Get</span><span class="p">(</span><span class="n">sArray</span><span class="p">,</span> <span class="n">StartIndex</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="nv">A_Index</span><span class="p">),</span> <span class="n">size</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
+            <span class="n">cnt</span> :<span class="o">=</span> <span class="n">A_Put</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span> <span class="n">elm</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">cnt</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Appends entire sArray to Array</span>
+<span class="n">A_Merge</span><span class="p">(</span><span class="n">Byref</span> <span class="n">Array</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">sArray</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">If</span> <span class="p">(</span>!<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">sArray</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="n">A_Count</span><span class="p">(</span><span class="n">sArray</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid source Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span>
+            <span class="n">A_Init</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span>
+        <span class="n">A_Slice</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">sArray</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">A_Count</span><span class="p">(</span><span class="n">sArray</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Returns TRUE if Array, FALSE otherwise - Thx, Lexikos</span>
+<span class="n">A_Array</span><span class="p">(</span><span class="n">byRef</span> <span class="n">Array</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">Array</span><span class="o">=</span><span class="s">&quot;Array()&quot;</span> <span class="o">&amp;&amp;</span> <span class="nf">VarSetCapacity(</span><span class="n">Array</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">28</span> <span class="o">&amp;&amp;</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span><span class="o">=</span><span class="mh">0x1001</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Returns current element count of given array or -1 if no valid binary array</span>
+<span class="n">A_Count</span><span class="p">(</span><span class="n">byRef</span> <span class="n">Array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; for internal use only - initialises bytestructure of array</span>
+<span class="n">A_Init</span><span class="p">(</span><span class="n">byRef</span> <span class="n">Array</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; ATM 28 Bytes is minimum for AHK binary array structure</span>
+    <span class="n">ArraySize</span> :<span class="o">=</span> <span class="mi">28</span> 
+    <span class="nf">VarSetCapacity(</span><span class="n">Array</span><span class="p">,</span><span class="n">ArraySize</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+
+    <span class="n">Array</span> <span class="o">=</span> <span class="n">Array</span><span class="p">()</span>
+
+    <span class="nf">NumPut(</span><span class="mh">0x1001</span><span class="p">,</span>    <span class="n">Array</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span><span class="c-Singleline">   ; Array version</span>
+    <span class="nf">NumPut(</span><span class="n">ArraySize</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">  ; ArraySize in bytes</span>
+    <span class="nf">NumPut(</span><span class="mh">0x1c</span><span class="p">,</span>      <span class="n">Array</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline">  ; TableLength in bytes</span>
+    <span class="nf">NumPut(</span><span class="mh">0x0</span><span class="p">,</span>       <span class="n">Array</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline">  ; ArrayLength in bytes</span>
+    <span class="nf">NumPut(</span><span class="mh">0x0</span><span class="p">,</span>       <span class="n">Array</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="c-Singleline">  ; Element count</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">True</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; for internal use only - returns ArrayStructuresize</span>
+<span class="n">A_Size</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">){</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; for internal use only - returns DataLength of Array</span>
+<span class="n">A_Length</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">){</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">A_Dump</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">If</span> !<span class="p">(</span><span class="n">A_Array</span><span class="p">(</span><span class="n">Array</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;No valid binary Array&quot;</span>
+<span class="w">        </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+        <span class="n">out</span> :<span class="o">=</span> <span class="s">&quot;Array(&quot;</span> <span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span> <span class="s">&quot;)`n{`n&quot;</span> <span class="n">A_Implode</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="s">&quot;`n`t=&gt;`t&quot;</span><span class="p">)</span> <span class="s">&quot;`n}`n&quot;</span>
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span><span class="n">parse</span><span class="p">,</span><span class="n">out</span><span class="p">,</span>`<span class="n">n</span>
+            <span class="n">if</span> <span class="p">((</span><span class="nv">A_Index</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">A_Count</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="o">&gt;=</span><span class="nv">A_Index</span><span class="p">))</span>
+                <span class="n">out</span> <span class="o">.=</span> <span class="s">&quot;   [&quot;</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">2</span> <span class="s">&quot;]&quot;</span> <span class="p">((</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">2</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> ? <span class="s">&quot;`t=&gt;`t&quot;</span> : <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">            </span><span class="nb">else</span> 
+                <span class="n">out</span> :<span class="o">=</span> <span class="p">((</span><span class="nv">A_Index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> ? <span class="nv">A_LoopField</span> : <span class="n">out</span> <span class="nv">A_LoopField</span><span class="p">)</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">out</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; for internal use only - SyntaxSugar for RtlMoveMemory</span>
+<span class="n">A_ArrayMM</span><span class="p">(</span><span class="n">Target</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">Target</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">Source</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">Length</span><span class="p">)</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; for debugging purposes only</span>
+<span class="n">A___ArrayBin</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Array</span><span class="p">,</span><span class="n">offset</span><span class="p">,</span><span class="n">length</span><span class="p">){</span>
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span><span class="n">Integer</span><span class="p">,</span><span class="n">h</span>
+    <span class="n">n</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span><span class="o">%</span> <span class="n">length</span>
+    <span class="p">{</span>
+        <span class="n">c</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="n">offset</span><span class="o">+</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uchar&quot;</span><span class="p">)</span>
+        <span class="n">o</span> <span class="o">.=</span> <span class="nf">SubStr(</span><span class="s">&quot;0&quot;</span> <span class="nf">SubStr(</span><span class="n">c</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="s">&quot; &quot;</span> <span class="p">((</span><span class="n">n</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span> ? <span class="s">&quot;`t&quot;</span> <span class="n">chars</span> <span class="s">&quot;`n&quot;</span> : <span class="s">&quot;&quot;</span> <span class="p">)</span>
+        <span class="n">chars</span> :<span class="o">=</span> <span class="p">((</span><span class="n">n</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span> ? <span class="s">&quot;&quot;</span> : <span class="n">chars</span> <span class="p">(</span><span class="nf">RegExMatch(chr(</span><span class="n">c</span><span class="p">),</span><span class="s">&quot;[^\x0-\x1f\x7f-\xa0]&quot;</span><span class="p">)</span> ? <span class="nf">chr(</span><span class="n">c</span><span class="p">)</span> : <span class="s">&quot;.&quot;</span><span class="p">))</span>
+<span class="w">        </span><span class="nl">n:</span><span class="o">=</span> <span class="p">((</span><span class="n">n</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span> ? <span class="mi">0</span> : <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span><span class="n">Integer</span><span class="p">,</span><span class="n">D</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">n</span><span class="o">!=</span><span class="mi">16</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">spc</span><span class="p">,(</span><span class="mi">16</span><span class="o">-</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+        <span class="n">r</span> :<span class="o">=</span> <span class="n">spc</span> <span class="s">&quot;`t&quot;</span> <span class="n">chars</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="nb">return</span> <span class="n">o</span> <span class="n">r</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; for debugging purposes only - to dump an array use A_Dump(Array)</span>
+<span class="n">A___ArrayInsideView</span><span class="p">(</span><span class="n">Array</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">    </span><span class="nl">A_ArrayMM(&amp;(as1:</span><span class="o">=</span><span class="s">&quot;-------&quot;</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">Array</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="n">as2</span> :<span class="o">=</span> <span class="p">((</span><span class="n">x</span>:<span class="o">=</span><span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span><span class="s">&quot;uchar&quot;</span><span class="p">))</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> ? <span class="s">&quot;\0&quot;</span> : <span class="n">x</span>
+    <span class="n">av</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span><span class="c-Singleline">   ; Array version</span>
+    <span class="n">as</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">  ; ArraySize in bytes    (Structure)</span>
+
+    <span class="n">tl</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline">  ; TableLength in bytes</span>
+    <span class="n">al</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline">  ; ArrayLength in bytes  (Data)</span>
+    <span class="n">ec</span>  :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="c-Singleline">  ; Element count</span>
+    
+    <span class="n">offset</span> :<span class="o">=</span> <span class="mi">28</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span><span class="o">%</span> <span class="p">(</span><span class="n">tl</span><span class="o">-</span><span class="n">offset</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span>
+    <span class="p">{</span>
+        <span class="n">elms</span> <span class="o">.=</span> <span class="s">&quot;&amp;&quot;</span> <span class="n">offset</span><span class="o">+</span><span class="p">((</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span>   <span class="s">&quot; ptr elm &quot;</span> <span class="nv">a_index</span> 
+                    <span class="o">.</span> <span class="s">&quot;`t-&gt;`t&quot;</span> <span class="p">(</span><span class="n">o</span>:<span class="o">=</span><span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="n">offset</span><span class="o">+</span><span class="p">((</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)))</span>   <span class="s">&quot;`n&quot;</span>
+              <span class="o">.</span> <span class="s">&quot;&amp;&quot;</span> <span class="n">offset</span><span class="o">+</span><span class="p">((</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span> <span class="s">&quot; len elm &quot;</span> <span class="nv">a_index</span> 
+                    <span class="o">.</span> <span class="s">&quot;`t-&gt;`t&quot;</span> <span class="p">(</span><span class="n">l</span>:<span class="o">=</span><span class="nf">NumGet(</span><span class="n">Array</span><span class="p">,</span><span class="n">offset</span><span class="o">+</span><span class="mi">4</span><span class="o">+</span><span class="p">((</span><span class="nv">A_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)))</span> <span class="s">&quot;`n&quot;</span>
+        <span class="n">data</span> <span class="o">.=</span> <span class="s">&quot;&amp;&quot;</span> <span class="n">o</span> <span class="s">&quot;: &quot;</span> <span class="n">A___ArrayBin</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span><span class="n">o</span><span class="p">,</span><span class="n">l</span><span class="p">)</span> <span class="s">&quot;`n&quot;</span>
+    <span class="p">}</span>
+    
+    <span class="n">out</span><span class="o">=</span>
+<span class="w">        </span><span class="g">(LTrim </span>
+<span class="g">            aSignature    &amp;0    %as1%</span>
+<span class="g">            Terminator    &amp;7    %as2%</span>
+<span class="g">            arrayVersion    &amp;8    %av%</span>
+<span class="g">            tArraySize    &amp;12    %as%</span>
+<span class="g">            tableLength    &amp;16    %tl%</span>
+<span class="g">            arrayLength    &amp;20    %al%</span>
+<span class="g">            elementCount    &amp;24    %ec%</span>
+<span class="g">                        </span>
+<span class="g">            %elms%</span>
+<span class="g">            %data%</span>
+<span class="g">        )</span>
+
+<span class="w">    </span><span class="nb">return</span> <span class="n">out</span> 
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">a_array - by derRaphael - exmaple internal table layout</span>
+
+<span class="cm">  &amp;0    (str)     Array()</span>
+<span class="cm">  &amp;7    (uchar)    \0</span>
+<span class="cm">  &amp;8    (uint)    AHK Array Version Major/Minor ::atm dec 4097 or 0x1001::</span>
+<span class="cm"> &amp;12    (uint)    ArraySize in bytes</span>
+<span class="cm"> &amp;16    (uint)    TableLength ::subject to change:: will stay reserved</span>
+<span class="cm"> &amp;20    (uint)    ArrayLength</span>
+<span class="cm"> &amp;24    (uint)    ElementsCount</span>
+<span class="cm"> &amp;28    (uint)    Elm1Offset ::In this case &amp;36::</span>
+<span class="cm"> &amp;32    (uint)    elm1Length</span>
+<span class="cm"> &amp;36     rawdata</span>
+<span class="cm">*/</span>
+</pre></div>

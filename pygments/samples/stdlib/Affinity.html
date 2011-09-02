@@ -1,0 +1,117 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="n">Affinity_Set</span><span class="p">(</span> <span class="n">CPU</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PID</span><span class="o">=</span><span class="mh">0x0</span> <span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; CPU0=1 CPU1=2 | to use both, CPU should be 3</span>
+<span class="w">  </span><span class="nb">Process</span><span class="p">,</span> <span class="n">Exist</span><span class="p">,</span> <span class="nv">%PID%</span>
+<span class="w">  </span><span class="nb">IfEqual</span><span class="p">,</span><span class="nv">ErrorLevel</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span>  <span class="n">SetEnv</span><span class="p">,</span><span class="n">PID</span><span class="p">,</span><span class="o">%</span> <span class="nf">DllCall(</span> <span class="s">&quot;GetCurrentProcessId&quot;</span> <span class="p">)</span>
+  <span class="n">hPr</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;OpenProcess&quot;</span><span class="p">,</span><span class="n">Int</span><span class="p">,</span><span class="mi">1536</span><span class="p">,</span><span class="n">Int</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">Int</span><span class="p">,</span><span class="n">PID</span> <span class="p">)</span>  
+  <span class="nf">DllCall(</span> <span class="s">&quot;GetProcessAffinityMask&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span><span class="n">hPr</span><span class="p">,</span> <span class="n">IntP</span><span class="p">,</span><span class="n">PAM</span><span class="p">,</span> <span class="n">IntP</span><span class="p">,</span><span class="n">SAM</span> <span class="p">)</span>
+  <span class="n">If</span> <span class="p">(</span> <span class="n">CPU</span><span class="o">&gt;</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">CPU</span><span class="o">&lt;=</span><span class="n">SAM</span> <span class="p">)</span>
+     <span class="n">Res</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;SetProcessAffinityMask&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span><span class="n">hPr</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span><span class="n">CPU</span> <span class="p">)</span>
+  <span class="nf">DllCall(</span> <span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span><span class="n">hPr</span> <span class="p">)</span>
+<span class="nb">Return</span> <span class="p">(</span> <span class="n">Res</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span> ? <span class="mi">0</span> : <span class="n">Res</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">MSDN Links:</span>
+
+<span class="cm">SetProcessAffinityMask : http://msdn.microsoft.com/en-us/library/ms686223(VS.85).aspx </span>
+<span class="cm">GetProcessAffinityMask : http://msdn.microsoft.com/en-us/library/ms683213(VS.85).aspx</span>
+
+<span class="cm">MSDN DOC Follows :</span>
+
+<span class="cm">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- </span>
+<span class="cm">SetProcessAffinityMask Function</span>
+<span class="cm">Sets a processor affinity mask for the threads of the specified process.</span>
+<span class="cm">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --</span>
+
+<span class="cm">Syntax</span>
+<span class="cm">BOOL WINAPI SetProcessAffinityMask(</span>
+<span class="cm">  __in  HANDLE hProcess,</span>
+<span class="cm">  __in  DWORD_PTR dwProcessAffinityMask</span>
+<span class="cm">);</span>
+
+<span class="cm">Parameters :</span>
+
+<span class="cm">hProcess [in] : A handle to the process whose affinity mask is to be set. This handle must</span>
+<span class="cm">                have the PROCESS_SET_INFORMATION access right. For more information, </span>
+<span class="cm">                see Process Security and Access Rights.</span>
+
+<span class="cm">dwProcessAffinityMask [in] </span>
+<span class="cm">                The affinity mask for the threads of the process.</span>
+
+<span class="cm">Return Value  : If the function succeeds, the return value is nonzero.  </span>
+<span class="cm">                If the function fails, the return value is zero. To get extended error </span>
+<span class="cm">                information, call GetLastError.</span>
+
+<span class="cm">Remarks       : A process affinity mask is a bit vector in which each bit represents the </span>
+<span class="cm">                processor on which the threads of the process are allowed to run.</span>
+
+<span class="cm">                The value of the process affinity mask must be a subset of the system </span>
+<span class="cm">                affinity mask values obtained by the GetProcessAffinityMask function.</span>
+
+<span class="cm">                Do not call SetProcessAffinityMask in a DLL that may be called by </span>
+<span class="cm">                processes other than your own.</span>
+
+<span class="cm">                Process affinity is inherited by any child process or newly instantiated </span>
+<span class="cm">                local process.</span>
+
+<span class="cm">Requirements  : Client Requires Windows Vista, Windows XP, or Windows 2000 Professional. </span>
+<span class="cm">                Server Requires Windows Server 2008, Windows Server 2003, or Windows 2000 </span>
+<span class="cm">                Server. </span>
+
+<span class="cm">                DLL Requires Kernel32.dll.</span>
+<span class="cm"> </span>
+<span class="cm"> </span>
+<span class="cm"> </span>
+<span class="cm">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- </span>
+<span class="cm">GetProcessAffinityMask Function</span>
+<span class="cm">Retrieves the process affinity mask for the specified process and the system affinity mask</span>
+<span class="cm">for the system.</span>
+<span class="cm">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --</span>
+
+<span class="cm">Syntax</span>
+<span class="cm">BOOL WINAPI GetProcessAffinityMask(</span>
+<span class="cm">  __in   HANDLE hProcess,</span>
+<span class="cm">  __out  PDWORD_PTR lpProcessAffinityMask,</span>
+<span class="cm">  __out  PDWORD_PTR lpSystemAffinityMask</span>
+<span class="cm">);</span>
+
+<span class="cm">Parameters</span>
+
+<span class="cm">hProcess [in] : A handle to the process whose affinity mask is desired. </span>
+<span class="cm">                This handle must have the PROCESS_QUERY_INFORMATION or </span>
+<span class="cm">                PROCESS_QUERY_LIMITED_INFORMATION access right. For more information, </span>
+<span class="cm">                see Process Security and Access Rights.</span>
+
+<span class="cm">                Windows Server 2003 and Windows XP/2000:  The handle must have the </span>
+<span class="cm">                PROCESS_QUERY_INFORMATION access right.</span>
+
+<span class="cm">lpProcessAffinityMask [out] </span>
+
+<span class="cm">                A pointer to a variable that receives the affinity mask for the specified </span>
+<span class="cm">                process.</span>
+
+<span class="cm">lpSystemAffinityMask [out] </span>
+<span class="cm">                A pointer to a variable that receives the affinity mask for the system.</span>
+
+<span class="cm">Return Value : If the function succeeds, the return value is nonzero and the function sets</span>
+<span class="cm">               the variables pointed to by lpProcessAffinityMask and lpSystemAffinityMask </span>
+<span class="cm">               to the appropriate affinity masks.</span>
+
+<span class="cm">               If the function fails, the return value is zero, and the values of the </span>
+<span class="cm">               variables pointed to by lpProcessAffinityMask and lpSystemAffinityMask are </span>
+<span class="cm">               undefined. To get extended error information, call GetLastError.</span>
+
+<span class="cm">Remarks     :  A process affinity mask is a bit vector in which each bit represents the </span>
+<span class="cm">               processors that a process is allowed to run on. A system affinity mask is a </span>
+<span class="cm">               bit vector in which each bit represents the processors that are configured </span>
+<span class="cm">               into a system.</span>
+
+<span class="cm">               A process affinity mask is a subset of the system affinity mask. A process </span>
+<span class="cm">               is only allowed to run on the processors configured into a system.</span>
+
+<span class="cm">Requirement :  Client Requires Windows Vista, Windows XP, or Windows 2000 Professional. </span>
+<span class="cm">              Server Requires Windows Server 2008, Windows Server 2003, or Windows 2000 </span>
+<span class="cm">              Server.</span>
+<span class="cm">               </span>
+<span class="cm">              DLL Requires Kernel32.dll.</span>
+<span class="cm"> - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span>
+</pre></div>

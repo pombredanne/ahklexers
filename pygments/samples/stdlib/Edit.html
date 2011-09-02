@@ -1,0 +1,2015 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">Title: Edit Library v1.1</span>
+
+<span class="cm">Group: Introduction</span>
+
+<span class="cm">    This library is designed for use on the standard edit control.</span>
+
+
+<span class="cm">Group: Issues/Consideration </span>
+
+<span class="cm">    A few considerations...</span>
+
+<span class="cm"> -  Although many of the functions work on all types of edit</span>
+<span class="cm">    controls -- single-line, multiline, and combo boxes (contains a single-line</span>
+<span class="cm">    edit control) -- there are several functions that only work on one type of</span>
+<span class="cm">    edit control.  See the documentation for each function for more information.</span>
+
+<span class="cm"> -  AutoHotkey supports the creation and manipulation of the standard edit</span>
+<span class="cm">    control. For this reason, there are a small number functions that were</span>
+<span class="cm">    intentionally left out of this library because they provide no additional</span>
+<span class="cm">    value to what the standard AutoHotkey commands provide.</span>
+
+<span class="cm"> -  The edit control does not support several key messages that are needed by</span>
+<span class="cm">    this library.  Absent messages include EM_GETSELTEXT, EM_GETTEXTRANGE, and</span>
+<span class="cm">    EM_FINDTEXT.  These messages have been replaced with AutoHotkey commands or</span>
+<span class="cm">    with other messages.  Although the substitute code/messages are very</span>
+<span class="cm">    capable, they are not quite as efficient (memory and/or speed) as the</span>
+<span class="cm">    messages they replace (if they existed).  These inefficiencies are not</span>
+<span class="cm">    really noticable if the control only contains a limited amount of text</span>
+<span class="cm">    (~512K or less), but they become more pronounced with increasing text sizes.</span>
+<span class="cm">    Efficiency also depends on the where work in the control is being done.  For</span>
+<span class="cm">    example, extracting text from the top of the control uses less resources</span>
+<span class="cm">    that extracting text from the end of the control.</span>
+
+
+<span class="cm">Group: Credit</span>
+
+<span class="cm">    This library was inspired by the Edit mini-library created by *Lexikos* and</span>
+<span class="cm">    the HiEditor library created by *majkinetor*.  Some of the syntax and code</span>
+<span class="cm">    ideas were extracted from these libraries.  Thank to these authors for</span>
+<span class="cm">    sharing their work.</span>
+
+
+<span class="cm">Group: Functions</span>
+<span class="cm">*/</span><span class="c-Singleline"></span>
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_CanUndo</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns TRUE if there are any actions in the edit control&#39;s undo queue,</span>
+<span class="c-Singleline">;   otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_CanUndo</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_CANUNDO</span>:<span class="o">=</span><span class="mh">0xC6</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_CANUNDO</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_CharFromPos</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets information about the character and/or line closest to a specified</span>
+<span class="c-Singleline">;   point in the the client area of the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   X, Y - The coordinates of a point in the edit control&#39;s client area</span>
+<span class="c-Singleline">;       relative to the upper-left corner of the client area.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   r_CharPos - The zero-based index of the character nearest the specified</span>
+<span class="c-Singleline">;       point. [Optional] This index is relative to the beginning of the</span>
+<span class="c-Singleline">;       control, not the beginning of the line. If the specified point is beyond</span>
+<span class="c-Singleline">;       the last character in the edit control, the return value indicates the</span>
+<span class="c-Singleline">;       last character in the control.  See the Remarks section for more</span>
+<span class="c-Singleline">;       information.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   r_LineIdx - Zero-based index of the line that contains the character.</span>
+<span class="c-Singleline">;       [Optional] For single-line edit controls, this value is zero. The index</span>
+<span class="c-Singleline">;       indicates the line delimiter if the specified point is beyond the last</span>
+<span class="c-Singleline">;       visible character in a line.  See the Remarks section for more</span>
+<span class="c-Singleline">;       information.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The value of the r_CharPos variable.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   If the specified point is outside the bounds of the edit control, all output</span>
+<span class="c-Singleline">;   variables (Return, r_CharPos, and r_LineIdx) are set to -1.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_CharFromPos</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_CharPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_LineIdx</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_CHARFROMPOS</span>:<span class="o">=</span><span class="mh">0xD7</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_CHARFROMPOS</span><span class="p">,</span><span class="mi">0</span><span class="p">,(</span><span class="n">Y</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="p">)</span><span class="o">|</span><span class="n">X</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Out of bounds?</span>
+    <span class="n">if</span> <span class="p">(</span><span class="nv">ErrorLevel</span><span class="o">=</span><span class="mh">0xFFFFFFFF</span><span class="p">)</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nl">r_CharPos:</span><span class="o">=-</span><span class="mi">1</span>
+<span class="w">        </span><span class="nl">r_LineIdx:</span><span class="o">=-</span><span class="mi">1</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">r_CharPos</span>
+        <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Extract values (UShort)</span>
+<span class="w">    </span><span class="nl">r_CharPos:</span><span class="o">=</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="c-Singleline">  ;-- LOWORD</span>
+<span class="w">    </span><span class="nl">r_LineIdx:</span><span class="o">=</span><span class="nv">ErrorLevel</span><span class="o">&gt;&gt;</span><span class="mi">16</span><span class="c-Singleline">       ;-- HIWORD</span>
+
+<span class="c-Singleline">    ;-- Convert to UInt using known UInt values as reference</span>
+<span class="w">    </span><span class="nl">FirstLine:</span><span class="o">=</span><span class="n">Edit_GetFirstVisibleLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">FirstLine</span><span class="o">&gt;</span><span class="n">r_LineIdx</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">r_LineIdx:</span><span class="o">=</span><span class="n">r_LineIdx</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">FirstLine</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_LineIdx</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
+
+<span class="w">    </span><span class="nl">FirstCharPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">FirstLine</span><span class="o">&lt;</span><span class="mi">0</span> ? <span class="mi">0</span>:<span class="n">FirstLine</span><span class="p">)</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">FirstCharPos</span><span class="o">&gt;</span><span class="n">r_CharPos</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">r_CharPos:</span><span class="o">=</span><span class="n">r_CharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">FirstCharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_CharPos</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
+
+<span class="w">    </span><span class="nb">Return</span> <span class="n">r_CharPos</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Clear</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Delete (clear) the current selection, if any, from the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Undo can be used to reverse this action.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Clear</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">WM_CLEAR</span>:<span class="o">=</span><span class="mh">0x303</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_CLEAR</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Convert2DOS</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Converts Unix, DOS/Unix mix, and Mac file formats to DOS format.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Convert2DOS</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Unix</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Mac to Unix</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert Unix to DOS</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">p_Text</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Convert2Mac</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Convert DOS, DOS/Unix mix, and Unix file formats to Mac format.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Convert2Mac</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Mac</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Unix to Mac</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_Text</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> `<span class="n">r</span>
+            <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;`r&quot;</span>
+
+<span class="w">    </span><span class="nb">Return</span> <span class="n">p_Text</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Convert2Unix</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Convert DOS, DOS/Unix mix, and Mac formats to Unix format.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Convert2Unix</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Unix</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Mac to Unix</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_Text</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> `<span class="n">n</span>
+            <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+
+<span class="w">    </span><span class="nb">Return</span> <span class="n">p_Text</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_ConvertCase</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Convert case of selected text.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Case - Set to &quot;Upper&quot;, &quot;Lower&quot;, &quot;Capitalize&quot;, or &quot;Toggle&quot;.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_ConvertCase</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Case</span><span class="p">)</span>
+    <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ;-- Collect current select postions</span>
+    <span class="n">Edit_GetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">l_StartSelPos</span><span class="o">=</span><span class="n">l_EndSelPos</span><span class="p">)</span><span class="c-Singleline">  ;-- Nothing selected</span>
+<span class="w">        </span><span class="nb">Return</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Collect selected text</span>
+<span class="w">    </span><span class="nl">l_SelectedText:</span><span class="o">=</span><span class="n">Edit_GetSelText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">l_SelectedText</span> <span class="ow">is</span> <span class="n">Space</span>
+<span class="w">        </span><span class="nb">Return</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Convert</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">p_Case</span> <span class="ow">in</span> <span class="n">U</span><span class="p">,</span><span class="n">Upper</span><span class="p">,</span><span class="n">Uppercase</span>
+<span class="w">        </span><span class="nb">StringUpper</span> <span class="n">l_SelectedText</span><span class="p">,</span><span class="n">l_SelectedText</span>
+<span class="w">     </span><span class="nb">else</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">p_Case</span> <span class="ow">in</span> <span class="n">L</span><span class="p">,</span><span class="n">Lower</span><span class="p">,</span><span class="n">Lowercase</span>
+<span class="w">            </span><span class="nb">StringLower</span> <span class="n">l_SelectedText</span><span class="p">,</span><span class="n">l_SelectedText</span>
+<span class="w">         </span><span class="nb">else</span>
+<span class="w">            </span><span class="nb">if </span><span class="n">p_Case</span> <span class="ow">in</span> <span class="n">C</span><span class="p">,</span><span class="n">Capitalize</span><span class="p">,</span><span class="n">Title</span><span class="p">,</span><span class="n">TitleCase</span>
+<span class="w">                </span><span class="nb">StringLower</span> <span class="n">l_SelectedText</span><span class="p">,</span><span class="n">l_SelectedText</span><span class="p">,</span><span class="n">T</span>
+<span class="w">             </span><span class="nb">else</span>
+<span class="w">                </span><span class="nb">if </span><span class="n">p_Case</span> <span class="ow">in</span> <span class="n">T</span><span class="p">,</span><span class="n">Toggle</span><span class="p">,</span><span class="n">ToggleCase</span><span class="p">,</span><span class="n">I</span><span class="p">,</span><span class="n">Invert</span><span class="p">,</span><span class="n">InvertCase</span>
+                    <span class="p">{</span>
+                    <span class="n">t_SelectedText</span><span class="o">=</span>
+<span class="w">                    </span><span class="nb">Loop</span> <span class="n">Parse</span><span class="p">,</span><span class="n">l_SelectedText</span>
+                        <span class="p">{</span>
+<span class="w">                        </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nv">A_LoopField</span>
+<span class="w">                        </span><span class="nl">l_Asc:</span><span class="o">=</span><span class="nf">Asc(</span><span class="n">t_Char</span><span class="p">)</span>
+<span class="w">                        </span><span class="nb">if </span><span class="n">l_Asc</span> <span class="n">between</span> <span class="mi">65</span> <span class="ow">and</span> <span class="mi">90</span>
+<span class="w">                            </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nf">Chr(</span><span class="n">l_Asc</span><span class="o">+</span><span class="mi">32</span><span class="p">)</span>
+<span class="w">                         </span><span class="nb">else</span>
+<span class="w">                            </span><span class="nb">if </span><span class="n">l_Asc</span> <span class="n">between</span> <span class="mi">97</span> <span class="ow">and</span> <span class="mi">122</span>
+<span class="w">                                </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nf">Chr(</span><span class="n">l_Asc</span><span class="o">-</span><span class="mi">32</span><span class="p">)</span>
+
+                        <span class="n">t_SelectedText</span> <span class="o">.=</span> <span class="n">t_Char</span>
+                        <span class="p">}</span>
+
+<span class="w">                    </span><span class="nl">l_SelectedText:</span><span class="o">=</span><span class="n">t_SelectedText</span>
+                    <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Replace selected text with converted text</span>
+    <span class="n">Edit_ReplaceSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_SelectedText</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Reselect to the user&#39;s original positions</span>
+    <span class="n">Edit_SetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Copy</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Copy the current selection to the clipboard in CF_TEXT format.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Copy</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span> 
+    <span class="n">Static</span> <span class="n">WM_COPY</span>:<span class="o">=</span><span class="mh">0x301</span> 
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_COPY</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"> </span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Cut</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Delete the current selection, if any, and copy the deleted text to the</span>
+<span class="c-Singleline">;   clipboard in CF_TEXT format.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Cut</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span> 
+    <span class="n">Static</span> <span class="n">WM_CUT</span>:<span class="o">=</span><span class="mh">0x300</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_CUT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_EmptyUndoBuffer</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Resets the undo flag of the edit control. The undo flag is set whenever an</span>
+<span class="c-Singleline">;   operation within the edit control can be undone.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_EmptyUndoBuffer</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_EMPTYUNDOBUFFER</span>:<span class="o">=</span><span class="mh">0xCD</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_EMPTYUNDOBUFFER</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_FindText</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Find text within the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_SearchText - Search text.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Min, p_Max -  Zero-based search range within the edit control. p_Min is</span>
+<span class="c-Singleline">;       the character index of the first character in the range and p_Max is the</span>
+<span class="c-Singleline">;       character index immediately following the last character in the range.</span>
+<span class="c-Singleline">;       (Ex: To search the first 5 characters of the text, set p_Min to 0 and</span>
+<span class="c-Singleline">;       p_Max to 5)  Set p_Max to -1 to search to the end of the text. To search</span>
+<span class="c-Singleline">;       backward, the roles and descriptions of the p_Min and p_Max are</span>
+<span class="c-Singleline">;       reversed. (Ex: To search the first 5 characters of the control in</span>
+<span class="c-Singleline">;       reverse, set p_Min to 5 and p_Max to 0)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Flags - Valid flags are as follows:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       (Start code)</span>
+<span class="c-Singleline">;       Flag        Description</span>
+<span class="c-Singleline">;       ----        -----------</span>
+<span class="c-Singleline">;       MatchCase   Search is case sensitive.  This flag is ignored if the</span>
+<span class="c-Singleline">;                   &quot;RegEx&quot; flag is also defined.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       RegEx       Regular expression search.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       Static      [Advanced feature]</span>
+<span class="c-Singleline">;                   Text collected from the edit control remains in memory is</span>
+<span class="c-Singleline">;                   used to satisfy the search request.  The text remains in</span>
+<span class="c-Singleline">;                   memory until the &quot;Reset&quot; flag is used or until the</span>
+<span class="c-Singleline">;                   &quot;Static&quot; flag is not used.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;                   Advantages: Search time is reduced 10 to 60 percent</span>
+<span class="c-Singleline">;                   (or more) depending on the size of the text in the control.</span>
+<span class="c-Singleline">;                   There is no speed increase on the first use of the &quot;Static&quot;</span>
+<span class="c-Singleline">;                   flag.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;                   Disadvantages: Any changes in the edit control are not</span>
+<span class="c-Singleline">;                   reflected in the search.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;                   Bottom line: Don&#39;t use this flag unless performing multiple</span>
+<span class="c-Singleline">;                   search requests on a control that will not be modified</span>
+<span class="c-Singleline">;                   while searching.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;                   </span>
+<span class="c-Singleline">;       Reset       [Advanced feature]</span>
+<span class="c-Singleline">;                   Clears the saved text created by the &quot;Static&quot; flag so that</span>
+<span class="c-Singleline">;                   the next use of the &quot;Static&quot; flag will get the text directly</span>
+<span class="c-Singleline">;                   from the edit control.  To clear the saved memory without</span>
+<span class="c-Singleline">;                   performing a search, use the following syntax:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;                       Edit_FindText(&quot;&quot;,&quot;&quot;,0,0,&quot;Reset&quot;)</span>
+<span class="c-Singleline">;       (end)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   r_RegExOutput - Variable that contains the part of the source text that</span>
+<span class="c-Singleline">;       matched the RegEx pattern. [Optional]</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       Zero-based character index of the first character of the match or -1 if</span>
+<span class="c-Singleline">;       no match is found.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Programming Notes:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Searching using regular expressions (RegEx) can produce results that have a</span>
+<span class="c-Singleline">;   dynamic number of characters.  For this reason, searching for the &quot;next&quot;</span>
+<span class="c-Singleline">;   pattern (forward or backward) may produce different results from developer</span>
+<span class="c-Singleline">;   developer depending on how values of p_Min and p_Max are determined.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_FindText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">p_Min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_Max</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">p_Flags</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_RegExOut</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">s_Text</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Initialize</span>
+<span class="w">    </span><span class="nl">r_RegExOut:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;Reset&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">s_Text:</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Anything to search?</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_SearchText</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="w">    </span><span class="nl">l_MaxLen:</span><span class="o">=</span><span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">l_MaxLen</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Parameters</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">p_Min</span><span class="o">&lt;</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">p_Max</span><span class="o">&gt;</span><span class="n">l_MaxLen</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">p_Min:</span><span class="o">=</span><span class="n">l_MaxLen</span>
+
+    <span class="n">if</span> <span class="p">(</span><span class="n">p_Max</span><span class="o">&lt;</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">p_Max</span><span class="o">&gt;</span><span class="n">l_MaxLen</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">p_Max:</span><span class="o">=</span><span class="n">l_MaxLen</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Anything to search?</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">p_Min</span><span class="o">=</span><span class="n">p_Max</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Get text</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;Static&quot;</span><span class="p">)</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">s_Text</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="nl">s_Text:</span><span class="o">=</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">s_Text</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span>:<span class="n">p_Max</span><span class="o">+</span><span class="mi">1</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Max</span>:<span class="n">p_Min</span><span class="p">)</span>
+        <span class="p">}</span>
+<span class="w">     </span><span class="nb">else</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nl">s_Text:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="n">Edit_GetTextRange</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Min</span>:<span class="n">p_Max</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Max</span>:<span class="n">p_Min</span><span class="p">)</span>
+        <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Look for it</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;RegEx&quot;</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline">  ;-- Not RegEx</span>
+<span class="w">        </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">InStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;MatchCase&quot;</span><span class="p">),(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="mi">1</span>:<span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">     </span><span class="nb">else</span><span class="c-Singleline">  ;-- RegEx</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nl">p_SearchText:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="n">p_SearchText</span><span class="p">,</span><span class="s">&quot;^P\)?&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">   ;-- Remove P or P)</span>
+        <span class="n">if</span> <span class="p">(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span><span class="c-Singleline">  ;-- Search forward</span>
+            <span class="p">{</span>
+<span class="w">            </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">r_RegExOut</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">            </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
+                <span class="p">{</span>
+<span class="w">                </span><span class="nb">outputdebug</span><span class="p">,</span>
+<span class="w">                   </span><span class="g">(ltrim join`s</span>
+<span class="g">                    Function: %A_ThisFunc% - RegExMatch error.</span>
+<span class="g">                    ErrorLevel=%ErrorLevel%</span>
+<span class="g">                   )</span>
+
+<span class="w">                </span><span class="nl">l_FoundPos:</span><span class="o">=-</span><span class="mi">1</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+<span class="w">         </span><span class="nb">else</span><span class="c-Singleline">  ;-- Search backward</span>
+            <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ;-- Programming notes:</span>
+<span class="c-Singleline">            ;</span>
+<span class="c-Singleline">            ;    -  The first search begins from the user-defined minimum</span>
+<span class="c-Singleline">            ;       position. This will  establish the true minimum position to</span>
+<span class="c-Singleline">            ;       begin search calculations. If nothing is found, no</span>
+<span class="c-Singleline">            ;       additional searching is necessary.</span>
+<span class="c-Singleline">            ;</span>
+<span class="c-Singleline">            ;    -  The RE_MinPos, RE_MaxPos, and RE_StartPos variables contain</span>
+<span class="c-Singleline">            ;       1-based values.</span>
+<span class="c-Singleline">            ;</span>
+            <span class="n">RE_MinPos</span>     :<span class="o">=</span><span class="mi">1</span>
+            <span class="n">RE_MaxPos</span>     :<span class="o">=</span><span class="nf">StrLen(</span><span class="n">l_Text</span><span class="p">)</span>
+            <span class="n">RE_StartPos</span>   :<span class="o">=</span><span class="n">RE_MinPos</span>
+<span class="w">            </span><span class="nl">Saved_FoundPos:</span><span class="o">=-</span><span class="mi">1</span>
+<span class="w">            </span><span class="nl">Saved_RegExOut:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="w">            </span><span class="nb">loop</span>
+                <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">                ;-- Positional search.  Last found match (if any) wins</span>
+<span class="w">                </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">r_RegExOut</span><span class="p">,</span><span class="n">RE_StartPos</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
+                    <span class="p">{</span>
+<span class="w">                    </span><span class="nb">outputdebug</span><span class="p">,</span>
+<span class="w">                       </span><span class="g">(ltrim join`s</span>
+<span class="g">                        Function: %A_ThisFunc% - RegExMatch error.</span>
+<span class="g">                        ErrorLevel=%ErrorLevel%</span>
+<span class="g">                       )</span>
+
+<span class="w">                    </span><span class="nl">l_FoundPos:</span><span class="o">=-</span><span class="mi">1</span>
+<span class="w">                    </span><span class="nb">Break</span>
+                    <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">                ;-- If found, update saved and RE_MinPos, else update RE_MaxPos</span>
+                <span class="n">if</span> <span class="p">(</span><span class="n">l_FoundPos</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="p">{</span>
+<span class="w">                    </span><span class="nl">Saved_FoundPos:</span><span class="o">=</span><span class="n">l_FoundPos</span>
+<span class="w">                    </span><span class="nl">Saved_RegExOut:</span><span class="o">=</span><span class="n">r_RegExOut</span>
+                    <span class="n">RE_MinPos</span>     :<span class="o">=</span><span class="n">l_FoundPos</span><span class="o">+</span><span class="mi">2</span>
+                    <span class="p">}</span>
+<span class="w">                </span><span class="nb">else</span>
+<span class="w">                    </span><span class="nl">RE_MaxPos:</span><span class="o">=</span><span class="n">RE_StartPos</span><span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">                ;-- Are we done?</span>
+                <span class="n">if</span> <span class="p">(</span><span class="n">RE_MinPos</span><span class="o">&gt;</span><span class="n">RE_MaxPos</span> <span class="ow">or</span> <span class="n">RE_MinPos</span><span class="o">&gt;</span><span class="nf">StrLen(</span><span class="n">l_Text</span><span class="p">))</span>
+                    <span class="p">{</span>
+<span class="w">                    </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="n">Saved_FoundPos</span>
+<span class="w">                    </span><span class="nl">r_RegExOut:</span><span class="o">=</span><span class="n">Saved_RegExOut</span>
+<span class="w">                    </span><span class="nb">Break</span>
+                    <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">                ;-- Calculate new start position</span>
+<span class="w">                </span><span class="nl">RE_StartPos:</span><span class="o">=</span><span class="n">RE_MinPos</span><span class="o">+</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">RE_MaxPos</span><span class="o">-</span><span class="n">RE_MinPos</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Adjust FoundPos</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">l_FoundPos</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">l_FoundPos</span> <span class="o">+=</span> <span class="p">(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Min</span>:<span class="n">p_Max</span>
+
+<span class="w">    </span><span class="nb">Return</span> <span class="n">l_FoundPos</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;--- Clears the saved text created by the &quot;Static&quot; flag. </span>
+<span class="n">Edit_FindTextReset</span><span class="p">()</span>
+    <span class="p">{</span>
+    <span class="n">Edit_FindText</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Reset&quot;</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_FmtLines</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets a flag that determines whether a multiline edit control includes soft</span>
+<span class="c-Singleline">;   line-break characters. A soft line break consists of two carriage returns</span>
+<span class="c-Singleline">;   and a line feed and is inserted at the end of a line that is broken because</span>
+<span class="c-Singleline">;   of word wrapping.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Flag - Set to TRUE to insert soft line-break characters characters, FALSE</span>
+<span class="c-Singleline">;       to removes them.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The value of p_Flag.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   This message has no effect on the display of the text within the edit</span>
+<span class="c-Singleline">;   control.  It affects the buffer returned by the EM_GETHANDLE message and</span>
+<span class="c-Singleline">;   the text returned by the WM_GETTEXT message.  Since the WM_GETTEXT message</span>
+<span class="c-Singleline">;   is used by other functions in this library, be sure to un-format the text as</span>
+<span class="c-Singleline">;   soon as possible.  Example of use:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       (Start code)</span>
+<span class="c-Singleline">;       Edit_FmtLines(hEdit,True)</span>
+<span class="c-Singleline">;       FormattedText:=Edit_GetText(hEdit)</span>
+<span class="c-Singleline">;       Edit_FmtLines(hEdit,False)</span>
+<span class="c-Singleline">;       (end)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_FmtLines</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_FMTLINES</span>:<span class="o">=</span><span class="mh">0xC8</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_FMTLINES</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetFirstVisibleLine</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns the zero-based index of the uppermost visible line.  For single-line</span>
+<span class="c-Singleline">;   edit controls, the return value is the zero-based index of the first visible</span>
+<span class="c-Singleline">;   character.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetFirstVisibleLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_GETFIRSTVISIBLELINE</span>:<span class="o">=</span><span class="mh">0xCE</span>
+<span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_GETFIRSTVISIBLELINE</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetLastVisibleLine</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns the zero-based line index of the last visible line on the edit</span>
+<span class="c-Singleline">;   control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   To calculate the total number of visible lines, use the following...</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       (start code)</span>
+<span class="c-Singleline">;       Edit_GetLastVisibleLine(hEdit) - Edit_GetFirstVisibleLine(hEdit) + 1</span>
+<span class="c-Singleline">;       (end)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetLastVisibleLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span> 
+    <span class="n">Edit_GetRect</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">Left</span><span class="p">,</span><span class="n">Top</span><span class="p">,</span><span class="n">Right</span><span class="p">,</span><span class="n">Bottom</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">Edit_LineFromPos</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">Bottom</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetLimitText</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns the current text limit for the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Windows NT+: The maximum text length is 0x7FFFFFFE characters for</span>
+<span class="c-Singleline">;   single-line edit controls and -1 for multiline edit controls.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetLimitText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_GETLIMITTEXT</span>:<span class="o">=</span><span class="mh">0xD5</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETLIMITTEXT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span><span class="o">&lt;&lt;</span><span class="mi">32</span><span class="o">&gt;&gt;</span><span class="mi">32</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetLine</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Get the text of the desired line from the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_LineIdx - The zero-based index of the line to retrieve. [Optional] Use</span>
+<span class="c-Singleline">;       -1 (the default) to get the current line.  This parameter is ignored if</span>
+<span class="c-Singleline">;       used for a single-line edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Length - Length of the line or length of the text to be extracted.</span>
+<span class="c-Singleline">;       [Optional] Use -1 (the default) to automatically determine the length</span>
+<span class="c-Singleline">;       of the line.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The text of the specified line.  The return value is an empty string if the</span>
+<span class="c-Singleline">;   line number specified by the p_LineIdx parameter is greater than the number</span>
+<span class="c-Singleline">;   of lines in the Edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">p_Length</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_GETLINE</span>:<span class="o">=</span><span class="mh">0xC4</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">p_LineIdx</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">p_LineIdx:</span><span class="o">=</span><span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">))</span>
+
+    <span class="n">if</span> <span class="p">(</span><span class="n">p_Length</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">l_Length:</span><span class="o">=</span><span class="n">p_Length</span>
+<span class="w">     </span><span class="nb">else</span>
+<span class="w">        </span><span class="nl">l_Length:</span><span class="o">=</span><span class="n">Edit_LineLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nb">if </span><span class="n">l_Length</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="nb">Return</span>
+
+    <span class="nf">VarSetCapacity(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> ? <span class="mi">2</span>:<span class="n">l_Length</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">NumPut(</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> ? <span class="mi">2</span>:<span class="n">l_Length</span><span class="p">,</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;UShort&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETLINE</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> ? <span class="nf">SubStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>:<span class="n">l_Text</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetLineCount</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns an integer specifying the total number of text lines in a multiline</span>
+<span class="c-Singleline">;   edit control.  If the control has no text, the return value is 1.  The</span>
+<span class="c-Singleline">;   return value will never be less than 1.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The value returned is for the number of lines in the edit control. Very long</span>
+<span class="c-Singleline">;   lines (&gt;1024) or word wrap may introduce additional lines to the control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetLineCount</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_GETLINECOUNT</span>:<span class="o">=</span><span class="mh">0xBA</span>
+<span class="w">   	</span><span class="nb">SendMessage</span> <span class="n">EM_GETLINECOUNT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetMargins</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the widths of the left and right margins for the edit control.  If</span>
+<span class="c-Singleline">;   defined, these values are returned in the r_LeftMargin and r_RightMargin</span>
+<span class="c-Singleline">;   variables.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   r_LeftMargin - Left margin, in pixels. [Optional]</span>
+<span class="c-Singleline">;   r_RightMargin - Right margin, in pixels. [Optional]</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The edit control&#39;s left margin</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetMargins</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_LeftMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_RightMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_GETMARGINS</span>:<span class="o">=</span><span class="mh">0xD4</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETMARGINS</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="n">r_LeftMargin</span> :<span class="o">=</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="c-Singleline">      ;-- LOWORD of result</span>
+<span class="w">    </span><span class="nl">r_RightMargin:</span><span class="o">=</span><span class="nv">ErrorLevel</span><span class="o">&gt;&gt;</span><span class="mi">16</span><span class="c-Singleline">           ;-- HIWORD of result</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">r_LeftMargin</span><span class="c-Singleline">  ; ##### --------------------------------------- Really?</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetModify</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the state of the edit control&#39;s modification flag.  The flag indicates</span>
+<span class="c-Singleline">;   whether the contents of the edit control have been modified.  Returns TRUE</span>
+<span class="c-Singleline">;   if the control has been modified, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetModify</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_GETMODIFY</span>:<span class="o">=</span><span class="mh">0xB8</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETMODIFY</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetRect</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the formatting rectangle of the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   r_Left..r_Bottom - Output variables. [Optional]</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Space separated rectangle.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetRect</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Left</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Top</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Right</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Bottom</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_GETRECT</span>:<span class="o">=</span><span class="mh">0xB2</span>
+    <span class="nf">VarSetCapacity(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETRECT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">&amp;</span><span class="n">RECT_Structure</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="n">r_Left</span>  :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Top</span>   :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Right</span> :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">r_Bottom:</span><span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">r_Left</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Top</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Right</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Bottom</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetSel</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the starting and ending character positions of the current selection in</span>
+<span class="c-Singleline">;   the edit control.  If defined, these values are returned in</span>
+<span class="c-Singleline">;   the r_StartSelPos and r_EndSelPos variables.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   r_StartSelPos - Starting position of the selection. [Optional]</span>
+<span class="c-Singleline">;   r_EndSelPos - Ending position of the selection. [Optional]</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:	</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Starting position of the selection.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_StartSelPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_EndSelPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_GETSEL</span>:<span class="o">=</span><span class="mh">0xB0</span>
+    <span class="nf">VarSetCapacity(</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity(</span><span class="n">l_EndSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETSEL</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_EndSelPos</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nl">r_StartSelPos:</span><span class="o">=</span><span class="nf">NumGet(</span><span class="n">l_StartSelPos</span><span class="p">)</span>
+    <span class="n">r_EndSelPos</span>  :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">r_StartSelPos</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetSelText</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns the currently selected text (if any).</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Since the edit control does not support the EM_GETSELTEXT message, the</span>
+<span class="c-Singleline">;   EM_GETLINE (if the selection is on one line) and the WM_GETTEXT messages are</span>
+<span class="c-Singleline">;   used instead.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetSelText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Edit_GetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">l_StartSelPos</span><span class="o">=</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">Return</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Get line indexes of the selection</span>
+<span class="w">    </span><span class="nl">l_FirstSelectedLine:</span><span class="o">=</span><span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_StartSelPos</span><span class="p">)</span>
+    <span class="n">l_LastSelectedLine</span> :<span class="o">=</span><span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Get selected text</span>
+<span class="w">    </span><span class="nl">l_FirstPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">)</span>
+     <span class="n">if</span> <span class="p">(</span><span class="n">l_FirstSelectedLine</span><span class="o">=</span><span class="n">l_LastSelectedLine</span><span class="p">)</span>
+    <span class="ow">and</span> <span class="p">(</span><span class="n">l_EndSelPos</span><span class="o">&lt;=</span><span class="n">l_FirstPos</span><span class="o">+</span><span class="n">Edit_LineLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">))</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">Edit_GetLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="o">-</span><span class="n">l_FirstPos</span><span class="p">),</span><span class="n">l_StartSelPos</span><span class="o">-</span><span class="n">l_FirstPos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">     </span><span class="nb">else</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">),</span><span class="n">l_StartSelPos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetText</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns all text from the control up to p_Length length.  If p_Length=-1</span>
+<span class="c-Singleline">;   (the default), all text is returned.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   This function is similar to the AutoHotkey *GUIControlGet* command (for AHK</span>
+<span class="c-Singleline">;   GUI&#39;s) and the *ControlGetText* command except that end-of-line (EOL)</span>
+<span class="c-Singleline">;   characters from the retrieved text are not automatically converted</span>
+<span class="c-Singleline">;   (CR+LF to LF).  If needed, use the &lt;Edit_Convert2Unix&gt; function to convert</span>
+<span class="c-Singleline">;   the text to the AutoHotkey text format.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Length</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">WM_GETTEXT</span>:<span class="o">=</span><span class="mh">0xD</span>
+
+    <span class="n">if</span> <span class="p">(</span><span class="n">p_Length</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">p_Length:</span><span class="o">=</span><span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+
+    <span class="nf">VarSetCapacity(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_Length</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_GETTEXT</span><span class="p">,</span><span class="n">p_Length</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">return</span> <span class="n">l_Text</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetTextLength</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns the length, in characters, of the text in the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">WM_GETTEXTLENGTH</span>:<span class="o">=</span><span class="mh">0xE</span>
+<span class="w">	</span><span class="nb">SendMessage</span> <span class="n">WM_GETTEXTLENGTH</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetTextRange</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Get a range of characters.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Min - Character position index immediately preceding the first character</span>
+<span class="c-Singleline">;       in the range.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Max - Character position immediately following the last character in the</span>
+<span class="c-Singleline">;       range.  Set to -1 to indicate the end of the text.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Since the edit control does not support the EM_GETTEXTRANGE message, the</span>
+<span class="c-Singleline">;   &lt;Edit_GetText&gt; function (WM_GETTEXT message) is used to collect the desired</span>
+<span class="c-Singleline">;   range of characters.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetTextRange</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_Max</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Max</span><span class="p">),</span><span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_IsMultiline</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns TRUE if the edit control is multiline, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_IsMultiline</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">ES_MULTILINE</span>:<span class="o">=</span><span class="mh">0x4</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">Edit_IsStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ES_MULTILINE</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_IsReadOnly</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns TRUE if the ES_READONLY style has been set, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_IsReadOnly</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">ES_READONLY</span>:<span class="o">=</span><span class="mh">0x800</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">Edit_IsStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ES_READONLY</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_IsStyle</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns TRUE if the specified style has been set, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Style - Style of the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Some common edit control styles...</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   (start code)</span>
+<span class="c-Singleline">;   ES_LEFT       :=0x0         ;-- Can&#39;t actually check this style.  It&#39;s the lack of ES_CENTER or ES_RIGHT.</span>
+<span class="c-Singleline">;   ES_CENTER     :=0x1</span>
+<span class="c-Singleline">;   ES_RIGHT      :=0x2</span>
+<span class="c-Singleline">;   ES_MULTILINE  :=0x4</span>
+<span class="c-Singleline">;   ES_UPPERCASE  :=0x8</span>
+<span class="c-Singleline">;   ES_LOWERCASE  :=0x10</span>
+<span class="c-Singleline">;   ES_PASSWORD   :=0x20        ;-- Single-line edit control only</span>
+<span class="c-Singleline">;   ES_AUTOVSCROLL:=0x40</span>
+<span class="c-Singleline">;   ES_AUTOHSCROLL:=0x80</span>
+<span class="c-Singleline">;   ES_NOHIDESEL  :=0x100</span>
+<span class="c-Singleline">;   ES_COMBO      :=0x200</span>
+<span class="c-Singleline">;   ES_OEMCONVERT :=0x400</span>
+<span class="c-Singleline">;   ES_READONLY   :=0x800</span>
+<span class="c-Singleline">;   ES_WANTRETURN :=0x1000</span>
+<span class="c-Singleline">;   ES_NUMBER     :=0x2000</span>
+<span class="c-Singleline">;   WS_TABSTOP    :=0x10000</span>
+<span class="c-Singleline">;   WS_HSCROLL    :=0x100000</span>
+<span class="c-Singleline">;   WS_VSCROLL    :=0x200000 </span>
+<span class="c-Singleline">;   (end)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_IsStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Style</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">GWL_STYLE</span>:<span class="o">=-</span><span class="mi">16</span>
+<span class="w">    </span><span class="nb">ControlGet</span> <span class="n">l_Style</span><span class="p">,</span><span class="n">Style</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span><span class="c-Singleline"></span>
+<span class="c-Singleline">;;;;;    l_Style:=DllCall(&quot;GetWindowLong&quot;,&quot;UInt&quot;,hEdit,&quot;Int&quot;,GWL_STYLE)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Style</span> <span class="o">&amp;</span> <span class="n">p_Style</span> ? <span class="nv">True</span>:<span class="nv">False</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetStyle</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Adds, removes, or toggles a style for an edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Style - Style to set.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Option - Use &quot;+&quot; (the default) to add, &quot;-&quot; to remove, and &quot;^&quot; to toggle.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   TRUE if the request completed successfully, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Styles that can be modified after the edit control has been created include</span>
+<span class="c-Singleline">;   the following:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       (start code)</span>
+<span class="c-Singleline">;       ES_UPPERCASE  :=0x8 </span>
+<span class="c-Singleline">;       ES_LOWERCASE  :=0x10</span>
+<span class="c-Singleline">;       ES_PASSWORD   :=0x20    ;-- Use the Edit_SetPasswordChar function</span>
+<span class="c-Singleline">;       ES_OEMCONVERT :=0x400</span>
+<span class="c-Singleline">;       ES_READONLY   :=0x800   ;-- Use the Edit_SetReadOnly function</span>
+<span class="c-Singleline">;       ES_WANTRETURN :=0x1000</span>
+<span class="c-Singleline">;       ES_NUMBER     :=0x2000</span>
+<span class="c-Singleline">;       (end)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Use the &lt;Edit_IsStyle&gt; function to determine if a style is currently set.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Style</span><span class="p">,</span><span class="n">p_Option</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">Control</span> <span class="n">Style</span><span class="p">,</span><span class="nv">%p_Option%%p_Style%</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span> ? <span class="nv">False</span>:<span class="nv">True</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_LineFromChar</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the index of the line that contains the specified character index.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_CharPos - The character index of the character contained in the line</span>
+<span class="c-Singleline">;       whose number is to be retrieved. [Optional] If 1 (the default), the</span>
+<span class="c-Singleline">;       function retrieves either the line number of the current line (the line</span>
+<span class="c-Singleline">;       containing the caret) or, if there is a selection, the line number of</span>
+<span class="c-Singleline">;       the line containing the beginning of the selection.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The zero-based line number of the line containing the character index</span>
+<span class="c-Singleline">;   specified by p_CharPos.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_CharPos</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_LINEFROMCHAR</span>:<span class="o">=</span><span class="mh">0xC9</span>
+<span class="w">   	</span><span class="nb">SendMessage</span> <span class="n">EM_LINEFROMCHAR</span><span class="p">,</span><span class="n">p_CharPos</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_LineFromPos</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   This function is the same as &lt;Edit_CharFromPos&gt; except the line index </span>
+<span class="c-Singleline">;   (r_LineIdx) is returned.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_LineFromPos</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_CharPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_LineIdx</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Edit_CharFromPos</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">r_CharPos</span><span class="p">,</span><span class="n">r_LineIdx</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">r_LineIdx</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_LineIndex</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the character index of the first character of a specified line.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_LineIdx - Zero-based line number. [Optional] Use -1 (the default) for the</span>
+<span class="c-Singleline">;       current line.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The character index of the specified line or -1 if the specified line is </span>
+<span class="c-Singleline">;   greater than the total number of lines in the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hedit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_LINEINDEX</span>:<span class="o">=</span><span class="mh">0xBB</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_LINEINDEX</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span><span class="o">&lt;&lt;</span><span class="mi">32</span><span class="o">&gt;&gt;</span><span class="mi">32</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_LineLength</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the length of a line.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_LineIdx - The zero-based line index of the desired line.  Use -1</span>
+<span class="c-Singleline">;       (the default) for the current line.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The length, in characters, of the specified line.  If p_LineIndex is greater</span>
+<span class="c-Singleline">;   than the total number of lines in the edit control, the length of the last</span>
+<span class="c-Singleline">;   (or only) line is returned.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_LineLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_LINELENGTH</span>:<span class="o">=</span><span class="mh">0xC1</span>
+
+<span class="w">    </span><span class="nl">l_CharPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">)</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">l_CharPos</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">  ;-- Invalid p_LineIdx</span>
+<span class="w">        </span><span class="nl">l_CharPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_LINELENGTH</span><span class="p">,</span><span class="n">l_CharPos</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span> 
+<span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_LineScroll</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Scrolls the text in the edit control for the current file.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   xScroll - The number of characters to scroll horizontally.  Use a negative</span>
+<span class="c-Singleline">;       number to scroll to the left and a positive number to scroll to the</span>
+<span class="c-Singleline">;       right.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   yScroll - The number of lines to scroll vertically.  Use a negative number</span>
+<span class="c-Singleline">;       to scroll up and a positive number to scroll down.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   TRUE if sent to a multiline edit control, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_LineScroll</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">xScroll</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">yScroll</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_LINESCROLL</span>:<span class="o">=</span><span class="mh">0xB6</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_LINESCROLL</span><span class="p">,</span><span class="n">xScroll</span><span class="p">,</span><span class="n">yScroll</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_LoadFile</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Load the contents of a file to the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_FileName - The full path and name of the file.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Convert2DOS - If TRUE, the text will be converted from Unix, DOS/Unix mix,</span>
+<span class="c-Singleline">;       or Mac format, to DOS format before it is loaded to the edit control.</span>
+<span class="c-Singleline">;       [Optional]</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   r_FileFormat - Contains the file format variable. [Optional]  This variable</span>
+<span class="c-Singleline">;       is set to the file format of loaded file - &quot;DOS&quot;, &quot;Unix&quot;, or &quot;Mac&quot;.</span>
+<span class="c-Singleline">;       This information is useful if the contents of the edit control will be</span>
+<span class="c-Singleline">;       be converted back to the original file format when the file is saved.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   TRUE if successful, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   This request will replace the entire edit control with the contents of the</span>
+<span class="c-Singleline">;   the requested file.  Consequently, the Undo buffer is flushed.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_LoadFile</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_FileName</span><span class="p">,</span><span class="n">p_Convert2DOS</span><span class="o">=</span><span class="nv">False</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_FileFormat</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">IfNotExist</span> <span class="nv">%p_FileName%</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">File</span> <span class="s">&quot;%p_FileName%&quot;</span> <span class="ow">not</span> <span class="n">found</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nv">False</span>
+        <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Load contents of file into variable</span>
+<span class="w">    </span><span class="nb">FileRead</span> <span class="n">l_Text</span><span class="p">,</span><span class="nv">%p_FileName%</span>
+<span class="w">    </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">read</span> <span class="n">from</span> <span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nv">False</span>
+        <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Determine file format</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> `<span class="n">r</span>`<span class="n">n</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nl">r_FileFormat:</span><span class="o">=</span><span class="s">&quot;DOS&quot;</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">DOS</span> <span class="n">file</span> <span class="n">format</span> <span class="n">detected</span>
+        <span class="p">}</span>
+<span class="w">     </span><span class="nb">else</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> `<span class="n">n</span>
+            <span class="p">{</span>
+<span class="w">            </span><span class="nl">r_FileFormat:</span><span class="o">=</span><span class="s">&quot;UNIX&quot;</span>
+<span class="w">            </span><span class="nb">outputdebug</span> <span class="n">Unix</span> <span class="n">file</span> <span class="n">format</span> <span class="n">detected</span>
+            <span class="p">}</span>
+<span class="w">         </span><span class="nb">else</span>
+<span class="w">            </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> `<span class="n">r</span>
+                <span class="p">{</span>
+<span class="w">                </span><span class="nl">r_FileFormat:</span><span class="o">=</span><span class="s">&quot;MAC&quot;</span>
+<span class="w">                </span><span class="nb">outputdebug</span> <span class="n">Mac</span> <span class="n">file</span> <span class="n">format</span> <span class="n">detected</span>
+                <span class="p">}</span>
+<span class="w">             </span><span class="nb">else</span>
+                <span class="p">{</span>
+<span class="w">                </span><span class="nl">r_FileFormat:</span><span class="o">=</span><span class="s">&quot;DOS&quot;</span>
+<span class="w">                </span><span class="nb">outputdebug</span> <span class="n">NO</span> <span class="n">EOL</span> <span class="n">character</span> <span class="n">detected</span><span class="o">.</span> <span class="n">DOS</span> <span class="n">file</span> <span class="n">format</span> <span class="n">assumed</span><span class="o">.</span>
+                <span class="p">}</span><span class="c-Singleline"></span>
+
+
+<span class="c-Singleline">    ;-- Convert file format?</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">p_Convert2DOS</span>
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="n">Edit_Convert2DOS</span><span class="p">(</span><span class="n">l_Text</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Load text to edit control</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">Edit_SetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_Text</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Paste</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Copies the current content of the clipboard to the edit control at the</span>
+<span class="c-Singleline">;   current caret position.  Data is inserted only if the clipboard contains</span>
+<span class="c-Singleline">;   data in CF_TEXT format.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Paste</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span> 
+    <span class="n">Static</span> <span class="n">WM_PASTE</span>:<span class="o">=</span><span class="mh">0x302</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_PASTE</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"> </span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_PosFromChar</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Gets the client area coordinates of a specified character in the edit</span>
+<span class="c-Singleline">;   control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_CharPos - The zero-based index of the character.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   X, Y - These parameters, which must contain valid variable names, are used</span>
+<span class="c-Singleline">;       to return the x/y-coordinates of a point in the Edit control&#39;s client</span>
+<span class="c-Singleline">;       relative to the upper-left corner of the client area.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   If p_CharPos is greater than the index of the last character in the</span>
+<span class="c-Singleline">;   control, the returned coordinates are of the position just past the last</span>
+<span class="c-Singleline">;   character of the control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_PosFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_CharPos</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">X</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">Y</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_POSFROMCHAR</span>:<span class="o">=</span><span class="mh">0xD6</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_POSFROMCHAR</span><span class="p">,</span><span class="n">p_CharPos</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nl">X:</span><span class="o">=</span><span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="mi">48</span><span class="o">&gt;&gt;</span><span class="mi">48</span><span class="c-Singleline"></span>
+<span class="c-Singleline">        ;-- LOWORD of result and converted from UShort to Short</span>
+<span class="w">    </span><span class="nl">Y:</span><span class="o">=</span><span class="p">(</span><span class="nv">ErrorLevel</span><span class="o">&gt;&gt;</span><span class="mi">16</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="mi">48</span><span class="o">&gt;&gt;</span><span class="mi">48</span><span class="c-Singleline"></span>
+<span class="c-Singleline">        ;-- HIWORD of result and converted from UShort to Short</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_ReplaceSel</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Replaces the selected text with the specified text.  If there is no</span>
+<span class="c-Singleline">;   selection, the replacement text is inserted at the caret.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Text - Text to replace selection with.</span>
+<span class="c-Singleline">;   p_CanUndo - If TRUE (the default), replace can be undone.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_ReplaceSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Text</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_CanUndo</span><span class="o">=</span><span class="nv">True</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_REPLACESEL</span>:<span class="o">=</span><span class="mh">0xC2</span>
+<span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_REPLACESEL</span><span class="p">,</span><span class="n">p_CanUndo</span><span class="p">,</span><span class="o">&amp;</span><span class="n">p_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span> 
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SaveFile</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Save the contents of the edit control to a file.  If the file does not</span>
+<span class="c-Singleline">;   exist, it will be created.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_FileName - The full path and name of the file.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Convert - Convert file format. [Optional] Set to &quot;M&quot; or &quot;Mac&quot; to convert</span>
+<span class="c-Singleline">;       to Mac.  Set to &quot;U&quot; or &quot;Unix&quot; to convert to Unix.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   TRUE if successful, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SaveFile</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_FileName</span><span class="p">,</span><span class="n">p_Convert</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ;-- Delete if file exists</span>
+<span class="w">    </span><span class="nb">IfExist</span> <span class="nv">%p_FileName%</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">FileDelete</span> <span class="nv">%p_FileName%</span>
+<span class="w">        </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
+            <span class="p">{</span>
+<span class="w">            </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThisFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">delete</span> <span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">            </span><span class="nb">Return</span> <span class="nv">False</span>        
+            <span class="p">}</span>
+        <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Get text</span>
+<span class="w">    </span><span class="nl">l_Text:</span><span class="o">=</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- If requested, convert file format</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">p_Convert</span> <span class="ow">in</span> <span class="n">M</span><span class="p">,</span><span class="n">Mac</span>
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="n">Edit_Convert2Mac</span><span class="p">(</span><span class="n">l_Text</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nb">if </span><span class="n">p_Convert</span> <span class="ow">in</span> <span class="n">U</span><span class="p">,</span><span class="n">Unix</span>
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="n">Edit_Convert2Unix</span><span class="p">(</span><span class="n">l_Text</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Save it</span>
+<span class="w">    </span><span class="nb">FileAppend</span> <span class="nv">%l_Text%</span><span class="p">,</span><span class="o">*</span><span class="nv">%p_FileName%</span><span class="c-Singleline">  ;-- Save in binary mode</span>
+<span class="w">    </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThisFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">save</span> <span class="n">to</span> <span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nv">False</span>        
+        <span class="p">}</span>
+
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">True</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Scroll</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Scrolls the text vertically in the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Pages - The number of pages to scroll.  Use a negative number to scroll up</span>
+<span class="c-Singleline">;       and a positive number to scroll down.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Lines - The number of lines to scroll.  Use a negative number to scroll up</span>
+<span class="c-Singleline">;       and a positive number to scroll down.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   The number of lines that the command scrolls. The value will be negative if</span>
+<span class="c-Singleline">;   scrolling up and positive if scrolling down.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Scroll</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Pages</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_Lines</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_SCROLL</span>  :<span class="o">=</span><span class="mh">0xB5</span>
+          <span class="p">,</span><span class="n">SB_LINEUP</span>  :<span class="o">=</span><span class="mh">0x0</span><span class="c-Singleline">     ;-- Scroll up one line</span>
+<span class="w">          </span><span class="nl">,SB_LINEDOWN:</span><span class="o">=</span><span class="mh">0x1</span><span class="c-Singleline">     ;-- Scroll down one line</span>
+          <span class="p">,</span><span class="n">SB_PAGEUP</span>  :<span class="o">=</span><span class="mh">0x2</span><span class="c-Singleline">     ;-- Scroll up one page</span>
+<span class="w">          </span><span class="nl">,SB_PAGEDOWN:</span><span class="o">=</span><span class="mh">0x3</span><span class="c-Singleline">     ;-- Scroll down one page</span>
+
+<span class="c-Singleline">    ;-- Initialize</span>
+<span class="w">    </span><span class="nl">l_ScrollLines:</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Pages</span>
+<span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">p_Pages</span><span class="p">)</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Pages</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> ? <span class="n">SB_PAGEDOWN</span>:<span class="n">SB_PAGEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">        </span><span class="nb">if </span><span class="ow">not</span> <span class="nv">ErrorLevel</span>
+<span class="w">            </span><span class="nb">Break</span>
+
+<span class="w">        </span><span class="nl">l_ScrollLines:</span><span class="o">=</span><span class="n">l_ScrollLines</span><span class="o">+</span><span class="p">((</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="mi">48</span><span class="o">&gt;&gt;</span><span class="mi">48</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ;-- LOWORD of result and converted from UShort to Short</span>
+        <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">    ;-- Lines</span>
+<span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">p_Lines</span><span class="p">)</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Lines</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> ? <span class="n">SB_LINEDOWN</span>:<span class="n">SB_LINEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">        </span><span class="nb">if </span><span class="ow">not</span> <span class="nv">ErrorLevel</span>
+<span class="w">            </span><span class="nb">Break</span>
+
+<span class="w">        </span><span class="nl">l_ScrollLines:</span><span class="o">=</span><span class="n">l_ScrollLines</span><span class="o">+</span><span class="p">((</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="mi">48</span><span class="o">&gt;&gt;</span><span class="mi">48</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ;-- LOWORD of result and converted from UShort to Short</span>
+        <span class="p">}</span>
+
+<span class="w">    </span><span class="nb">Return</span> <span class="n">l_ScrollLines</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_ScrollCaret</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Scrolls the edit control until caret is visible.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_ScrollCaret</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_SCROLLCARET</span>:<span class="o">=</span><span class="mh">0xB7</span>
+<span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_SCROLLCARET</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span> 
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetLimitText</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets the text limit of the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Limit - The maximum number of characters the user can enter.  </span>
+<span class="c-Singleline">;       Windows NT+: If this parameter is zero, the text length is set to</span>
+<span class="c-Singleline">;       0x7FFFFFFE characters for single-line edit controls or 1 for multiline</span>
+<span class="c-Singleline">;       edit controls.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - This message limits only the text the user can enter. It does not affect any</span>
+<span class="c-Singleline">;   text already in the edit control when the message is sent, nor does it</span>
+<span class="c-Singleline">;   affect the length of the text copied to the edit control by the WM_SETTEXT</span>
+<span class="c-Singleline">;   message. For more information: </span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       &lt;http://msdn.microsoft.com/en-us/library/bb761607(VS.85).aspx&gt;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - For AutoHotkey GUI&#39;s, use the +Limitnn and -Limit options.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - Although this message can be sent to any edit control, not all programs will</span>
+<span class="c-Singleline">;   respond well to a limit change.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetLimitText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Limit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_LIMITTEXT</span>:<span class="o">=</span><span class="mh">0xC5</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_LIMITTEXT</span><span class="p">,</span><span class="n">p_Limit</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetMargins</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets the width of the left and/or right margin (in pixels) for the edit</span>
+<span class="c-Singleline">;   control. The message automatically redraws the control to reflect the new</span>
+<span class="c-Singleline">;   margins.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_LeftMargin - Left margin, in pixels. If blank, the left margin is not set.</span>
+<span class="c-Singleline">;       Specify the EC_USEFONTINFO value (0xFFFF or 65535) to set the left</span>
+<span class="c-Singleline">;       margin to a narrow width calculated using the text metrics of the</span>
+<span class="c-Singleline">;       control&#39;s current font. If no font has been set for the control, the</span>
+<span class="c-Singleline">;       margin is set to zero.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_RightMargin - Right margin, in pixels.  If blank, the right margin is not</span>
+<span class="c-Singleline">;       set.  Specify the EC_USEFONTINFO value (0xFFFF or 65535) to set the</span>
+<span class="c-Singleline">;       right margin to a narrow width calculated using the text metrics of the</span>
+<span class="c-Singleline">;       control&#39;s current font. If no font has been set for the control, the</span>
+<span class="c-Singleline">;       margin is set to zero.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetMargins</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LeftMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_RightMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_SETMARGINS</span> :<span class="o">=</span><span class="mh">0xD3</span>
+          <span class="p">,</span><span class="n">EC_LEFTMARGIN</span> :<span class="o">=</span><span class="mh">0x1</span>
+<span class="w">          </span><span class="nl">,EC_RIGHTMARGIN:</span><span class="o">=</span><span class="mh">0x2</span>
+<span class="w">          </span><span class="nl">,EC_USEFONTINFO:</span><span class="o">=</span><span class="mh">0xFFFF</span>
+
+<span class="w">    </span><span class="nl">l_Margins:</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">l_Flags</span>  :<span class="o">=</span><span class="mi">0</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">p_LeftMargin</span> <span class="ow">is</span> <span class="n">Integer</span>
+        <span class="p">{</span>
+        <span class="n">l_Flags</span> <span class="o">|=</span> <span class="n">EC_LEFTMARGIN</span>
+        <span class="n">l_Margins</span> <span class="o">|=</span> <span class="n">p_LeftMargin</span><span class="c-Singleline">       ;-- LOWORD</span>
+        <span class="p">}</span>
+
+<span class="w">    </span><span class="nb">if </span><span class="n">p_RightMargin</span> <span class="ow">is</span> <span class="n">Integer</span>
+        <span class="p">{</span>
+        <span class="n">l_Flags</span> <span class="o">|=</span> <span class="n">EC_RIGHTMARGIN</span>
+        <span class="n">l_Margins</span> <span class="o">|=</span> <span class="n">p_RightMargin</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="c-Singleline">  ;-- HIWORD</span>
+        <span class="p">}</span>
+
+<span class="w">    </span><span class="nb">if </span><span class="n">l_Flags</span>
+<span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SETMARGINS</span><span class="p">,</span><span class="n">l_Flags</span><span class="p">,</span><span class="n">l_Margins</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetModify</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets or clears the modification flag for the edit control. The modification</span>
+<span class="c-Singleline">;   flag indicates whether the text within the control has been modified.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Flag - Set to TRUE to set the modification flag. Set to FALSE to clear the</span>
+<span class="c-Singleline">;       modification flag.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetModify</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_SETMODIFY</span>:<span class="o">=</span><span class="mh">0xB9</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETMODIFY</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetPasswordChar</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets or removes the password character for a single-line edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Char - The character that is displayed in place of the characters typed by</span>
+<span class="c-Singleline">;       the user. [Optional] The default is an asterisk (&quot;*&quot;).  Set to null</span>
+<span class="c-Singleline">;       (&quot;&quot;) to remove the password character.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Documented: This message does not return a value.  Undocumented and/or does</span>
+<span class="c-Singleline">;   not apply to all OS versions:  Returns TRUE if successful or &quot;FAIL&quot; if</span>
+<span class="c-Singleline">;   unsuccessful.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - This request adds or removes the ES_Password style to/from a single-line</span>
+<span class="c-Singleline">;   edit control.  Use the &lt;Edit_IsStyle&gt; function to determine if the</span>
+<span class="c-Singleline">;   ES_PASSWORD style has been set.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - Observation:  On Windows 2000+, the ES_Password style cannot be removed once</span>
+<span class="c-Singleline">;   added unless the request is made from the same process that created the</span>
+<span class="c-Singleline">;   control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - For AutoHotkey GUI&#39;s, use the +Password and -Password options to add/remove</span>
+<span class="c-Singleline">;   ES_PASSWORD style unless a password character other than &quot;*&quot; is desired.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetPasswordChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Char</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_SETPASSWORDCHAR</span>:<span class="o">=</span><span class="mh">0xCC</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETPASSWORDCHAR</span><span class="p">,</span><span class="nf">Asc(</span><span class="n">p_Char</span><span class="p">),</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetReadOnly</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets or removes the read-only style (ES_READONLY) of the edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Flag - Set to TRUE to add the ES_READONLY style.  Set to FALSE to remove</span>
+<span class="c-Singleline">;       the ES_READONLY style.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   TRUE if successful, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;   </span>
+<span class="c-Singleline">;   For AutoHotkey GUIs, this is same as using the +ReadOnly or -ReadOnly </span>
+<span class="c-Singleline">;   option when creating the Edit control or using the GUIControl command after</span>
+<span class="c-Singleline">;   the edit control has been created.  For example:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       (start code)</span>
+<span class="c-Singleline">;       GUIControl +ReadOnly,Edit1</span>
+<span class="c-Singleline">;       (end code)</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetReadOnly</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_SETREADONLY</span>:<span class="o">=</span><span class="mh">0xCF</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETREADONLY</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span> ? <span class="nv">True</span>:<span class="nv">False</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetRect</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets the formatting rectangle of a multiline edit control. The formatting</span>
+<span class="c-Singleline">;   rectangle is the limiting rectangle into which the control draws the text.</span>
+<span class="c-Singleline">;   The limiting rectangle is independent of the size of the edit control</span>
+<span class="c-Singleline">;   window.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_Left..p_Bottom - Coordinates.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Advanced feature. For additional information, see the following...</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;       &lt;http://msdn.microsoft.com/en-us/library/bb761657(VS.85).aspx&gt;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetRect</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Left</span><span class="p">,</span><span class="n">p_Top</span><span class="p">,</span><span class="n">p_Right</span><span class="p">,</span><span class="n">p_Bottom</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_SETRECT</span>:<span class="o">=</span><span class="mh">0xB3</span>
+
+    <span class="nf">VarSetCapacity(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">NumPut(</span><span class="n">p_Left</span><span class="p">,</span>  <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="nf">NumPut(</span><span class="n">p_Top</span><span class="p">,</span>   <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="nf">NumPut(</span><span class="n">p_Right</span><span class="p">,</span> <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="nf">NumPut(</span><span class="n">p_Bottom</span><span class="p">,</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETRECT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">&amp;</span><span class="n">RECT_Structure</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetTabStops</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Sets the tab stops in a multiline edit control. When text is copied to the</span>
+<span class="c-Singleline">;   control, any tab character in the text causes space to be generated up to</span>
+<span class="c-Singleline">;   the next tab stop.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_NbrOfTabStops - Number of tab stops. [Optional] Set to 0 (the default) to</span>
+<span class="c-Singleline">;       set the tab stops to the system default.  Set to 1 to have all tab stops</span>
+<span class="c-Singleline">;       set to the value of the p_DTU parameter or 32 if p_DTU is not defined.</span>
+<span class="c-Singleline">;       Any value greater than 1 will set that number of tab stops.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_DTU - Dialog Template Units. [Optional] If p_NbrOfTabStops=0, this</span>
+<span class="c-Singleline">;       parameter is ignored.  If this parameter contains a single value</span>
+<span class="c-Singleline">;       (Ex: 21), all tab stops will be set to a factor of this value</span>
+<span class="c-Singleline">;       (Ex: 21, 42, 63, etc.).  Otherwise, this parameter should contain values</span>
+<span class="c-Singleline">;       for all requested tab stops each separated by a comma &quot;,&quot;</span>
+<span class="c-Singleline">;       (Ex: &quot;20,45,70,125&quot;).</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   TRUE if all the tabs are set, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetTabStops</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_DTU</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">EM_SETTABSTOPS</span>:<span class="o">=</span><span class="mh">0xCB</span>
+    
+    <span class="nf">VarSetCapacity(</span><span class="n">l_TabStops</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">p_DTU</span> <span class="n">contains</span> <span class="p">,,</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">Loop</span> <span class="n">Parse</span><span class="p">,</span><span class="n">p_DTU</span><span class="p">,</span>`<span class="p">,,</span><span class="nv">%A_Space%</span>
+            <span class="n">if</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">&lt;=</span><span class="n">p_NbrOfTabStops</span><span class="p">)</span>
+                <span class="nf">Numput(</span><span class="nv">A_LoopField</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="n">l_TabStops</span><span class="p">,(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+<span class="w">     </span><span class="nb">else</span>
+<span class="w">        </span><span class="nb">Loop</span> <span class="nv">%p_NbrOfTabStops%</span>
+            <span class="nf">NumPut(</span><span class="n">p_DTU</span><span class="o">*</span><span class="nv">A_Index</span><span class="p">,</span><span class="n">l_TabStops</span><span class="p">,(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETTABSTOPS</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_TabStops</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetText</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Set the text of the edit control.  Returns TRUE if successful, otherwise</span>
+<span class="c-Singleline">;   FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - The system automatically resets the undo flag whenever an edit control</span>
+<span class="c-Singleline">;   receives a WM_SETTEXT message.  Use the &lt;Edit_SetSel&gt; (select all) and</span>
+<span class="c-Singleline">;   &lt;Edit_ReplaceSel&gt; functions to populate the control if undo is desired.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; - This function is the same as the AutoHotkey *ControlSetText* command except</span>
+<span class="c-Singleline">;   there is no delay after the command has executed.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Text</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Static</span> <span class="n">WM_SETTEXT</span>:<span class="o">=</span><span class="mh">0xC</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_SETTEXT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">&amp;</span><span class="n">p_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_SetSel</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Selects a range of characters.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_StartSelPos - Starting character position of the selection. If set to -1,</span>
+<span class="c-Singleline">;       the current selection (if any) will be deselected.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_EndSelPos	- Ending character position of the selection. Set to -1 to use</span>
+<span class="c-Singleline">;       the position of the last character in the control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_SetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_StartSelPos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_EndSelPos</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_SETSEL</span>:<span class="o">=</span><span class="mh">0x0B1</span>
+<span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_SETSEL</span><span class="p">,</span><span class="n">p_StartSelPos</span><span class="p">,</span><span class="n">p_EndSelPos</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_TextIsSelected</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Returns TRUE if text is selected, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_TextIsSelected</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Edit_GetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="p">(</span><span class="n">l_StartSelPos</span><span class="o">&lt;&gt;</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_Undo</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Undo the last operation.  Returns TRUE if the Undo operation succeeds,</span>
+<span class="c-Singleline">;   otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   For a single-line edit control, the return value is always TRUE.  For a</span>
+<span class="c-Singleline">;   multiline edit control, the return value is TRUE if the undo operation is</span>
+<span class="c-Singleline">;   successful, otherwise FALSE.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_Undo</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
+    <span class="p">{</span>
+	<span class="n">Static</span> <span class="n">EM_UNDO</span>:<span class="o">=</span><span class="mh">0xC7</span>
+<span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_UNDO</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+
+<span class="c-Singleline">;**************************</span>
+<span class="c-Singleline">;*                        *</span>
+<span class="c-Singleline">;*    Helper functions    *</span>
+<span class="c-Singleline">;*                        *</span>
+<span class="c-Singleline">;**************************</span>
+
+<span class="c-Singleline">;-----------------------------</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Function: Edit_GetActiveHandles</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Description:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Finds the handles for the active control and active window.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Parameters:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   hEdit - Variable that contains the handle of the active edit control.  </span>
+<span class="c-Singleline">;       [Optional] Value is zero if the active control is not an edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   hWindow - Variable that contains the handle of the active window. [Optional]</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   p_MsgBox - Display error message. [Optional] If TRUE, an error MsgBox is</span>
+<span class="c-Singleline">;       displayed if the active control is not an edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Returns:</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;   Handle of the active edit control or FALSE (0) if the active control is not</span>
+<span class="c-Singleline">;   an edit control.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
+<span class="n">Edit_GetActiveHandles</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">hEdit</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">hWindow</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_MsgBox</span><span class="o">=</span><span class="nv">False</span><span class="p">)</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">WinGet</span> <span class="n">hWindow</span><span class="p">,</span><span class="n">ID</span><span class="p">,</span><span class="n">A</span>
+<span class="w">    </span><span class="nb">ControlGetFocus</span> <span class="n">l_Control</span><span class="p">,</span><span class="n">A</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">SubStr(</span><span class="n">l_Control</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;Edit&quot;</span>
+        <span class="p">{</span>
+<span class="w">        </span><span class="nb">ControlGet</span> <span class="n">hEdit</span><span class="p">,</span><span class="n">hWnd</span><span class="p">,,</span><span class="nv">%l_Control%</span><span class="p">,</span><span class="n">A</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="n">hEdit</span>
+        <span class="p">}</span>
+
+<span class="w">    </span><span class="nb">if </span><span class="n">p_MsgBox</span>
+<span class="w">        </span><span class="nb">MsgBox</span>
+            <span class="p">,</span><span class="mi">262160</span><span class="c-Singleline"></span>
+<span class="c-Singleline">                ;-- 262160 = 0 (OK button) + 16 (&quot;Error&quot; icon) + 262144 (AOT) </span>
+            <span class="p">,</span><span class="n">Error</span>
+            <span class="p">,</span><span class="n">This</span> <span class="n">request</span> <span class="n">cannot</span> <span class="n">be</span> <span class="n">performed</span> <span class="n">on</span> <span class="n">this</span> <span class="n">control</span><span class="o">.</span>  <span class="nv">%A_Space%</span>
+<span class="w"> </span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">False</span>
+    <span class="p">}</span>
+</pre></div>

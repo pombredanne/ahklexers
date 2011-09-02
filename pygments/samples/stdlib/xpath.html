@@ -1,0 +1,453 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">		Title: XPath Quick Reference</span>
+<span class="cm">		</span>
+<span class="cm">		License:</span>
+<span class="cm">			- Version 3.13c by Titan &lt;http://www.autohotkey.net/~Titan/#xpath&gt;</span>
+<span class="cm">			- GNU General Public License 3.0 or higher &lt;http://www.gnu.org/licenses/gpl-3.0.txt&gt;</span>
+<span class="cm">*/</span>
+
+<span class="cm">/*</span>
+
+<span class="cm">		Function: xpath</span>
+<span class="cm">			Selects nodes and attributes from a standard xpath expression.</span>
+<span class="cm">		</span>
+<span class="cm">		Parameters:</span>
+<span class="cm">			doc - an xml object returned by xpath_load()</span>
+<span class="cm">			step - a valid XPath 2.0 expression</span>
+<span class="cm">			set - (optional) text content to replace the current selection</span>
+<span class="cm">		</span>
+<span class="cm">		Returns:</span>
+<span class="cm">			The XML source of the selection.</span>
+<span class="cm">			If the content was set to be modified the previous value will be returned.</span>
+<span class="cm">		</span>
+<span class="cm">		Remarks:</span>
+<span class="cm">			Since multiple return values are seperated with a comma,</span>
+<span class="cm">			any found within the text content will be entity escaped as &amp;#44;.</span>
+<span class="cm">			To get or set the text content of a node use the text function,</span>
+<span class="cm">			e.g. /root/node/text(); this behaviour is always assumed within predicates.</span>
+<span class="cm">			For performance reasons count() and last() do not update with the creation of new nodes</span>
+<span class="cm">			so you may need to alter the results accordingly.</span>
+
+<span class="cm">*/</span>
+<span class="n">xpath</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">doc</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">set</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">sc</span><span class="p">,</span> <span class="n">scb</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="c-Singleline"> ; use EOT (\x04) as delimiter</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">step</span> <span class="n">contains</span> <span class="nv">%scb%</span><span class="c-Singleline"> ; i.e. illegal character</span>
+<span class="w">		</span><span class="nb">Return</span>
+	<span class="n">sid</span> :<span class="o">=</span> <span class="n">scb</span> <span class="o">.</span> <span class="o">&amp;</span><span class="n">doc</span> <span class="o">.</span> <span class="s">&quot;:&quot;</span><span class="c-Singleline"> ; should be unique identifier for current XML object</span>
+	<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">step</span><span class="p">,</span> <span class="s">&quot;select:&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; for quick selection</span>
+		<span class="n">stsl</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">		</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="mi">7</span>
+	<span class="p">}</span>
+	<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">step</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="n">str</span> <span class="o">=</span> <span class="mi">1</span><span class="c-Singleline"> ; root selected</span>
+<span class="w">	</span><span class="nb">Else</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="nv">%sid%</span><span class="c-Singleline"> ; retrieve previous path</span>
+<span class="w">		</span><span class="nb">If </span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">t</span> <span class="o">=</span> <span class="o">/</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">StringMid</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">p</span> <span class="o">+=</span> <span class="nf">StrLen(</span><span class="n">sid</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">sc</span><span class="p">,</span> <span class="n">scb</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">p</span>
+		<span class="n">step</span> <span class="o">=</span> <span class="nv">%t%</span><span class="o">/</span><span class="nv">%step%</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline">	; normalize path e.g. /root/node/../child/. becomes /root/child:</span>
+	<span class="n">step</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">step</span><span class="p">,</span> <span class="s">&quot;(?&lt;=^|/)(?:[^\[/@]+/\.{2}|\.)(?:/|$)|^.+(?=//)&quot;</span><span class="p">)</span>
+	
+	<span class="n">If</span> <span class="p">(</span><span class="n">str</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">stsl</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; if not relative path and no select:</span>
+<span class="c-Singleline">		; remove last node and trailing attributes and functions:</span>
+		<span class="n">xpr</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">step</span><span class="p">,</span> <span class="p">(</span><span class="n">str</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">stsl</span> <span class="o">!=</span> <span class="mi">1</span> ? <span class="s">&quot;/(?:\w+:)?\w+(?:\[[^\]]*])?&quot;</span> : <span class="s">&quot;&quot;</span><span class="p">)</span>
+			<span class="o">.</span> <span class="s">&quot;(?:/@.*?|/\w+\(\))*$&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">xpr</span><span class="p">,</span> <span class="n">xpr</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">All</span><span class="c-Singleline"> ; -1 become just 1</span>
+<span class="w">		</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">xpr</span><span class="p">,</span> <span class="n">xpr</span><span class="p">,</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">last</span><span class="p">()],</span> <span class="n">All</span><span class="c-Singleline"> ; +1 becomes last()</span>
+<span class="w">		</span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="nv">%sid%</span>
+<span class="w">		</span><span class="nb">If </span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">sc</span> <span class="o">=</span> <span class="nv">%sc%%sid%%xpr%%scb%</span><span class="c-Singleline"> ; add record or update as necessary:</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">sc</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">sc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span> <span class="o">+=</span> <span class="nf">StrLen(</span><span class="n">sid</span><span class="p">))</span> <span class="o">.</span> <span class="n">xpr</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">sc</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">sc</span><span class="p">,</span> <span class="n">scb</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline">	; for unions call each operand seperately and join results:</span>
+	<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">step</span><span class="p">,</span> <span class="s">&quot;|&quot;</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="o">|</span><span class="p">,</span> `<span class="n">n</span>`<span class="n">t</span>  `<span class="n">r</span>
+<span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%s0%</span>
+			<span class="n">res</span> <span class="o">.=</span> <span class="n">xpath</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">s</span><span class="nv">%A_Index%</span><span class="p">,</span> <span class="n">set</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;,&quot;</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nf">SubStr(</span><span class="n">res</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">step</span><span class="p">,</span> <span class="s">&quot;//&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; for wildcard selectors use regex searching mode:</span>
+<span class="w">		</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="mi">2</span>
+		<span class="n">re</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="n">rew</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="n">xp</span> <span class="o">=</span> <span class="o">/</span><span class="p">(</span>?:<span class="p">(</span>?:\<span class="n">w</span><span class="o">+</span>:<span class="p">)</span>?\<span class="n">w</span><span class="o">+</span><span class="p">)</span><span class="o">*/</span>
+	<span class="p">}</span>
+	
+	<span class="nf">NumPut(</span><span class="mi">160</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span><span class="c-Singleline"> ; unmask variable</span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline">	; resolve xpath components to: absolute node path, attributes and predicates (if any)</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="o">/</span>
+	<span class="p">{</span>
+		<span class="n">s</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span>
+		<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;*&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; regex mode for wildcards</span>
+		<span class="p">{</span>
+			<span class="n">re</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">s</span> :<span class="o">=</span> <span class="s">&quot;(?:\w+:)?\w+&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">s</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;@&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; if current step is attribute:</span>
+<span class="w">			</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">atr</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">			</span><span class="nb">Continue</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="c-Singleline"> ; look for predicate opening [...]</span>
+<span class="w">		</span><span class="nb">If </span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">If </span><span class="n">s</span> <span class="n">contains</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="c-Singleline"> ; for child nodes record creation instructions in a list</span>
+			<span class="p">{</span>
+<span class="w">				</span><span class="nb">If </span><span class="nv">A_Index</span> <span class="o">=</span> <span class="mi">2</span><span class="c-Singleline"> ; root node creation</span>
+				<span class="p">{</span>
+<span class="w">					</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">p</span>
+					<span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nv">%t%</span><span class="o">/</span>:: <span class="o">&gt;&lt;/</span><span class="nv">%t%</span><span class="o">/&gt;</span>
+					<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;+1&quot;</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">						</span><span class="nb">If </span><span class="n">doc</span> <span class="o">=</span>
+							<span class="n">doc</span> <span class="o">=</span> <span class="o">.</span>
+						<span class="n">doc</span> <span class="o">=</span> <span class="nv">%doc%%t%</span>
+					<span class="p">}</span>
+<span class="w">					</span><span class="nb">Else</span> <span class="n">doc</span> <span class="o">=</span> <span class="o">.</span><span class="nv">%t%%doc%</span>
+<span class="w">					</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;[&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+				<span class="p">}</span>
+<span class="w">				</span><span class="nb">Else</span> <span class="p">{</span>
+					<span class="n">nw</span> <span class="o">=</span> <span class="nv">%nw%%s%</span>
+<span class="w">					</span><span class="nb">Continue</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+<span class="w">			</span><span class="nb">Else</span> <span class="p">{</span><span class="c-Singleline"> ; i.e. for conditional predicates</span>
+				
+				<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;last()&quot;</span><span class="p">))</span> <span class="p">{</span><span class="c-Singleline"> ; finding last node</span>
+<span class="w">					</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">p</span>
+					<span class="n">t</span> :<span class="o">=</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">xp</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">.</span> <span class="n">t</span> <span class="o">.</span> <span class="s">&quot;/:: &quot;</span>
+<span class="w">					</span><span class="nb">If </span><span class="n">re</span><span class="c-Singleline"> ; with regex:</span>
+					<span class="p">{</span>
+						<span class="n">os</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">						</span><span class="nb">Loop</span>
+							<span class="n">If</span> <span class="p">(</span>!<span class="n">os</span> :<span class="o">=</span> <span class="nf">RegExMatch(</span><span class="n">doc</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">os</span><span class="p">))</span> <span class="p">{</span>
+								<span class="n">t</span> <span class="o">=</span> <span class="nv">%A_Index%</span>
+<span class="w">								</span><span class="nb">Break</span>
+							<span class="p">}</span>
+						<span class="n">t</span><span class="o">--</span>
+					<span class="p">}</span>
+<span class="w">					</span><span class="nb">Else</span> <span class="p">{</span><span class="c-Singleline"> ; otherwise using StringReplace</span>
+<span class="w">						</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="nv">%t%</span><span class="p">,</span> <span class="nv">%t%</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+						<span class="n">t</span> <span class="o">=</span> <span class="nv">%ErrorLevel%</span>
+					<span class="p">}</span>
+					<span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;i)last\(\)\s*\-\s*(\d+)&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span><span class="c-Singleline"> ; i.e. [last() - 2]</span>
+<span class="w">						</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="nv">%a%</span><span class="p">,</span> <span class="o">%</span> <span class="n">t</span> <span class="o">-</span> <span class="n">a1</span>
+<span class="w">					</span><span class="nb">Else</span> <span class="n">StringReplace</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">last</span><span class="p">(),</span> <span class="nv">%t%</span>
+				<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">				</span>
+<span class="c-Singleline">				; concat. the predicate to the list against the current absolute path:</span>
+				<span class="n">ax</span> <span class="o">=</span> <span class="nv">%ax%%xp%%s%</span>
+<span class="w">				</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">p</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;()&quot;</span><span class="p">))</span> <span class="p">{</span><span class="c-Singleline"> ; if step is function, add to list</span>
+			<span class="n">fn</span> <span class="o">=</span> <span class="nv">%fn%</span><span class="o">+</span><span class="nv">%s%</span><span class="c-Singleline"> ; use + prefix to prevent overlapping naming conflicts</span>
+<span class="w">			</span><span class="nb">Continue</span>
+		<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">		; finally, if step is not any of the above, assume it&#39;s the name of a child node</span>
+		<span class="n">xp</span> <span class="o">=</span> <span class="nv">%xp%%s%</span><span class="o">/</span><span class="c-Singleline"> ; ... and add to list, forming the absolute path</span>
+	<span class="p">}</span>
+	
+	<span class="n">If</span> <span class="p">(</span><span class="n">xp</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="ow">or</span> <span class="n">xp</span> <span class="o">==</span> <span class="s">&quot;/&quot;</span><span class="p">)</span><span class="c-Singleline"> ; i.e. error cases</span>
+<span class="w">		</span><span class="nb">Return</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline">	; remove initial root selector (/) as this is how the parser works by default:</span>
+<span class="w">	</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">	</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">nw</span><span class="p">,</span> <span class="n">nw</span><span class="p">,</span> <span class="mi">1</span>
+	
+	<span class="n">ct</span> <span class="o">=</span> <span class="mi">0</span><span class="c-Singleline"> ; counter</span>
+	<span class="n">os</span> <span class="o">=</span> <span class="mi">0</span><span class="c-Singleline"> ; offset for main loop starts at zero</span>
+<span class="w">	</span><span class="nb">Loop</span> <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">		; find offset of next element, and its closing tag offset:</span>
+<span class="w">		</span><span class="nb">If </span><span class="n">re</span>
+			<span class="n">os</span> :<span class="o">=</span> <span class="nf">RegExMatch(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="n">xp</span> <span class="o">.</span> <span class="s">&quot;:: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">os</span><span class="p">)</span>
+				<span class="p">,</span> <span class="n">osx</span> :<span class="o">=</span> <span class="nf">RegExMatch(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&lt;/&quot;</span> <span class="o">.</span> <span class="n">xp</span> <span class="o">.</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="n">rem</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">rem</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="p">{</span>
+<span class="w">			</span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">osx</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="o">&lt;/</span><span class="nv">%xp%</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">,</span> <span class="n">os</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="n">xp</span> <span class="o">.</span> <span class="s">&quot;:: &quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">os</span><span class="p">)</span>
+			<span class="n">osx</span> <span class="o">+=</span> <span class="mi">4</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">xp</span><span class="p">)</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">If </span><span class="n">os</span> <span class="o">=</span> <span class="mi">0</span><span class="c-Singleline"> ; stop looping when no more tags are found</span>
+<span class="w">			</span><span class="nb">Break</span><span class="c-Singleline"></span>
+<span class="c-Singleline">		</span>
+<span class="c-Singleline">		; predicate parser:</span>
+<span class="w">		</span><span class="nb">If </span><span class="n">ax</span> <span class="o">!=</span>
+		<span class="p">{</span>
+			<span class="n">sk</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">			</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="p">]</span><span class="c-Singleline"> ; for each predicate</span>
+			<span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">				; split components to: (1) path, (2) selector, (3) operator, (4) quotation char, (5) operand</span>
+				<span class="n">If</span> <span class="p">(</span>!<span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;/?(.*?)\[(.+?)(?:\s*([&lt;&gt;!=]{1,2})\s*([&#39;</span><span class="se">&quot;&quot;</span><span class="s">])?(.+)(?(4)\4))?\s*$&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
+<span class="w">					</span><span class="nb">Continue</span>
+				<span class="n">a1</span> <span class="o">=</span> <span class="nv">%a1%</span><span class="o">/</span>
+<span class="w">				</span><span class="nb">If </span><span class="n">re</span>
+					<span class="nf">RegExMatch(</span><span class="n">rem</span><span class="p">,</span> <span class="s">&quot;(?&lt;=^&lt;/)&quot;</span> <span class="o">.</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a1</span><span class="p">)</span>
+<span class="w">				</span>
+<span class="w">				</span><span class="nb">If </span><span class="n">a2</span> <span class="ow">is</span> <span class="n">integer</span><span class="c-Singleline"> ; i.e. match only certain index</span>
+				<span class="p">{</span>
+<span class="w">					</span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">R2</span>
+<span class="w">					</span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span>
+					<span class="n">t</span> :<span class="o">=</span> <span class="nf">InStr(SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">os</span><span class="p">),</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="n">t</span> <span class="o">.</span> <span class="s">&quot;:: &quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">					; extract parent node:</span>
+<span class="w">					</span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span>
+					<span class="n">xpf</span> :<span class="o">=</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="n">a1</span> <span class="o">.</span> <span class="s">&quot;:: &quot;</span><span class="c-Singleline"></span>
+<span class="c-Singleline">					; get index of current element within parent node:</span>
+<span class="w">					</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="nv">%xpf%</span><span class="p">,</span> <span class="nv">%xpf%</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+<span class="w">					</span><span class="nb">If </span><span class="n">a2</span> <span class="o">!=</span> <span class="nv">%ErrorLevel%</span>
+						<span class="n">sk</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">					</span><span class="nb">Continue</span>
+				<span class="p">}</span>
+<span class="w">				</span>
+<span class="w">				</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+				<span class="n">t</span> <span class="o">=</span> <span class="nv">%ErrorLevel%</span>
+<span class="w">				</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">UseErrorLevel</span><span class="c-Singleline"></span>
+<span class="c-Singleline">				</span>
+<span class="c-Singleline">				 ; extract result for deep analysis</span>
+<span class="w">				</span><span class="nb">If </span><span class="n">t</span> <span class="o">=</span> <span class="nv">%ErrorLevel%</span><span class="c-Singleline"> ; i.e. /root/node[child=&#39;test&#39;]</span>
+<span class="w">					</span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">os</span><span class="p">,</span> <span class="n">osx</span> <span class="o">-</span> <span class="n">os</span>
+<span class="w">				</span><span class="nb">Else</span> <span class="n">StringMid</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">doc</span>
+					 	<span class="p">,</span> <span class="n">t</span> :<span class="o">=</span> <span class="nf">InStr(SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">os</span><span class="p">),</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="n">a1</span> <span class="o">.</span> <span class="s">&quot;:: &quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+					 	<span class="p">,</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&lt;/&quot;</span> <span class="o">.</span> <span class="n">a1</span> <span class="o">.</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">				</span>
+<span class="w">				</span><span class="nb">If </span><span class="n">a2</span> <span class="o">=</span> <span class="n">position</span><span class="p">()</span>
+					<span class="n">sub</span> <span class="o">=</span> <span class="nv">%i%</span>
+<span class="w">				</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">a2</span><span class="p">,</span> <span class="s">&quot;@&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; when selector is an attribute:</span>
+				 <span class="nf">RegExMatch(SubStr(</span><span class="n">sub</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">sub</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">))</span>
+						<span class="p">,</span> <span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> ? <span class="s">&quot;\b&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">a2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;=([</span><span class="se">&quot;&quot;</span><span class="s">&#39;])[^\1]*?\1&quot;</span>
+						: <span class="s">&quot;\b(?&lt;=&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">a2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;=([</span><span class="se">&quot;&quot;</span><span class="s">&#39;]))[^\1]+?(?=\1)&quot;</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
+<span class="w">				</span><span class="nb">Else</span><span class="c-Singleline"> ; otherwise child node:</span>
+				<span class="p">{</span>
+<span class="w">					</span><span class="nb">If </span><span class="n">a2</span> <span class="o">=</span> <span class="o">.</span><span class="c-Singleline"> ; if selector is current node don&#39;t append to path:</span>
+						<span class="n">a2</span> <span class="o">=</span> <span class="o">/</span>
+<span class="w">					</span><span class="nb">Else</span> <span class="n">a2</span> <span class="o">=</span> <span class="nv">%a2%</span><span class="o">/</span>
+<span class="w">					</span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">sub</span>
+						<span class="p">,</span> <span class="n">t</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">sub</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">sub</span><span class="p">,</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="n">a1</span> <span class="o">.</span> <span class="n">a2</span> <span class="o">.</span> <span class="s">&quot;:: &quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+						<span class="p">,</span> <span class="nf">InStr(</span><span class="n">sub</span><span class="p">,</span> <span class="s">&quot;&lt;/&quot;</span> <span class="o">.</span> <span class="n">a1</span> <span class="o">.</span> <span class="n">a2</span> <span class="o">.</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span>
+				<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">				</span>
+<span class="c-Singleline">				; dynamic mini expression evaluator:</span>
+				<span class="n">sk</span> <span class="o">+=</span> !<span class="p">(</span><span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> ? <span class="p">(</span><span class="n">sub</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+					: <span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;=&quot;</span> ? <span class="n">sub</span> <span class="o">==</span> <span class="n">a5</span>
+					: <span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;!=&quot;</span> ? <span class="n">sub</span> <span class="o">!=</span> <span class="n">a5</span>
+					: <span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;&gt;&quot;</span> ? <span class="n">sub</span> <span class="o">&gt;</span> <span class="n">a5</span>
+					: <span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;&gt;=&quot;</span> ? <span class="n">sub</span> <span class="o">&gt;=</span> <span class="n">a5</span>
+					: <span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;&lt;&quot;</span> ? <span class="n">sub</span> <span class="o">&lt;</span> <span class="n">a5</span>
+					: <span class="n">a3</span> <span class="o">==</span> <span class="s">&quot;&lt;=&quot;</span> ? <span class="n">sub</span> <span class="o">&lt;=</span> <span class="n">a5</span><span class="p">)</span>
+			<span class="p">}</span>
+<span class="w">			</span><span class="nb">If </span><span class="n">sk</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; if conditions were not met for this result, skip it</span>
+<span class="w">				</span><span class="nb">Continue</span>
+		<span class="p">}</span>
+<span class="w">		</span>
+<span class="w">		</span><span class="nb">If </span><span class="n">nw</span> <span class="o">!=</span><span class="c-Singleline"> ; for node creation</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">If </span><span class="n">re</span>
+				<span class="n">nwp</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">rem</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">Else</span> <span class="n">nwp</span> <span class="o">=</span> <span class="nv">%xp%</span>
+<span class="w">			</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">nw</span><span class="p">,</span> <span class="p">]</span>
+			<span class="p">{</span>
+<span class="w">				</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">nwn</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;[&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+				<span class="n">nwn</span> <span class="o">=</span> <span class="nv">%nwn%</span><span class="o">/</span>
+				<span class="n">nwt</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nv">%nwp%%nwn%</span>:: <span class="o">&gt;&lt;/</span><span class="nv">%nwp%%nwn%</span><span class="o">&gt;</span>
+				<span class="n">If</span> <span class="p">(</span><span class="n">t</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;-1&quot;</span><span class="p">)</span>
+					? <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">.</span> <span class="n">nwp</span> <span class="o">.</span> <span class="s">&quot;:: &quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+					: <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&lt;/&quot;</span> <span class="o">.</span> <span class="n">nwp</span> <span class="o">.</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">,</span> <span class="n">os</span><span class="p">))</span>
+					<span class="n">os</span> :<span class="o">=</span> <span class="n">t</span>
+<span class="w">				</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">osx</span><span class="p">,</span> <span class="n">nwt</span>
+				<span class="n">osx</span> <span class="o">+=</span> <span class="n">os</span>
+				<span class="n">doc</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">os</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">.</span> <span class="n">nwt</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span>
+				<span class="n">nwp</span> <span class="o">=</span> <span class="nv">%nwp%%nwn%</span>
+			<span class="p">}</span>
+<span class="w">			</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">nwp</span>
+			<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+text()&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">atr</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+				<span class="n">os</span> <span class="o">+=</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span> <span class="n">osx</span> <span class="o">-=</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">3</span>
+		<span class="p">}</span>
+<span class="w">		</span>
+<span class="w">		</span><span class="nb">If </span><span class="n">atr</span> <span class="o">!=</span>
+		<span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">			; extract attribute offsets, with surrounding declaration if text() is not used:</span>
+			<span class="n">If</span> <span class="p">(</span><span class="n">t</span> :<span class="o">=</span> <span class="nf">RegExMatch(SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="n">os</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span> <span class="o">-</span> <span class="n">os</span><span class="p">),</span> <span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+text()&quot;</span><span class="p">)</span>
+				? <span class="s">&quot;(?&lt;=\b&quot;</span> <span class="o">.</span> <span class="n">atr</span> <span class="o">.</span> <span class="s">&quot;=([</span><span class="se">&quot;&quot;</span><span class="s">&#39;]))[^\1]*?(?=\1)&quot;</span>
+				: <span class="s">&quot;\b&quot;</span> <span class="o">.</span> <span class="n">atr</span> <span class="o">.</span> <span class="s">&quot;=([</span><span class="se">&quot;&quot;</span><span class="s">&#39;])[^\1]*?\1&quot;</span><span class="p">,</span> <span class="n">rem</span><span class="p">))</span>
+				<span class="n">os</span> <span class="o">+=</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">osx</span> :<span class="o">=</span> <span class="n">os</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">rem</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">Else</span> <span class="p">{</span><span class="c-Singleline"> ; create attribute</span>
+				<span class="n">os</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">os</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+					<span class="p">,</span> <span class="n">doc</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">os</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot; &quot;</span> <span class="o">.</span> <span class="n">atr</span> <span class="o">.</span> <span class="s">&quot;=</span><span class="se">&quot;&quot;&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span>
+					<span class="p">,</span> <span class="n">osx</span> :<span class="o">=</span> <span class="o">++</span><span class="n">os</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">atr</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span>
+				<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+text()&quot;</span><span class="p">))</span>
+					<span class="n">osx</span> :<span class="o">=</span> <span class="n">os</span> <span class="o">+=</span> <span class="nf">StrLen(</span><span class="n">atr</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+text()&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">nw</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; for text content:</span>
+			<span class="n">os</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">osx</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="n">re</span> ? <span class="n">rem</span> : <span class="s">&quot;&lt;/&quot;</span> <span class="o">.</span> <span class="n">xp</span> <span class="o">.</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span>
+<span class="w">		</span>
+<span class="w">		</span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+index-of()&quot;</span><span class="p">)</span><span class="c-Singleline"> ; get index rather than content</span>
+			<span class="n">sub</span> <span class="o">=</span> <span class="nv">%A_Index%</span> 
+<span class="w">		</span><span class="nb">Else</span> <span class="n">StringMid</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">os</span><span class="p">,</span> <span class="n">osx</span> <span class="o">-</span> <span class="n">os</span><span class="c-Singleline"> ; extract result</span>
+		
+		<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+count()&quot;</span><span class="p">))</span><span class="c-Singleline"> ; increment counter if count() function is used</span>
+			<span class="n">ct</span><span class="o">++</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">res</span> <span class="o">=</span> <span class="nv">%res%%sub%</span><span class="p">,</span><span class="c-Singleline"> ; ... and concat to list</span>
+		
+		<span class="n">If</span> <span class="p">(</span><span class="n">set</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="ow">or</span> <span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+remove()&quot;</span><span class="p">))</span><span class="c-Singleline"> ; modify or remove...</span>
+			<span class="n">setb</span> <span class="o">=</span> <span class="nv">%setb%%os%</span><span class="o">.</span><span class="nv">%osx%</span><span class="o">|</span><span class="c-Singleline"> ; mark for modification</span>
+	<span class="p">}</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">setb</span> <span class="o">!=</span>
+	<span class="p">{</span>
+		<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">set</span><span class="p">,</span> <span class="s">&quot;node:&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">set</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">xpath</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="nf">SubStr(</span><span class="n">set</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;/rawsrc()&quot;</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">set</span><span class="p">,</span> <span class="n">set</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="nv">%xp%</span><span class="p">,</span> <span class="n">All</span>
+<span class="w">			</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">set</span><span class="p">,</span> <span class="n">set</span><span class="p">,</span> <span class="o">&lt;</span><span class="nv">%xp%</span><span class="o">/</span><span class="p">,</span> <span class="o">&lt;/</span><span class="nv">%xp%</span><span class="p">,</span> <span class="n">All</span>
+			<span class="nf">NumPut(</span><span class="mi">160</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">setb</span><span class="p">,</span> <span class="n">setb</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">setb</span><span class="p">,</span> <span class="o">|</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">setp</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="o">.</span>
+<span class="w">			</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">xp</span>
+			<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+append()&quot;</span><span class="p">))</span>
+				<span class="n">setp2</span> :<span class="o">=</span> <span class="n">setp1</span> :<span class="o">=</span> <span class="n">setp2</span> <span class="o">-</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">3</span>
+<span class="w">			</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+prepend()&quot;</span><span class="p">))</span>
+				<span class="n">setp2</span> :<span class="o">=</span> <span class="n">setp1</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">setp1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+			<span class="n">doc</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">setp1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">.</span> <span class="n">set</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="n">setp2</span><span class="p">)</span><span class="c-Singleline"> ; dissect then insert new value</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	
+	<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+count()&quot;</span><span class="p">))</span>
+		<span class="n">res</span> <span class="o">=</span> <span class="nv">%ct%</span><span class="p">,</span><span class="c-Singleline"> ; trailing char since SubStr is used below</span>
+	
+	<span class="n">nsid</span> :<span class="o">=</span> <span class="n">scb</span> <span class="o">.</span> <span class="o">&amp;</span><span class="n">doc</span> <span class="o">.</span> <span class="s">&quot;:&quot;</span><span class="c-Singleline"> ; update sid as necessary</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">nsid</span> <span class="o">!=</span> <span class="nv">%sid%</span>
+<span class="w">		</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="nv">%sid%</span><span class="p">,</span> <span class="nv">%nsid%</span>
+	
+	<span class="nf">NumPut(</span><span class="mi">0</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span><span class="c-Singleline"> ; remask variable to prevent external editing</span>
+<span class="w">	</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;+rawsrc()&quot;</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">xpr</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">		</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="o">&lt;</span><span class="nv">%t%</span><span class="o">/</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">,</span> <span class="n">All</span>
+<span class="w">		</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="o">&lt;/</span><span class="nv">%t%</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">,</span> <span class="n">All</span>
+<span class="w">		</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> `<span class="p">,,</span> `<span class="p">,</span><span class="nv">%scb%</span><span class="p">,</span> <span class="n">All</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="n">scb</span> <span class="o">.</span> <span class="n">res</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	; remove trailing comma and absolute paths from result before returning:</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="nf">RegExReplace(</span><span class="n">res</span><span class="p">,</span> <span class="s">&quot;S)(?&lt;=&lt;)(\/)?(?:(\w+)\/)+(?(1)|:: )&quot;</span><span class="p">,</span> <span class="s">&quot;$1$2&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+
+<span class="cm">		Function: xpath_save</span>
+<span class="cm">			Saves an XML document to file or returns the source.</span>
+<span class="cm">		</span>
+<span class="cm">		Parameters:</span>
+<span class="cm">			doc - an xml object returned by xpath_load()</span>
+<span class="cm">			src - (optional) a path to a file where the XML document should be saved;</span>
+<span class="cm">				if the file already exists it will be replaced</span>
+<span class="cm">		</span>
+<span class="cm">		Returns:</span>
+<span class="cm">			False if there was an error in saving the document, true otherwise.</span>
+<span class="cm">			If the src parameter is left blank the source code of the document is returned instead.</span>
+
+<span class="cm">*/</span>
+<span class="n">xpath_save</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">doc</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">xml</span> :<span class="o">=</span> <span class="nf">RegExReplace(SubStr(</span><span class="n">doc</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s">&quot;S)(?&lt;=&lt;)(\/)?(?:(\w+)\/)+(?(1)|:: )&quot;</span><span class="p">,</span> <span class="s">&quot;$1$2&quot;</span><span class="p">)</span><span class="c-Singleline"> ; remove metadata</span>
+	<span class="n">xml</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">xml</span><span class="p">,</span> <span class="s">&quot;&lt;([\w:]+)([^&gt;]*)&gt;&lt;\/\1&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;$1$2 /&gt;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; fuse empty nodes</span>
+<span class="c-Singleline">	;xml := RegExReplace(xml, &quot; (?=(?:\w+:)?\w+=[&#39;&quot;&quot;])&quot;) ; remove prepending whitespace on attributes</span>
+	<span class="n">xml</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">xml</span><span class="p">,</span> <span class="s">&quot;^\s+|\s+$&quot;</span><span class="p">)</span><span class="c-Singleline"> ; remove start and leading whitespace</span>
+<span class="w">	</span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">xml</span><span class="p">,</span> <span class="s">&quot;&lt;?xml&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="c-Singleline"> ; add processor instruction if there isn&#39;t any:</span>
+		<span class="n">xml</span> <span class="o">=</span> <span class="o">&lt;</span>?<span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;iso-8859-1&quot;</span>?<span class="o">&gt;</span>`<span class="n">n</span><span class="nv">%xml%</span>
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">xml</span><span class="p">,</span> <span class="n">xml</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span><span class="c-Singleline"> ; normalize linefeeds:</span>
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">xml</span><span class="p">,</span> <span class="n">xml</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>`<span class="n">n</span><span class="p">,</span> <span class="n">All</span>
+	<span class="n">sp</span> :<span class="o">=</span> <span class="s">&quot;  &quot;</span>
+<span class="w">	</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">sl</span><span class="p">,</span> <span class="n">sp</span>
+	<span class="n">s</span> <span class="o">=</span>
+	<span class="nf">VarSetCapacity(</span><span class="n">sxml</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">xml</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">xml</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">,</span> `<span class="n">n</span>`<span class="n">t</span> 	 `<span class="n">r</span>
+	<span class="p">{</span>
+<span class="w">		</span><span class="nb">If </span><span class="nv">A_LoopField</span> <span class="o">=</span>
+<span class="w">			</span><span class="nb">Continue</span>
+		<span class="n">If</span> <span class="p">(</span><span class="n">sb</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">sl</span>
+		<span class="n">sxml</span> <span class="o">=</span> <span class="nv">%sxml%</span>`<span class="n">n</span><span class="nv">%s%</span><span class="o">&lt;</span><span class="nv">%A_LoopField%</span>
+<span class="w">		</span><span class="nb">If </span><span class="n">sb</span>
+<span class="w">			</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">sl</span>
+		<span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;?&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span>
+			<span class="ow">and</span> !<span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;/&gt;&quot;</span><span class="p">))</span>
+			<span class="n">s</span> <span class="o">.=</span> <span class="n">sp</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">sxml</span><span class="p">,</span> <span class="n">sxml</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="n">sxml</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">sxml</span><span class="p">,</span> <span class="s">&quot;(\n(?:&quot;</span> <span class="o">.</span> <span class="n">sp</span> <span class="o">.</span> <span class="s">&quot;)*&lt;((?:\w+:)?\w+\b)[^&lt;]+?)\n(?:&quot;</span>
+		<span class="o">.</span> <span class="n">sp</span> <span class="o">.</span> <span class="s">&quot;)*&lt;/\2&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;$1&lt;/$2&gt;&quot;</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">src</span> <span class="o">=</span><span class="c-Singleline"> ; if save path not specified return the XML document:</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="n">sxml</span>
+<span class="w">	</span><span class="nb">FileDelete</span><span class="p">,</span> <span class="nv">%src%</span><span class="c-Singleline"> ; delete existing file</span>
+<span class="w">	</span><span class="nb">FileAppend</span><span class="p">,</span> <span class="nv">%sxml%</span><span class="p">,</span> <span class="nv">%src%</span><span class="c-Singleline"> ; create new one</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">ErrorLevel</span><span class="c-Singleline"> ; return errors, if any</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+
+<span class="cm">		Function: xpath_load</span>
+<span class="cm">			Loads an XML document.</span>
+<span class="cm">		</span>
+<span class="cm">		Parameters:</span>
+<span class="cm">			doc - a reference to the loaded XML file as a variable, to be used in other functions</span>
+<span class="cm">			src - (optional) the document to load, this can be a file name or a string,</span>
+<span class="cm">				if omitted the first paramter is used as the source</span>
+<span class="cm">		</span>
+<span class="cm">		Returns:</span>
+<span class="cm">			False if there was an error in loading the document, true otherwise.</span>
+
+<span class="cm">*/</span>
+<span class="n">xpath_load</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">doc</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">src</span> <span class="o">=</span><span class="c-Singleline"> ; if source is empty assume the out variable is the one to be loaded</span>
+		<span class="n">src</span> <span class="o">=</span> <span class="nv">%doc%</span>
+<span class="w">	</span><span class="nb">Else</span> <span class="n">If</span> <span class="nf">FileExist(</span><span class="n">src</span><span class="p">)</span><span class="c-Singleline"> ; otherwise read from file (if it exists)</span>
+<span class="w">		</span><span class="nb">FileRead</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="nv">%src%</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">src</span> <span class="ow">not</span> <span class="n">contains</span> <span class="o">&lt;</span><span class="p">,</span><span class="o">&gt;</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">false</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	; combined expressions slightly improve performance:</span>
+	<span class="n">src</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">src</span><span class="p">,</span> <span class="s">&quot;&lt;((?:\w+:)?\w+\b)([^&gt;]*)\/\s*&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;$1$2&gt;&lt;/$1&gt;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; defuse nodes</span>
+		<span class="p">,</span> <span class="nf">VarSetCapacity(</span><span class="n">doc</span><span class="p">,</span> <span class="nf">VarSetCapacity(</span><span class="n">xml</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">src</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">)</span><span class="c-Singleline"> ; pre-allocate enough space</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="o">&lt;</span><span class="c-Singleline"> ; for each opening tag:</span>
+	<span class="p">{</span>
+		<span class="n">If</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;?xml&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">Continue</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;?&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; ignore all other processor instructions</span>
+			<span class="n">xml</span> <span class="o">=</span> <span class="nv">%xml%</span><span class="o">&lt;</span><span class="nv">%A_LoopField%</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;![CDATA[&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; escape entities in CDATA sections</span>
+			<span class="n">cdata</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="s">&quot;, &amp;quot;, All</span>
+<span class="w">			</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="o">&amp;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;,</span> <span class="n">All</span>
+<span class="w">			</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> &#39;<span class="p">,</span> <span class="o">&amp;</span><span class="n">apos</span><span class="p">;,</span> <span class="n">All</span>
+<span class="w">			</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;,</span> <span class="n">All</span>
+<span class="w">			</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span> <span class="o">&gt;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;,</span> <span class="n">All</span>
+			<span class="n">xml</span> <span class="o">=</span> <span class="nv">%xml%%cdata%</span> 
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span>!<span class="n">pos</span> :<span class="o">=</span> <span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;^\/?(?:\w+:)?\w+&quot;</span><span class="p">,</span> <span class="n">tag</span><span class="p">))</span><span class="c-Singleline"> ; if this isn&#39;t a valid tag:</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">If </span><span class="nv">A_LoopField</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">space</span>
+				<span class="n">xml</span> <span class="o">=</span> <span class="nv">%xml%</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="nv">%A_LoopField%</span><span class="c-Singleline"> ; convert to escaped entity value</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="p">{</span>
+<span class="w">			</span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">tag</span><span class="p">)</span><span class="c-Singleline"> ; get tag name</span>
+<span class="w">			</span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">{</span><span class="c-Singleline"> ; if this is a closing tag:</span>
+				<span class="n">xml</span> <span class="o">=</span> <span class="nv">%xml%</span><span class="o">&lt;/</span><span class="nv">%pre%%ex%</span><span class="c-Singleline"> ; close tag</span>
+<span class="w">				</span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">R2</span>
+<span class="w">				</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="p">}</span>
+<span class="w">			</span><span class="nb">Else</span> <span class="p">{</span>
+				<span class="n">pre</span> <span class="o">=</span> <span class="nv">%pre%%tag%</span><span class="o">/</span>
+				<span class="n">xml</span> <span class="o">=</span> <span class="nv">%xml%</span><span class="o">&lt;</span><span class="nv">%pre%</span>:: <span class="nv">%ex%</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">xml</span><span class="p">,</span> `<span class="p">,,</span> <span class="o">&amp;</span>#<span class="mi">44</span><span class="p">;,</span> <span class="n">All</span><span class="c-Singleline"> ; entity escape commas (which are used as array delimiters)</span>
+	<span class="nf">NumPut(</span><span class="mi">0</span><span class="p">,</span> <span class="n">doc</span> :<span class="o">=</span> <span class="s">&quot; &quot;</span> <span class="o">.</span> <span class="n">doc</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span><span class="c-Singleline"> ; mask variable from text display with nullbyte</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="nv">true</span><span class="c-Singleline"> ; assume sucessful load by this point</span>
+<span class="p">}</span>
+</pre></div>

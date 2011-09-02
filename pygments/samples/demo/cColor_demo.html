@@ -1,0 +1,20 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include CColor.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH1</span> <span class="n">cred</span><span class="p">,</span> <span class="n">hello</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH2</span> <span class="n">cred</span> <span class="n">x</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> <span class="p">(</span><span class="n">de</span><span class="p">)</span><span class="n">nick</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH3</span> <span class="n">cred</span> <span class="n">x</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> <span class="n">thx</span>
+
+<span class="nb">MsgBox</span> <span class="n">Proceed</span> <span class="n">further</span> <span class="n">to</span> <span class="n">see</span> <span class="n">what</span> <span class="n">happens</span> <span class="n">if</span> <span class="n">colored</span> <span class="n">with</span> <span class="n">CColor</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">h100</span> <span class="n">w200</span>
+<span class="nb">Sleep</span><span class="p">,</span> <span class="mi">1500</span>
+<span class="n">CColor</span><span class="p">(</span><span class="n">h2</span><span class="p">,</span> <span class="s">&quot;FFFFFF&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="o">+</span><span class="n">LastFound</span>
+<span class="nb">WinSet</span><span class="p">,</span> <span class="n">ReDraw</span><span class="c-Singleline"> ; Without this redraw, the change does not take effect!</span>
+<span class="nb">Return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nb">ExitApp</span>
+</pre></div>

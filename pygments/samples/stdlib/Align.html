@@ -1,0 +1,130 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">  Function:	Align</span>
+<span class="cm"> 			Aligns controls inside the parent.</span>
+
+<span class="cm">  Parameter:</span>
+<span class="cm"> 			HCtrl	- Control&#39;s handle or Parent handle. If other parameters are omitted, hCtrl represents Parent that</span>
+<span class="cm">					  should be re-aligned. Use re-align when you hide/show/resize controls to reposition remaining controls.</span>
+
+<span class="cm">			Type	- String specifying align type. Available align types are Left, Right, Top, Bottom, Fill and N.</span>
+<span class="cm"> 					  Top and Bottom types are horizontal alignments while Left and Right are vertical. Fill type is both</span>
+<span class="cm"> 					  vertically and horizontally aligned.</span>
+<span class="cm"> 					  Control will be aligned to the edge of given type of its parent. For any given Type, control&#39;s</span>
+<span class="cm"> 					  x, y are ignored, w is ignored for vertical, h for horizontal alignment.					  </span>
+
+<span class="cm"> 			Dim		- Dimension, optional. This is width for vertical and height for horizontal alignment type.</span>
+<span class="cm"> 					  If you omit dimension, controls current dimension will be used.</span>
+<span class="cm">					  If you use dot infront of the number, everything after the dot will be seen as a handle of the control which serves as a marker.</span>
+<span class="cm">					  In this mode, hCtrl control is aligned according to the marker control.</span>
+<span class="cm">			</span>
+<span class="cm">			hGlueCtrl - If present, changes behavior of the function. HCtrl will be glued to this control and Type will represent on which side </span>
+<span class="cm">						to glue HCtrl to the hMarker. If first char of hMarker is &quot;*&quot;, the function will position control relative to its root window, </span>
+<span class="cm">						otherwise, the repositioning is relative to its parent.</span>
+<span class="cm"> </span>
+<span class="cm">  Remarks:</span>
+<span class="cm">			Parent window size must be set prior to calling this function. Function is not limited to top level windows, it can align</span>
+<span class="cm">			controls inside container controls.</span>
+
+<span class="cm">			The order in which you register controls to be aligned is important. </span>
+
+<span class="cm">			In case you use resizable GUI and &lt;Attach&gt; function, Align will reset Attach for the parent that is re-aligned.</span>
+
+<span class="cm">  Example:</span>
+<span class="cm">	(start code)</span>
+<span class="cm"> 			Align(h1, &quot;L&quot;, 100)	  ;Align this control to the left edge of its parent, set width to 100,</span>
+<span class="cm"> 			Align(h2, &quot;T&quot;)		  ; then align this control to the top minus space taken from previous control, use its own height,</span>
+<span class="cm"> 			Align(h3, &quot;F&quot;)		  ; then set this control to fill remaining space.</span>
+<span class="cm"> 		</span>
+<span class="cm"> 			Align(hGui)			  ;Re-align hGui</span>
+
+
+<span class="cm"> 			Align(h3, &quot;F&quot;, &quot;&quot;,  hGlueCtrl )  ; Align h3 to cover hGlueCtrl control</span>
+<span class="cm">			Align(h3, &quot;T&quot;, 200, hGlueCtrl )  ; Align h3 to be put above hGlueCtrl control and have height=200.</span>
+<span class="cm">	(end code)</span>
+
+<span class="cm">  About:</span>
+<span class="cm">		o 1.04 by majkinetor.</span>
+<span class="cm">		o Licensed under BSD &lt;http://creativecommons.org/licenses/BSD/&gt; </span>
+<span class="cm"> */</span>
+<span class="n">Align</span><span class="p">(</span><span class="n">HCtrl</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Dim</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">HGlueCtrl</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>
+	<span class="n">static</span> 
+
+	<span class="n">HCtrl</span> <span class="o">+=</span> <span class="mi">0</span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">Type</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Type</span><span class="o">=</span><span class="s">&quot;reset&quot;</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline">	;realign</span>
+<span class="w">		</span><span class="nb">critical</span> <span class="mi">100</span>
+		<span class="n">hParent</span> :<span class="o">=</span> <span class="n">HCtrl</span><span class="p">,</span> <span class="nv">%hParent%</span><span class="n">rect</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">type</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span> <span class="n">return</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="nv">%hParent%</span><span class="p">,</span> <span class="o">|</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="nv">%A_Space%</span>
+			<span class="n">HCtrl</span> :<span class="o">=</span> <span class="n">s1</span><span class="p">,</span> <span class="n">Type</span> :<span class="o">=</span> <span class="n">s2</span><span class="p">,</span> <span class="nv">%Type%</span> :<span class="o">=</span> <span class="nv">true</span><span class="p">,</span> <span class="n">Dim</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+<span class="w">			</span><span class="nb">gosub</span> <span class="nv">%A_ThisFunc%</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nf">IsFunc(</span><span class="n">t</span>:<span class="o">=</span><span class="s">&quot;Attach&quot;</span><span class="p">)</span> ? <span class="nv">%t%</span><span class="p">(</span><span class="n">hParent</span><span class="p">)</span> : <span class="s">&quot;&quot;</span>
+	<span class="p">}</span> 
+	
+	<span class="n">if</span> <span class="p">(</span><span class="n">HGlueCtrl</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">if </span><span class="nf">SubStr(</span><span class="n">HGlueCtrl</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+			<span class="n">HGlueCtrl</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">HGlueCtrl</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">bRoot</span> :<span class="o">=</span> <span class="mi">1</span>
+<span class="w">		</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">bRoot</span>
+<span class="w">			</span><span class="nb">ControlGetPos</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%HGlueCtrl%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">Win_GetRect</span><span class="p">(</span><span class="n">HGlueCtrl</span><span class="p">,</span> <span class="s">&quot;*xywh&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="w">		</span><span class="nl">l:</span><span class="o">=</span><span class="n">r</span>:<span class="o">=</span><span class="n">t</span>:<span class="o">=</span><span class="n">b</span>:<span class="o">=</span><span class="n">f</span>:<span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nv">%Type%</span> :<span class="o">=</span> <span class="mi">1</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">Dim</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">			</span><span class="nb">ControlGetPos</span><span class="p">,,,</span><span class="n">DimH</span><span class="p">,</span><span class="n">DimV</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%HCtrl%</span>
+			<span class="n">Dim</span> :<span class="o">=</span> <span class="n">r</span> <span class="o">||</span> <span class="n">l</span> ? <span class="n">DimH</span> : <span class="n">DimV</span>
+		<span class="p">}</span>
+		<span class="n">x</span> <span class="o">+=</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> ? <span class="p">(</span><span class="n">l</span> ? <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">Dim</span> : <span class="n">w</span><span class="p">)</span> : <span class="mi">0</span><span class="p">,</span>  <span class="n">w</span> :<span class="o">=</span> <span class="n">r</span> <span class="o">||</span> <span class="n">l</span> ? <span class="n">Dim</span> : <span class="n">w</span>
+		<span class="n">y</span> <span class="o">+=</span> <span class="n">t</span> <span class="o">||</span> <span class="n">b</span> ? <span class="p">(</span><span class="n">t</span> ? <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">Dim</span> : <span class="n">h</span><span class="p">)</span> : <span class="mi">0</span><span class="p">,</span>  <span class="n">h</span> :<span class="o">=</span> <span class="n">t</span> <span class="o">||</span> <span class="n">b</span> ? <span class="n">Dim</span> : <span class="n">h</span>
+
+<span class="w">		</span><span class="nb">if </span><span class="n">bRoot</span>
+<span class="w">			 </span><span class="nb">ControlMove</span><span class="p">,</span> <span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hCtrl%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="nf">DllCall(</span><span class="s">&quot;SetWindowPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hctrl</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">return</span>
+	<span class="p">}</span>
+	
+
+ 	<span class="n">hParent</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetParent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">HCtrl</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">)</span>
+	<span class="n">if</span> !<span class="n">hParent</span> <span class="ow">or</span> !<span class="n">hCtrl</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Invalid handle.   Control: &quot;</span> <span class="n">hCtrl</span> <span class="s">&quot;  Parent: &quot;</span> <span class="n">hParent</span>
+
+<span class="w"> </span><span class="nl">Align:</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">Type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">f</span>
+<span class="w">		 </span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Unknown type: &quot;</span> <span class="n">Type</span> 
+<span class="w">	</span><span class="nb">else</span> <span class="n">l</span>:<span class="o">=</span><span class="n">r</span>:<span class="o">=</span><span class="n">t</span>:<span class="o">=</span><span class="n">b</span>:<span class="o">=</span><span class="n">f</span>:<span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nv">%Type%</span> :<span class="o">=</span> <span class="nv">true</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="nv">%hParent%</span><span class="n">rect</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">c1</span> :<span class="o">=</span> <span class="n">c2</span> :<span class="o">=</span> <span class="mi">0</span>
+		<span class="n">Win_Get</span><span class="p">(</span><span class="n">hParent</span><span class="p">,</span> <span class="s">&quot;Lwh&quot;</span><span class="p">,</span> <span class="n">c3</span><span class="p">,</span> <span class="n">c4</span><span class="p">)</span>
+	<span class="p">}</span> <span class="n">else</span> <span class="n">StringSplit</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="nv">%hParent%</span><span class="n">rect</span><span class="p">,</span> <span class="nv">%A_Space%</span>
+
+	<span class="n">if</span> !<span class="nf">InStr(</span><span class="nv">%hParent%</span><span class="p">,</span> <span class="n">HCtrl</span><span class="p">)</span>
+		<span class="nv">%hParent%</span> <span class="o">.=</span> <span class="p">(</span><span class="nv">%hParent%</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> ? <span class="s">&quot;|&quot;</span> : <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="n">HCtrl</span> <span class="s">&quot; &quot;</span> <span class="n">Type</span>
+
+<span class="w">	</span><span class="nb">ControlGet</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%HCtrl%</span>
+	<span class="n">if</span> !<span class="p">(</span><span class="n">style</span> <span class="o">&amp;</span> <span class="mh">0x10000000</span><span class="p">)</span><span class="c-Singleline">	;WS_VISIBLE</span>
+<span class="w">		</span><span class="nb">return</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">Dim</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">ControlGetPos</span><span class="p">,,,</span><span class="n">DimH</span><span class="p">,</span><span class="n">DimV</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%HCtrl%</span>
+		<span class="n">Dim</span> :<span class="o">=</span> <span class="n">r</span> <span class="o">||</span> <span class="n">l</span> ? <span class="n">DimH</span> : <span class="n">DimV</span>
+	<span class="p">}</span>
+
+	  <span class="n">x</span> :<span class="o">=</span> <span class="n">r</span>		? <span class="n">c3</span><span class="o">-</span><span class="n">Dim</span> : <span class="n">c1</span>
+	<span class="p">,</span> <span class="n">y</span> :<span class="o">=</span> <span class="n">b</span>		? <span class="n">c4</span><span class="o">-</span><span class="n">Dim</span> : <span class="n">c2</span>
+	<span class="p">,</span> <span class="n">w</span> :<span class="o">=</span> <span class="n">r</span> <span class="o">||</span> <span class="n">l</span>	? <span class="n">Dim</span> : <span class="n">c3</span><span class="o">-</span><span class="n">c1</span>
+	<span class="p">,</span> <span class="n">h</span> :<span class="o">=</span> <span class="n">t</span> <span class="o">||</span> <span class="n">b</span>	? <span class="n">Dim</span> : <span class="n">c4</span><span class="o">-</span><span class="n">c2</span>
+	
+	<span class="nf">DllCall(</span><span class="s">&quot;SetWindowPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hctrl</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+	
+	  <span class="n">c1</span> <span class="o">+=</span> <span class="n">l</span> ? <span class="n">Dim</span> : <span class="mi">0</span>
+	<span class="p">,</span> <span class="n">c2</span> <span class="o">+=</span> <span class="n">t</span> ? <span class="n">Dim</span> : <span class="mi">0</span>
+	<span class="p">,</span> <span class="n">c3</span> <span class="o">-=</span> <span class="n">r</span> ? <span class="n">Dim</span> : <span class="mi">0</span>
+	<span class="p">,</span> <span class="n">c4</span> <span class="o">-=</span> <span class="n">b</span> ? <span class="n">Dim</span> : <span class="mi">0</span>
+
+	<span class="nv">%hParent%</span><span class="n">rect</span> :<span class="o">=</span> <span class="n">c1</span> <span class="s">&quot; &quot;</span> <span class="n">c2</span> <span class="s">&quot; &quot;</span> <span class="n">c3</span> <span class="s">&quot; &quot;</span> <span class="n">c4</span>
+<span class="w"> </span><span class="nb">return</span>
+<span class="p">}</span>
+</pre></div>

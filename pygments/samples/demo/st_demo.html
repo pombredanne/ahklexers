@@ -1,0 +1,46 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include st.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;Declare our new stack</span>
+<span class="n">ST_Dim</span><span class="p">(</span><span class="n">Script</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;Create our sample gui, which adds entrys to the stack</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="o">+</span><span class="n">ToolWindow</span>
+
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">x5</span> <span class="n">y5</span> <span class="n">w350</span> <span class="n">h20</span> <span class="n">vEdit</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">x5</span> <span class="n">y30</span> <span class="n">w350</span> <span class="n">h65</span> <span class="o">+</span><span class="n">ReadOnly</span> <span class="n">vAll</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">x5</span> <span class="n">y105</span> <span class="n">w100</span> <span class="n">h15</span> <span class="n">vCount</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">x250</span> <span class="n">y105</span> <span class="n">w50</span> <span class="n">h20</span> <span class="n">gRun</span><span class="p">,</span> <span class="n">Show</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">x305</span> <span class="n">y105</span> <span class="n">w50</span> <span class="n">h20</span> <span class="n">gAdd</span><span class="p">,</span> <span class="n">Add</span>
+
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Show</span><span class="p">,</span> <span class="n">w360</span> <span class="n">h130</span><span class="p">,</span> <span class="n">Stack</span> <span class="n">Example</span>
+<span class="w">  </span><span class="nb">Return</span>
+
+<span class="nl">Add:</span><span class="c-Singleline"></span>
+<span class="c-Singleline">  ;Retrieve edit content</span>
+<span class="w">  </span><span class="nb">GuiControlGet</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="mi">1</span>:<span class="c-Singleline"></span>
+<span class="c-Singleline">  ;Clear edit</span>
+<span class="w">  </span><span class="nb">GuiControl</span><span class="p">,</span> <span class="mi">1</span>:<span class="p">,</span> <span class="n">Edit</span><span class="p">,</span><span class="c-Singleline"></span>
+<span class="c-Singleline">  ;Add to stack</span>
+  <span class="n">ST_Push</span><span class="p">(</span><span class="n">Script</span><span class="p">,</span><span class="n">Edit</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">  ;Update count text</span>
+<span class="w">  </span><span class="nb">GuiControl</span><span class="p">,</span> <span class="mi">1</span>:<span class="p">,</span> <span class="n">Count</span><span class="p">,</span> <span class="o">%</span> <span class="n">ST_Len</span><span class="p">(</span><span class="n">Script</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">Return</span>
+
+<span class="nb">Run</span>:<span class="c-Singleline"></span>
+<span class="c-Singleline">  ;Loop trough the stack</span>
+<span class="w">  </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">ST_Len</span><span class="p">(</span><span class="n">Script</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ;Retrieve current contents</span>
+<span class="w">    </span><span class="nb">GuiControlGet</span><span class="p">,</span> <span class="n">All</span><span class="p">,</span> <span class="mi">1</span>:<span class="c-Singleline"></span>
+<span class="c-Singleline">    ;Add new value to old contents</span>
+<span class="w">    </span><span class="nb">GuiControl</span><span class="p">,</span> <span class="mi">1</span>:<span class="p">,</span> <span class="n">All</span><span class="p">,</span> <span class="o">%</span> <span class="n">All</span> <span class="o">.</span> <span class="n">ST_Pop</span><span class="p">(</span><span class="n">Script</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ;Update count text</span>
+<span class="w">    </span><span class="nb">GuiControl</span><span class="p">,</span> <span class="mi">1</span>:<span class="p">,</span> <span class="n">Count</span><span class="p">,</span> <span class="o">%</span> <span class="n">ST_Len</span><span class="p">(</span><span class="n">Script</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="w">  </span><span class="nb">Return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="w">  </span><span class="nb">ExitApp</span>
+</pre></div>

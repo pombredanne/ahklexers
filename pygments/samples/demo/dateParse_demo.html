@@ -1,0 +1,15 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include DateParse.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="n">time</span> :<span class="o">=</span> <span class="s">&quot;2:35 PM, 27 November, 2007&quot;</span>
+<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">time</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">`n`n    converted to`n`n</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">DateParse</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; It will also work with any of the following formats:</span>
+<span class="c-Singleline">; 4:55 am Feb 27, 2004</span>
+<span class="c-Singleline">; 11:26 PM</span>
+<span class="c-Singleline">; 1532</span>
+<span class="c-Singleline">; 19/2/05</span>
+<span class="c-Singleline">; 2007-06-26T14:09:12Z</span>
+</pre></div>

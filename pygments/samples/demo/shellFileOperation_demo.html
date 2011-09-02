@@ -1,0 +1,8 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ShellFileOperation.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="n">ShellFileOperation</span><span class="p">(</span> <span class="mh">0x2</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,</span> <span class="nv">A_DeskTop</span> <span class="p">)</span><span class="c-Singleline">                     ; Copy a Single file</span>
+<span class="n">ShellFileOperation</span><span class="p">(</span> <span class="mh">0x2</span><span class="p">,</span> <span class="s">&quot;C:\Program Files\AutoHotkey&quot;</span><span class="p">,</span> <span class="nv">A_DeskTop</span> <span class="p">)</span><span class="c-Singleline"> ; Copy the whole folder</span>
+</pre></div>

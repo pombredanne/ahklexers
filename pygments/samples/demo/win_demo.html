@@ -1,0 +1,18 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Win.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">vh1</span><span class="p">,</span> <span class="n">hello</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">vh2</span><span class="p">,</span> <span class="n">majkinetor</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">vh3</span><span class="p">,</span> <span class="n">thx</span>
+
+<span class="nb">Msgbox</span><span class="p">,,</span> <span class="nv">%A_ScriptName%</span><span class="p">,</span> <span class="n">Close</span> <span class="n">Gui</span> <span class="n">with</span> <span class="n">a</span> <span class="mf">2.5</span> <span class="n">second</span> <span class="n">blend</span> <span class="n">effect</span> <span class="ow">and</span> <span class="n">exit</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
+<span class="n">hwnd</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="s">&quot;A&quot;</span><span class="p">)</span>
+<span class="nb">Sleep</span><span class="p">,</span> <span class="mi">1500</span>
+
+<span class="n">Win_Animate</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="s">&quot;hide blend&quot;</span><span class="p">,</span> <span class="mi">2500</span><span class="p">)</span>
+<span class="nb">ExitApp</span>
+</pre></div>

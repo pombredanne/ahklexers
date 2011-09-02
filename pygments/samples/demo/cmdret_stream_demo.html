@@ -1,0 +1,24 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include CMDret_stream.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">x6</span> <span class="n">y10</span> <span class="n">w460</span> <span class="n">h360</span> <span class="o">+</span><span class="n">HScroll</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">x398</span> <span class="n">y110</span> <span class="n">h377</span> <span class="n">w477</span><span class="p">,</span> <span class="n">CMDret</span> <span class="o">-</span> <span class="n">AHK</span> <span class="n">version</span> <span class="o">-</span> <span class="n">Streaming</span> <span class="n">Test</span> <span class="n">App</span>
+
+<span class="nb">Gui</span> <span class="o">+</span><span class="n">LastFound</span>
+<span class="n">StrOut</span> :<span class="o">=</span> <span class="n">CMDret_Stream</span><span class="p">(</span><span class="s">&quot;cmd /c dir c:\&quot;</span><span class="p">)</span>
+<span class="nb">MsgBox</span> <span class="nv">%StrOut%</span>
+
+<span class="nb">Return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nb">ExitApp</span>
+
+<span class="n">CMDret_Output</span><span class="p">(</span><span class="n">CMDout</span><span class="p">,</span> <span class="n">CMDname</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">Global</span> <span class="n">OutputWindow</span>
+<span class="w">	</span><span class="nb">ControlSetText</span><span class="p">,</span> <span class="n">Edit1</span><span class="p">,</span> <span class="nv">%CMDout%</span>
+<span class="w">	</span><span class="nb">Sleep</span><span class="p">,</span> <span class="mi">200</span>
+<span class="p">}</span>
+</pre></div>

@@ -1,0 +1,12 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include EmptyMem.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;This example will reduce mem usage from around 5,000k to 500k</span>
+<span class="nb">Run</span><span class="p">,</span> <span class="n">taskmgr</span><span class="o">.</span><span class="n">exe</span>
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="n">Remember</span> <span class="n">current</span> <span class="n">memory</span> <span class="n">usage</span> <span class="n">then</span> <span class="n">compare</span><span class="o">.</span>
+<span class="n">EmptyMem</span><span class="p">()</span>
+<span class="nb">Sleep</span><span class="p">,</span> <span class="mi">5000</span>
+<span class="nb">Exitapp</span>
+</pre></div>

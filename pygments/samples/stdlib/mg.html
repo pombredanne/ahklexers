@@ -1,0 +1,160 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*==Description=========================================================================</span>
+
+<span class="cm">MOUSE GESTURES module</span>
+<span class="cm">Author:		Learning one (Boris Mudrinic)</span>
+<span class="cm">Contact:	boris-mudrinic@net.hr</span>
+<span class="cm">AHK forum:	http://www.autohotkey.com/forum/topic56472.html</span>
+
+<span class="cm">License:	</span>
+<span class="cm">Mouse gestures module is free for non-commercial, personal use.</span>
+<span class="cm">You are not allowed to use it commercialy or have any profit from it in general, without my written permission.</span>
+<span class="cm">I&#39;m not responsible for any damages arising from the use of Mouse gestures module. You are not allowed to remove</span>
+<span class="cm">comments from this file.</span>
+<span class="cm">In majotiry of cases, mentioning my name and contact will probably be all what I&#39;ll demand for giving you permission</span>
+<span class="cm">to use this module commercialy. First ask and than act!</span>
+
+
+<span class="cm">Documentation.</span>
+<span class="cm">Mouse gestures are specific mouse movements which can be recognized by this module. </span>
+<span class="cm">Gestures recognition system recognizes 4 basic mouse movements; up, down, right, left.</span>
+<span class="cm">Abbreviations for those movements are U (up), D (down) , R (right), and L (left).</span>
+<span class="cm">Minimal mouse movement distance which this module recognizes as movement is 9 pixels.</span>
+
+<span class="cm">To recognize mouse gesture, you have to call MG_Recognize() function. You can:</span>
+<span class="cm">1) 	store performed gesture in variable. Example: Gesture := MG_Recognize()</span>
+<span class="cm">2) 	or execute existing MG_ function. Syntaxs: &quot;MG_&quot; means mouse gesture. &quot;U&quot; means up, &quot;D&quot; down, &quot;R&quot; right, &quot;L&quot; left.</span>
+<span class="cm">	So, for example, if function MG_R() exists in your script, it will be executed when you perform &quot;drag right gesture&quot;</span>
+<span class="cm">	MG_RU() will be executed when you perform &quot;drag right up gesture&quot;, MG_UDU() - &quot;drag up down up gesture&quot;, etc.</span>
+
+<span class="cm">MG_Recognize(MGHotkey=&quot;&quot;, ToolTip=0, MaxMoves=3, ExecuteMGFunction=1, SendIfNoDrag=1)</span>
+<span class="cm">All parameters are optional.</span>
+<span class="cm">-	MGHotkey 	mouse gesture hotkey. Can be: 1) any mouse button that can be pressed down and 2) any keyboard key</span>
+<span class="cm">				except alt, control, shift (modifiers).</span>
+<span class="cm">-	ToolTip 	1 means show gesture in tooltip while performing it, 0 means don&#39;t show it.</span>
+<span class="cm">-	MaxMoves	maximum number of moves (directions) in one gesture. If you perform more moves than specified,</span>
+<span class="cm">				gesture will be canceled. In that case, MG_Recognize() will not execute existing MG_&lt;gesture&gt; </span>
+<span class="cm">				function and will return blank value.</span>
+<span class="cm">-	ExecuteMGFunction	1 means execute existing MG_&lt;gesture&gt; function. 0 means don&#39;t execute it.</span>
+<span class="cm">-	SendIfNoDrag		1 means send MGHotkey click (press) if drag was under 9 pixels. 0 Means don&#39;t send it.</span>
+
+<span class="cm">MG_Recognize() return values:</span>
+<span class="cm">- blank	if gesture is canceled</span>
+<span class="cm">- 0 if you dragged MGHotkey for less than 9 pixels</span>
+<span class="cm">- &lt;performed gesture&gt; for example; R, D, LD, LUL, URL, etc.</span>
+
+<span class="cm">If SendIfNoDrag = 1 (default), normal MGHotkey&#39;s click function is preserved; just click and don&#39;t drag and module will</span>
+<span class="cm">send normal click. There are no built-in actions on gestures. It&#39;s up to you to write your commands that fit your needs.</span>
+<span class="cm">You can find more informations about this type of mouse gestures in Radial menu help file. You will find Radial menu here:</span>
+<span class="cm">http://www.autohotkey.com/forum/viewtopic.php?p=308352#308352</span>
+<span class="cm">*/</span><span class="c-Singleline"></span>
+
+
+<span class="c-Singleline">;===Functions===========================================================================</span>
+<span class="n">MG_GetMove</span><span class="p">(</span><span class="n">Angle</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="mi">4</span>
+    <span class="p">{</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">Angle</span> <span class="o">&lt;=</span> <span class="mi">90</span><span class="o">*</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">45</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="n">Sector</span> :<span class="o">=</span> <span class="nv">A_Index</span>
+<span class="w">			</span><span class="nb">Break</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">Else</span> <span class="n">if</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+		<span class="n">Sector</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">Sector</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="s">&quot;U&quot;</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">if</span> <span class="n">Sector</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="s">&quot;R&quot;</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">if</span> <span class="n">Sector</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="s">&quot;D&quot;</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">if</span> <span class="n">Sector</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="s">&quot;L&quot;</span>
+<span class="p">}</span>
+
+<span class="n">MG_GetAngle</span><span class="p">(</span><span class="n">StartX</span><span class="p">,</span> <span class="n">StartY</span><span class="p">,</span> <span class="n">EndX</span><span class="p">,</span> <span class="n">EndY</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">x</span> :<span class="o">=</span> <span class="n">EndX</span><span class="o">-</span><span class="n">StartX</span><span class="p">,</span> <span class="n">y</span> :<span class="o">=</span> <span class="n">EndY</span><span class="o">-</span><span class="n">StartY</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">{</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="w">        </span><span class="nb">return</span> <span class="mi">180</span>
+<span class="w">        </span><span class="nb">Else</span> <span class="n">if</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span>
+<span class="w">        </span><span class="nb">return</span> <span class="mi">360</span>
+<span class="w">        </span><span class="nb">Else</span>
+<span class="w">        </span><span class="nb">return</span>
+    <span class="p">}</span>
+    <span class="n">deg</span> :<span class="o">=</span> <span class="nf">ATan(</span><span class="n">y</span><span class="o">/</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mf">57.295779513</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="w">    </span><span class="nb">return</span> <span class="n">deg</span> <span class="o">+</span> <span class="mi">90</span>
+<span class="w">    </span><span class="nb">Else</span>
+<span class="w">    </span><span class="nb">return</span> <span class="n">deg</span> <span class="o">+</span> <span class="mi">270</span>	
+<span class="p">}</span>
+
+<span class="n">MG_GetRadius</span><span class="p">(</span><span class="n">StartX</span><span class="p">,</span> <span class="n">StartY</span><span class="p">,</span> <span class="n">EndX</span><span class="p">,</span> <span class="n">EndY</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">a</span> :<span class="o">=</span> <span class="nf">Abs(</span><span class="n">endX</span><span class="o">-</span><span class="n">startX</span><span class="p">),</span> <span class="n">b</span> :<span class="o">=</span> <span class="nf">Abs(</span><span class="n">endY</span><span class="o">-</span><span class="n">startY</span><span class="p">),</span> <span class="n">Radius</span> :<span class="o">=</span> <span class="nf">Sqrt(</span><span class="n">a</span><span class="o">*</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">Radius</span>    
+<span class="p">}</span>
+
+<span class="n">MG_Recognize</span><span class="p">(</span><span class="n">MGHotkey</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ToolTip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">MaxMoves</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ExecuteMGFunction</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">SendIfNoDrag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nb">CoordMode</span><span class="p">,</span> <span class="n">mouse</span><span class="p">,</span> <span class="n">Screen</span>
+<span class="w">   </span><span class="nb">MouseGetPos</span><span class="p">,</span> <span class="n">mx1</span><span class="p">,</span> <span class="n">my1</span>
+<span class="w">   </span><span class="nb">if </span><span class="n">MGHotkey</span> <span class="o">=</span>
+   <span class="n">MGHotkey</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="nv">A_ThisHotkey</span><span class="p">,</span><span class="s">&quot;^(\w* &amp; |\W)&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">Loop</span>
+   <span class="p">{</span>
+		<span class="n">if</span> !<span class="p">(</span><span class="nf">GetKeyState(</span><span class="n">MGHotkey</span><span class="p">,</span> <span class="s">&quot;p&quot;</span><span class="p">))</span>
+		<span class="p">{</span>
+<span class="w">			</span><span class="nb">if </span><span class="n">Gesture</span> <span class="o">=</span>
+			<span class="p">{</span>
+<span class="w">				</span><span class="nb">if </span><span class="n">ToolTip</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">				</span><span class="nb">ToolTip</span>
+<span class="w">				</span><span class="nb">if </span><span class="n">SendIfNoDrag</span> <span class="o">=</span> <span class="mi">1</span>
+				<span class="p">{</span>
+<span class="w">					</span><span class="nb">Suspend</span><span class="p">,</span> <span class="n">on</span>
+<span class="w">					</span><span class="nb">SendInput</span><span class="p">,</span> <span class="p">{</span><span class="nv">%MGHotkey%</span><span class="p">}</span>
+<span class="w">					</span><span class="nb">Suspend</span><span class="p">,</span> <span class="n">off</span>
+				<span class="p">}</span>
+<span class="w">				</span><span class="nb">Return</span> <span class="mi">0</span>
+			<span class="p">}</span>
+<span class="w">			</span><span class="nb">if </span><span class="n">ToolTip</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">			</span><span class="nb">ToolTip</span>
+			<span class="n">if</span> <span class="p">(</span><span class="nf">IsFunc(</span><span class="s">&quot;MG_&quot;</span> <span class="n">Gesture</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ExecuteMGFunction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+			<span class="n">MG_</span><span class="nv">%Gesture%</span><span class="p">()</span>
+<span class="w">			</span><span class="nb">Return</span> <span class="n">Gesture</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">Sleep</span><span class="p">,</span> <span class="mi">20</span>
+<span class="w">		</span><span class="nb">MouseGetPos</span><span class="p">,</span> <span class="n">EndX</span><span class="p">,</span> <span class="n">EndY</span>
+		<span class="n">Radius</span> :<span class="o">=</span> <span class="n">MG_GetRadius</span><span class="p">(</span><span class="n">mx1</span><span class="p">,</span> <span class="n">my1</span><span class="p">,</span> <span class="n">EndX</span><span class="p">,</span> <span class="n">EndY</span><span class="p">)</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">Radius</span> <span class="o">&lt;</span> <span class="mi">9</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">Continue</span>
+		
+		<span class="n">Angle</span> :<span class="o">=</span> <span class="n">MG_GetAngle</span><span class="p">(</span><span class="n">mx1</span><span class="p">,</span> <span class="n">my1</span><span class="p">,</span> <span class="n">EndX</span><span class="p">,</span> <span class="n">EndY</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">MouseGetPos</span><span class="p">,</span> <span class="n">mx1</span><span class="p">,</span> <span class="n">my1</span>
+		<span class="n">CurMove</span> :<span class="o">=</span> <span class="n">MG_GetMove</span><span class="p">(</span><span class="n">Angle</span><span class="p">)</span>
+		
+		<span class="n">if</span> !<span class="p">(</span><span class="n">CurMove</span> <span class="o">=</span> <span class="n">LastMove</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="n">Gesture</span> <span class="o">.=</span> <span class="n">CurMove</span>
+			<span class="n">LastMove</span> :<span class="o">=</span> <span class="n">CurMove</span>
+			<span class="p">{</span>
+				<span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">Gesture</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MaxMoves</span><span class="p">)</span>  
+				<span class="p">{</span>
+<span class="w">					</span><span class="nb">if </span><span class="n">ToolTip</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">					</span><span class="nb">ToolTip</span>
+<span class="w">					</span><span class="nb">Progress</span><span class="p">,</span> <span class="n">m2</span> <span class="n">b</span> <span class="n">fs10</span> <span class="n">zh0</span> <span class="n">w80</span> <span class="n">WMn700</span><span class="p">,</span> <span class="n">Gesture</span> <span class="n">canceled</span>
+<span class="w">					</span><span class="nb">Sleep</span><span class="p">,</span> <span class="mi">200</span>
+<span class="w">					</span><span class="nb">KeyWait</span><span class="p">,</span> <span class="nv">%MGHotkey%</span>
+<span class="w">					</span><span class="nb">Progress</span><span class="p">,</span> <span class="n">off</span>
+<span class="w">					</span><span class="nb">Return</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">ToolTip</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">		</span><span class="nb">ToolTip</span><span class="p">,</span> <span class="nv">%Gesture%</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>

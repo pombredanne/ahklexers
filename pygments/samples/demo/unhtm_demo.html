@@ -1,0 +1,8 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include UnHTM.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="n">HTM</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;/intl/en/ads/&quot;</span><span class="o">&gt;</span><span class="n">Advertising</span><span class="o">&amp;</span><span class="n">nbsp</span><span class="p">;</span><span class="n">Programs</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;</span>
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="o">%</span> <span class="n">UnHTM</span><span class="p">(</span> <span class="n">HTM</span> <span class="p">)</span>
+</pre></div>

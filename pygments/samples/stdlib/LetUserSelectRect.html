@@ -1,0 +1,49 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; LetUserSelectRect by Lexikos</span>
+<span class="c-Singleline">; 2009, http://www.autohotkey.com/forum/viewtopic.php?t=49784</span>
+<span class="n">LetUserSelectRect</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">X1</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">X2</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Y2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">static</span> <span class="n">r</span> :<span class="o">=</span> <span class="mi">3</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Create the &quot;selection rectangle&quot; GUIs (one for each edge).</span>
+<span class="w">    </span><span class="nb">Loop</span> <span class="mi">4</span> <span class="p">{</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%A_Index%</span>: <span class="o">-</span><span class="n">Caption</span> <span class="o">+</span><span class="n">ToolWindow</span> <span class="o">+</span><span class="n">AlwaysOnTop</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%A_Index%</span>: <span class="n">Color</span><span class="p">,</span> <span class="n">Red</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Disable LButton.</span>
+<span class="w">    </span><span class="nb">Hotkey</span><span class="p">,</span> <span class="o">*</span><span class="n">LButton</span><span class="p">,</span> <span class="n">lusr_return</span><span class="p">,</span> <span class="n">On</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Wait for user to press LButton.</span>
+<span class="w">    </span><span class="nb">KeyWait</span><span class="p">,</span> <span class="n">LButton</span><span class="p">,</span> <span class="n">D</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Get initial coordinates.</span>
+<span class="w">    </span><span class="nb">MouseGetPos</span><span class="p">,</span> <span class="n">xorigin</span><span class="p">,</span> <span class="n">yorigin</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Set timer for updating the selection rectangle.</span>
+<span class="w">    </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="n">lusr_update</span><span class="p">,</span> <span class="mi">10</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Wait for user to release LButton.</span>
+<span class="w">    </span><span class="nb">KeyWait</span><span class="p">,</span> <span class="n">LButton</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Re-enable LButton.</span>
+<span class="w">    </span><span class="nb">Hotkey</span><span class="p">,</span> <span class="o">*</span><span class="n">LButton</span><span class="p">,</span> <span class="n">Off</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Disable timer.</span>
+<span class="w">    </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="n">lusr_update</span><span class="p">,</span> <span class="n">Off</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ; Destroy &quot;selection rectangle&quot; GUIs.</span>
+<span class="w">    </span><span class="nb">Loop</span> <span class="mi">4</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%A_Index%</span>: <span class="n">Destroy</span>
+<span class="w">    </span><span class="nb">return</span>
+<span class="w"> </span>
+<span class="w">    </span><span class="nl">lusr_update:</span>
+<span class="w">        </span><span class="nb">MouseGetPos</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+        <span class="n">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">xlast</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ylast</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ; Mouse hasn&#39;t moved so there&#39;s nothing to do.</span>
+<span class="w">            </span><span class="nb">return</span>
+        <span class="n">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">xorigin</span><span class="p">)</span>
+             <span class="n">x1</span> :<span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">x2</span> :<span class="o">=</span> <span class="n">xorigin</span>
+<span class="w">        </span><span class="nb">else</span> <span class="n">x2</span> :<span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">x1</span> :<span class="o">=</span> <span class="n">xorigin</span>
+        <span class="n">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">yorigin</span><span class="p">)</span>
+             <span class="n">y1</span> :<span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">y2</span> :<span class="o">=</span> <span class="n">yorigin</span>
+<span class="w">        </span><span class="nb">else</span> <span class="n">y2</span> :<span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">y1</span> :<span class="o">=</span> <span class="n">yorigin</span><span class="c-Singleline"></span>
+<span class="c-Singleline">        ; Update the &quot;selection rectangle&quot;.</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Show</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;NA X&quot;</span> <span class="n">x1</span> <span class="s">&quot; Y&quot;</span> <span class="n">y1</span> <span class="s">&quot; W&quot;</span> <span class="n">x2</span><span class="o">-</span><span class="n">x1</span> <span class="s">&quot; H&quot;</span> <span class="n">r</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span>:<span class="n">Show</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;NA X&quot;</span> <span class="n">x1</span> <span class="s">&quot; Y&quot;</span> <span class="n">y2</span><span class="o">-</span><span class="n">r</span> <span class="s">&quot; W&quot;</span> <span class="n">x2</span><span class="o">-</span><span class="n">x1</span> <span class="s">&quot; H&quot;</span> <span class="n">r</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">3</span>:<span class="n">Show</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;NA X&quot;</span> <span class="n">x1</span> <span class="s">&quot; Y&quot;</span> <span class="n">y1</span> <span class="s">&quot; W&quot;</span> <span class="n">r</span> <span class="s">&quot; H&quot;</span> <span class="n">y2</span><span class="o">-</span><span class="n">y1</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="mi">4</span>:<span class="n">Show</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;NA X&quot;</span> <span class="n">x2</span><span class="o">-</span><span class="n">r</span> <span class="s">&quot; Y&quot;</span> <span class="n">y1</span> <span class="s">&quot; W&quot;</span> <span class="n">r</span> <span class="s">&quot; H&quot;</span> <span class="n">y2</span><span class="o">-</span><span class="n">y1</span>
+<span class="w">    </span><span class="nl">lusr_return:</span>
+<span class="w">    </span><span class="nb">return</span>
+<span class="p">}</span>
+</pre></div>

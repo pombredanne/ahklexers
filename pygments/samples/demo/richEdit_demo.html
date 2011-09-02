@@ -1,0 +1,22 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include RichEdit.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">SetKeyDelay</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span>
+
+<span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
+<span class="n">hwnd</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="n">hRichEdit</span> :<span class="o">=</span> <span class="n">RichEdit_Add</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="n">RichEdit_SetBgColor</span><span class="p">(</span><span class="n">hRichEdit</span><span class="p">,</span> <span class="s">&quot;0x661122&quot;</span><span class="p">)</span>
+<span class="n">RichEdit_SetCharFormat</span><span class="p">(</span><span class="n">hRichEdit</span><span class="p">,</span> <span class="s">&quot;courier new&quot;</span><span class="p">,</span> <span class="s">&quot;bold&quot;</span><span class="p">,</span> <span class="s">&quot;0x3366ff&quot;</span><span class="p">,</span> <span class="s">&quot;0x333333&quot;</span><span class="p">)</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">w210</span> <span class="n">h310</span>
+
+<span class="nb">BlockInput</span><span class="p">,</span> <span class="n">Send</span>
+<span class="nb">Sleep</span><span class="p">,</span> <span class="mi">500</span>
+<span class="nb">SendEvent</span><span class="p">,</span> <span class="n">RichEdit</span>
+<span class="nb">BlockInput</span><span class="p">,</span> <span class="n">Off</span>
+<span class="nb">Return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nb">ExitApp</span>
+</pre></div>

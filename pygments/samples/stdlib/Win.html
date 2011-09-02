@@ -1,0 +1,803 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">	Title:	Win</span>
+<span class="cm">			Set of window functions.</span>
+<span class="cm"> */</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Animate</span>
+<span class="cm"> 			Enables you to produce special effects when showing or hiding windows.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			Type		- White space separated list of animation flags. By default, these flags take effect when showing a window.</span>
+<span class="cm">			Time		- Specifies how long it takes to play the animation, in millisecond .</span>
+<span class="cm"> </span>
+<span class="cm"> Animation types:</span>
+<span class="cm">			activate	- Activates the window. Do not use this value with HIDE flag.</span>
+<span class="cm">			blend		- Uses a fade effect. This flag can be used only if hwnd is a top-level window.</span>
+<span class="cm">			center		- Makes the window appear to collapse inward if HIDE is used or expand outward if the HIDE is not used. The various direction flags have no effect.</span>
+<span class="cm">			hide		- Hides the window. By default, the window is shown.</span>
+<span class="cm">			slide		- Uses slide animation. Ignored when used with CENTER.</span>
+<span class="cm">			:</span>
+<span class="cm">			hneg		- Animates the window from right to left. This flag can be used with roll or slide animation. It is ignored when used with CENTER or BLEND.</span>
+<span class="cm">			hpos		- Animates the window from left to right. This flag can be used with roll or slide animation. It is ignored when used with CENTER or BLEND.</span>
+<span class="cm">			vneg		- Animates the window from top to bottom. This flag can be used with roll or slide animation. It is ignored when used with CENTER or BLEND.</span>
+<span class="cm">			vpos		- Animates the window from bottom to top. This flag can be used with roll or slide animation. It is ignored when used with CENTER or BLEND.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			When using slide or roll animation, you must specify the direction.</span>
+<span class="cm">			You can combine HPOS or HNEG with VPOS or VNEG to animate a window diagonally.</span>
+<span class="cm">			If a child window is displayed partially clipped, when it is animated it will have holes where it is clipped.</span>
+<span class="cm">			Avoid animating a window that has a drop shadow because it produces visually distracting, jerky animations.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm"> 			If the function succeeds, the return value is nonzero.</span>
+<span class="cm"> </span>
+<span class="cm"> Example:</span>
+<span class="cm">		&gt;  Win_Animate(hWnd, &quot;hide blend&quot;, 500)</span>
+<span class="cm"> </span>
+<span class="cm"> */</span>
+<span class="n">Win_Animate</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Time</span><span class="o">=</span><span class="mi">100</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">AW_ACTIVATE</span> <span class="o">=</span> <span class="mh">0x20000</span><span class="p">,</span> <span class="n">AW_BLEND</span><span class="o">=</span><span class="mh">0x80000</span><span class="p">,</span> <span class="n">AW_CENTER</span><span class="o">=</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">AW_HIDE</span><span class="o">=</span><span class="mh">0x10000</span>
+			<span class="p">,</span><span class="n">AW_HNEG</span><span class="o">=</span><span class="mh">0x2</span><span class="p">,</span> <span class="n">AW_HPOS</span><span class="o">=</span><span class="mh">0x1</span><span class="p">,</span> <span class="n">AW_SLIDE</span><span class="o">=</span><span class="mh">0x40000</span><span class="p">,</span> <span class="n">AW_VNEG</span><span class="o">=</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">AW_VPOS</span><span class="o">=</span><span class="mh">0x4</span>
+
+	<span class="n">hFlags</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span><span class="p">,</span> <span class="nv">%A_Tab%%A_Space%</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,,</span><span class="n">continue</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">hFlags</span> <span class="o">|=</span> <span class="n">AW_</span><span class="nv">%A_LoopField%</span>
+
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hFlags</span><span class="p">,</span> <span class="p">,</span><span class="n">return</span> <span class="s">&quot;Err: Some of the types are invalid&quot;</span>
+	<span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Time</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hFlags</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	FromPoint</span>
+<span class="cm"> 			Retrieves a handle to the top level window that contains the specified point.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			X, Y - Point. Use word &quot;mouse&quot; as X to use mouse coordinates.</span>
+<span class="cm"> */</span>
+<span class="n">Win_FromPoint</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="s">&quot;mouse&quot;</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span> 
+<span class="w">	</span><span class="nb">if </span><span class="n">X</span><span class="o">=</span><span class="n">mouse</span>
+		<span class="nf">VarSetCapacity(</span><span class="n">POINT</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="nf">DllCall(</span><span class="s">&quot;GetCursorPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">POINT</span><span class="p">),</span> <span class="n">X</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">POINT</span><span class="p">),</span> <span class="n">Y</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">POINT</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+	<span class="nf">VarSetCapacity(</span><span class="n">POINT</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="nf">NumPut(</span><span class="n">X</span><span class="p">,</span> <span class="n">POINT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span> <span class="nf">NumPut(</span><span class="n">Y</span><span class="p">,</span> <span class="n">POINT</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;WindowFromPoint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">POINT</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Get</span>
+<span class="cm"> 			Get window information.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			pQ			- List of query parameters.</span>
+<span class="cm">			o1 .. o9	- Reference to output variables. R,L,B &amp; N query parameters can return multiple outputs.</span>
+<span class="cm"> </span>
+<span class="cm"> Query:</span>
+<span class="cm">			C,I			- Class, pId.</span>
+<span class="cm">			R,L,B,N		- One of the window rectangles: R (window Rectangle), L (cLient rectangle screen coordinates), B (ver/hor Border), N (captioN rect).</span>
+<span class="cm"> 						  N returns the size of the caption regardless of the window style or theme. These coordinates include all title-bar elements except the window menu.</span>
+<span class="cm">						  The function returns x, y, w &amp; h separated by space. </span>
+<span class="cm">						  For all 4 query parameters you can additionaly specify x,y,w,h arguments in any order (except Border which can have only x(hor) and y(ver) arguments) to</span>
+<span class="cm">						  extract desired number into output variable.</span>
+<span class="cm">			S,E			- Style, Extended style.</span>
+<span class="cm"> 		    P,A,O		- Parents handle, Ancestors handle, Owners handle.</span>
+<span class="cm"> 			M			- Module full path (owner exe), unlike WinGet,,ProcessName which returns only name without path.</span>
+<span class="cm"> 			T			- Title for a top level window or text for a child window.</span>
+<span class="cm">			D			- DC.</span>
+<span class="cm">			#			- Non-negative integer. If present must be first option in the query string. Function will return window information</span>
+<span class="cm">						  not for passed window but for its ancestor. 1 is imidiate parent, 2 is parent&#39;s parent etc... 0 represents root window.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm">			o1</span>
+<span class="cm"> </span>
+<span class="cm"> Examples:</span>
+<span class="cm"> (start code)</span>
+<span class="cm">  	Win_Get(hwnd, &quot;CIT&quot;, class, pid, text)					;get class, pid and text</span>
+<span class="cm">    Win_Get(hwnd, &quot;RxwTC&quot;, x, w, t, c)						;get x &amp; width attributes of window rect, title and class</span>
+<span class="cm">  	Win_Get(hwnd, &quot;RxywhCLxyTBy&quot;,wx,wy,ww,wh,c,lx,ly,t,b)	;get all 4 attributes of window rect, class, x &amp; y of client rect, text and horizontal border height</span>
+<span class="cm">    right := Win_Get(hwnd, &quot;Rx&quot;) + Win_Get(hwnd, &quot;Rw&quot;)		;first output is returned as function result so u can use function in expressions.</span>
+<span class="cm">    Win_Get(hwnd, &quot;Rxw&quot;, x, w), right := x+w				;the same as above but faster.</span>
+<span class="cm">    right := Win_Get(hwnd, &quot;Rxw&quot;, x, w ) + w				;not recommended.</span>
+
+<span class="cm">	Win_Get(hwnd, &quot;1CIT&quot;, class, pid, text)					;get class, pid and text for parent of the hwnd.</span>
+<span class="cm">	rect := Win_Get(hwnd, &quot;0R&quot;)								;get rectangle of the root window.</span>
+<span class="cm"> (end code)</span>
+<span class="cm"> */</span> 
+<span class="n">Win_Get</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o3</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o4</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o5</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o6</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o7</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o8</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o9</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">c</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pQ</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">c</span> <span class="ow">is</span> <span class="n">integer</span> 
+	<span class="p">{</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="n">Hwnd</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetAncestor&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">loop</span><span class="p">,</span> <span class="nv">%c%</span>
+			<span class="n">Hwnd</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetParent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+
+		<span class="n">pQ</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pQ</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="w">		</span>
+<span class="w">	</span><span class="nb">if </span><span class="n">pQ</span> <span class="n">contains</span> <span class="n">R</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">L</span>
+		<span class="nf">VarSetCapacity(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">NumPut(</span><span class="mi">60</span><span class="p">,</span> <span class="n">WI</span><span class="p">),</span>  <span class="nf">DllCall(</span><span class="s">&quot;GetWindowInfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">WI</span><span class="p">)</span>
+	
+	<span class="n">oldDetect</span> :<span class="o">=</span> <span class="nv">A_DetectHiddenWindows</span>
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="n">on</span>
+	
+	<span class="n">k</span> :<span class="o">=</span> <span class="n">i</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">	</span><span class="nb">loop</span>
+	<span class="p">{</span>
+		<span class="n">i</span><span class="o">++</span><span class="p">,</span> <span class="n">k</span><span class="o">++</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">_</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pQ</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+<span class="w">			</span><span class="nb">break</span>
+
+		<span class="n">if</span> !<span class="nf">IsLabel(</span><span class="s">&quot;Win_Get_&quot;</span> <span class="n">_</span> <span class="p">)</span>
+<span class="w">			</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Invalid query parameter: &quot;</span> <span class="n">_</span>
+<span class="w">		</span><span class="nb">Goto</span> <span class="nv">%A_ThisFunc%</span><span class="n">_</span><span class="nv">%_%</span>
+
+<span class="w">		</span><span class="nl">Win_Get_C:</span>
+<span class="w">				</span><span class="nb">WinGetClass</span><span class="p">,</span> <span class="n">o</span><span class="nv">%i%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>		
+<span class="w">		</span><span class="nb">continue</span>
+
+<span class="w">		</span><span class="nl">Win_Get_I:</span>
+<span class="w">				</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">o</span><span class="nv">%i%</span><span class="p">,</span> <span class="n">PID</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>		
+<span class="w">		</span><span class="nb">continue</span>
+
+<span class="w">		</span><span class="nl">Win_Get_N:</span>
+				<span class="n">rect</span> :<span class="o">=</span> <span class="s">&quot;title&quot;</span>
+				<span class="nf">VarSetCapacity(</span><span class="n">TBI</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">NumPut(</span><span class="mi">44</span><span class="p">,</span> <span class="n">TBI</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">DllCall(</span><span class="s">&quot;GetTitleBarInfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">TBI</span><span class="p">)</span>
+				<span class="n">title_x</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">TBI</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span> <span class="n">title_y</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">TBI</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span> <span class="n">title_w</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">TBI</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">title_x</span><span class="p">,</span> <span class="n">title_h</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">TBI</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="n">title_y</span> 
+<span class="w">				</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>				
+				<span class="n">title_h</span> :<span class="o">=</span>  <span class="n">style</span> <span class="o">&amp;</span> <span class="mh">0xC00000</span> ? <span class="n">title_h</span> : <span class="mi">0</span><span class="c-Singleline">			  ; if no WS_CAPTION style, set 0 as win sets randoms otherwise...</span>
+<span class="w">				</span><span class="nb">goto</span> <span class="n">Win_Get_Rect</span>
+<span class="w">		</span><span class="nl">Win_Get_B:</span>
+				<span class="n">rect</span> :<span class="o">=</span> <span class="s">&quot;border&quot;</span>
+				<span class="n">border_x</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">),</span>  <span class="n">border_y</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span>	
+<span class="w">				</span><span class="nb">goto</span> <span class="n">Win_Get_Rect</span>
+<span class="w">		</span><span class="nl">Win_Get_R:</span>
+				<span class="n">rect</span> :<span class="o">=</span> <span class="s">&quot;window&quot;</span>
+				<span class="n">window_x</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>  <span class="s">&quot;Int&quot;</span><span class="p">),</span>  <span class="n">window_y</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span>  <span class="s">&quot;Int&quot;</span><span class="p">),</span>  <span class="n">window_w</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">window_x</span><span class="p">,</span>  <span class="n">window_h</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">window_y</span>
+<span class="w">				</span><span class="nb">goto</span> <span class="n">Win_Get_Rect</span>
+<span class="w">		</span><span class="nl">Win_Get_L:</span> 
+				<span class="n">client_x</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span>  <span class="n">client_y</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span>  <span class="n">client_w</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">client_x</span><span class="p">,</span>  <span class="n">client_h</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WI</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">client_y</span>
+				<span class="n">rect</span> :<span class="o">=</span> <span class="s">&quot;client&quot;</span>
+<span class="w">		</span><span class="nl">Win_Get_Rect:</span>
+				<span class="n">k</span><span class="o">++</span><span class="p">,</span> <span class="n">arg</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pQ</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">				</span><span class="nb">if </span><span class="n">arg</span> <span class="ow">in</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span>
+				<span class="p">{</span>
+					<span class="n">o</span><span class="nv">%i%</span> :<span class="o">=</span> <span class="nv">%rect%</span><span class="n">_</span><span class="nv">%arg%</span><span class="p">,</span> <span class="n">j</span> :<span class="o">=</span> <span class="n">i</span><span class="o">++</span>
+<span class="w">					</span><span class="nb">goto</span> <span class="n">Win_Get_Rect</span>
+				<span class="p">}</span>
+<span class="w">				</span><span class="nb">else</span> <span class="n">if</span> !<span class="n">j</span>
+						  <span class="n">o</span><span class="nv">%i%</span> :<span class="o">=</span> <span class="nv">%rect%</span><span class="n">_x</span> <span class="s">&quot; &quot;</span> <span class="nv">%rect%</span><span class="n">_y</span>  <span class="p">(</span><span class="n">_</span> <span class="o">=</span> <span class="s">&quot;B&quot;</span> ? <span class="s">&quot;&quot;</span> : <span class="s">&quot; &quot;</span> <span class="nv">%rect%</span><span class="n">_w</span> <span class="s">&quot; &quot;</span> <span class="nv">%rect%</span><span class="n">_h</span><span class="p">)</span>
+				
+		<span class="n">rect</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">--</span><span class="p">,</span> <span class="n">i</span><span class="o">--</span><span class="p">,</span> <span class="n">j</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_S:</span>
+<span class="w">			</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">o</span><span class="nv">%i%</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_E:</span> 
+<span class="w">			</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">o</span><span class="nv">%i%</span><span class="p">,</span> <span class="n">ExStyle</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_P:</span> 
+			<span class="n">o</span><span class="nv">%i%</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetParent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_A:</span> 
+			<span class="n">o</span><span class="nv">%i%</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetAncestor&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span><span class="c-Singleline"> ; GA_ROOT</span>
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_O:</span> 
+			<span class="n">o</span><span class="nv">%i%</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetWindowLong&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span><span class="c-Singleline"> ; GWL_HWNDPARENT</span>
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_T:</span>
+<span class="w">			</span><span class="nb">if </span><span class="nf">DllCall(</span><span class="s">&quot;IsChild&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">)</span>
+<span class="w">				 </span><span class="nb">WinGetText</span><span class="p">,</span> <span class="n">o</span><span class="nv">%i%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>
+<span class="w">			</span><span class="nb">else</span> <span class="n">WinGetTitle</span><span class="p">,</span> <span class="n">o</span><span class="nv">%i%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_M:</span> 
+<span class="w">			</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">PID</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>
+			<span class="n">hp</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;OpenProcess&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0x10</span><span class="o">|</span><span class="mh">0x400</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nv">false</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">_</span> <span class="p">)</span> 
+			<span class="n">if</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> !<span class="n">hp</span><span class="p">)</span> 
+<span class="w">				</span><span class="nb">continue</span>
+			<span class="nf">VarSetCapacity(</span><span class="n">buf</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">DllCall(</span> <span class="s">&quot;psapi.dll\GetModuleFileNameExA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hp</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span>  <span class="nf">DllCall(</span> <span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="n">hp</span> <span class="p">)</span> 
+			<span class="n">o</span><span class="nv">%i%</span> :<span class="o">=</span> <span class="n">buf</span> 
+<span class="w">		</span><span class="nb">continue</span>
+<span class="w">		</span><span class="nl">Win_Get_D:</span>
+			<span class="n">o</span><span class="nv">%i%</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetDC&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">continue</span>
+	<span class="p">}</span>	
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="nv">%oldDetect%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">o1</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	GetRect</span>
+<span class="cm"> 			Get window rectangle.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm"> 			hwnd		- Window handle</span>
+<span class="cm">			pQ			- Query parameter: ordered list of x, y, w and h characters and optionally type specified as first charachter.</span>
+<span class="cm">						  Use *  to get placement relative to the client area of the parent&#39;s window, or ! get placement relative to the root window.</span>
+<span class="cm">						  Omit x,y,w,h to return all attributes separated by space for given placement type.</span>
+<span class="cm">			o1 .. o4	- Reference to output variables. </span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			o1 or string with all coordinates.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			This function is faster alternative to &lt;Get&gt; with R parameter. However, if you query additional window info using &lt;Get&gt;, it may be faster and definitely more </span>
+<span class="cm">			convenient then obtaining the info using alternatives. </span>
+<span class="cm">			Besides that, you can&#39;t use &lt;Get&gt; to obtain relative coordinates of child windows.</span>
+
+<span class="cm"> Examples:</span>
+<span class="cm">	(start code)</span>
+<span class="cm">  			Win_GetRect(hwnd, &quot;xw&quot;, x, w)		;get x &amp; width</span>
+<span class="cm">  			Win_GetRect(hwnd, &quot;yhx&quot;, y, h, x)	;get y, height, and x</span>
+<span class="cm">  			p := Win_GetRect(hwnd, &quot;x&quot;) + 5		;for single query parameter you don&#39;t need output variable as function returns o1</span>
+<span class="cm">  			all := Win_GetRect(hwnd)			;return all</span>
+<span class="cm">  			Win_Get(hwnd, &quot;*hx&quot;, h, x)			;return relative h and x</span>
+<span class="cm">  			all_rel := WiN_Get(hwnd, &quot;*&quot;)		;return all, relative coordinates</span>
+<span class="cm">	(end code)</span>
+<span class="cm"> */</span>
+<span class="n">Win_GetRect</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o3</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">o4</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nf">VarSetCapacity(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetWindowRect&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">RECT</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">pQ</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pQ</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
+		<span class="n">retAll</span> :<span class="o">=</span> <span class="nv">true</span><span class="p">,</span>  <span class="n">pQ</span> <span class="o">.=</span> <span class="s">&quot;xywh&quot;</span>
+
+	<span class="n">xx</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span> <span class="n">yy</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">),</span>  <span class="n">c</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pQ</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span><span class="p">)</span> 
+		<span class="n">Win_Get</span><span class="p">(</span><span class="nf">DllCall(</span><span class="s">&quot;GetParent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">),</span> <span class="s">&quot;Lxy&quot;</span><span class="p">,</span> <span class="n">lx</span><span class="p">,</span> <span class="n">ly</span><span class="p">),</span> <span class="n">xx</span> <span class="o">-=</span> <span class="n">lx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">-=</span> <span class="n">ly</span><span class="p">,</span> <span class="n">pQ</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pQ</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">=</span> <span class="s">&quot;!&quot;</span><span class="p">)</span> 
+		<span class="n">Win_Get</span><span class="p">(</span><span class="nf">DllCall(</span><span class="s">&quot;GetAncestor&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s">&quot;Lxy&quot;</span><span class="p">,</span> <span class="n">lx</span><span class="p">,</span> <span class="n">ly</span><span class="p">),</span> <span class="n">xx</span> <span class="o">-=</span> <span class="n">lx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">-=</span> <span class="n">ly</span><span class="p">,</span>  <span class="n">pQ</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pQ</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">pQ</span>
+<span class="w">		</span><span class="nb">if </span><span class="nv">A_LoopField</span> <span class="o">=</span> <span class="n">x</span>
+			<span class="n">o</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="n">xx</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">if</span> <span class="nv">A_LoopField</span> <span class="o">=</span> <span class="n">y</span>
+			<span class="n">o</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="n">yy</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">if</span> <span class="nv">A_LoopField</span> <span class="o">=</span> <span class="n">w</span>
+			<span class="n">o</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">xx</span> <span class="o">-</span> <span class="p">(</span> <span class="n">lx</span> ? <span class="n">lx</span> : <span class="mi">0</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">if</span> <span class="nv">A_LoopField</span> <span class="o">=</span> <span class="n">h</span>
+			<span class="n">o</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">RECT</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">yy</span> <span class="o">-</span> <span class="p">(</span> <span class="n">ly</span> ? <span class="n">ly</span> : <span class="mi">0</span> <span class="p">)</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="n">retAll</span> ? <span class="n">o1</span> <span class="s">&quot; &quot;</span> <span class="n">o2</span> <span class="s">&quot; &quot;</span> <span class="n">o3</span> <span class="s">&quot; &quot;</span> <span class="n">o4</span> : <span class="n">o1</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	GetChildren</span>
+<span class="cm">			Get first level child windows for a window.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			Hwnd	- Handle of the parent window.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			New line separated list of child control handles.</span>
+<span class="cm">  </span>
+<span class="cm"> */</span>
+<span class="n">Win_GetChildren</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">GW_HWNDNEXT</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">GW_CHILD</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">adrGetWindow</span>
+	<span class="n">if</span> !<span class="n">adrGetWindow</span>
+		<span class="n">adrGetWindow</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">DllCall(</span><span class="s">&quot;GetModuleHandle&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;user32&quot;</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;GetWindow&quot;</span><span class="p">)</span>
+	<span class="n">s</span> :<span class="o">=</span> <span class="n">hChild</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="n">adrGetWindow</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">GW_CHILD</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="n">return</span>
+<span class="w">	</span><span class="nb">while</span> <span class="p">(</span><span class="n">hChild</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="n">adrGetWindow</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hChild</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">GW_HWNDNEXT</span><span class="p">))</span>
+		<span class="n">s</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="n">hChild</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">s</span>	
+<span class="p">}</span>
+
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	GetClassNN</span>
+<span class="cm">			Get a control ClassNN.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			HCtrl	- Handle of the parent window.</span>
+<span class="cm">			HRoot	- Handle of the top level window containing control.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			ClassNN</span>
+<span class="cm"> </span>
+<span class="cm"> About:</span>
+<span class="cm">			o Developed by Lexikos. See &lt;http://www.autohotkey.com/forum/viewtopic.php?p=308628#308628&gt;</span>
+<span class="cm"> */</span>
+<span class="n">Win_GetClassNN</span><span class="p">(</span><span class="n">HCtrl</span><span class="p">,</span> <span class="n">HRoot</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">HRoot</span><span class="p">,,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">HRoot</span><span class="p">,</span> <span class="o">%</span> <span class="nf">DllCall(</span><span class="s">&quot;GetAncestor&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">HCtrl</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">WinGet</span><span class="p">,</span> <span class="n">hlist</span><span class="p">,</span> <span class="n">ControlListHwnd</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%HRoot%</span> 
+<span class="w">    </span><span class="nb">WinGetClass</span><span class="p">,</span> <span class="n">tclass</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%HCtrl%</span> 
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">hlist</span><span class="p">,</span> `<span class="n">n</span> 
+    <span class="p">{</span> 
+<span class="w">        </span><span class="nb">WinGetClass</span><span class="p">,</span> <span class="n">lclass</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%A_LoopField%</span> 
+        <span class="n">if</span> <span class="p">(</span><span class="n">lclass</span> <span class="o">==</span> <span class="n">tclass</span><span class="p">)</span> 
+        <span class="p">{</span> 
+            <span class="n">nn</span> <span class="o">+=</span> <span class="mi">1</span> 
+<span class="w">            </span><span class="nb">if </span><span class="nv">A_LoopField</span> <span class="o">=</span> <span class="nv">%hctl%</span> 
+<span class="w">                </span><span class="nb">return</span> <span class="n">tclass</span> <span class="n">nn</span> 
+        <span class="p">}</span> 
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Is</span>
+<span class="cm"> 			Checks handle against specified criterium.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			pQ			- Query parameter.</span>
+
+<span class="cm"> Query:</span>
+<span class="cm">			win			- True if handle is window.</span>
+<span class="cm">			child		- True if handle is child window.</span>
+<span class="cm">			enabled		- True if window is enabled.</span>
+<span class="cm">			visible		- True if window is visible.</span>
+<span class="cm">			max			- True if window is maximized.</span>
+<span class="cm">			hung		- True if window is hung and doesn&#39;t respond to messages.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			TRUE or FALSE</span>
+<span class="cm"> */</span>
+<span class="n">Win_Is</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">pQ</span><span class="o">=</span><span class="s">&quot;win&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">is_win</span> <span class="o">=</span> <span class="s">&quot;IsWindow&quot;</span><span class="p">,</span> <span class="n">is_child</span><span class="o">=</span><span class="s">&quot;IsChild&quot;</span><span class="p">,</span> <span class="n">is_enabled</span><span class="o">=</span><span class="s">&quot;IsWindowEnabled&quot;</span><span class="p">,</span> <span class="n">is_visible</span><span class="o">=</span><span class="s">&quot;IsWindowVisible&quot;</span><span class="p">,</span> <span class="n">is_max</span> <span class="o">=</span> <span class="s">&quot;IsZoomed&quot;</span><span class="p">,</span> <span class="n">is_hung</span> <span class="o">=</span> <span class="s">&quot;IsHungAppWindow&quot;</span>
+	<span class="n">fun</span> :<span class="o">=</span> <span class="s">&quot;is_&quot;</span> <span class="n">pQ</span><span class="p">,</span> <span class="n">fun</span> :<span class="o">=</span> <span class="nv">%fun%</span>
+
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Invalid query parameter: &quot;</span> <span class="n">pQ</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="n">fun</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Move</span>
+<span class="cm">			Change the size and position of a child, pop-up, or top-level window.</span>
+<span class="cm">	</span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			X..H		- Size / position. You can omit any parameter to keep its current value.</span>
+<span class="cm">			Flags		- Can be R or A.</span>
+
+<span class="cm"> Flags:</span>
+<span class="cm">			R - Does not redraw changes. If this flag is set, no repainting of any kind occurs. </span>
+<span class="cm">			A - Asynchronous mode - if the calling thread and the thread that owns the window are attached to different input queues, the system posts the request to the thread that owns the window. This prevents the calling thread from blocking its execution while other threads process the request.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			True if successful, False otherwise.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			Does not produce the same effect as ControlMove on child windows. Mentioned AHK function puts child window relative to the ancestor window rectangle </span>
+<span class="cm">			while Win_Move puts it relative to the parent&#39;s client rectangle which is usually the wanted behavior.</span>
+<span class="cm">			WinMove produces the same effect as Win_Move on child controls, except its X and Y parameters are not optional which makes lot of additional code for frequent operation: moving the control by some offset of its current position. </span>
+<span class="cm">			In order to do that you must get the current position of the control. That can be done with ControlGetPos which works in pair with ControlMove hence it is not relative to the client rect or WinGetPos which returns screen coordinates of child control so those can not </span>
+<span class="cm">			be immediately used in WinMove as it positions child window relative to the parents client rect. This scenario can be additionally complicated by the fact that each window may have its own theme which influences the size of its borders, non client area, etc...</span>
+<span class="cm"> */</span>
+<span class="n">Win_Move</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">;	static SWP_NOMOVE=2, SWP_NOREDRAW=8, SWP_NOSIZE=1, SWP_NOZORDER=4, SWP_NOACTIVATE = 0x10, SWP_ASYNCWINDOWPOS=0x4000, HWND_BOTTOM=1, HWND_TOPMOST=-1, HWND_NOTOPMOST = -2</span>
+	<span class="n">static</span> <span class="n">SWP_NOMOVE</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">SWP_NOSIZE</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">SWP_NOZORDER</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">SWP_NOACTIVATE</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">SWP_R</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">SWP_A</span><span class="o">=</span><span class="mh">0x4000</span>
+
+	<span class="n">hFlags</span> :<span class="o">=</span> <span class="n">SWP_NOZORDER</span> <span class="o">|</span> <span class="n">SWP_NOACTIVATE</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Flags</span>
+		<span class="n">hFlags</span> <span class="o">|=</span> <span class="n">SWP_</span><span class="nv">%A_LoopField%</span>
+		
+	<span class="n">if</span> <span class="p">(</span><span class="n">X</span> <span class="n">Y</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">p</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetParent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">),</span> <span class="n">Win_Get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s">&quot;Lxy&quot;</span><span class="p">,</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">),</span> <span class="n">Win_GetRect</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;xywh&quot;</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cw</span><span class="p">,</span> <span class="n">ch</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">X</span><span class="p">,,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">%</span> <span class="n">cx</span> <span class="o">-</span> <span class="n">px</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">Y</span><span class="p">,,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="o">%</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">py</span>
+	<span class="p">}</span> <span class="n">else</span> <span class="n">hFlags</span> <span class="o">|=</span> <span class="n">SWP_NOMOVE</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">W</span> <span class="n">H</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">if</span> !<span class="n">cx</span>
+			<span class="n">Win_GetRect</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;wh&quot;</span><span class="p">,</span> <span class="n">cw</span><span class="p">,</span> <span class="n">ch</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">W</span><span class="p">,,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="nv">%cw%</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">H</span><span class="p">,,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="nv">%ch%</span>
+	<span class="p">}</span> <span class="n">else</span> <span class="n">hFlags</span> <span class="o">|=</span> <span class="n">SWP_NOSIZE</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;SetWindowPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hFlags</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	MoveDelta</span>
+<span class="cm"> 			Move the window by specified amount.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			Xd .. Hd - Delta to add to each window rect property. Skipped properties will not be changed.</span>
+<span class="cm">			Flags	 - The same as in &lt;Move&gt;.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			True if successful, False otherwise.</span>
+<span class="cm"> */</span>
+
+<span class="n">Win_MoveDelta</span><span class="p">(</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="n">Xd</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Yd</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Wd</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Hd</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="n">Win_GetRect</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;*xywh&quot;</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cw</span><span class="p">,</span> <span class="n">ch</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">Win_Move</span><span class="p">(</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="n">cx</span><span class="o">+</span><span class="n">Xd</span><span class="p">,</span> <span class="n">cy</span><span class="o">+</span><span class="n">Yd</span><span class="p">,</span> <span class="n">cw</span><span class="o">+</span><span class="n">Wd</span><span class="p">,</span> <span class="n">ch</span><span class="o">+</span><span class="n">Hd</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/* </span>
+<span class="cm">  Function:	Recall</span>
+<span class="cm">			Store &amp; recall window position, size and/or state.</span>
+
+<span class="cm">  Parameters:</span>
+<span class="cm">		Options		- White space separated list of options. See bellow.		</span>
+<span class="cm">		Hwnd		- Hwnd of the window for which to store data or Gui number if AHK window. </span>
+<span class="cm">					If omitted, function will use Hwnd of the default AHK Gui. You can also use Gui, N:Default </span>
+<span class="cm">					prior to calling the function. For 3td party windows, this parameter is mandatory. </span>
+<span class="cm">					Set 0 as hwnd to return position string without applying it to any window. This can be used for AHK Guis to</span>
+<span class="cm">					calculate size of controls based on window size and position, when needed. </span>
+
+<span class="cm">		IniFileName	- Ini file to use as storage. Function will save the data under the [Recall] section.</span>
+<span class="cm">					If omitted, Windows Registry key HKEY_CURRENT_USER\AutoHotKey\Win is used. Each script is uniquely determined by its full path </span>
+<span class="cm">					so same scripts with different name will not share the storage.</span>
+<span class="cm">					</span>
+<span class="cm">  Options:</span>
+<span class="cm">		&quot;&gt;&quot;, &quot;&lt;&quot;, &quot;-&quot;, &quot;--&quot; - Operation, mandatory option. Use &quot;&gt;&quot; to store or &quot;&lt;&quot; to recall window position.</span>
+<span class="cm">					It can be optionally followed by the string representing the name of the storage location for that window.</span>
+<span class="cm">					You need to use name if your script stores more then one window, otherwise it will be saved under unnamed location.</span>
+<span class="cm">					&quot;&gt;&quot; and &quot;&lt;&quot; are special names that can be used to store or recall all AHK Guis.</span>
+<span class="cm">					&quot;-&quot;	operation is used alone as an argument to delete Registry or Ini sections belonging to the script.</span>
+<span class="cm">					&quot;--&quot; operation is used alone as an argument to delete all Registry entries for all scripts.</span>
+
+<span class="cm">		</span>
+<span class="cm">		-Min	  - Don&#39;t save minimize state.</span>
+<span class="cm">		-Max	  - Don&#39;t save maximized state.		</span>
+<span class="cm">					</span>
+<span class="cm">  Returns:</span>
+<span class="cm">			Position string, space separated list of syntax &quot;left top right bottom state cw ch&quot; of the window. </span>
+<span class="cm">			Empty if no recall data is stored for the window.</span>
+<span class="cm">			State can be 1 (normal) 2 (minimized) or 3 (maximized).</span>
+<span class="cm">			cw &amp; ch numbers are present only for AHK Guis and represent client width &amp; height which can be used </span>
+<span class="cm">			without modifications in Gui, Show command.</span>
+
+<span class="cm">  Examples:</span>
+<span class="cm">		Single Gui Example:</span>
+<span class="cm">		(start code)</span>
+<span class="cm">		 Gui, +Resize +LastFound</span>
+<span class="cm">		 WinSetTitle, MyGui</span>
+<span class="cm">		 if !Win_Recall(&quot;&lt;&quot;)                     ;Recall gui if its position is already saved</span>
+<span class="cm">			Gui, Show, h300 w300, MyGui         ; otherwise use these defaults.</span>
+<span class="cm">		return</span>
+
+<span class="cm">		GuiClose:</span>
+<span class="cm">			Win_Recall(&quot;&gt;&quot;)                     ;Store the Gui.</span>
+<span class="cm">			ExitApp</span>
+<span class="cm">		return</span>
+<span class="cm">		(end code)</span>
+
+<span class="cm">		Snippets:</span>
+<span class="cm">		(start code)</span>
+<span class="cm">			Win_Recall(&quot;&gt;MyGui&quot;)					;Save position for default Gui under name MyGui.</span>
+<span class="cm">			Win_Recall(&quot;&lt;MyGui&quot;)					;Recall position for MyGui for default Gui</span>
+<span class="cm">			</span>
+<span class="cm">			Win_Recall(&quot;&gt;MyGui2&quot;, Hwnd)				;Save window position under MyGui2 name, given the window handle or Gui number.</span>
+<span class="cm">			Win_Recall(&quot;&gt;&gt;&quot;)						;Save all Guis. The names will be given by their number.</span>
+<span class="cm">			Win_Recall(&quot;&lt;&lt;&quot;)						;Recall all Guis.</span>
+
+<span class="cm">			Win_Recall(&quot;-&quot;)							;Delete all Registry entries for the script.</span>
+<span class="cm">			Win_Recall(&quot;--&quot;)						;Delete all Registry entries for all scripts.</span>
+
+<span class="cm">			pos := Win_Recall(&quot;&lt;MyWin&quot;, 0)			;Return position string only for window saved under the &quot;MyWin&quot; name.</span>
+<span class="cm">		(end code)</span>
+<span class="cm"> */</span>
+<span class="n">Win_Recall</span><span class="p">(</span><span class="n">Options</span><span class="p">,</span> <span class="n">Hwnd</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">IniFileName</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">key</span><span class="o">=</span><span class="s">&quot;Software\AutoHotkey\Win&quot;</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s">&quot;Recall&quot;</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">Options</span> <span class="o">=</span> <span class="s">&quot;-&quot;</span><span class="p">){</span>
+<span class="w">		</span><span class="nb">ifNotEqual</span><span class="p">,</span> <span class="n">IniFileName</span><span class="p">,,</span> <span class="n">IniDelete</span><span class="p">,</span> <span class="nv">%IniFileName%</span><span class="p">,</span> <span class="nv">%section%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">loop</span><span class="p">,</span> <span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="nv">%key%</span>
+			 <span class="nf">InStr(</span><span class="nv">A_LoopRegName</span><span class="p">,</span> <span class="nv">A_ScriptFullPath</span><span class="p">)</span> ? 
+<span class="w">				</span><span class="nb">RegDelete</span><span class="p">,</span> <span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="nv">%key%</span><span class="p">,</span> <span class="nv">%A_LoopRegName%</span>		
+<span class="w">		</span><span class="nb">return</span>
+	<span class="p">}</span> <span class="n">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">Options</span> <span class="o">=</span> <span class="s">&quot;--&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">RegDelete</span><span class="p">,</span> <span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="nv">%key%</span>
+<span class="w">		</span><span class="nb">return</span>
+	<span class="p">}</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="nv">%A_Space%%A_Tab%</span><span class="p">,</span> <span class="nv">%A_Space%%A_Tab%</span>
+	<span class="p">{</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="p">,</span><span class="n">continue</span>	
+		<span class="n">f</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="n">p</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">&gt;</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="n">name</span> :<span class="o">=</span> <span class="n">p</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">ifEqual</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;&lt;&quot;</span><span class="p">,</span> <span class="n">name</span> :<span class="o">=</span> <span class="n">p</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="o">-</span><span class="n">Min</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">noMin</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">ifEqual</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="o">-</span><span class="n">Max</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">noMax</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="p">}</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">Hwnd</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">Hwnd</span><span class="o">&gt;</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">Hwnd</span> <span class="o">&lt;=</span> <span class="mi">99</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,,</span> <span class="n">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFoundExist</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">Gui</span><span class="p">,</span> <span class="nv">%Hwnd%</span>:<span class="o">+</span><span class="n">LastFound</span>
+		<span class="n">Hwnd</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">name</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="p">,</span><span class="o">&gt;</span>
+	<span class="p">{</span>		
+<span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="mi">99</span> <span class="p">{</span>
+<span class="w">			</span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%A_Index%</span>:<span class="o">+</span><span class="n">LastFoundExist</span>
+<span class="w">			</span><span class="nb">if </span><span class="nf">WinExist(</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">name</span> :<span class="o">=</span> <span class="nv">A_Index</span><span class="p">,</span> <span class="n">Hwnd</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="w">				</span><span class="nb">gosub</span> <span class="nv">%A_ThisFunc%</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+<span class="w">		</span><span class="nb">return</span>
+	<span class="p">}</span>	
+
+<span class="w"> </span><span class="nl">Win_Recall:</span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">op</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">IniFileName</span> <span class="o">!=</span>
+<span class="w">			 </span><span class="nb">IniRead</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="nv">%IniFileName%</span><span class="p">,</span> <span class="nv">%section%</span><span class="p">,</span> !<span class="nv">%name%</span><span class="p">,</span> <span class="nv">%A_Space%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">RegRead</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">REG_SZ</span><span class="p">,</span>  <span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="nv">%key%</span><span class="p">,</span> <span class="nv">%A_ScriptFullPath%</span>!<span class="nv">%name%</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">pos</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> !<span class="n">Hwnd</span> 
+<span class="w">			</span><span class="nb">return</span> <span class="n">pos</span>
+		
+		<span class="nf">VarSetCapacity(</span><span class="n">WP</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="nf">NumPut(</span><span class="mi">44</span><span class="p">,</span><span class="n">WP</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">StringSplit</span> <span class="n">p</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="nv">%A_Space%</span>
+		<span class="n">p5</span> :<span class="o">=</span> <span class="p">(</span><span class="n">p5</span><span class="o">=</span><span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">noMin</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">p5</span><span class="o">=</span><span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">noMax</span><span class="p">)</span> ? <span class="mi">1</span> : <span class="n">p5</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="mi">4</span>
+			<span class="nf">NumPut(</span><span class="n">p</span><span class="nv">%A_Index%</span><span class="p">,</span> <span class="n">WP</span><span class="p">,</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">+</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span>
+		<span class="nf">NumPut(</span><span class="n">p5</span><span class="p">,</span> <span class="n">WP</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+		<span class="nf">DllCall(</span><span class="s">&quot;SetWindowPlacement&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">WP</span><span class="p">)</span>
+	<span class="p">}</span> 
+<span class="w">	</span><span class="nb">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">op</span> <span class="o">=</span> <span class="s">&quot;&gt;&quot;</span><span class="p">){</span>			
+		<span class="nf">VarSetCapacity(</span><span class="n">WP</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="nf">NumPut(</span><span class="mi">44</span><span class="p">,</span><span class="n">WP</span><span class="p">)</span>
+		<span class="nf">DllCall(</span><span class="s">&quot;GetWindowPlacement&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">WP</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">WinGetClass</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>
+		<span class="n">if</span> <span class="p">(</span><span class="n">cls</span><span class="o">=</span><span class="s">&quot;AutoHotkeyGUI&quot;</span><span class="p">)</span>
+			<span class="n">Win_Get</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;Lwh&quot;</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">),</span>   <span class="n">szAHK</span> :<span class="o">=</span> <span class="s">&quot; &quot;</span> <span class="n">w</span> <span class="s">&quot; &quot;</span> <span class="n">h</span><span class="c-Singleline">		;Store AHK client width &amp; height so it can be used with Gui, Show.</span>
+
+		<span class="n">pos</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="mi">4</span>
+			<span class="n">pos</span> <span class="o">.=</span> <span class="nf">NumGet(</span><span class="n">WP</span><span class="p">,</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">+</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span> <span class="s">&quot; &quot;</span>
+		<span class="n">s</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">WP</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span> 
+		<span class="n">pos</span>	<span class="o">.=</span> <span class="p">(</span><span class="n">s</span> <span class="o">!=</span> <span class="mi">0</span> ? <span class="n">s</span> : <span class="mi">1</span><span class="p">)</span> <span class="n">szAHK</span>
+<span class="w">		</span>
+<span class="w">		</span><span class="nb">if </span><span class="n">IniFileName</span> <span class="o">!=</span>
+<span class="w">			 </span><span class="nb">IniWrite</span><span class="p">,</span> <span class="nv">%pos%</span><span class="p">,</span> <span class="nv">%IniFileName%</span><span class="p">,</span> <span class="nv">%section%</span><span class="p">,</span> !<span class="nv">%name%</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">RegWrite</span><span class="p">,</span> <span class="n">REG_SZ</span><span class="p">,</span>  <span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="nv">%key%</span><span class="p">,</span> <span class="nv">%A_ScriptFullPath%</span>!<span class="nv">%name%</span><span class="p">,</span> <span class="nv">%pos%</span>
+	<span class="p">}</span>	
+<span class="w">  </span><span class="nb">return</span> <span class="n">pos</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Redraw</span>
+<span class="cm"> 			Redraws the window.</span>
+
+<span class="cm"> Parameters:</span>
+<span class="cm">			Hwnd	- Handle of the window. If this parameter is omitted, Redraw updates the desktop window.</span>
+<span class="cm">			Option  - &quot;-&quot; to disable redrawing for the window. &quot;+&quot; to enable it and redraw it. By default empty.</span>
+<span class="cm"> </span>
+<span class="cm"> Returns:</span>
+<span class="cm">			A nonzero value indicates success. Zero indicates failure.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			This function will update the window for sure, unlike WinSet or InvalidateRect.</span>
+<span class="cm"> */</span>
+<span class="n">Win_Redraw</span><span class="p">(</span> <span class="n">Hwnd</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Option</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">WM_SETREDRAW</span><span class="o">=</span><span class="mh">0xB</span><span class="p">,</span> <span class="n">RDW_ALLCHILDREN</span>:<span class="o">=</span><span class="mh">0x80</span><span class="p">,</span> <span class="n">RDW_ERASE</span>:<span class="o">=</span><span class="mh">0x4</span><span class="p">,</span> <span class="n">RDW_ERASENOW</span>:<span class="o">=</span><span class="mh">0x200</span><span class="p">,</span> <span class="n">RDW_FRAME</span>:<span class="o">=</span><span class="mh">0x400</span><span class="p">,</span> <span class="n">RDW_INTERNALPAINT</span>:<span class="o">=</span><span class="mh">0x2</span><span class="p">,</span> <span class="n">RDW_INVALIDATE</span>:<span class="o">=</span><span class="mh">0x1</span><span class="p">,</span> <span class="n">RDW_NOCHILDREN</span>:<span class="o">=</span><span class="mh">0x40</span><span class="p">,</span> <span class="n">RDW_NOERASE</span>:<span class="o">=</span><span class="mh">0x20</span><span class="p">,</span> <span class="n">RDW_NOFRAME</span>:<span class="o">=</span><span class="mh">0x800</span><span class="p">,</span> <span class="n">RDW_NOINTERNALPAINT</span>:<span class="o">=</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">RDW_UPDATENOW</span>:<span class="o">=</span><span class="mh">0x100</span><span class="p">,</span> <span class="n">RDW_VALIDATE</span>:<span class="o">=</span><span class="mh">0x8</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">Option</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">old</span> :<span class="o">=</span> <span class="nv">A_DetectHiddenWindows</span>
+<span class="w">		</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="n">on</span>
+		<span class="n">bEnable</span> :<span class="o">=</span> <span class="n">Option</span><span class="o">=</span><span class="s">&quot;+&quot;</span>
+<span class="w">		</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="mh">0xB</span><span class="p">,</span> <span class="n">bEnable</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>
+<span class="w">		</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="nv">%old%</span>
+<span class="w">		</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">bEnable</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span>		
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;RedrawWindow&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span> <span class="p">,</span><span class="n">RDW_INVALIDATE</span> <span class="o">|</span> <span class="n">RDW_ERASE</span> <span class="o">|</span> <span class="n">RDW_FRAME</span> <span class="o">|</span> <span class="n">RDW_ERASENOW</span> <span class="o">|</span> <span class="n">RDW_UPDATENOW</span> <span class="o">|</span> <span class="n">RDW_ALLCHILDREN</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	SetCaption</span>
+<span class="cm"> 			Set visibility of the window caption.</span>
+
+<span class="cm"> Parameters:</span>
+<span class="cm">			Flag	- Set + to show the caption or - otherwise. If omitted, caption will be toggled.</span>
+<span class="cm"> */</span>
+<span class="n">Win_SetCaption</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">Flag</span><span class="o">=</span><span class="s">&quot;^&quot;</span><span class="p">){</span>
+	<span class="n">oldDetect</span> :<span class="o">=</span> <span class="nv">A_DetectHiddenWindows</span>
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="n">on</span>
+<span class="w">	</span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="nv">%Flag%</span><span class="mh">0xC00000</span>
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="nv">%oldDetect%</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	SetMenu</span>
+<span class="cm"> 			Set the window menu.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			hMenu	- Handle of the menu to set for window. By default 0 means that menu will be removed.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			Handle of the previous menu.</span>
+
+<span class="cm"> */</span>
+<span class="n">Win_SetMenu</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">hMenu</span><span class="o">=</span><span class="mi">0</span><span class="p">){</span>
+	<span class="n">hPrevMenu</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetMenu&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">)</span>
+	<span class="nf">DllCall(</span><span class="s">&quot;SetMenu&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hMenu</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">hPrevMenu</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	SetIcon</span>
+<span class="cm"> 			Set the titlebar icon for the window.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			Icon	- Path to the icon. If omitted, icon is removed. If integer, handle to the already loaded icon.</span>
+<span class="cm">			Flag	- 1 sets the large icon for the window, 0 sets the small icon for the window. </span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			The return value is a handle to the previous large or small icon, depending on the Flag value.</span>
+
+<span class="cm"> */</span>
+<span class="n">Win_SetIcon</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">Icon</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Flag</span><span class="o">=</span><span class="mi">1</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">WM_SETICON</span> <span class="o">=</span> <span class="mh">0x80</span><span class="p">,</span> <span class="n">LR_LOADFROMFILE</span><span class="o">=</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">IMAGE_ICON</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">Flag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Unsupported Flag: &quot;</span> <span class="n">Flag</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">Icon</span> <span class="o">!=</span> 
+		<span class="n">hIcon</span> :<span class="o">=</span> <span class="n">Icon</span><span class="o">+</span><span class="mi">0</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> ? <span class="n">Icon</span> : <span class="nf">DllCall(</span><span class="s">&quot;LoadImage&quot;</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Icon</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">IMAGE_ICON</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">LR_LOADFROMFILE</span><span class="p">)</span> 	
+
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">WM_SETICON</span><span class="p">,</span> <span class="nv">%Flag%</span><span class="p">,</span> <span class="n">hIcon</span><span class="p">,</span> <span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nv">ErrorLevel</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	SetParent</span>
+<span class="cm"> 			Changes the parent window of the specified window.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			Hwnd	- Handle of the window for which to send parent.</span>
+<span class="cm">			HParent	- Handle to the parent window. If this parameter is 0, the desktop window becomes the new parent window.</span>
+<span class="cm">			bFixStyle - Set to TRUE to fix WS_CHILD &amp; WS_POPUP styles. SetParent does not modify the WS_CHILD or WS_POPUP window styles of the window whose parent is being changed.</span>
+<span class="cm">						If HParent is 0, you should also clear the WS_CHILD bit and set the WS_POPUP style after calling SetParent (and vice-versa).</span>
+<span class="cm"> Returns:</span>
+<span class="cm">			If the function succeeds, the return value is a handle to the previous parent window. Otherwise, its 0.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			If the window identified by the Hwnd parameter is visible, the system performs the appropriate redrawing and repainting.</span>
+<span class="cm">			The function sends WM_CHANGEUISTATE to the parent after succesifull operation uncoditionally.</span>
+<span class="cm">			See &lt;http://msdn.microsoft.com/en-us/library/ms633541(VS.85).aspx&gt; for more information.</span>
+<span class="cm"> */</span>
+<span class="n">Win_SetParent</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">HParent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bFixStyle</span><span class="o">=</span><span class="nv">false</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">WS_POPUP</span><span class="o">=</span><span class="mh">0x80000000</span><span class="p">,</span> <span class="n">WS_CHILD</span><span class="o">=</span><span class="mh">0x40000000</span><span class="p">,</span> <span class="n">WM_CHANGEUISTATE</span><span class="o">=</span><span class="mh">0x127</span><span class="p">,</span> <span class="n">UIS_INITIALIZE</span><span class="o">=</span><span class="mi">3</span>
+	
+	<span class="n">if</span> <span class="p">(</span><span class="n">bFixStyle</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">s1</span> :<span class="o">=</span> <span class="n">Hwnd</span> ? <span class="s">&quot;+&quot;</span> : <span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="n">s2</span> :<span class="o">=</span> <span class="n">Hwnd</span> ? <span class="s">&quot;-&quot;</span> : <span class="s">&quot;+&quot;</span>
+<span class="w">		</span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="nv">%s1%%WS_CHILD%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>
+<span class="w">		</span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Style</span><span class="p">,</span> <span class="nv">%s2%%WS_POPUP%</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>
+	<span class="p">}</span>
+	<span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;SetParent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">HParent</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="mi">0</span>
+<span class="w">	</span><span class="nb">SendMessage</span><span class="p">,</span> <span class="n">WM_CHANGEUISTATE</span><span class="p">,</span> <span class="n">UIS_INITIALIZE</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%HParent%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">r</span>
+<span class="p">}</span>
+
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	SetOwner</span>
+<span class="cm"> 			Changes the owner window of the specified window.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			hOwner	- Handle to the owner window.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			Handle of the previous owner.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			An owned window is always above its owner in the z-order. The system automatically destroys an owned window when its owner is destroyed. An owned window is hidden when its owner is minimized. </span>
+<span class="cm">			Only an overlapped or pop-up window can be an owner window; a child window cannot be an owner window.</span>
+<span class="cm"> */</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;Famous misleading statement. Almost as misleading as the choice of GWL_HWNDPARENT as the name. It has nothing to do with a window&#39;s parent. </span>
+<span class="c-Singleline">;It really changes the Owner exactly the same thing as including the Owner argument in the Show statement. </span>
+<span class="c-Singleline">;A more accurate version might be: &quot;SetWindowLong with the GWL_HWNDPARENT will not change the parent of a child window. Instead, use the SetParent function.&quot;</span>
+<span class="c-Singleline">;GWL_HWNDPARENT should have been called GWL_HWNDOWNER, but nobody noticed it until after a bazillion copies of the SDK had gone out. This is what happens </span>
+<span class="c-Singleline">;when the the dev team lives on M&amp;Ms and CocaCola for to long. Too bad. Live with it.</span>
+<span class="c-Singleline">;</span>
+<span class="n">Win_SetOwner</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">hOwner</span><span class="p">){</span>
+	<span class="n">static</span> <span class="n">GWL_HWNDPARENT</span> <span class="o">=</span> <span class="o">-</span><span class="mi">8</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;SetWindowLong&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">GWL_HWNDPARENT</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hOwner</span><span class="p">)</span>		
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	SetToolWindow</span>
+<span class="cm"> 			Set the WS_EX_TOOLWINDOW style for the window.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			Flag	- Set + to show the caption or - otherwise. If omitted, caption will be toggled.</span>
+<span class="cm"> */</span>
+<span class="n">Win_SetToolWindow</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">Flag</span><span class="o">=</span><span class="s">&quot;^&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">WS_EX_TOOLWINDOW</span> <span class="o">=</span> <span class="mh">0x80</span>	
+	<span class="n">oldDetect</span> :<span class="o">=</span> <span class="nv">A_DetectHiddenWindows</span>
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="n">on</span>
+<span class="w">	</span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">ExStyle</span><span class="p">,</span> <span class="nv">%FLag%</span><span class="n">WS_EX_TOOLWINDOW</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>	
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="nv">%oldDetect%</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Show</span>
+<span class="cm"> 			Show / Hide window.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			bShow	- True to show (default), False to hide window.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">		If the window was previously visible, the return value is nonzero. </span>
+<span class="cm">		If the window was previously hidden, the return value is zero.</span>
+<span class="cm"> */</span>
+<span class="n">Win_Show</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">bShow</span><span class="o">=</span><span class="nv">true</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;ShowWindow&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">bShow</span> ? <span class="mi">5</span>:<span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	ShowSysMenu</span>
+<span class="cm"> 			Show system menu for a window (ALT + SPACE menu).</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters:</span>
+<span class="cm">			X, Y	- Coordinates on which to show menu. Pass word &quot;mouse&quot; as X (default) to use mouse coordinates.</span>
+
+
+<span class="cm"> Returns:</span>
+<span class="cm">			True if menu has been shown, False otherwise.</span>
+<span class="cm"> */</span>
+<span class="n">Win_ShowSysMenu</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="s">&quot;mouse&quot;</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">WM_SYSCOMMAND</span> <span class="o">=</span> <span class="mh">0x112</span><span class="p">,</span> <span class="n">TPM_RETURNCMD</span><span class="o">=</span><span class="mh">0x100</span>
+
+	<span class="n">oldDetect</span> :<span class="o">=</span> <span class="nv">A_DetectHiddenWindows</span>
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="n">on</span>
+<span class="w">	</span><span class="nb">Process</span><span class="p">,</span> <span class="n">Exist</span>
+	<span class="n">h</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="s">&quot;ahk_pid &quot;</span> <span class="nv">ErrorLevel</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="nv">%oldDetect%</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">X</span><span class="o">=</span><span class="n">mouse</span>
+		<span class="nf">VarSetCapacity(</span><span class="n">POINT</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="nf">DllCall(</span><span class="s">&quot;GetCursorPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">POINT</span><span class="p">),</span> <span class="n">X</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">POINT</span><span class="p">),</span> <span class="n">Y</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">POINT</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+	<span class="n">hSysMenu</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetSystemMenu&quot;</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nv">False</span><span class="p">)</span> 
+	<span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;TrackPopupMenu&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hSysMenu</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">TPM_RETURNCMD</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span>
+<span class="w">	</span><span class="nb">PostMessage</span><span class="p">,</span> <span class="n">WM_SYSCOMMAND</span><span class="p">,</span> <span class="n">r</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%Hwnd%</span>
+<span class="w">	</span><span class="nb">return</span> <span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Subclass </span>
+<span class="cm">			Subclass window.</span>
+<span class="cm"> </span>
+<span class="cm"> Parameters: </span>
+<span class="cm">			Hwnd    - Handle to the window to be subclassed.</span>
+<span class="cm">			Fun		- New window procedure. You can also pass function address here in order to subclass child window</span>
+<span class="cm">					  with previously created window procedure.</span>
+<span class="cm">			Opt		- Optional callback options for Fun, by default &quot;&quot; </span>
+<span class="cm">		   $WndProc - Optional reference to the output variable that will receive address of the new window procedure.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			The address of the previous window procedure or 0 on error.</span>
+
+<span class="cm"> Remarks:</span>
+<span class="cm">			Works only for controls created in the autohotkey process.</span>
+
+<span class="cm"> Example:</span>
+<span class="cm">	(start code)</span>
+<span class="cm">  	if !Win_SubClass(hwndList, &quot;MyWindowProc&quot;) </span>
+<span class="cm">  	     MsgBox, Subclassing failed. </span>
+<span class="cm">  	... </span>
+<span class="cm">  	MyWindowProc(hwnd, uMsg, wParam, lParam){ </span>
+<span class="cm">  </span>
+<span class="cm">  	   if (uMsg = .....)  </span>
+<span class="cm">            ; my message handling here </span>
+<span class="cm">  </span>
+<span class="cm">  	   return DllCall(&quot;CallWindowProcA&quot;, &quot;UInt&quot;, A_EventInfo, &quot;UInt&quot;, hwnd, &quot;UInt&quot;, uMsg, &quot;UInt&quot;, wParam, &quot;UInt&quot;, lParam) </span>
+<span class="cm">  	}</span>
+<span class="cm">	(end code)</span>
+<span class="cm"> */</span>
+<span class="n">Win_Subclass</span><span class="p">(</span><span class="n">Hwnd</span><span class="p">,</span> <span class="n">Fun</span><span class="p">,</span> <span class="n">Opt</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> $<span class="n">WndProc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span> 
+<span class="w">	</span><span class="nb">if </span><span class="n">Fun</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">integer</span>
+	<span class="p">{</span>
+		 <span class="n">oldProc</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetWindowLong&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">)</span> 
+<span class="w">		 </span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">oldProc</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="mi">0</span> 
+		 $<span class="n">WndProc</span> :<span class="o">=</span> <span class="nf">RegisterCallback(</span><span class="n">Fun</span><span class="p">,</span> <span class="n">Opt</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">oldProc</span><span class="p">)</span> 
+<span class="w">		 </span><span class="nb">ifEqual</span><span class="p">,</span> $<span class="n">WndProc</span><span class="p">,</span> <span class="p">,</span> <span class="n">return</span> <span class="mi">0</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">else</span> $<span class="n">WndProc</span> :<span class="o">=</span> <span class="n">Fun</span>
+<span class="w">	   </span>
+<span class="w">    </span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;SetWindowLong&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> $<span class="n">WndProc</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">)</span> 
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">Group: About</span>
+<span class="cm">	o v1.24 by majkinetor.</span>
+<span class="cm">	o Reference: &lt;http://msdn.microsoft.com/en-us/library/ms632595(VS.85).aspx&gt;</span>
+<span class="cm">	o Licensed under GNU GPL &lt;http://creativecommons.org/licenses/GPL/2.0/&gt;</span>
+<span class="cm">/*</span>
+</pre></div>

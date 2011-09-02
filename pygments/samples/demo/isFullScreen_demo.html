@@ -1,0 +1,12 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include IsFullScreen.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="nb">MsgBox</span> <span class="n">Click</span> <span class="n">Win</span><span class="o">+</span><span class="n">LeftMouseButton</span> <span class="n">to</span> <span class="n">see</span> <span class="n">if</span> <span class="n">application</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">fullscreen</span> <span class="n">mode</span><span class="o">.</span>
+<span class="nb">Return</span>
+
+<span class="nl">#LButton::</span>
+<span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">IsFullscreen</span><span class="p">()</span>
+<span class="nb">Return</span>
+</pre></div>

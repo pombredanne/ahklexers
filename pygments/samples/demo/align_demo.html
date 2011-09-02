@@ -1,0 +1,26 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Win.ahk</span>
+<span class="c-Singleline">; #Include Align.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH1</span><span class="p">,</span> <span class="n">hello</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH2</span> <span class="n">x</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> <span class="n">majkinetor</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH3</span> <span class="n">x</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> <span class="n">thx</span>
+
+<span class="nb">MsgBox</span> <span class="n">Proceed</span> <span class="n">further</span> <span class="n">to</span> <span class="n">see</span> <span class="n">what</span> <span class="n">happens</span> <span class="n">if</span> <span class="n">aligned</span> <span class="n">with</span> <span class="n">Align</span><span class="o">.</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">h100</span> <span class="n">w200</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
+<span class="n">hGui</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="s">&quot;A&quot;</span><span class="p">)</span>
+<span class="nb">Sleep</span><span class="p">,</span> <span class="mi">1500</span>
+
+<span class="n">Align</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="s">&quot;L&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="c-Singleline">	  ;Align this control to the left edge of its parent, set width to 100,</span>
+<span class="n">Align</span><span class="p">(</span><span class="n">h2</span><span class="p">,</span> <span class="s">&quot;T&quot;</span><span class="p">)</span><span class="c-Singleline">		  ; then align this control to the top minus space taken from previous control, use its own height,</span>
+<span class="n">Align</span><span class="p">(</span><span class="n">h3</span><span class="p">,</span> <span class="s">&quot;F&quot;</span><span class="p">)</span><span class="c-Singleline">		  ; then set this control to fill remaining space.</span>
+ 		
+<span class="n">Align</span><span class="p">(</span><span class="n">hGui</span><span class="p">)</span><span class="c-Singleline">			  ;Re-align hGui</span>
+<span class="nb">Return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nb">ExitApp</span>
+</pre></div>

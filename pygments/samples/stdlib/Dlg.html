@@ -1,0 +1,450 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/* Title:	Dlg</span>
+<span class="cm">			*Common Operating System Dialogs*</span>
+<span class="cm"> */</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:		Color</span>
+<span class="cm">				(See Dlg_color.png)</span>
+
+<span class="cm"> Parameters: </span>
+<span class="cm">				Color	- Initial color and output in RGB format.</span>
+<span class="cm">				hGui	- Optional handle to parents Gui. Affects dialog position.</span>
+<span class="cm">  </span>
+<span class="cm"> Returns:	</span>
+<span class="cm">				False if user canceled the dialog or if error occurred	</span>
+<span class="cm"> */</span> 
+<span class="n">Dlg_Color</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Color</span><span class="p">,</span> <span class="n">hGui</span><span class="o">=</span><span class="mi">0</span><span class="p">){</span><span class="c-Singleline"> </span>
+<span class="c-Singleline">  ;covert from rgb</span>
+    <span class="n">clr</span> :<span class="o">=</span> <span class="p">((</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="mh">0xFF00</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">Color</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+
+    <span class="nf">VarSetCapacity(</span><span class="n">CHOOSECOLOR</span><span class="p">,</span> <span class="mh">0x24</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">VarSetCapacity(</span><span class="n">CUSTOM</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+     <span class="p">,</span><span class="nf">NumPut(</span><span class="mh">0x24</span><span class="p">,</span>		<span class="n">CHOOSECOLOR</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">      ; DWORD lStructSize </span>
+     <span class="p">,</span><span class="nf">NumPut(</span><span class="n">hGui</span><span class="p">,</span>		<span class="n">CHOOSECOLOR</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline">      ; HWND hwndOwner (makes dialog &quot;modal&quot;). </span>
+     <span class="p">,</span><span class="nf">NumPut(</span><span class="n">clr</span><span class="p">,</span>		<span class="n">CHOOSECOLOR</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">     ; clr.rgbResult </span>
+     <span class="p">,</span><span class="nf">NumPut(</span><span class="o">&amp;</span><span class="n">CUSTOM</span><span class="p">,</span>	<span class="n">CHOOSECOLOR</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline">     ; COLORREF *lpCustColors</span>
+     <span class="p">,</span><span class="nf">NumPut(</span><span class="mh">0x00000103</span><span class="p">,</span><span class="n">CHOOSECOLOR</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline">     ; Flag: CC_ANYCOLOR || CC_RGBINIT </span>
+
+    <span class="n">nRC</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;comdlg32\ChooseColorA&quot;</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="n">CHOOSECOLOR</span><span class="p">)</span><span class="c-Singleline">  ; Display the dialog. </span>
+    <span class="n">if</span> <span class="p">(</span><span class="nv">errorlevel</span> <span class="o">&lt;&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">nRC</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> 
+<span class="w">       </span><span class="nb">return</span>  <span class="nv">false</span> 
+
+    <span class="n">clr</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">CHOOSECOLOR</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> 
+    
+    <span class="n">oldFormat</span> :<span class="o">=</span> <span class="nv">A_FormatInteger</span> 
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span> <span class="n">integer</span><span class="p">,</span> <span class="n">hex</span><span class="c-Singleline">  ; Show RGB color extracted below in hex format. </span>
+
+<span class="c-Singleline"> ;convert to rgb </span>
+    <span class="n">Color</span> :<span class="o">=</span> <span class="p">(</span><span class="n">clr</span> <span class="o">&amp;</span> <span class="mh">0xff00</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">clr</span> <span class="o">&amp;</span> <span class="mh">0xff0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">clr</span> <span class="o">&amp;</span> <span class="mh">0xff</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> 
+<span class="w">    </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">Color</span><span class="p">,</span> <span class="n">Color</span><span class="p">,</span> <span class="mi">2</span> 
+<span class="w">    </span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="mi">6</span><span class="o">-</span><span class="nf">strlen(</span><span class="n">Color</span><span class="p">)</span> 
+		<span class="n">Color</span><span class="o">=</span><span class="mi">0</span><span class="nv">%Color%</span> 
+    <span class="n">Color</span><span class="o">=</span><span class="mi">0</span><span class="n">x</span><span class="nv">%Color%</span> 
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span> <span class="n">integer</span><span class="p">,</span> <span class="nv">%oldFormat%</span> 
+<span class="w">	</span><span class="nb">return</span> <span class="nv">true</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+
+<span class="cm"> Function:     Find / Replace</span>
+<span class="cm">				(See Dlg_find.png)</span>
+<span class="cm">				(See Dlg_replace.png)</span>
+
+<span class="cm"> Parameters: </span>
+<span class="cm">               hGui    - Handle to the parent.</span>
+<span class="cm">               Handler - Notification handler, see below.</span>
+<span class="cm">               Flags   - Creation flags, see below.</span>
+<span class="cm">               FindText - Default text to be displayed at the start of the dialog box in find edit box.</span>
+<span class="cm">               ReplaceText - Default text to be displayed at the start of the dialog box in replace edit box.</span>
+
+<span class="cm"> Flags:        </span>
+<span class="cm">				String containing list of creation flags. You can use &quot;-&quot; prefix to hide that GUI field.</span>
+
+<span class="cm">                d - down radio button selected in Find dialog.</span>
+<span class="cm">                w - whole word selected.</span>
+<span class="cm">                c - match case selected.</span>
+
+<span class="cm"> Handler:</span>
+<span class="cm">				Dialog box is not modal, so it communicates with the script while it is active. Both Find &amp; Replace use </span>
+<span class="cm">				the same prototype of notification function.</span>
+
+<span class="cm"> &gt;				Handler(Event, Flags, FindText, ReplaceText)</span>
+
+<span class="cm">                   Event    - C (Close), F (Find), R (Replace), A (replace All)</span>
+<span class="cm">                   Flags    - String containing flags about user selection; each letter means user has selected that particular GUI element.</span>
+<span class="cm">                   FindText - Current find text.</span>
+<span class="cm">                ReplaceText - Current replace text.</span>
+<span class="cm">   </span>
+<span class="cm"> Returns:      </span>
+<span class="cm">				Handle of the dialog or 0 if the dialog can&#39;t be created. Returns error code on invalid handler.</span>
+<span class="cm"> */</span> 
+<span class="n">Dlg_Find</span><span class="p">(</span> <span class="n">hGui</span><span class="p">,</span> <span class="n">Handler</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="s">&quot;d&quot;</span><span class="p">,</span> <span class="n">FindText</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">FINDMSGSTRING</span> <span class="o">=</span> <span class="s">&quot;commdlg_FindReplace&quot;</span>
+	<span class="n">static</span> <span class="n">FR_DOWN</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">FR_MATCHCASE</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">FR_WHOLEWORD</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">FR_HIDEMATCHCASE</span><span class="o">=</span><span class="mh">0x8000</span><span class="p">,</span> <span class="n">FR_HIDEWHOLEWORD</span><span class="o">=</span><span class="mh">0x10000</span><span class="p">,</span> <span class="n">FR_HIDEUPDOWN</span><span class="o">=</span><span class="mh">0x4000</span>
+	<span class="n">static</span> <span class="n">buf</span><span class="p">,</span> <span class="n">FR</span><span class="p">,</span> <span class="n">len</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">len</span> <span class="o">=</span>
+		<span class="nf">VarSetCapacity(</span><span class="n">FR</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">VarSetCapacity(</span><span class="n">buf</span><span class="p">,</span> <span class="n">len</span> :<span class="o">=</span> <span class="mi">256</span><span class="p">)</span>
+
+<span class="w">	</span><span class="nb">ifNotEqual</span><span class="p">,</span> <span class="n">FindText</span><span class="p">,</span> <span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="nv">%FindText%</span>
+	
+	<span class="n">f</span> :<span class="o">=</span> <span class="mi">0</span>
+	 <span class="p">,</span><span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;d&quot;</span><span class="p">)</span>  ? <span class="n">f</span> <span class="o">|=</span> <span class="n">FR_DOWN</span>			 : <span class="s">&quot;&quot;</span>
+	 <span class="p">,</span><span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;c&quot;</span><span class="p">)</span>  ? <span class="n">f</span> <span class="o">|=</span> <span class="n">FR_MATCHCASE</span>	 : <span class="s">&quot;&quot;</span>
+	 <span class="p">,</span><span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>  ? <span class="n">f</span> <span class="o">|=</span> <span class="n">FR_WHOLEWORD</span>	 : <span class="s">&quot;&quot;</span>
+	 <span class="p">,</span><span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;-d&quot;</span><span class="p">)</span> ? <span class="n">f</span> <span class="o">|=</span> <span class="n">FR_HIDEUPDOWN</span>	 : <span class="s">&quot;&quot;</span>
+	 <span class="p">,</span><span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;-w&quot;</span><span class="p">)</span> ? <span class="n">f</span> <span class="o">|=</span> <span class="n">FR_HIDEWHOLEWORD</span> : <span class="s">&quot;&quot;</span>
+	 <span class="p">,</span><span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">)</span> ? <span class="n">f</span> <span class="o">|=</span> <span class="n">FR_HIDEMATCHCASE</span> : <span class="s">&quot;&quot;</span>
+
+	<span class="nf">NumPut(</span><span class="mi">40</span><span class="p">,</span>		<span class="n">FR</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">	;size</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">hGui</span><span class="p">,</span>	<span class="n">FR</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline">	;hwndOwner</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">f</span><span class="p">,</span>	<span class="n">FR</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">	;Flags</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span>	<span class="n">FR</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline">	;lpstrFindWhat</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">len</span><span class="p">,</span>	<span class="n">FR</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="c-Singleline"> ;wFindWhatLen</span>
+
+	<span class="n">if</span> !<span class="nf">IsFunc(</span><span class="n">Handler</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt;Invalid handler: &quot;</span> <span class="n">Handler</span>
+
+	<span class="n">Dlg_callback</span><span class="p">(</span><span class="n">Handler</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="nf">OnMessage(</span> <span class="nf">DllCall(</span><span class="s">&quot;RegisterWindowMessage&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FINDMSGSTRING</span><span class="p">),</span> <span class="s">&quot;Dlg_callback&quot;</span> <span class="p">)</span>
+
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;comdlg32\FindTextA&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FR</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">Dlg_Replace</span><span class="p">(</span> <span class="n">hGui</span><span class="p">,</span> <span class="n">Handler</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">FindText</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ReplaceText</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">FINDMSGSTRING</span> <span class="o">=</span> <span class="s">&quot;commdlg_FindReplace&quot;</span>
+	<span class="n">static</span> <span class="n">FR_MATCHCASE</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">FR_WHOLEWORD</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">FR_HIDEMATCHCASE</span><span class="o">=</span><span class="mh">0x8000</span><span class="p">,</span> <span class="n">FR_HIDEWHOLEWORD</span><span class="o">=</span><span class="mh">0x10000</span><span class="p">,</span> <span class="n">FR_HIDEUPDOWN</span><span class="o">=</span><span class="mh">0x4000</span>
+	<span class="n">static</span> <span class="n">buf_f</span><span class="p">,</span> <span class="n">buf_r</span><span class="p">,</span> <span class="n">FR</span><span class="p">,</span> <span class="n">len</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">len</span> <span class="o">=</span>
+		<span class="n">len</span> :<span class="o">=</span> <span class="mi">256</span><span class="p">,</span> <span class="nf">VarSetCapacity(</span><span class="n">FR</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">VarSetCapacity(</span><span class="n">buf_f</span><span class="p">,</span> <span class="n">len</span><span class="p">),</span> <span class="nf">VarSetCapacity(</span><span class="n">buf_r</span><span class="p">,</span> <span class="n">len</span><span class="p">)</span>
+
+	<span class="n">f</span> :<span class="o">=</span> <span class="mi">0</span>
+	<span class="n">f</span> <span class="o">|=</span> <span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;c&quot;</span><span class="p">)</span>  ? <span class="n">FR_MATCHCASE</span> : <span class="mi">0</span>
+	<span class="n">f</span> <span class="o">|=</span> <span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>  ? <span class="n">FR_WHOLEWORD</span> : <span class="mi">0</span>
+	<span class="n">f</span> <span class="o">|=</span> <span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;-w&quot;</span><span class="p">)</span> ? <span class="n">FR_HIDEWHOLEWORD</span> :<span class="mi">0</span> 
+	<span class="n">f</span> <span class="o">|=</span> <span class="nf">InStr(</span><span class="n">flags</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">)</span> ? <span class="n">FR_HIDEMATCHCASE</span> :<span class="mi">0</span>
+
+
+<span class="w">	</span><span class="nb">ifNotEqual</span><span class="p">,</span> <span class="n">FindText</span><span class="p">,</span> <span class="p">,</span><span class="n">SetEnv</span><span class="p">,</span> <span class="n">buf_f</span><span class="p">,</span> <span class="nv">%FindText%</span>
+<span class="w">	</span><span class="nb">ifNotEqual</span><span class="p">,</span> <span class="n">ReplaceText</span><span class="p">,</span> <span class="p">,</span><span class="n">SetEnv</span><span class="p">,</span> <span class="n">buf_r</span><span class="p">,</span> <span class="nv">%ReplaceText%</span>
+
+	
+	<span class="nf">NumPut(</span> <span class="mi">40</span><span class="p">,</span>		  <span class="n">FR</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">	;size</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">hGui</span><span class="p">,</span>	  <span class="n">FR</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline">	;hwndOwner</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">f</span><span class="p">,</span>	  <span class="n">FR</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">	;Flags</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">buf_f</span><span class="p">,</span> <span class="n">FR</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline">	;lpstrFindWhat</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">buf_r</span><span class="p">,</span> <span class="n">FR</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span><span class="c-Singleline">	;lpstrReplaceWith</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">len</span><span class="p">,</span>	  <span class="n">FR</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="c-Singleline">	;wFindWhatLen</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">len</span><span class="p">,</span>	  <span class="n">FR</span><span class="p">,</span> <span class="mi">26</span><span class="p">)</span><span class="c-Singleline">	;wReplaceWithLen</span>
+
+
+	<span class="n">Dlg_callback</span><span class="p">(</span><span class="n">Handler</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="nf">OnMessage(</span> <span class="nf">DllCall(</span><span class="s">&quot;RegisterWindowMessage&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FINDMSGSTRING</span><span class="p">),</span> <span class="s">&quot;Dlg_callback&quot;</span> <span class="p">)</span>
+<span class="w">	</span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;comdlg32\ReplaceTextA&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FR</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  Font</span>
+<span class="cm">			 (See Dlg_font.png)				</span>
+
+<span class="cm"> Parameters:</span>
+<span class="cm">            Name	- Initial font,  output.</span>
+<span class="cm">            Style	- Initial style, output.</span>
+<span class="cm">            Color	- Initial text color, output.</span>
+<span class="cm">			Effects	- Set to false to disable effects (strikeout, underline, color).</span>
+<span class="cm">            hGui	- Parent&#39;s handle, affects position.</span>
+
+<span class="cm">  Returns:</span>
+<span class="cm">            False if user canceled the dialog or if error occurred.</span>
+<span class="cm"> */</span>
+<span class="n">Dlg_Font</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Name</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Style</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Color</span><span class="p">,</span> <span class="n">Effects</span><span class="o">=</span><span class="nv">true</span><span class="p">,</span> <span class="n">hGui</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+   <span class="n">LogPixels</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetDeviceCaps&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">DllCall(</span><span class="s">&quot;GetDC&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hGui</span><span class="p">),</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span><span class="c-Singleline">	;LOGPIXELSY</span>
+   <span class="nf">VarSetCapacity(</span><span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+   <span class="n">Effects</span> :<span class="o">=</span> <span class="mh">0x041</span> <span class="o">+</span> <span class="p">(</span><span class="n">Effects</span> ? <span class="mh">0x100</span> : <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">  ;CF_EFFECTS = 0x100, CF_SCREENFONTS=1, CF_INITTOLOGFONTSTRUCT = 0x40</span>
+
+<span class="c-Singleline">   ;set initial name</span>
+   <span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LOGFONT</span><span class="o">+</span><span class="mi">28</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Name</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">   ;convert from rgb  </span>
+   <span class="n">clr</span> :<span class="o">=</span> <span class="p">((</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="mh">0xFF00</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">Color</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">   ;set intial data</span>
+<span class="w">   </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">Style</span><span class="p">,</span> <span class="s">&quot;bold&quot;</span><span class="p">)</span>
+      <span class="nf">NumPut(</span><span class="mi">700</span><span class="p">,</span> <span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+<span class="w">   </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">Style</span><span class="p">,</span> <span class="s">&quot;italic&quot;</span><span class="p">)</span>
+      <span class="nf">NumPut(</span><span class="mi">255</span><span class="p">,</span> <span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="w">   </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">Style</span><span class="p">,</span> <span class="s">&quot;underline&quot;</span><span class="p">)</span>
+      <span class="nf">NumPut(</span><span class="mi">1</span><span class="p">,</span> <span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">Style</span><span class="p">,</span> <span class="s">&quot;strikeout&quot;</span><span class="p">)</span>
+      <span class="nf">NumPut(</span><span class="mi">1</span><span class="p">,</span> <span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="w">   </span><span class="nb">if </span><span class="nf">RegExMatch(</span><span class="n">Style</span><span class="p">,</span> <span class="s">&quot;s[1-9][0-9]*&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">){</span>
+<span class="w">      </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">1</span>      
+      <span class="n">s</span> :<span class="o">=</span> <span class="o">-</span><span class="nf">DllCall(</span><span class="s">&quot;MulDiv&quot;</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">LogPixels</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">72</span><span class="p">)</span>
+      <span class="nf">NumPut(</span><span class="n">s</span><span class="p">,</span> <span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span><span class="c-Singleline">			; set size</span>
+   <span class="p">}</span>
+<span class="w">   </span><span class="nb">else</span>  <span class="nf">NumPut(</span><span class="mi">16</span><span class="p">,</span> <span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">         ; set default size</span>
+
+   <span class="nf">VarSetCapacity(</span><span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">,</span><span class="nf">NumPut(</span><span class="mi">60</span><span class="p">,</span>		 <span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">		; DWORD lStructSize</span>
+    <span class="p">,</span><span class="nf">NumPut(</span><span class="n">hGui</span><span class="p">,</span>    <span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline">		; HWND hwndOwner (makes dialog &quot;modal&quot;).</span>
+    <span class="p">,</span><span class="nf">NumPut(</span><span class="o">&amp;</span><span class="n">LOGFONT</span><span class="p">,</span><span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="c-Singleline">	; LPLOGFONT lpLogFont</span>
+    <span class="p">,</span><span class="nf">NumPut(</span><span class="n">Effects</span><span class="p">,</span> <span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>	
+    <span class="p">,</span><span class="nf">NumPut(</span><span class="n">clr</span><span class="p">,</span>	 <span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="c-Singleline">	; rgbColors</span>
+
+   <span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;comdlg32\ChooseFontA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CHOOSEFONT</span><span class="p">)</span><span class="c-Singleline">  ; Display the dialog.</span>
+   <span class="n">if</span> !<span class="n">r</span>
+<span class="w">      </span><span class="nb">return</span> <span class="nv">false</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">  ;font name</span>
+	<span class="nf">VarSetCapacity(</span><span class="n">Name</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+	<span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Name</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LOGFONT</span> <span class="o">+</span> <span class="mi">28</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+	<span class="n">Style</span> :<span class="o">=</span> <span class="s">&quot;s&quot;</span> <span class="nf">NumGet(</span><span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="o">//</span> <span class="mi">10</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">  ;color</span>
+	<span class="n">old</span> :<span class="o">=</span> <span class="nv">A_FormatInteger</span>
+<span class="w">	</span><span class="nb">SetFormat</span><span class="p">,</span> <span class="n">integer</span><span class="p">,</span> <span class="n">hex</span><span class="c-Singleline">                      ; Show RGB color extracted below in hex format.</span>
+	<span class="n">Color</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">CHOOSEFONT</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">SetFormat</span><span class="p">,</span> <span class="n">integer</span><span class="p">,</span> <span class="nv">%old%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">  ;styles</span>
+	<span class="n">Style</span> <span class="o">=</span>
+	<span class="nf">VarSetCapacity(</span><span class="n">s</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+	<span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LOGFONT</span> <span class="o">+</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="nf">NumGet(</span><span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">700</span>
+	  <span class="n">Style</span> <span class="o">.=</span> <span class="s">&quot;bold &quot;</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="nf">NumGet(</span><span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span>
+      <span class="n">Style</span> <span class="o">.=</span> <span class="s">&quot;italic &quot;</span>
+<span class="w">   </span>
+<span class="w">	</span><span class="nb">if </span><span class="nf">NumGet(</span><span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span>
+      <span class="n">Style</span> <span class="o">.=</span> <span class="s">&quot;underline &quot;</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="nf">NumGet(</span><span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span>
+      <span class="n">Style</span> <span class="o">.=</span> <span class="s">&quot;strikeout &quot;</span>
+
+	<span class="n">s</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">LOGFONT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">)</span>
+	<span class="n">Style</span> <span class="o">.=</span> <span class="s">&quot;s&quot;</span> <span class="nf">Abs(DllCall(</span><span class="s">&quot;MulDiv&quot;</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">abs(</span><span class="n">s</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">LogPixels</span><span class="p">))</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline"> ;convert to rgb </span>
+	<span class="n">oldFormat</span> :<span class="o">=</span> <span class="nv">A_FormatInteger</span> 
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span> <span class="n">integer</span><span class="p">,</span> <span class="n">hex</span><span class="c-Singleline">  ; Show RGB color extracted below in hex format. </span>
+
+    <span class="n">Color</span> :<span class="o">=</span> <span class="p">(</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="mh">0xff00</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="mh">0xff0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="mh">0xff</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> 
+<span class="w">    </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">Color</span><span class="p">,</span> <span class="n">Color</span><span class="p">,</span> <span class="mi">2</span> 
+<span class="w">    </span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="mi">6</span><span class="o">-</span><span class="nf">strlen(</span><span class="n">Color</span><span class="p">)</span> 
+		<span class="n">Color</span><span class="o">=</span><span class="mi">0</span><span class="nv">%Color%</span> 
+    <span class="n">Color</span><span class="o">=</span><span class="mi">0</span><span class="n">x</span><span class="nv">%Color%</span> 
+<span class="w">    </span><span class="nb">SetFormat</span><span class="p">,</span> <span class="n">integer</span><span class="p">,</span> <span class="nv">%oldFormat%</span> 
+
+<span class="w">   </span><span class="nb">return</span> <span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:	Icon </span>
+<span class="cm">			(See Dlg_icon.png)</span>
+
+<span class="cm"> Parameters:</span>
+<span class="cm">			Icon	- Default icon resource, output.</span>
+<span class="cm">			Index	- Default index within resource, output.</span>
+<span class="cm">			hGui	- Optional handle of the parent GUI.</span>
+
+<span class="cm"> Returns:</span>
+<span class="cm">			False if user canceled the dialog or if error occurred </span>
+<span class="cm">		</span>
+<span class="cm"> Remarks:</span>
+<span class="cm">			This is simple and non-flexible dialog. If you need more features, use &lt;IconEx&gt; instead.</span>
+<span class="cm"> */</span>
+<span class="n">Dlg_Icon</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Icon</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Index</span><span class="p">,</span> <span class="n">hGui</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>      
+    <span class="nf">VarSetCapacity(</span><span class="n">wIcon</span><span class="p">,</span> <span class="mi">1025</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+    <span class="n">If</span> <span class="p">(</span><span class="n">Icon</span><span class="p">)</span> <span class="o">&amp;&amp;</span> !<span class="nf">DllCall(</span><span class="s">&quot;MultiByteToWideChar&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="n">Icon</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">Icon</span><span class="p">),</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wIcon</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="mi">1025</span><span class="p">)</span> 
+<span class="w">		</span><span class="nb">return</span> <span class="nv">false</span>
+
+	<span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="nf">DllCall(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;shell32.dll&quot;</span><span class="p">),</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="mi">62</span><span class="p">),</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hGui</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wIcon</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1025</span><span class="p">,</span> <span class="s">&quot;intp&quot;</span><span class="p">,</span> <span class="o">--</span><span class="n">Index</span><span class="p">)</span>
+	<span class="n">Index</span><span class="o">++</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">false</span>
+
+	<span class="nf">VarSetCapacity(</span><span class="n">Icon</span><span class="p">,</span> <span class="n">len</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;lstrlenW&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wIcon</span><span class="p">)</span> <span class="p">)</span> 
+	<span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;WideCharToMultiByte&quot;</span> <span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wIcon</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">len</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="n">Icon</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">len</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span> <span class="nv">false</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">True</span> 
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> Function:  Open / Save </span>
+<span class="cm">			 (See Dlg_open.png)</span>
+
+<span class="cm"> Parameters: </span>
+<span class="cm">            hGui            - Parent&#39;s handle, positive number by default 0 (influences dialog position).</span>
+<span class="cm">            Title			- Dialog title.</span>
+<span class="cm">            Filter          - Specify filter as with FileSelectFile. Separate multiple filters with &quot;|&quot;. For instance &quot;All Files (*.*)|Audio (*.wav; *.mp2; *.mp3)|Documents (*.txt)&quot;</span>
+<span class="cm">            DefaultFilter   - Index of default filter (1 based), by default 1.</span>
+<span class="cm">            Root			- Specifies startup directory and initial content of &quot;File Name&quot; edit. </span>
+<span class="cm">							  Directory must have trailing &quot;\&quot;.</span>
+<span class="cm">            DefaultExt      - Extension to append when none given .</span>
+<span class="cm">            Flags           - White space separated list of flags, by default &quot;FILEMUSTEXIST HIDEREADONLY&quot;.</span>
+<span class="cm">  </span>
+<span class="cm">  Flags:</span>
+<span class="cm">			allowmultiselect	- Specifies that the File Name list box allows multiple selections </span>
+<span class="cm">			createprompt		- If the user specifies a file that does not exist, this flag causes the dialog box to prompt the user for permission to create the file</span>
+<span class="cm">			dontaddtorecent		- Prevents the system from adding a link to the selected file in the file system directory that contains the user&#39;s most recently used documents. </span>
+<span class="cm">			extensiondifferent	- Specifies that the user typed a file name extension that differs from the extension specified by defaultExt</span>
+<span class="cm">			filemustexist		- Specifies that the user can type only names of existing files in the File Name entry field</span>
+<span class="cm">			forceshowhidden		- Forces the showing of system and hidden files, thus overriding the user setting to show or not show hidden files. However, a file that is marked both system and hidden is not shown.</span>
+<span class="cm">			hidereadonly		- Hides the Read Only check box.</span>
+<span class="cm">			nochangedir			- Restores the current directory to its original value if the user changed the directory while searching for files.</span>
+<span class="cm">			nodereferencelinks	- Directs the dialog box to return the path and file name of the selected shortcut (.LNK) file. If this value is not specified, the dialog box returns the path and file name of the file referenced by the shortcut.</span>
+<span class="cm">			novalidate			- Specifies that the common dialog boxes allow invalid characters in the returned file name</span>
+<span class="cm">			overwriteprompt		- Causes the Save As dialog box to generate a message box if the selected file already exists. The user must confirm whether to overwrite the file.</span>
+<span class="cm">			pathmustexist		- Specifies that the user can type only valid paths and file names.</span>
+<span class="cm">			readonly			- Causes the Read Only check box to be selected initially when the dialog box is created</span>
+<span class="cm">			showhelp			- Causes the dialog box to display the Help button. The hGui receives the HELPMSGSTRING registered messages that the dialog box sends when the user clicks the Help button. </span>
+<span class="cm">			noreadonlyreturn	- Specifies that the returned file does not have the Read Only check box selected and is not in a write-protected directory.</span>
+<span class="cm">			notestfilecreate	- Specifies that the file is not created before the dialog box is closed. This flag should be specified if the application saves the file on a create-nonmodify network share.</span>
+<span class="cm"> </span>
+<span class="cm">  Returns: </span>
+<span class="cm">            Selected FileName or nothing if cancelled. If more then one file is selected they are separated by new line character.</span>
+
+
+<span class="cm">  Remarks:</span>
+<span class="cm">		    Those functions will change the working directory of the script. Use SetWorkingDir afterwards to restore working directory if needed.</span>
+<span class="cm"> */</span>	
+<span class="n">Dlg_Open</span><span class="p">(</span> <span class="n">hGui</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Title</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Filter</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">DefaultFilter</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Root</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">DefaultExt</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="s">&quot;FILEMUSTEXIST HIDEREADONLY&quot;</span> <span class="p">)</span> <span class="p">{</span> 
+	<span class="n">static</span> <span class="n">OFN_S</span>:<span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">OFN_ALLOWMULTISELECT</span>:<span class="o">=</span><span class="mh">0x200</span><span class="p">,</span> <span class="n">OFN_CREATEPROMPT</span>:<span class="o">=</span><span class="mh">0x2000</span><span class="p">,</span> <span class="n">OFN_DONTADDTORECENT</span>:<span class="o">=</span><span class="mh">0x2000000</span><span class="p">,</span> <span class="n">OFN_EXTENSIONDIFFERENT</span>:<span class="o">=</span><span class="mh">0x400</span><span class="p">,</span> <span class="n">OFN_FILEMUSTEXIST</span>:<span class="o">=</span><span class="mh">0x1000</span><span class="p">,</span> <span class="n">OFN_FORCESHOWHIDDEN</span>:<span class="o">=</span><span class="mh">0x10000000</span><span class="p">,</span> <span class="n">OFN_HIDEREADONLY</span>:<span class="o">=</span><span class="mh">0x4</span><span class="p">,</span> <span class="n">OFN_NOCHANGEDIR</span>:<span class="o">=</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">OFN_NODEREFERENCELINKS</span>:<span class="o">=</span><span class="mh">0x100000</span><span class="p">,</span> <span class="n">OFN_NOVALIDATE</span>:<span class="o">=</span><span class="mh">0x100</span><span class="p">,</span> <span class="n">OFN_OVERWRITEPROMPT</span>:<span class="o">=</span><span class="mh">0x2</span><span class="p">,</span> <span class="n">OFN_PATHMUSTEXIST</span>:<span class="o">=</span><span class="mh">0x800</span><span class="p">,</span> <span class="n">OFN_READONLY</span>:<span class="o">=</span><span class="mh">0x1</span><span class="p">,</span> <span class="n">OFN_SHOWHELP</span>:<span class="o">=</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">OFN_NOREADONLYRETURN</span>:<span class="o">=</span><span class="mh">0x8000</span><span class="p">,</span> <span class="n">OFN_NOTESTFILECREATE</span>:<span class="o">=</span><span class="mh">0x10000</span>
+
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">Filter</span><span class="p">,</span> <span class="p">,</span><span class="n">SetEnv</span><span class="p">,</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">All</span> <span class="n">Files</span> <span class="p">(</span><span class="o">*.*</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">SplitPath</span><span class="p">,</span> <span class="n">Root</span><span class="p">,</span> <span class="n">rootFN</span><span class="p">,</span> <span class="n">rootDir</span>
+
+	<span class="n">hFlags</span> :<span class="o">=</span> <span class="mh">0x80000</span><span class="c-Singleline">								;OFN_ENABLEXPLORER always set</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Flags</span><span class="p">,</span><span class="nv">%A_TAB%%A_SPACE%</span><span class="p">,</span><span class="nv">%A_TAB%%A_SPACE%</span>
+<span class="w">		</span><span class="nb">if </span><span class="nv">A_LoopField</span> <span class="o">!=</span>
+			<span class="n">hFlags</span> <span class="o">|=</span> <span class="n">OFN_</span><span class="nv">%A_LoopField%</span>
+
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hFlags</span><span class="p">,</span> <span class="p">,</span> <span class="n">return</span> <span class="nv">A_ThisFunc</span> <span class="s">&quot;&gt; Some of the flags are invalid: &quot;</span> <span class="n">Flags</span>
+	<span class="nf">VarSetCapacity(</span> <span class="n">FN</span><span class="p">,</span> <span class="mh">0xffff</span> <span class="p">),</span> <span class="nf">VarSetCapacity(</span> <span class="n">lpstrFilter</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="nf">StrLen(</span><span class="n">filter</span><span class="p">))</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">rootFN</span> <span class="o">!=</span>
+		  <span class="nf">DllCall(</span><span class="s">&quot;lstrcpyn&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">rootFN</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">rootFN</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">	; Contruct FilterText seperate by \0 </span>
+	<span class="n">delta</span> :<span class="o">=</span> <span class="mi">0</span><span class="c-Singleline">										;Used by Loop as Offset</span>
+<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Filter</span><span class="p">,</span> <span class="o">|</span>                
+	<span class="p">{</span> 
+		<span class="n">desc</span> :<span class="o">=</span> <span class="nv">A_LoopField</span><span class="p">,</span>  <span class="n">ext</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr(</span> <span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;(&quot;</span> <span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+		<span class="n">lenD</span> :<span class="o">=</span> <span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>	<span class="n">lenE</span> :<span class="o">=</span> <span class="nf">StrLen(</span><span class="n">ext</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="c-Singleline">				;including /0</span>
+
+		<span class="nf">DllCall(</span><span class="s">&quot;lstrcpyn&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lpstrFilter</span> <span class="o">+</span> <span class="n">delta</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">lenD</span><span class="p">)</span> 
+		<span class="nf">DllCall(</span><span class="s">&quot;lstrcpyn&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lpstrFilter</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">+</span> <span class="n">lenD</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ext</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">lenE</span><span class="p">)</span>
+		<span class="n">delta</span> <span class="o">+=</span> <span class="n">lenD</span> <span class="o">+</span> <span class="n">lenE</span>
+	<span class="p">}</span> 
+	<span class="nf">NumPut(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lpstrFilter</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span> <span class="p">)</span><span class="c-Singleline">		  ; Double Zero Termination </span>
+
+<span class="c-Singleline">	; Contruct OPENFILENAME Structure   </span>
+	<span class="nf">VarSetCapacity(</span> <span class="n">OFN</span> <span class="p">,</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="mi">76</span><span class="p">,</span>			 <span class="n">OFN</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; Length of Structure </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">hGui</span><span class="p">,</span>			 <span class="n">OFN</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; HWND </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">lpstrFilter</span><span class="p">,</span>	 <span class="n">OFN</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; Pointer to FilterStruc </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">DefaultFilter</span><span class="p">,</span> <span class="n">OFN</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; DefaultFilter Pair </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">FN</span><span class="p">,</span>			 <span class="n">OFN</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; lpstrFile / InitialisationFileName </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="mh">0xffff</span><span class="p">,</span>		 <span class="n">OFN</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; MaxFile / lpstrFile length </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">rootDir</span><span class="p">,</span>		 <span class="n">OFN</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; StartDir </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">Title</span><span class="p">,</span>		 <span class="n">OFN</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">	  ; DlgTitle</span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="n">hFlags</span><span class="p">,</span>		 <span class="n">OFN</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; Flags </span>
+	 <span class="p">,</span><span class="nf">NumPut(</span> <span class="o">&amp;</span><span class="n">DefaultExt</span><span class="p">,</span>	 <span class="n">OFN</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span> <span class="p">)</span><span class="c-Singleline">    ; DefaultExt </span>
+
+	<span class="n">res</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">Flags</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;S&quot;</span> ? <span class="nf">DllCall(</span><span class="s">&quot;comdlg32\GetSaveFileNameA&quot;</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">OFN</span> <span class="p">)</span> : <span class="nf">DllCall(</span><span class="s">&quot;comdlg32\GetOpenFileNameA&quot;</span><span class="p">,</span> <span class="s">&quot;Uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">OFN</span> <span class="p">)</span>
+<span class="w">	</span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">return</span>
+
+	<span class="n">adr</span> :<span class="o">=</span> <span class="o">&amp;</span><span class="n">FN</span><span class="p">,</span>  <span class="n">f</span> :<span class="o">=</span> <span class="n">d</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;MulDiv&quot;</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">adr</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">),</span> <span class="n">res</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+<span class="w">	</span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">d</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="c-Singleline">			;windows adds \ when in root of the drive and doesn&#39;t do that otherwise</span>
+		<span class="n">d</span><span class="o">.=</span><span class="s">&quot;\&quot;</span>		
+<span class="w">	</span><span class="nb">if </span><span class="n">ms</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">Flags</span><span class="p">,</span> <span class="s">&quot;ALLOWMULTISELECT&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">loop</span> 
+<span class="w">			</span><span class="nb">if </span><span class="n">f</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;MulDiv&quot;</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">adr</span> <span class="o">+=</span> <span class="nf">StrLen(</span><span class="n">f</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">)</span> 
+				<span class="n">res</span> <span class="o">.=</span> <span class="n">d</span> <span class="n">f</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">			</span><span class="nb">else</span> <span class="p">{</span>
+<span class="w">				 </span><span class="nb">IfEqual</span><span class="p">,</span> <span class="nv">A_Index</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nv">%d%</span><span class="c-Singleline">		;if user selects only 1 file with multiselect flag, windows ignores this flag.... </span>
+<span class="w">				 </span><span class="nb">break</span>
+			<span class="p">}</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">ms</span> ? <span class="nf">SubStr(</span><span class="n">res</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> : <span class="nf">SubStr(</span><span class="n">d</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="n">Dlg_Save</span><span class="p">(</span> <span class="n">hGui</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Title</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Filter</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">DefaultFilter</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Root</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">DefaultExt</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">return</span> <span class="n">Dlg_Open</span><span class="p">(</span> <span class="n">hGui</span><span class="p">,</span> <span class="n">Title</span><span class="p">,</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">DefaultFilter</span><span class="p">,</span> <span class="n">Root</span><span class="p">,</span> <span class="n">DefaultExt</span><span class="p">,</span> <span class="s">&quot;S &quot;</span> <span class="n">Flags</span> <span class="p">)</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+
+<span class="c-Singleline">;=========================================== PRIVATE ===============================================</span>
+
+<span class="n">Dlg_callback</span><span class="p">(</span><span class="n">wparam</span><span class="p">,</span> <span class="n">lparam</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">static</span> <span class="n">FR_DIALOGTERM</span> <span class="o">=</span> <span class="mh">0x40</span><span class="p">,</span> <span class="n">FR_DOWN</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">FR_MATCHCASE</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">FR_WHOLEWORD</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">FR_HIDEMATCHCASE</span><span class="o">=</span><span class="mh">0x8000</span><span class="p">,</span> <span class="n">FR_HIDEWHOLEWORD</span><span class="o">=</span><span class="mh">0x10000</span><span class="p">,</span> <span class="n">FR_HIDEUPDOWN</span><span class="o">=</span><span class="mh">0x4000</span><span class="p">,</span> <span class="n">FR_REPLACE</span><span class="o">=</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">FR_REPLACEALL</span><span class="o">=</span><span class="mh">0x20</span><span class="p">,</span> <span class="n">FR_FINDNEXT</span><span class="o">=</span><span class="mi">8</span>
+	<span class="n">static</span> <span class="n">handler</span> 
+<span class="w">	</span><span class="nb">ifEqual</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">,</span> <span class="p">,</span><span class="n">return</span> <span class="n">handler</span> :<span class="o">=</span> <span class="n">wparam</span>
+	
+	<span class="n">hFlags</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">lparam</span><span class="o">+</span><span class="mi">12</span><span class="p">)</span>
+	<span class="n">if</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_DIALOGTERM</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">return</span> <span class="nv">%handler%</span><span class="p">(</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+
+ 	<span class="n">flags</span> <span class="o">.=</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_MATCHCASE</span><span class="p">)</span> <span class="o">&amp;&amp;</span> !<span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_HIDEMATCHCASE</span><span class="p">)</span>? <span class="s">&quot;c&quot;</span> :
+	<span class="n">flags</span> <span class="o">.=</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_WHOLEWORD</span><span class="p">)</span> <span class="o">&amp;&amp;</span> !<span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_HIDEWHOLEWORD</span><span class="p">)</span>? <span class="s">&quot;w&quot;</span> :
+	<span class="n">findText</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;MulDiv&quot;</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">lparam</span><span class="o">+</span><span class="mi">16</span><span class="p">),</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">)</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_FINDNEXT</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">flags</span> <span class="o">.=</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_DOWN</span><span class="p">)</span> <span class="o">&amp;&amp;</span> !<span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_HIDEUPDOWN</span><span class="p">)</span> ? <span class="s">&quot;d&quot;</span> :
+<span class="w">		</span><span class="nb">return</span> <span class="nv">%handler%</span><span class="p">(</span><span class="s">&quot;F&quot;</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">findText</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_REPLACE</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_REPLACEALL</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">event</span> :<span class="o">=</span> <span class="p">(</span><span class="n">hFlags</span> <span class="o">&amp;</span> <span class="n">FR_REPLACEALL</span><span class="p">)</span> ? <span class="s">&quot;A&quot;</span> : <span class="s">&quot;R&quot;</span>
+		<span class="n">replaceText</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;MulDiv&quot;</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">lparam</span><span class="o">+</span><span class="mi">20</span><span class="p">),</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">)</span> 
+<span class="w">		</span><span class="nb">return</span> <span class="nv">%handler%</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">findText</span><span class="p">,</span> <span class="n">replaceText</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/* Group: Examples</span>
+
+<span class="cm">	Example1: </span>
+<span class="cm">	(start code)</span>
+
+<span class="cm">	  ;basic usage</span>
+
+<span class="cm">	  if Dlg_Icon(icon, idx := 4) </span>
+<span class="cm">		   msgbox Icon:   %icon%`nIndex:  %idx% </span>
+
+<span class="cm">	   if Dlg_Color( color := 0xFF00AA ) </span>
+<span class="cm">		  msgbox Color:  %color% </span>
+
+<span class="cm">	   if Dlg_Font( font := &quot;Courier New&quot;, style := &quot;s16 bold underline italic&quot;, color:=0x80) </span>
+<span class="cm">			msgbox Font:  %font%`nStyle:  %style%`nColor:  %color%</span>
+
+<span class="cm">	   res := Dlg_Open(&quot;&quot;, &quot;Select several files&quot;, &quot;&quot;, &quot;&quot;, &quot;c:\Windows\&quot;, &quot;&quot;, &quot;ALLOWMULTISELECT FILEMUSTEXIST HIDEREADONLY&quot;)</span>
+<span class="cm">	   IfNotEqual, res, , MsgBox, %res%</span>
+<span class="cm">	return</span>
+<span class="cm">	(end code)</span>
+
+<span class="cm">	Example2:</span>
+<span class="cm">	(start code)</span>
+<span class="cm">		;create gui and set text color </span>
+
+<span class="cm">		Dlg_Font( font := &quot;Courier New&quot;, style := &quot;s16 bold italic&quot;, color:=0xFF) </span>
+
+<span class="cm">		Gui Font, %Style% c%Color%, %Font% </span>
+<span class="cm">		Gui, Add, Text, ,Hello world.....  :roll: </span>
+<span class="cm">		Gui, Show, Autosize </span>
+<span class="cm">	return</span>
+<span class="cm">	(end code)</span>
+<span class="cm"> */</span>
+
+<span class="cm">/* Group: About</span>
+<span class="cm">		o Ver 5.02 by majkinetor. See http://www.autohotkey.com/forum/topic17230.html</span>
+<span class="cm">		o Licenced under BSD &lt;http://creativecommons.org/licenses/BSD/&gt;</span>
+<span class="cm"> */</span>
+</pre></div>

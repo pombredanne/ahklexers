@@ -1,0 +1,91 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; Uncomment this if MI.ahk is not in your function library:</span>
+<span class="c-Singleline">;#include %A_ScriptDir%\MI.ahk</span>
+
+<span class="nb">#NoEnv</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Sample menu items.</span>
+<span class="nb">Menu</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="mi">16</span><span class="n">x16</span> <span class="n">Icon</span><span class="p">,</span> <span class="n">ItemClick</span>
+<span class="nb">Menu</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="mi">32</span><span class="n">x32</span> <span class="n">Icon</span><span class="p">,</span> <span class="n">ItemClick</span>
+<span class="nb">Menu</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="mi">48</span><span class="n">x48</span> <span class="n">Icon</span><span class="p">,</span> <span class="n">ItemClick</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Set item 1&#39;s icon to shell32.dll, icon 4, 16x16.</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="s">&quot;M&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;shell32.dll&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">; Set item 2&#39;s icon to shell32.dll, icon 4, 32x32.</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="s">&quot;M&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;shell32.dll&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">; Windows 2000 or later required (supports sizes other than 16x16 and 32x32):</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="s">&quot;M&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&quot;shell32.dll&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">; Usually looks better:</span>
+<span class="n">MI_SetMenuStyle</span><span class="p">(</span><span class="s">&quot;M&quot;</span><span class="p">,</span> <span class="mh">0x4000000</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Note: This menu is shown automatically after setting up the tray menu.</span>
+
+
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Icons in the Tray menu!</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Refer to a menu by handle for efficiency.</span>
+<span class="n">hTM</span> :<span class="o">=</span> <span class="n">MI_GetMenuHandle</span><span class="p">(</span><span class="s">&quot;Tray&quot;</span><span class="p">)</span>
+
+<span class="n">if</span> <span class="p">(</span><span class="nv">A_OSVersion</span> <span class="o">!=</span> <span class="s">&quot;WIN_VISTA&quot;</span><span class="p">)</span>
+<span class="p">{</span><span class="c-Singleline">   ; It is necessary to hook the tray icon for owner-drawing to work.</span>
+<span class="c-Singleline">    ; (Owner-drawing is not used on Windows Vista.)</span>
+    <span class="nf">OnMessage(</span><span class="mh">0x404</span><span class="p">,</span> <span class="s">&quot;AHK_NOTIFYICON&quot;</span><span class="p">)</span>
+    <span class="nf">OnMessage(</span><span class="mh">0x111</span><span class="p">,</span> <span class="s">&quot;WM_COMMAND&quot;</span><span class="p">)</span><span class="c-Singleline"> ; To track &quot;pause&quot; status.</span>
+    <span class="n">MI_SetMenuStyle</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mh">0x4000000</span><span class="p">)</span><span class="c-Singleline"> ; MNS_CHECKORBMP (optional)</span>
+<span class="p">}</span>
+
+<span class="nb">SplitPath</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,,</span> <span class="n">SpyPath</span>
+<span class="n">SpyPath</span> <span class="o">=</span> <span class="nv">%SpyPath%</span>\<span class="n">AU3_Spy</span><span class="o">.</span><span class="n">exe</span>
+
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; open</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nv">A_WinDir</span> <span class="s">&quot;\hh.exe&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; help</span>
+<span class="c-Singleline">;-</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">SpyPath</span><span class="p">,</span>   <span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; spy</span>
+<span class="c-Singleline">; reload - icon needed!</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; edit</span>
+<span class="c-Singleline">;-</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; suspend</span>
+<span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; pause</span>
+<span class="n">MI_SetMenuItemBitmap</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span><span class="c-Singleline"> ; exit</span>
+
+
+<span class="n">MI_ShowMenu</span><span class="p">(</span><span class="s">&quot;M&quot;</span><span class="p">)</span>
+<span class="nb">return</span>
+
+<span class="nl">ItemClick:</span>
+<span class="nb">return</span>
+
+
+<span class="n">AHK_NOTIFYICON</span><span class="p">(</span><span class="n">wParam</span><span class="p">,</span> <span class="n">lParam</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">global</span> <span class="n">hTM</span><span class="p">,</span> <span class="n">M_IsPaused</span>
+    <span class="n">if</span> <span class="p">(</span><span class="n">lParam</span> <span class="o">=</span> <span class="mh">0x205</span><span class="p">)</span><span class="c-Singleline"> ; WM_RBUTTONUP</span>
+    <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">        ; Update &quot;Suspend Script&quot; and &quot;Pause Script&quot; checkmarks.</span>
+        <span class="nf">DllCall(</span><span class="s">&quot;CheckMenuItem&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hTM</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">65305</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="nv">A_IsSuspended</span> ? <span class="mi">8</span>:<span class="mi">0</span><span class="p">)</span>
+        <span class="nf">DllCall(</span><span class="s">&quot;CheckMenuItem&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hTM</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">65306</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">M_IsPaused</span> ? <span class="mi">8</span>:<span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">        ; Show menu to allow owner-drawing.</span>
+        <span class="n">MI_ShowMenu</span><span class="p">(</span><span class="n">hTM</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">return</span> <span class="mi">0</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">WM_COMMAND</span><span class="p">(</span><span class="n">wParam</span><span class="p">,</span> <span class="n">lParam</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nb">Critical</span>
+    <span class="n">global</span> <span class="n">M_IsPaused</span>
+    <span class="n">id</span> :<span class="o">=</span> <span class="n">wParam</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">id</span> <span class="ow">in</span> <span class="mi">65306</span><span class="p">,</span><span class="mi">65403</span><span class="c-Singleline">  ; tray pause, file menu pause</span>
+    <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">        ; When the script is not paused, WM_COMMAND() is called once for</span>
+<span class="c-Singleline">        ; AutoHotkey --** and once for OwnerDrawnMenuMsgWin **--.</span>
+<span class="w">        </span><span class="nb">DetectHiddenWindows</span><span class="p">,</span> <span class="n">On</span>
+<span class="w">        </span><span class="nb">WinGetClass</span><span class="p">,</span> <span class="n">cl</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%hwnd%</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">cl</span> <span class="o">!=</span> <span class="n">AutoHotkey</span>
+<span class="w">            </span><span class="nb">return</span><span class="c-Singleline"></span>
+<span class="c-Singleline">       </span>
+<span class="c-Singleline">        ; This will become incorrect if &quot;pause&quot; is used from the script.</span>
+        <span class="n">M_IsPaused</span> :<span class="o">=</span> ! <span class="n">M_IsPaused</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>

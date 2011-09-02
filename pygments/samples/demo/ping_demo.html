@@ -1,0 +1,15 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ping.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="n">hostlist</span> :<span class="o">=</span> <span class="s">&quot;127.0.0.1|192.168.2.1|http://www.google.com||http://www.wikipedia.com|99.99.99.99|&quot;</span>
+<span class="n">data</span> :<span class="o">=</span> <span class="s">&quot;AHK test&quot;</span>
+<span class="n">timeout</span> :<span class="o">=</span> <span class="s">&quot;500&quot;</span>
+
+<span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">hostlist</span><span class="p">,</span> <span class="o">|</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nb">MsgBox</span><span class="p">,,</span> <span class="nv">%A_LoopField%</span><span class="p">,</span> <span class="o">%</span> <span class="n">ping</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+<span class="p">}</span>
+   
+</pre></div>

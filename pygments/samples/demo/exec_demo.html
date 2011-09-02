@@ -1,0 +1,13 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Exec.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="n">test</span><span class="o">=</span><span class="n">var</span>
+<span class="n">double</span><span class="o">=</span><span class="n">triple</span>
+<span class="n">one</span><span class="o">=</span><span class="n">double</span>
+<span class="n">var</span><span class="o">=</span><span class="n">one</span>
+<span class="n">Script</span> :<span class="o">=</span> <span class="s">&quot;MsgBox 4,Title,%test% is %var%``, %%var%%``, %%%var%%%,5`nIfMsgBox Yes,MsgBox,You pressed yes`nIfMsgBox No,MsgBox,You pressed no&quot;</span>
+<span class="n">Exec</span><span class="p">(</span><span class="n">Script</span><span class="p">)</span>
+<span class="nb">ExitApp</span> 
+</pre></div>

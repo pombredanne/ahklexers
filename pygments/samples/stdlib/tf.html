@@ -1,0 +1,1361 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">Name          : TF: Textfile &amp; String Library for AutoHotkey - maintained by HugoV</span>
+<span class="cm">Version       : 3.3</span>
+<span class="cm">Updated       : 16 April 2010</span>
+<span class="cm">Documentation : http://www.autohotkey.net/~hugov/tf-lib.htm (needs to be updated for v3+)</span>
+<span class="cm">AHK Forum     : http://www.autohotkey.com/forum/viewtopic.php?p=307344#307344 (Also for examples)</span>
+<span class="cm">Credits       : http://www.autohotkey.net/~hugov/tf-lib.htm#Credits </span>
+<span class="cm">History       : http://www.autohotkey.net/~hugov/tf-lib.htm#History</span>
+
+<span class="cm">Structure of most functions:</span>
+
+<span class="cm">TF_...(Text, other parameters)</span>
+<span class="cm">	{</span>
+<span class="cm">     ; get the basic data we need for further processing and returning the output: </span>
+<span class="cm">     TF_GetData(OW, Text, FileName)</span>
+<span class="cm">	 ; OW = 0 Copy inputfile </span>
+<span class="cm">	 ; OW = 1 Overwrite inputfile</span>
+<span class="cm">	 ; OW = 2 Return variable</span>
+<span class="cm">	 ; Text : either contents of file or the var that was passed on</span>
+<span class="cm">	 ; FileName : Used in case OW is 0 or 1 (=file), not used for OW=2 (variable)</span>
+<span class="cm">    </span>
+<span class="cm">	 ; Creates a matchlist for use in Loop below</span>
+<span class="cm">	 TF_MatchList:=_MakeMatchList(Text, StartLine, EndLine)</span>
+
+<span class="cm">	 Loop, Parse, Text, `n, `r</span>
+<span class="cm">		{</span>
+<span class="cm">		 If A_Index in %TF_MatchList%</span>
+<span class="cm">			{</span>
+<span class="cm">			...</span>
+<span class="cm">			}</span>
+<span class="cm">		 Else </span>
+<span class="cm">			{</span>
+<span class="cm">			...</span>
+<span class="cm">			}</span>
+<span class="cm">		}</span>
+<span class="cm">	 ; either copy or overwrite file or return variabla</span>
+<span class="cm">	 Return TF_ReturnOutPut(OW, OutPut, FileName, TrimTrailing, CreateNewFile) </span>
+<span class="cm">	 ; OW 0 or 1 = file</span>
+<span class="cm">	 ; Output = new content of file or var to save to file or return</span>
+<span class="cm">	 ; FileName</span>
+<span class="cm">	 ; TrimTrailing: because of the loops used most functions will add trailing newline, this will remove it by default</span>
+<span class="cm">	 ; CreateNewFile: To create a file that doesn&#39;t exist this parameter is needed, only used in few functions</span>
+<span class="cm">   }</span>
+
+<span class="cm">*/</span>
+
+<span class="n">TF_CountLines</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
+	<span class="p">{</span> 
+ 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>	 
+<span class="w"> 	 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="p">}</span>
+
+<span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Trailing</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>	 
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">		 </span><span class="nb">Else</span> <span class="n">if</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">=&gt;</span> <span class="n">EndLine</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">Break</span>
+		<span class="p">}</span>
+	 <span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="c-Singleline"> ; make sure we return variable not process file</span>
+<span class="w">     	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="n">Trailing</span><span class="p">)</span>
+	<span class="p">}</span>
+
+
+<span class="n">TF_ReplaceInLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SearchText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ReplaceText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+ 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">IfNotInString</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="nv">%SearchText%</span>
+<span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; SearchText not in TextFile so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+	 	<span class="p">{</span>
+<span class="w">      	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">LoopField</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="nv">%SearchText%</span><span class="p">,</span> <span class="nv">%ReplaceText%</span><span class="p">,</span> <span class="n">All</span>
+			 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nb">Else</span>
+			<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+    		<span class="p">}</span>		
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_Replace</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">,</span> <span class="n">ReplaceText</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">IfNotInString</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="nv">%SearchText%</span>
+<span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; SearchText not in TextFile so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
+<span class="w">	 </span><span class="nb">Loop</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="nv">%SearchText%</span><span class="p">,</span> <span class="nv">%ReplaceText%</span><span class="p">,</span> <span class="n">All</span>
+		 <span class="n">if</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; No more replacements needed.</span>
+<span class="w">			</span><span class="nb">break</span>
+		<span class="p">}</span>
+<span class="w"> 	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_RegExReplaceInLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">NeedleRegEx</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Replacement</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; SearchText not in TextFile so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">         	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+			 <span class="n">LoopField</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">,</span> <span class="n">Replacement</span><span class="p">)</span>
+			 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nb">Else</span>
+			<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_RegExReplace</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Replacement</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; SearchText not in TextFile so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
+	 <span class="n">Text</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">,</span> <span class="n">Replacement</span><span class="p">)</span>
+<span class="w"> 	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_RemoveLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">StartLine</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; remove last X lines from file, endline parameter ignored</span>
+	 	<span class="p">{</span>
+<span class="w">	 	 </span><span class="nl">StartLine:</span><span class="o">=</span><span class="n">TF_CountLines</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span> <span class="o">+</span> <span class="n">StartLine</span>
+	 	 <span class="n">EndLine</span><span class="o">=</span><span class="mi">0</span>
+	 	<span class="p">}</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">        	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+<span class="w">        		</span><span class="nb">Continue</span>
+<span class="w">		 </span><span class="nb">Else</span>
+        		<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_RemoveBlankLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; No empty lines so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span> 
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+         	 	<span class="n">OutPut</span> <span class="o">.=</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">))</span> ? <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span> :
+<span class="w">	         </span><span class="nb">Else</span>
+        		<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_RemoveDuplicateLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Endline</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Consecutive</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">CaseSensitive</span> <span class="o">=</span> <span class="nv">false</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">StartLine</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	        <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Endline</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">OR</span> <span class="n">Endline</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	        <span class="n">EndLine</span> :<span class="o">=</span> <span class="n">TF_Count</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;`n&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">&lt;</span> <span class="n">StartLine</span><span class="p">)</span>
+			<span class="n">Section1</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="n">between</span> <span class="nv">%StartLine%</span> <span class="ow">and</span> <span class="nv">%Endline%</span>
+			<span class="p">{</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">Consecutive</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+				<span class="p">{</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="nv">A_LoopField</span> <span class="o">&lt;&gt;</span> <span class="n">PreviousLine</span><span class="p">)</span><span class="c-Singleline"> ; method one for consequtive duplicate lines</span>
+					 <span class="n">Section2</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">				 </span><span class="nl">PreviousLine:</span><span class="o">=</span><span class="nv">A_LoopField</span>
+				<span class="p">}</span> 
+<span class="w">			 </span><span class="nb">Else</span>
+				<span class="p">{</span>
+				 <span class="n">If</span> !<span class="p">(</span><span class="nf">InStr(</span><span class="n">SearchForSection2</span><span class="p">,</span><span class="s">&quot;__bol__&quot;</span> <span class="o">.</span> <span class="nv">A_LoopField</span> <span class="o">.</span> <span class="s">&quot;__eol__&quot;</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; not found</span>
+				 	<span class="p">{</span>
+				 	 <span class="n">SearchForSection2</span> <span class="o">.=</span> <span class="s">&quot;__bol__&quot;</span> <span class="nv">A_LoopField</span> <span class="s">&quot;__eol__&quot;</span><span class="c-Singleline"> ; this makes it unique otherwise it could be a partial match</span>
+					 <span class="n">Section2</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+				 	<span class="p">}</span>
+				<span class="p">}</span>	 
+			<span class="p">}</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">&gt;</span> <span class="n">EndLine</span><span class="p">)</span>
+			<span class="n">Section3</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+	 <span class="n">Output</span> <span class="o">.=</span> <span class="n">Section1</span> <span class="n">Section2</span> <span class="n">Section3</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_InsertLine</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Endline</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">InsertText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">     </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">     </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">         	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="n">Output</span> <span class="o">.=</span> <span class="n">InsertText</span> <span class="s">&quot;`n&quot;</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">		 </span><span class="nb">Else</span> 
+			<span class="n">Output</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_ReplaceLine</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Endline</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ReplaceText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="n">Output</span> <span class="o">.=</span> <span class="n">ReplaceText</span> <span class="s">&quot;`n&quot;</span> 
+<span class="w">		 </span><span class="nb">Else</span> 
+			<span class="n">Output</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_InsertPrefix</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">InsertText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="n">OutPut</span> <span class="o">.=</span> <span class="n">InsertText</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">		 </span><span class="nb">Else</span>
+			<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_InsertSuffix</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">,</span> <span class="n">InsertText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">         	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+            		<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="n">InsertText</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">         	 </span><span class="nb">Else</span>
+            		<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_TrimLeft</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+<span class="w">       		 </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">StrOutPut</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="nv">%Count%</span>
+       		 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">StrOutPut</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nb">Else</span>
+       		<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>		
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_TrimRight</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">       	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+<span class="w">       		 </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">StrOutPut</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="nv">%Count%</span>
+       		 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">StrOutPut</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+<span class="w">      	 </span><span class="nb">Else</span>
+       		<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_AlignLeft</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Columns</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="n">Padding</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	 </span><span class="nl">Trim:</span><span class="o">=</span><span class="nv">A_AutoTrim</span><span class="c-Singleline"> ; store trim settings</span>
+<span class="w">	 </span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="n">On</span><span class="c-Singleline"> ; make sure AutoTrim is on</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Endline</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">OR</span> <span class="n">Endline</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+		<span class="n">EndLine</span> :<span class="o">=</span> <span class="n">TF_Count</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;`n&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">       	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+			 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span><span class="c-Singleline"> ; Make use of AutoTrim, should be faster then a RegExReplace. Trims leading and trailing spaces!</span>
+	       	 <span class="n">SpaceNum</span> :<span class="o">=</span> <span class="n">Columns</span><span class="o">-</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> 
+	       	 <span class="n">If</span> <span class="p">(</span><span class="n">SpaceNum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Padding</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; requires padding + keep padding</span>
+	        	<span class="p">{</span>
+<span class="w">				 </span><span class="nl">Left:</span><span class="o">=</span><span class="n">TF_SetWidth</span><span class="p">(</span><span class="n">LoopField</span><span class="p">,</span><span class="n">Columns</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; align left</span>
+		         <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Left</span> <span class="s">&quot;`n&quot;</span>
+        		<span class="p">}</span>
+<span class="w">        	 </span><span class="nb">Else</span> 
+       			<span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+<span class="w">         </span><span class="nb">Else</span>
+         	<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="nv">%Trim%</span><span class="c-Singleline">	; restore original Trim</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_AlignCenter</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Columns</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="n">Padding</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	 </span><span class="nl">Trim:</span><span class="o">=</span><span class="nv">A_AutoTrim</span><span class="c-Singleline"> ; store trim settings</span>
+<span class="w">	 </span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="n">On</span><span class="c-Singleline"> ; make sure AutoTrim is on</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">    	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">     	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+			<span class="p">{</span>
+<span class="w">         	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+				<span class="p">{</span>
+				 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span><span class="c-Singleline"> ; Make use of AutoTrim, should be faster then a RegExReplace</span>
+	         	 <span class="n">SpaceNum</span> :<span class="o">=</span> <span class="p">(</span><span class="n">Columns</span><span class="o">-</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">Padding</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">LoopField</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; skip emtpy lines, do not fill with spaces</span>
+					<span class="p">{</span>
+					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">					 </span><span class="nb">Continue</span>
+					<span class="p">}</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Columns</span><span class="p">)</span>
+					<span class="p">{</span>
+					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"> ; add as is 	</span>
+<span class="w">					 </span><span class="nb">Continue</span>
+					<span class="p">}</span>
+<span class="w">                 </span><span class="nl">Centered:</span><span class="o">=</span><span class="n">TF_SetWidth</span><span class="p">(</span><span class="n">LoopField</span><span class="p">,</span><span class="n">Columns</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; align center using set width</span>
+				 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Centered</span> <span class="s">&quot;`n&quot;</span>
+				<span class="p">}</span>
+<span class="w">         	 </span><span class="nb">Else</span>
+             	<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="nv">%Trim%</span><span class="c-Singleline">	; restore original Trim</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_AlignRight</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Columns</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="n">Skip</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	 </span><span class="nl">Trim:</span><span class="o">=</span><span class="nv">A_AutoTrim</span><span class="c-Singleline"> ; store trim settings</span>
+<span class="w">	 </span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="n">On</span><span class="c-Singleline"> ; make sure AutoTrim is on</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">     	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+			<span class="p">{</span>
+<span class="w">         	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+				<span class="p">{</span>
+				 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span><span class="c-Singleline"> ; Make use of AutoTrim, should be faster then a RegExReplace</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">Skip</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">LoopField</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; skip emtpy lines, do not fill with spaces</span>
+					<span class="p">{</span>
+					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">					 </span><span class="nb">Continue</span>
+					<span class="p">}</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Columns</span><span class="p">)</span> 
+					<span class="p">{</span>
+					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"> ; add as is 	</span>
+<span class="w">					 </span><span class="nb">Continue</span>
+					<span class="p">}</span>
+<span class="w">                 </span><span class="nl">Right:</span><span class="o">=</span><span class="n">TF_SetWidth</span><span class="p">(</span><span class="n">LoopField</span><span class="p">,</span><span class="n">Columns</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; align right using set width</span>
+				 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Right</span> <span class="s">&quot;`n&quot;</span>
+				<span class="p">}</span>
+<span class="w">         	 </span><span class="nb">Else</span>
+				<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="nv">%Trim%</span><span class="c-Singleline">	; restore original Trim</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">Based on:</span>
+<span class="cm">CONCATenate text files, ftp://garbo.uwasa.fi/pc/ts/tsfltc22.zip</span>
+<span class="cm">*/</span>
+
+<span class="n">TF_ConCat</span><span class="p">(</span><span class="n">FirstTextFile</span><span class="p">,</span> <span class="n">SecondTextFile</span><span class="p">,</span> <span class="n">OutputFile</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Blanks</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">FirstPadMargin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SecondPadMargin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Blanks</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="w">      	</span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%Blanks%</span>
+			<span class="n">InsertBlanks</span> <span class="o">.=</span> <span class="nv">A_Space</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">FirstPadMargin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%FirstPadMargin%</span>
+			<span class="n">PaddingFile1</span> <span class="o">.=</span> <span class="nv">A_Space</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">SecondPadMargin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="w">	         </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%SecondPadMargin%</span>
+	 <span class="n">PaddingFile2</span> <span class="o">.=</span> <span class="nv">A_Space</span>
+<span class="w">	 </span><span class="nl">Text:</span><span class="o">=</span><span class="n">FirstTextFile</span>		
+	 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">Str1Lines</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+<span class="w">	 </span><span class="nl">Text:</span><span class="o">=</span><span class="n">SecondTextFile</span>
+	 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">Str2Lines</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+	 <span class="n">Text</span><span class="o">=</span><span class="c-Singleline"> ; clear mem</span>
+
+<span class="c-Singleline">; first we need to determine the file with the most lines for our loop</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Str1Lines0</span> <span class="o">&gt;</span> <span class="n">Str2Lines0</span><span class="p">)</span>
+<span class="w">		</span><span class="nl">MaxLoop:</span><span class="o">=</span><span class="n">Str1Lines0</span>
+<span class="w">	 </span><span class="nb">Else</span>
+<span class="w">		</span><span class="nl">MaxLoop:</span><span class="o">=</span><span class="n">Str2Lines0</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%MaxLoop%</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nl">Section1:</span><span class="o">=</span><span class="n">Str1Lines</span><span class="nv">%A_Index%</span>
+<span class="w">		 </span><span class="nl">Section2:</span><span class="o">=</span><span class="n">Str2Lines</span><span class="nv">%A_Index%</span>
+		 <span class="n">OutPut</span> <span class="o">.=</span>  <span class="n">Section1</span> <span class="n">PaddingFile1</span> <span class="n">InsertBlanks</span> <span class="n">Section2</span> <span class="n">PaddingFile2</span> <span class="s">&quot;`n&quot;</span>
+		 <span class="n">Section1</span><span class="o">=</span><span class="c-Singleline"> ; otherwise it will remember the last line from the shortest file or var</span>
+		 <span class="n">Section2</span><span class="o">=</span>
+		<span class="p">}</span>
+	 <span class="n">OW</span><span class="o">=</span><span class="mi">1</span><span class="c-Singleline"> ; it is probably 0 so in that case it would create _copy, so set it to 1</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">OutPutFile</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; if OutPutFile is empty return as variable</span>
+		<span class="n">OW</span><span class="o">=</span><span class="mi">2</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">OutputFile</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+   	<span class="p">}</span>
+
+<span class="n">TF_LineNumber</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Leading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Restart</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Char</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; Hugov / ribbet.1</span>
+	<span class="p">{</span>
+	 <span class="n">global</span> <span class="n">t</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">Lines:</span><span class="o">=</span><span class="n">TF_Count</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;`n&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">	 </span><span class="nl">Padding:</span><span class="o">=</span><span class="nf">StrLen(</span><span class="n">Lines</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Leading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Char</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+		<span class="n">Char</span> :<span class="o">=</span> <span class="nv">A_Space</span>
+<span class="w">         </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%Padding%</span>
+        	<span class="n">PadLines</span> <span class="o">.=</span> <span class="n">Char</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span>
+		<span class="p">{</span>
+<span class="w">       	 </span><span class="nb">If </span><span class="n">Restart</span> <span class="o">=</span> <span class="mi">0</span>
+       		<span class="n">MaxNo</span> <span class="o">=</span> <span class="nv">%A_Index%</span>
+<span class="w">		 </span><span class="nb">Else</span>
+			<span class="p">{</span>
+			 <span class="n">MaxNo</span><span class="o">++</span>
+<span class="w">			 </span><span class="nb">If </span><span class="n">MaxNo</span> <span class="o">&gt;</span> <span class="nv">%Restart%</span>
+				<span class="n">MaxNo</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nl">LineNumber:</span><span class="o">=</span> <span class="n">MaxNo</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">Leading</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+			<span class="p">{</span>
+			 <span class="n">LineNumber</span> :<span class="o">=</span> <span class="n">Padlines</span> <span class="n">LineNumber</span><span class="c-Singleline">  ; add padding</span>
+<span class="w">			 </span><span class="nb">StringRight</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">Lines</span><span class="p">)</span><span class="c-Singleline"> ; remove excess padding</span>
+			<span class="p">}</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">Leading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="p">{</span>
+			 <span class="n">LineNumber</span> :<span class="o">=</span> <span class="n">LineNumber</span> <span class="n">Padlines</span><span class="c-Singleline"> ; add padding</span>
+<span class="w">			 </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">Lines</span><span class="p">)</span><span class="c-Singleline"> ; remove excess padding</span>
+			<span class="p">}</span>         
+		 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LineNumber</span> <span class="nv">A_Space</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">     </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+   <span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; skip = 1, skip shorter lines (e.g. lines shorter startcolumn position)</span>
+<span class="n">TF_ColGet</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">StartColumn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndColumn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Skip</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span> 
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">EndColumn:</span><span class="o">=</span><span class="p">(</span><span class="n">EndColumn</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">StartColumn</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+<span class="w">		     </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">StartColumn</span><span class="p">,</span> <span class="n">EndColumn</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">Skip</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">StartColumn</span><span class="p">)</span>
+<span class="w">		        </span><span class="nb">Continue</span>
+	         <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Section</span> <span class="s">&quot;`n&quot;</span>               
+			<span class="p">}</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="cm">/*</span>
+<span class="cm">Based on:</span>
+<span class="cm">COLPUT.EXE &amp; CUT.EXE, ftp://garbo.uwasa.fi/pc/ts/tsfltc22.zip</span>
+<span class="cm">*/</span>
+<span class="n">TF_ColPut</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Startline</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">StartColumn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">InsertText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Skip</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span> 
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">StartColumn</span><span class="o">--</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">Section1</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">StartColumn</span>
+<span class="w">			 </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">Section2</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">StartColumn</span><span class="o">+</span><span class="mi">1</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">Skip</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">StartColumn</span><span class="p">)</span>
+                <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Section1</span> <span class="n">Section2</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">			 </span><span class="nb">Else</span>
+                <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Section1</span> <span class="n">InsertText</span> <span class="n">Section2</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nb">Else</span>
+			<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_ColCut</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">StartColumn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndColumn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">StartColumn</span><span class="o">--</span>
+	 <span class="n">EndColumn</span><span class="o">++</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">Section1</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">StartColumn</span>
+<span class="w">			 </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">Section2</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">EndColumn</span>
+			 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Section1</span> <span class="n">Section2</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nb">Else</span>
+			<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+
+<span class="n">TF_ReverseLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span><span class="c-Singleline"> ; line0 is number of lines</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">OR</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nl">EndLine:</span><span class="o">=</span><span class="n">Line0</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">EndLine</span> <span class="o">&gt;</span> <span class="n">Line0</span><span class="p">)</span>
+<span class="w">		</span><span class="nl">EndLine:</span><span class="o">=</span><span class="n">Line0</span>
+<span class="w">	 </span><span class="nl">CountDown:</span><span class="o">=</span><span class="n">EndLine</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">&lt;</span> <span class="n">StartLine</span><span class="p">)</span>
+			<span class="n">Output1</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"> ; section1</span>
+<span class="w">	 	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="n">between</span> <span class="nv">%StartLine%</span> <span class="ow">and</span> <span class="nv">%Endline%</span>
+			<span class="p">{</span>
+			 <span class="n">CountDown</span><span class="o">--</span>
+			 <span class="n">Output2</span> <span class="o">.=</span> <span class="n">Line</span><span class="nv">%CountDown%</span> <span class="s">&quot;`n&quot;</span> <span class="n">section2</span>
+			<span class="p">}</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">&gt;</span> <span class="n">EndLine</span><span class="p">)</span>
+			 <span class="n">Output3</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+	 <span class="n">OutPut</span><span class="o">.=</span> <span class="n">Output1</span> <span class="n">Output2</span> <span class="n">Output3</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+
+
+<span class="c-Singleline">;TF_SplitFileByLines</span>
+<span class="c-Singleline">;example:</span>
+<span class="c-Singleline">;TF_SplitFileByLines(&quot;TestFile.txt&quot;, &quot;4&quot;, &quot;sfile_&quot;, &quot;txt&quot;, &quot;1&quot;) ; split file every 3 lines</span>
+<span class="c-Singleline">; InFile = 0 skip line e.g. do not include the actual line in any of the output files</span>
+<span class="c-Singleline">; InFile = 1 include line IN current file</span>
+<span class="c-Singleline">; InFile = 2 include line IN next file</span>
+
+<span class="n">TF_SplitFileByLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">,</span> <span class="n">Prefix</span> <span class="o">=</span> <span class="s">&quot;file&quot;</span><span class="p">,</span> <span class="n">Extension</span> <span class="o">=</span> <span class="s">&quot;txt&quot;</span><span class="p">,</span> <span class="n">InFile</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">LineCounter</span><span class="o">=</span><span class="mi">1</span>
+	 <span class="n">FileCounter</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">	 </span><span class="nl">Where:</span><span class="o">=</span><span class="n">SplitAt</span>
+	 <span class="n">Method</span><span class="o">=</span><span class="mi">1</span><span class="c-Singleline"> </span>
+<span class="c-Singleline">	 ; 1 = default, splitat every X lines, </span>
+<span class="c-Singleline">	 ; 2 = splitat: - rotating if applicable </span>
+<span class="c-Singleline">	 ; 3 = splitat: specific lines comma separated</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span>
+<span class="w">	 </span><span class="nb">IfInString</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">,</span> `<span class="o">-</span><span class="c-Singleline"> ; method 2</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">Split</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">,</span> `<span class="o">-</span>
+		 <span class="n">Part</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">		 </span><span class="nl">Where:</span><span class="o">=</span><span class="n">Split</span><span class="nv">%Part%</span>
+		 <span class="n">Method</span><span class="o">=</span><span class="mi">2</span>
+		<span class="p">}</span> 
+<span class="w">	 </span><span class="nb">IfInString</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">,</span> `<span class="p">,</span><span class="c-Singleline"> ; method 3</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">Split</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">,</span> `<span class="p">,</span>
+		 <span class="n">Part</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">		 </span><span class="nl">Where:</span><span class="o">=</span><span class="n">Split</span><span class="nv">%Part%</span>
+		 <span class="n">Method</span><span class="o">=</span><span class="mi">3</span>
+		<span class="p">}</span> 
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+		 <span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+         	 <span class="n">If</span> <span class="p">(</span><span class="n">LineCounter</span> <span class="o">=</span> <span class="n">Where</span><span class="p">)</span>
+			<span class="p">{</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">InFile</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+				<span class="p">{</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">PreviousOutput</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+				   	 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">PreviousOutput</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+					 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">PreviousOutput</span><span class="p">)</span>
+<span class="w">         		 </span><span class="nl">Output:</span><span class="o">=</span>
+           		<span class="p">}</span>
+       		 <span class="n">If</span> <span class="p">(</span><span class="n">InFile</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">			 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+                  		 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+			 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+				 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">Output</span><span class="p">)</span>
+<span class="w">			 </span><span class="nl">Output:</span><span class="o">=</span>
+                	<span class="p">}</span>
+             	<span class="n">If</span> <span class="p">(</span><span class="n">InFile</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+			<span class="p">{</span>
+			 <span class="n">OutPut</span> :<span class="o">=</span> <span class="n">PreviousOutput</span>
+<span class="w">			 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">			 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+                  		 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+			 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+				 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">Output</span><span class="p">)</span>
+			 <span class="n">OutPut</span> :<span class="o">=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>
+	     <span class="n">If</span> <span class="p">(</span><span class="n">Method</span> <span class="o">&lt;&gt;</span> <span class="mi">3</span><span class="p">)</span>			
+             	<span class="n">LineCounter</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline"> ; reset</span>
+             <span class="n">FileCounter</span><span class="o">++</span><span class="c-Singleline"> ; next file</span>
+			 <span class="n">Part</span><span class="o">++</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">Method</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; 2 = splitat: - rotating if applicable </span>
+			 	<span class="p">{</span>
+			 	 <span class="n">If</span> <span class="p">(</span><span class="n">Part</span> <span class="o">&gt;</span> <span class="n">Split0</span><span class="p">)</span>
+			 	    <span class="p">{</span>
+			 	     <span class="n">Part</span><span class="o">=</span><span class="mi">1</span>
+			 	    <span class="p">}</span>
+<span class="w">		 	 	 </span><span class="nl">Where:</span><span class="o">=</span><span class="n">Split</span><span class="nv">%Part%</span>
+			 	<span class="p">}</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">Method</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span><span class="c-Singleline"> ; 3 = splitat: specific lines comma separated</span>
+			 	<span class="p">{</span>
+			 	 <span class="n">If</span> <span class="p">(</span><span class="n">Part</span> <span class="o">&gt;</span> <span class="n">Split0</span><span class="p">)</span>
+<span class="w">			 	 	</span><span class="nl">Where:</span><span class="o">=</span><span class="n">Split</span><span class="nv">%Split0%</span>
+<span class="w">			 	 </span><span class="nb">Else</span>
+<span class="w">			 	 	</span><span class="nl">Where:</span><span class="o">=</span><span class="n">Split</span><span class="nv">%Part%</span>
+			 	<span class="p">}</span>
+			<span class="p">}</span>
+		 <span class="n">LineCounter</span><span class="o">++</span>
+<span class="w">		 </span><span class="nl">PreviousOutput:</span><span class="o">=</span><span class="n">Output</span>
+<span class="w">		 </span><span class="nl">PreviousLine:</span><span class="o">=</span><span class="nv">A_LoopField</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">	 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutPut</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+       	 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+	 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+		<span class="p">{</span>
+		 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">Output</span><span class="p">)</span>
+		 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="o">.</span> <span class="s">&quot;0&quot;</span> <span class="p">,</span> <span class="n">FileCounter</span><span class="p">)</span>
+		<span class="p">}</span> 
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; TF_SplitFileByText(&quot;TestFile.txt&quot;, &quot;button&quot;, &quot;sfile_&quot;, &quot;txt&quot;) ; split file at every line with button in it, can be regexp</span>
+<span class="c-Singleline">; InFile = 0 skip line e.g. do not include the actual line in any of the output files</span>
+<span class="c-Singleline">; InFile = 1 include line IN current file</span>
+<span class="c-Singleline">; InFile = 2 include line IN next file</span>
+
+<span class="n">TF_SplitFileByText</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">,</span> <span class="n">Prefix</span> <span class="o">=</span> <span class="s">&quot;file&quot;</span><span class="p">,</span> <span class="n">Extension</span> <span class="o">=</span> <span class="s">&quot;txt&quot;</span><span class="p">,</span>  <span class="n">InFile</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">LineCounter</span><span class="o">=</span><span class="mi">1</span>
+	 <span class="n">FileCounter</span><span class="o">=</span><span class="mi">1</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">SplitPath</span><span class="p">,</span> <span class="n">TextFile</span><span class="p">,,</span> <span class="n">Dir</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+         	 <span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">         	 </span><span class="nl">FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">)</span>
+         	 <span class="n">If</span> <span class="p">(</span><span class="n">FoundPos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+           		<span class="p">{</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">InFile</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+				<span class="p">{</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">PreviousOutput</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+				   	 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">PreviousOutput</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+					 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">PreviousOutput</span><span class="p">)</span>
+<span class="w">					</span><span class="nl">Output:</span><span class="o">=</span>
+           		<span class="p">}</span>
+       		 <span class="n">If</span> <span class="p">(</span><span class="n">InFile</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+				<span class="p">{</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+                  	 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+					 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">Output</span><span class="p">)</span>
+<span class="w">				 </span><span class="nl">Output:</span><span class="o">=</span>
+           		<span class="p">}</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">InFile</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+				<span class="p">{</span>
+				 <span class="n">OutPut</span> :<span class="o">=</span> <span class="n">PreviousOutput</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">				 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+                  	 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+				 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+					 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">Output</span><span class="p">)</span>
+				 <span class="n">OutPut</span> :<span class="o">=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+				<span class="p">}</span>
+       		 <span class="n">LineCounter</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline"> ; reset</span>
+       		 <span class="n">FileCounter</span><span class="o">++</span><span class="c-Singleline"> ; next file</span>
+			<span class="p">}</span>
+		 <span class="n">LineCounter</span><span class="o">++</span>
+<span class="w">		 </span><span class="nl">PreviousOutput:</span><span class="o">=</span><span class="n">Output</span>
+<span class="w">		 </span><span class="nl">PreviousLine:</span><span class="o">=</span><span class="nv">A_LoopField</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">	 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> <span class="n">CheckOutput</span><span class="p">,</span> `<span class="n">r</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutPut</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+       	 <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Prefix</span> <span class="n">FileCounter</span> <span class="s">&quot;.&quot;</span> <span class="n">Extension</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+	 <span class="n">If</span> <span class="p">(</span><span class="n">CheckOutput</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; skip empty files</span>
+		<span class="p">{</span>
+		 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="n">FileCounter</span><span class="p">,</span><span class="n">Output</span><span class="p">)</span>
+		 <span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">Prefix</span> <span class="o">.</span> <span class="s">&quot;0&quot;</span> <span class="p">,</span> <span class="n">FileCounter</span><span class="p">)</span>
+		<span class="p">}</span> 
+	<span class="p">}</span>
+
+
+
+<span class="n">TF_Find</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SearchText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ReturnFirst</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ReturnText</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span><span class="c-Singleline"> ; complete rewrite for 3.1</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">	 	</span><span class="nb">Return</span> <span class="s">&quot;0&quot;</span><span class="c-Singleline"> ; SearchText not in file or error, do nothing</span>
+<span class="w">     	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+		 	<span class="p">{</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+				<span class="p">{</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">ReturnText</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+					<span class="n">Lines</span> <span class="o">.=</span> <span class="nv">A_Index</span> <span class="s">&quot;,&quot;</span><span class="c-Singleline"> ; line number</span>
+<span class="w">				 </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">ReturnText</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+					<span class="n">Lines</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"> ; text of line </span>
+<span class="w">				 </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">ReturnText</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+					<span class="n">Lines</span> <span class="o">.=</span> <span class="nv">A_Index</span> <span class="s">&quot;: &quot;</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"> ; add line number</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">ReturnFirst</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; only return first occurence</span>
+<span class="w">					</span><span class="nb">Break</span>
+				<span class="p">}</span>	
+		 	<span class="p">}</span>	
+		<span class="p">}</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Lines</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">Lines</span><span class="p">,</span> <span class="n">Lines</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; trim trailing , or `n</span>
+<span class="w">	 </span><span class="nb">Else</span>
+		<span class="n">Lines</span> <span class="o">=</span> <span class="mi">0</span><span class="c-Singleline"> ; make sure we return 0</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">Lines</span>
+	<span class="p">}</span>
+
+
+<span class="n">TF_FindLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SearchText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">CaseSensitive</span> <span class="o">=</span> <span class="nv">false</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_Find</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_Prepend</span><span class="p">(</span><span class="n">File1</span><span class="p">,</span> <span class="n">File2</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="n">FileList</span><span class="o">=</span>
+<span class="g">(</span>
+<span class="g">%File1%</span>
+<span class="g">%File2%</span>
+<span class="g">)</span>
+<span class="n">TF_Merge</span><span class="p">(</span><span class="n">FileList</span><span class="p">,</span><span class="s">&quot;`n&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span> <span class="o">.</span> <span class="n">File2</span><span class="p">)</span>
+<span class="nb">Return</span>
+	<span class="p">}</span>
+
+<span class="n">TF_Append</span><span class="p">(</span><span class="n">File1</span><span class="p">,</span> <span class="n">File2</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="n">FileList</span><span class="o">=</span>
+<span class="g">(</span>
+<span class="g">%File2%</span>
+<span class="g">%File1%</span>
+<span class="g">)</span>
+<span class="n">TF_Merge</span><span class="p">(</span><span class="n">FileList</span><span class="p">,</span><span class="s">&quot;`n&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span> <span class="o">.</span> <span class="n">File2</span><span class="p">)</span>
+<span class="nb">Return</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; You will need to create a Filelist variable, one file per line, to pass on to the function:</span>
+<span class="c-Singleline">; FileList=</span>
+<span class="c-Singleline">; (</span>
+<span class="c-Singleline">; c:\file1.txt</span>
+<span class="c-Singleline">; c:\file2.txt</span>
+<span class="c-Singleline">; )</span>
+<span class="c-Singleline">; use Loop (files &amp; folders) to create one quickly if you want to merge all TXT files for example</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Loop, c:\*.txt</span>
+<span class="c-Singleline">;   FileList .= A_LoopFileFullPath &quot;`n&quot;</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; By default, a new line is used as a separator between two text files</span>
+<span class="c-Singleline">; !merged.txt deletes target file before starting to merge files</span>
+
+<span class="n">TF_Merge</span><span class="p">(</span><span class="n">FileList</span><span class="p">,</span> <span class="n">Separator</span> <span class="o">=</span> <span class="s">&quot;`n&quot;</span><span class="p">,</span> <span class="n">FileName</span> <span class="o">=</span> <span class="s">&quot;merged.txt&quot;</span><span class="p">)</span> 
+	<span class="p">{</span>
+	 <span class="n">OW</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">FileList</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+		 <span class="n">Append2File</span><span class="o">=</span><span class="c-Singleline"> ; Just make sure it is empty</span>
+<span class="w">		 </span><span class="nb">IfExist</span><span class="p">,</span> <span class="nv">%A_LoopField%</span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nb">FileRead</span><span class="p">,</span> <span class="n">Append2File</span><span class="p">,</span> <span class="nv">%A_LoopField%</span>
+<span class="w">			 </span><span class="nb">If </span><span class="ow">not</span> <span class="nv">ErrorLevel</span><span class="c-Singleline">  ; Successfully loaded</span>
+				<span class="n">Output</span> <span class="o">.=</span> <span class="n">Append2File</span> <span class="n">Separator</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">FileName</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span><span class="c-Singleline"> ; check if we want to delete the target file before we start</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nl">FileName:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">FileName</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+		 <span class="n">OW</span><span class="o">=</span><span class="mi">1</span>	 
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Wrap file or specified lines, by HugoV</span>
+<span class="n">TF_Wrap</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Columns</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="n">AllowBreak</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">AllowBreak</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">	 	</span><span class="nb">Break</span><span class="o">=</span>
+<span class="w">	 </span><span class="nb">Else</span>
+<span class="w">	 	</span><span class="nb">Break</span><span class="o">=</span><span class="p">[</span> \<span class="n">r</span>?\<span class="n">n</span><span class="p">]</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+	 	<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+		 	<span class="p">{</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">Columns</span><span class="p">)</span>
+				<span class="p">{</span>
+				 <span class="n">LoopField</span> :<span class="o">=</span> <span class="nv">A_LoopField</span> <span class="s">&quot; &quot;</span><span class="c-Singleline"> ; just seems to work better by adding a space</span>
+				 <span class="n">OutPut</span> <span class="o">.=</span> <span class="nf">RegExReplace(</span><span class="n">LoopField</span><span class="p">,</span> <span class="s">&quot;(.{1,&quot;</span> <span class="o">.</span> <span class="n">Columns</span> <span class="o">.</span> <span class="s">&quot;})&quot;</span> <span class="o">.</span> <span class="n">Break</span> <span class="p">,</span> <span class="s">&quot;$1`n&quot;</span><span class="p">)</span>
+				<span class="p">}</span>
+<span class="w">			 </span><span class="nb">Else</span>
+				<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+			<span class="p">}</span>	
+<span class="w">		  </span><span class="nb">Else</span>
+			 <span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>		
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF_WhiteSpace</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">RemoveLeading</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">RemoveTrailing</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
+<span class="w">	 </span><span class="nl">Trim:</span><span class="o">=</span><span class="nv">A_AutoTrim</span><span class="c-Singleline"> ; store trim settings</span>
+<span class="w">	 </span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="n">On</span><span class="c-Singleline"> ; make sure AutoTrim is on</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
+			<span class="p">{</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">RemoveLeading</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="n">AND</span> <span class="p">(</span><span class="n">RemoveTrailing</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+			 	<span class="p">{</span>
+				 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span>
+				 <span class="n">Output</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">			         </span><span class="nb">Continue</span>
+			 	<span class="p">}</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">RemoveLeading</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="n">AND</span> <span class="p">(</span><span class="n">RemoveTrailing</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+			 	<span class="p">{</span>
+				 <span class="n">LoopField</span> :<span class="o">=</span> <span class="nv">A_LoopField</span> <span class="o">.</span> <span class="s">&quot;.&quot;</span>
+				 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%LoopField%</span>
+<span class="w">				 </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">LoopField</span><span class="p">,</span> <span class="n">LoopField</span><span class="p">,</span> <span class="mi">1</span>
+				 <span class="n">Output</span> <span class="o">.=</span>  <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">			         </span><span class="nb">Continue</span>
+			 	<span class="p">}</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">RemoveLeading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">AND</span> <span class="p">(</span><span class="n">RemoveTrailing</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+			 	<span class="p">{</span>
+				 <span class="n">LoopField</span> :<span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="nv">A_LoopField</span>
+				 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%LoopField%</span>
+<span class="w">				 </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">LoopField</span><span class="p">,</span> <span class="n">LoopField</span><span class="p">,</span> <span class="mi">1</span>
+				 <span class="n">Output</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">			         </span><span class="nb">Continue</span>
+			 	<span class="p">}</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">RemoveLeading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">AND</span> <span class="p">(</span><span class="n">RemoveTrailing</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+			 	<span class="p">{</span>
+				 <span class="n">Output</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">			         </span><span class="nb">Continue</span>
+			 	<span class="p">}</span>
+		 	<span class="p">}</span>
+<span class="w">		 </span><span class="nb">Else</span>
+		 	<span class="n">Output</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+		<span class="p">}</span>
+<span class="w">	</span><span class="nb">AutoTrim</span><span class="p">,</span> <span class="nv">%Trim%</span><span class="c-Singleline">	; restore original Trim</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Delete lines from file1 in file2 (using StringReplace) by HugoV</span>
+<span class="n">TF_Substract</span><span class="p">(</span><span class="n">File1</span><span class="p">,</span> <span class="n">File2</span><span class="p">,</span> <span class="n">PartialMatch</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nl">Text:</span><span class="o">=</span><span class="n">File1</span>
+ 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	</span><span class="nl">Str1:</span><span class="o">=</span><span class="n">Text</span>
+<span class="w">	</span><span class="nl">Text:</span><span class="o">=</span><span class="n">File2</span>
+ 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">OutPut:</span><span class="o">=</span><span class="n">Text</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="n">File1</span><span class="o">=</span><span class="c-Singleline"> ; free mem in case of var/text</span>
+	 <span class="n">OutPut</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"> ; just to make sure the StringReplace will work</span>
+
+	<span class="n">If</span> <span class="p">(</span><span class="n">PartialMatch</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; allow paRTIal match</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Str1</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+<span class="w">		 	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="nv">%A_LoopField%</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span><span class="c-Singleline"> ; remove lines from file1 in file2</span>
+		<span class="p">}</span>
+<span class="w">	</span><span class="nb">Else</span>
+		<span class="p">{</span> 
+<span class="w">		 </span><span class="nl">search:</span><span class="o">=</span><span class="s">&quot;m)^(.*)$&quot;</span>
+		 <span class="n">replace</span><span class="o">=</span><span class="n">__bol__</span>$<span class="mi">1</span><span class="n">__eol__</span>
+<span class="w">		 </span><span class="nl">Output:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="n">Output</span><span class="p">,</span> <span class="n">search</span><span class="p">,</span> <span class="n">replace</span><span class="p">)</span>
+<span class="w">		 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n__eol__</span><span class="p">,</span><span class="n">__eol__</span> <span class="p">,</span> <span class="n">All</span><span class="c-Singleline"> ; strange fix but seems to be needed.</span>
+<span class="w">		 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Str1</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+<span class="w">		 	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">__bol__</span><span class="nv">%A_LoopField%</span><span class="n">__eol__</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span><span class="c-Singleline"> ; remove lines from file1 in file2</span>
+		<span class="p">}</span>	
+	<span class="n">If</span> <span class="p">(</span><span class="n">PartialMatch</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+		<span class="p">{</span>
+<span class="w">		  </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">__bol__</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+<span class="w">		  </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">__eol__</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
+		<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">		</span>
+<span class="c-Singleline">	; Remove all blank lines from the text in a variable:</span>
+<span class="w">	</span><span class="nb">Loop</span>
+	<span class="p">{</span>
+<span class="w">	    </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">r</span>`<span class="n">n</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>`<span class="n">n</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+	    <span class="n">if</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; No more replacements needed.</span>
+<span class="w">	        </span><span class="nb">break</span>
+	<span class="p">}</span>	
+<span class="w">	</span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Similar to &quot;BK Replace EM&quot; RangeReplace</span>
+<span class="n">TF_RangeReplace</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SearchTextBegin</span><span class="p">,</span> <span class="n">SearchTextEnd</span><span class="p">,</span> <span class="n">ReplaceText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">CaseSensitive</span> <span class="o">=</span> <span class="s">&quot;False&quot;</span><span class="p">,</span> <span class="n">KeepBegin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">KeepEnd</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">IfNotInString</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="nv">%SearchText%</span>
+<span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; SearchTextBegin not in TextFile so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
+     	 <span class="n">Start</span> <span class="o">=</span> <span class="mi">0</span>
+     	 <span class="n">End</span> <span class="o">=</span> <span class="mi">0</span>
+     	 <span class="n">If</span> <span class="p">(</span><span class="n">KeepBegin</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">     		</span><span class="nl">KeepBegin:</span><span class="o">=</span><span class="n">SearchTextBegin</span>
+<span class="w">     	 </span><span class="nb">Else</span>
+		<span class="n">KeepBegin</span><span class="o">=</span>
+     	 <span class="n">If</span> <span class="p">(</span><span class="n">KeepEnd</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">     		</span><span class="nl">KeepEnd:</span><span class="o">=</span> <span class="n">SearchTextEnd</span>
+<span class="w">     	 </span><span class="nb">Else</span>
+		<span class="n">KeepEnd</span><span class="o">=</span>
+         <span class="n">If</span> <span class="p">(</span><span class="n">SearchTextBegin</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+      		<span class="n">Start</span><span class="o">=</span><span class="mi">1</span>
+    	 <span class="n">If</span> <span class="p">(</span><span class="n">SearchTextEnd</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+      		<span class="n">End</span><span class="o">=</span><span class="mi">2</span>
+<span class="w">    </span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+	 	<span class="p">{</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; end has been found already, replacement made simply continue to add all lines</span>
+	 		<span class="p">{</span>
+			 <span class="n">Output</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">        		 </span><span class="nb">Continue</span>
+	 		<span class="p">}</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">Start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; start hasn&#39;t been found</span>
+		 	<span class="p">{</span>
+		 	 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="n">SearchTextBegin</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; start has been found</span>
+	 			<span class="p">{</span>
+		 		 <span class="n">Start</span> <span class="o">=</span> <span class="mi">1</span>
+		 		 <span class="n">KeepSection</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextBegin</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+		 		 <span class="n">EndSection</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextBegin</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> </span>
+<span class="c-Singleline">		 		 ; check if SearchEndText is in second part of line</span>
+		 		 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">EndSection</span><span class="p">,</span><span class="n">SearchTextEnd</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; end found</span>
+		 		 	<span class="p">{</span>
+		 		 	 <span class="n">EndSection</span> :<span class="o">=</span> <span class="n">ReplaceText</span> <span class="n">KeepEnd</span> <span class="nf">SubStr(</span><span class="n">EndSection</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">EndSection</span><span class="p">,</span> <span class="n">SearchTextEnd</span><span class="p">)</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">SearchTextEnd</span><span class="p">)</span> <span class="p">)</span> <span class="s">&quot;`n&quot;</span>
+		 		 	 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span>	
+		 		 	 	<span class="n">End</span><span class="o">=</span><span class="mi">1</span>
+		 		 	 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>	
+		 		 	 	<span class="n">EndSection</span><span class="o">=</span>
+		 		 	<span class="p">}</span>
+<span class="w">		 		 </span><span class="nb">Else</span>
+	 		 		<span class="n">EndSection</span><span class="o">=</span>
+		 		 <span class="n">Output</span> <span class="o">.=</span> <span class="n">KeepSection</span> <span class="n">KeepBegin</span> <span class="n">EndSection</span>
+<span class="w">				 </span><span class="nb">Continue</span>
+	 			<span class="p">}</span>
+<span class="w">		 	 </span><span class="nb">Else</span>	
+		 		<span class="n">Output</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span><span class="c-Singleline"> ; if not found yet simply add</span>
+	         	<span class="p">}</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">Start</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">End</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; start has been found, now look for end if end isn&#39;t an empty string</span>
+			<span class="p">{</span>
+		 	 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="n">SearchTextEnd</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; end found</span>
+		 		<span class="p">{</span>
+			 	 <span class="n">End</span> <span class="o">=</span> <span class="mi">1</span>
+				 <span class="n">Output</span> <span class="o">.=</span> <span class="n">ReplaceText</span> <span class="n">KeepEnd</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextEnd</span><span class="p">)</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">SearchTextEnd</span><span class="p">)</span> <span class="p">)</span> <span class="s">&quot;`n&quot;</span>
+			 	<span class="p">}</span>
+        		<span class="p">}</span>
+		<span class="p">}</span>   
+	 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>	
+	 	<span class="n">Output</span> <span class="o">.=</span> <span class="n">ReplaceText</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Create file of X lines and Y columns, fill with space or other character(s)</span>
+<span class="n">TF_MakeFile</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Lines</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Columns</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Fill</span> <span class="o">=</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">OW</span><span class="o">=</span><span class="mi">1</span>
+ 	 <span class="n">If</span> <span class="p">(</span><span class="n">Text</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; if OutPutFile is empty return as variable</span>
+		<span class="n">OW</span><span class="o">=</span><span class="mi">2</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Columns</span>
+		<span class="n">Cols</span> <span class="o">.=</span> <span class="n">Fill</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Lines</span>
+		<span class="n">Output</span> <span class="o">.=</span> <span class="n">Cols</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>	
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Convert tabs to spaces, shorthand for TF_ReplaceInLines</span>
+<span class="n">TF_Tab2Spaces</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">TabStop</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">TabStop</span>
+		<span class="n">Replace</span> <span class="o">.=</span> <span class="nv">A_Space</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="n">TF_ReplaceInLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">,</span> <span class="nv">A_Tab</span><span class="p">,</span> <span class="n">Replace</span><span class="p">)</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Convert spaces to tabs, shorthand for TF_ReplaceInLines</span>
+<span class="n">TF_Spaces2Tab</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">TabStop</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">TabStop</span>
+		<span class="n">Replace</span> <span class="o">.=</span> <span class="nv">A_Space</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="n">TF_ReplaceInLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">,</span> <span class="n">Replace</span><span class="p">,</span> <span class="nv">A_Tab</span><span class="p">)</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Sort (section of) text file</span>
+<span class="n">TF_Sort</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SortOptions</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; use the SORT options http://www.autohotkey.com/docs/commands/Sort.htm</span>
+	<span class="p">{</span>
+	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">If </span><span class="n">StartLine</span> <span class="n">contains</span> <span class="o">-</span><span class="p">,</span><span class="o">+</span><span class="p">,</span>`<span class="p">,</span><span class="c-Singleline"> ; no sections, incremental or multiple line input</span>
+<span class="w">		</span><span class="nb">Return</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Endline</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; process entire file</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nl">Output:</span><span class="o">=</span><span class="n">Text</span>
+<span class="w">	 	 </span><span class="nb">Sort</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="nv">%SortOptions%</span>
+	 	<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Else</span>
+	 	<span class="p">{</span>
+	 	 <span class="n">Output</span> :<span class="o">=</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">StartLine</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; get first section</span>
+	 	 <span class="n">ToSort</span> :<span class="o">=</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; get section to sort</span>
+<span class="w">	 	 </span><span class="nb">Sort</span><span class="p">,</span> <span class="n">ToSort</span><span class="p">,</span> <span class="nv">%SortOptions%</span>
+	 	 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">ToSort</span>
+	 	 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">EndLine</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; append last section</span>
+	 	<span class="p">}</span> 
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+	<span class="p">}</span>
+
+
+<span class="n">TF_Tail</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Lines</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">RemoveTrailing</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ReturnEmpty</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+    <span class="n">Neg</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">Lines</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="p">{</span>
+        <span class="n">Neg</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">        </span><span class="nl">Lines:</span><span class="o">=</span> <span class="n">Lines</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">ReturnEmpty</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; remove blank lines first so we can&#39;t return any blank lines anyway</span>
+      <span class="p">{</span>
+<span class="w">       </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+            <span class="n">OutPut</span> <span class="o">.=</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">))</span> ? <span class="nv">A_LoopField</span> <span class="s">&quot;`n&quot;</span> :
+<span class="w">	   </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing `n added by loop above</span>
+<span class="w">	   </span><span class="nl">Text:</span><span class="o">=</span><span class="n">OutPut</span>
+	   <span class="n">OutPut</span><span class="o">=</span>
+      <span class="p">}</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">Neg</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; get only one line!</span>
+      <span class="p">{</span> 
+        <span class="n">Lines</span><span class="o">++</span>
+<span class="w">		</span><span class="nl">Output:</span><span class="o">=</span><span class="n">Text</span>
+<span class="w">        </span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="n">R</span><span class="nv">%Lines%</span><span class="c-Singleline"> ; These next two Lines by Tuncay see</span>
+<span class="w">        </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="o">%</span> <span class="o">++</span><span class="n">Pos</span><span class="c-Singleline"> ; http://www.autoHotkey.com/forum/viewtopic.php?p=262375#262375</span>
+<span class="w">        </span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span>
+<span class="w">		</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="o">%</span> <span class="n">Pos</span>
+		<span class="n">Output</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+      <span class="p">}</span>
+<span class="w">    </span><span class="nb">Else</span>
+      <span class="p">{</span>
+<span class="w">	</span><span class="nl">Output:</span><span class="o">=</span><span class="n">Text</span>
+<span class="w">        </span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="n">R</span><span class="nv">%Lines%</span><span class="c-Singleline"> ; These next two Lines by Tuncay see</span>
+<span class="w">        </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="o">%</span> <span class="o">++</span><span class="n">Pos</span><span class="c-Singleline"> ; http://www.autoHotkey.com/forum/viewtopic.php?p=262375#262375</span>
+	<span class="n">Output</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+      <span class="p">}</span>
+    <span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="c-Singleline"> ; make sure we return variable not process file</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="n">RemoveTrailing</span><span class="p">)</span>
+  <span class="p">}</span>
+
+<span class="n">TF_Count</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">Char</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="nv">%Char%</span><span class="p">,,</span> <span class="n">UseErrorLevel</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
+	<span class="p">}</span>
+
+<span class="n">TF_Save</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="n">OverWrite</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; HugoV write file</span>
+<span class="w">	</span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OverWrite</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span>
+
+<span class="n">TF</span><span class="p">(</span><span class="n">TextFile</span><span class="p">,</span> <span class="n">CreateGlobalVar</span> <span class="o">=</span> <span class="s">&quot;T&quot;</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; read contents of file in output and %output% as global var ...  http://www.autohotkey.com/forum/viewtopic.php?p=313120#313120</span>
+	 <span class="n">global</span>
+<span class="w">	 </span><span class="nb">FileRead</span><span class="p">,</span> <span class="nv">%CreateGlobalVar%</span><span class="p">,</span> <span class="nv">%TextFile%</span>
+<span class="w">	 </span><span class="nb">Return</span><span class="p">,</span> <span class="p">(</span><span class="nv">%CreateGlobalVar%</span><span class="p">)</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;----- Helper functions ----------------</span>
+	
+<span class="n">TF_SetGlobal</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">content</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; helper function for TF_Split* to return array and not files, credits Tuncay :-)</span>
+	<span class="p">{</span>
+     <span class="n">global</span>
+     <span class="nv">%var%</span> :<span class="o">=</span> <span class="n">content</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline">; HugoV, helper function to determine if VAR/TEXT or FILE is passed to TF</span>
+<span class="c-Singleline">; Update 11 January 2010 (skip filecheck if `n in Text -&gt; can&#39;t be file)</span>
+<span class="n">TF_GetData</span><span class="p">(</span><span class="n">byref</span> <span class="n">OW</span><span class="p">,</span> <span class="n">byref</span> <span class="n">Text</span><span class="p">,</span> <span class="n">byref</span> <span class="n">FileName</span><span class="p">)</span> 
+	<span class="p">{</span>
+	<span class="n">OW</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline"> ; default setting: asume it is a file and create file_copy</span>
+<span class="w">	</span><span class="nb">IfNotInString</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> `<span class="n">n</span><span class="c-Singleline"> ; it can be a file as the Text doesn&#39;t contact a newline character</span>
+		<span class="p">{</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span><span class="c-Singleline"> ; first we check for &quot;overwrite&quot; </span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nl">Text:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+			 <span class="n">OW</span><span class="o">=</span><span class="mi">1</span><span class="c-Singleline"> ; overwrite file (if it is a file)</span>
+			<span class="p">}</span> 
+<span class="w">		 </span><span class="nb">IfNotExist</span><span class="p">,</span> <span class="nv">%Text%</span><span class="c-Singleline"> ; now we can check if the file exists, it doesn&#39;t so it is a var</span>
+		 <span class="p">{</span>
+		  <span class="n">If</span> <span class="p">(</span><span class="n">OW</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; the variable started with a ! so we need to put it back because it is variable/text not a file</span>
+<span class="w">			</span><span class="nl">Text:</span><span class="o">=</span> <span class="s">&quot;!&quot;</span> <span class="o">.</span> <span class="n">Text</span>
+		  <span class="n">OW</span><span class="o">=</span><span class="mi">2</span><span class="c-Singleline"> ; no file, so it is a var or Text passed on directly to TF</span>
+		 <span class="p">}</span>
+		<span class="p">}</span>
+<span class="w">	</span><span class="nb">Else</span><span class="c-Singleline"> ; there is a newline character in Text so it has to be a variable </span>
+		<span class="p">{</span>
+		 <span class="n">OW</span><span class="o">=</span><span class="mi">2</span>
+		<span class="p">}</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; it is a file, so we have to read into var Text</span>
+		<span class="p">{</span>
+	 	 <span class="n">Text</span> :<span class="o">=</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span> ? <span class="p">(</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> : <span class="n">Text</span>
+		 <span class="n">FileName</span><span class="o">=</span><span class="nv">%Text%</span><span class="c-Singleline"> ; Store FileName</span>
+<span class="w">		 </span><span class="nb">FileRead</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="nv">%Text%</span><span class="c-Singleline"> ; Read file and return as var Text</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="p">{</span>
+<span class="w">	 		 </span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="n">TF</span> <span class="n">Lib</span> <span class="n">Error</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;Can not read &quot;</span> <span class="n">FileName</span>
+<span class="w">			 </span><span class="nb">ExitApp</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+<span class="w">	</span><span class="nb">Return</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline">	</span>
+<span class="c-Singleline">; Skan</span>
+<span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=45880#45880</span>
+<span class="c-Singleline">; SetWidth() : SetWidth increases a String&#39;s length by adding spaces to it and aligns it Left/Center/Right. ( Requires Space() ) </span>
+
+<span class="n">TF_SetWidth</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span><span class="n">Width</span><span class="p">,</span><span class="n">AlignText</span><span class="p">)</span>
+	<span class="p">{</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">AlignText</span><span class="o">!=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">AlignText</span><span class="o">!=</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">AlignText</span><span class="o">!=</span><span class="mi">2</span><span class="p">)</span>
+		<span class="n">AlignText</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">	 </span><span class="nb">If </span><span class="n">AlignText</span><span class="o">=</span><span class="mi">0</span>         
+		<span class="p">{</span>
+		 <span class="n">RetStr</span><span class="o">=</span> <span class="o">%</span> <span class="p">(</span><span class="n">Text</span><span class="p">)</span><span class="n">TF_Space</span><span class="p">(</span><span class="n">Width</span><span class="p">)</span>
+<span class="w">		 </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">RetText</span><span class="p">,</span> <span class="n">RetText</span><span class="p">,</span> <span class="nv">%Width%</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">If </span><span class="n">AlignText</span><span class="o">=</span><span class="mi">1</span>         
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nl">Spaces:</span><span class="o">=</span><span class="p">(</span><span class="n">Width</span><span class="o">-</span><span class="p">(</span><span class="nf">StrLen(</span><span class="n">Text</span><span class="p">)))</span>
+		 <span class="n">RetStr</span><span class="o">=</span> <span class="o">%</span> <span class="n">TF_Space</span><span class="p">(</span><span class="nf">Round(</span><span class="n">Spaces</span><span class="o">/</span><span class="mi">2</span><span class="p">))(</span><span class="n">Text</span><span class="p">)</span><span class="n">TF_Space</span><span class="p">(</span><span class="n">Spaces</span><span class="o">-</span><span class="p">(</span><span class="nf">Round(</span><span class="n">Spaces</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">If </span><span class="n">AlignText</span><span class="o">=</span><span class="mi">2</span>         
+		<span class="p">{</span>
+		 <span class="n">RetStr</span><span class="o">=</span> <span class="o">%</span> <span class="n">TF_Space</span><span class="p">(</span><span class="n">Width</span><span class="p">)(</span><span class="n">Text</span><span class="p">)</span>
+<span class="w">		 </span><span class="nb">StringRight</span><span class="p">,</span> <span class="n">RetStr</span><span class="p">,</span> <span class="n">RetStr</span><span class="p">,</span> <span class="nv">%Width%</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">RetStr</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Skan</span>
+<span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=45880#45880</span>
+
+<span class="n">TF_Space</span><span class="p">(</span><span class="n">Width</span><span class="p">)</span>
+	<span class="p">{</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span><span class="nv">%Width%</span>
+	 <span class="n">Space</span><span class="o">=%</span> <span class="n">Space</span> <span class="nf">Chr(</span><span class="mi">32</span><span class="p">)</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">Space</span>
+	<span class="p">}</span>
+	
+<span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="n">TrimTrailing</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">CreateNewFile</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; HugoV</span>
+	<span class="n">If</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; input was file, file_copy will be created, if it already exist file_copy will be overwritten</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">IfNotExist</span><span class="p">,</span> <span class="o">%</span> <span class="n">FileName</span><span class="c-Singleline"> ; check if file Exist, if not return otherwise it would create an empty file. Thanks for the idea Murp|e</span>
+		 	<span class="p">{</span>
+		 	 <span class="n">If</span> <span class="p">(</span><span class="n">CreateNewFile</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; CreateNewFile used for TF_SplitFileBy* and others</span>
+				<span class="p">{</span>
+				 <span class="n">OW</span> <span class="o">=</span> <span class="mi">1</span> 
+<span class="w">		 		 </span><span class="nb">Goto</span> <span class="n">CreateNewFile</span>
+				<span class="p">}</span>
+<span class="w">			 </span><span class="nb">Else</span> 
+<span class="w">				</span><span class="nb">Return</span>
+			<span class="p">}</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">TrimTrailing</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">			 </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing `n</span>
+<span class="w">		</span><span class="nb">SplitPath</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,,</span> <span class="n">Dir</span><span class="p">,</span> <span class="n">Ext</span><span class="p">,</span> <span class="n">Name</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">Dir</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; if Dir is empty Text &amp; script are in same directory</span>
+			<span class="n">Dir</span> :<span class="o">=</span> <span class="nv">A_ScriptDir</span>
+<span class="w">		 </span><span class="nb">IfExist</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\backup&quot;</span><span class="c-Singleline"> ; if there is a backup dir, copy original file there</span>
+<span class="w">			</span><span class="nb">FileCopy</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\&quot;</span> <span class="n">Name</span> <span class="s">&quot;_copy.&quot;</span> <span class="n">Ext</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\backup\&quot;</span> <span class="n">Name</span> <span class="s">&quot;_copy.bak&quot;</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">		 </span><span class="nb">FileDelete</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\&quot;</span> <span class="n">Name</span> <span class="s">&quot;_copy.&quot;</span> <span class="n">Ext</span>
+<span class="w">		 </span><span class="nb">FileAppend</span><span class="p">,</span> <span class="nv">%Text%</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\&quot;</span> <span class="n">Name</span> <span class="s">&quot;_copy.&quot;</span> <span class="n">Ext</span>
+<span class="w">		 </span><span class="nb">Return</span> <span class="nv">Errorlevel</span> ? <span class="nv">False</span> : <span class="nv">True</span>
+		<span class="p">}</span>
+<span class="w">	 </span><span class="nl">CreateNewFile:</span>	
+	 <span class="n">If</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; input was file, will be overwritten by output </span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">IfNotExist</span><span class="p">,</span> <span class="o">%</span> <span class="n">FileName</span><span class="c-Singleline"> ; check if file Exist, if not return otherwise it would create an empty file. Thanks for the idea Murp|e</span>
+		 	<span class="p">{</span>
+		 	<span class="n">If</span> <span class="p">(</span><span class="n">CreateNewFile</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; CreateNewFile used for TF_SplitFileBy* and others</span>
+<span class="w">		 		</span><span class="nb">Return</span>
+			<span class="p">}</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">TrimTrailing</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">			 </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing `n</span>
+<span class="w">		 </span><span class="nb">SplitPath</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,,</span> <span class="n">Dir</span><span class="p">,</span> <span class="n">Ext</span><span class="p">,</span> <span class="n">Name</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">Dir</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; if Dir is empty Text &amp; script are in same directory</span>
+			<span class="n">Dir</span> :<span class="o">=</span> <span class="nv">A_ScriptDir</span>
+<span class="w">		 </span><span class="nb">IfExist</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\backup&quot;</span><span class="c-Singleline"> ; if there is a backup dir, copy original file there</span>
+<span class="w">			</span><span class="nb">FileCopy</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\&quot;</span> <span class="n">Name</span> <span class="s">&quot;.&quot;</span> <span class="n">Ext</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\backup\&quot;</span> <span class="n">Name</span> <span class="s">&quot;.bak&quot;</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">		 </span><span class="nb">FileDelete</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\&quot;</span> <span class="n">Name</span> <span class="s">&quot;.&quot;</span> <span class="n">Ext</span>
+<span class="w">		 </span><span class="nb">FileAppend</span><span class="p">,</span> <span class="nv">%Text%</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dir</span> <span class="s">&quot;\&quot;</span> <span class="n">Name</span> <span class="s">&quot;.&quot;</span> <span class="n">Ext</span>
+<span class="w">		 </span><span class="nb">Return</span> <span class="nv">Errorlevel</span> ? <span class="nv">False</span> : <span class="nv">True</span>
+		<span class="p">}</span>
+	<span class="n">If</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; input was var, return variable </span>
+		<span class="p">{</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">TrimTrailing</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing `n</span>
+<span class="w">		 </span><span class="nb">Return</span> <span class="n">Text</span>
+		<span class="p">}</span>
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+
+<span class="c-Singleline">; _MakeMatchList by HugoV</span>
+<span class="c-Singleline">; Purpose:</span>
+<span class="c-Singleline">; Make a MatchList which is used in various functions</span>
+<span class="c-Singleline">; Using a MatchList gives greater flexibility so you can process multiple</span>
+<span class="c-Singleline">; sections of lines in one go avoiding repetitive fileread/append actions</span>
+
+<span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Start</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">End</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+	<span class="n">ErrorList</span><span class="o">=</span>
+<span class="w">	 </span><span class="g">(join|</span>
+<span class="g">	 Error 01: Invalid StartLine parameter (non numerical character)</span>
+<span class="g">	 Error 02: Invalid EndLine parameter (non numerical character)</span>
+<span class="g">	 Error 03: Invalid StartLine parameter (only one + allowed)</span>
+<span class="g">	 )</span>
+<span class="w">	 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">ErrorMessage</span><span class="p">,</span> <span class="n">ErrorList</span><span class="p">,</span> <span class="o">|</span>
+	 <span class="n">Error</span> <span class="o">=</span> <span class="mi">0</span>
+	 
+ 	 <span class="n">TF_MatchList</span><span class="o">=</span><span class="c-Singleline"> ; just to be sure</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Start</span> <span class="o">=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">Start</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+		<span class="n">Start</span> <span class="o">=</span> <span class="mi">1</span><span class="c-Singleline"></span>
+<span class="c-Singleline">		</span>
+<span class="c-Singleline">	 ; some basic error checking</span>
+<span class="c-Singleline">	 </span>
+<span class="c-Singleline">	 ; error: only digits - and + allowed</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExReplace(</span><span class="n">Start</span><span class="p">,</span> <span class="s">&quot;[ 0-9+\-\,]&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+		 <span class="n">Error</span> <span class="o">=</span> <span class="mi">1</span>
+		 
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExReplace(</span><span class="n">End</span><span class="p">,</span> <span class="s">&quot;[0-9 ]&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+		 <span class="n">Error</span> <span class="o">=</span> <span class="mi">2</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ; error: only one + allowed</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="n">TF_Count</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span><span class="s">&quot;+&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+		 <span class="n">Error</span> <span class="o">=</span> <span class="mi">3</span>
+	 	
+	 <span class="n">If</span> <span class="p">(</span><span class="n">Error</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="n">TF</span> <span class="n">Lib</span> <span class="n">Error</span><span class="p">,</span> <span class="o">%</span> <span class="n">ErrorMessage</span><span class="nv">%Error%</span>
+<span class="w">		 </span><span class="nb">ExitApp</span>
+		<span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">		</span>
+<span class="c-Singleline"> 	 ; Option #1</span>
+<span class="c-Singleline">	 ; StartLine has + character indicating startline + incremental processing. </span>
+<span class="c-Singleline">	 ; EndLine will be used</span>
+<span class="c-Singleline">	 ; Make TF_MatchList</span>
+<span class="w"> </span>
+<span class="w">	 </span><span class="nb">IfInString</span><span class="p">,</span> <span class="n">Start</span><span class="p">,</span> `<span class="o">+</span> 
+		<span class="p">{</span>
+		 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">End</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; determine number of lines</span>
+<span class="w">			</span><span class="nl">End:</span><span class="o">=</span> <span class="n">TF_Count</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;`n&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">		 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Start</span><span class="p">,</span> `<span class="p">,</span><span class="c-Singleline"> ; we need to create a new &quot;TF_MatchList&quot; so we split by ,</span>
+<span class="w">		 </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%Section0%</span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">SectionLines</span><span class="p">,</span> <span class="n">Section</span><span class="nv">%A_Index%</span><span class="p">,</span> `<span class="o">+</span>
+<span class="w">			 </span><span class="nl">LoopSection:</span><span class="o">=</span><span class="n">End</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">SectionLines1</span>
+			 <span class="n">Counter</span><span class="o">=</span><span class="mi">0</span>
+	         	 <span class="n">TF_MatchList</span> <span class="o">.=</span> <span class="n">SectionLines1</span> <span class="s">&quot;,&quot;</span>
+<span class="w">			 </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%LoopSection%</span>
+				<span class="p">{</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">&gt;=</span> <span class="n">End</span><span class="p">)</span><span class="c-Singleline"> ; </span>
+<span class="w">					</span><span class="nb">Break</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="n">Counter</span> <span class="o">=</span> <span class="p">(</span><span class="n">SectionLines2</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="c-Singleline"> ; counter is smaller than the incremental value so skip</span>
+					<span class="p">{</span>
+					 <span class="n">TF_MatchList</span> <span class="o">.=</span> <span class="p">(</span><span class="n">SectionLines1</span> <span class="o">+</span> <span class="nv">A_Index</span><span class="p">)</span> <span class="s">&quot;,&quot;</span>
+					 <span class="n">Counter</span><span class="o">=</span><span class="mi">0</span>
+					<span class="p">}</span>
+<span class="w">				 </span><span class="nb">Else</span>
+					<span class="n">Counter</span><span class="o">++</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">TF_MatchList</span><span class="p">,</span> <span class="n">TF_MatchList</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing , </span>
+<span class="w">		 </span><span class="nb">Return</span> <span class="n">TF_MatchList</span>
+		<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ; Option #2</span>
+<span class="c-Singleline">	 ; StartLine has - character indicating from-to, COULD be multiple sections. </span>
+<span class="c-Singleline">	 ; EndLine will be ignored</span>
+<span class="c-Singleline">	 ; Make TF_MatchList</span>
+
+<span class="w">	 </span><span class="nb">IfInString</span><span class="p">,</span> <span class="n">Start</span><span class="p">,</span> `<span class="o">-</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Start</span><span class="p">,</span> `<span class="p">,</span><span class="c-Singleline"> ; we need to create a new &quot;TF_MatchList&quot; so we split by ,</span>
+<span class="w">		 </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%Section0%</span>
+			<span class="p">{</span>
+<span class="w">			 </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">SectionLines</span><span class="p">,</span> <span class="n">Section</span><span class="nv">%A_Index%</span><span class="p">,</span> `<span class="o">-</span>
+<span class="w">			 </span><span class="nl">LoopSection:</span><span class="o">=</span><span class="n">SectionLines2</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">SectionLines1</span>
+<span class="w">			 </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%LoopSection%</span>
+				<span class="p">{</span>
+				 <span class="n">TF_MatchList</span> <span class="o">.=</span> <span class="p">(</span><span class="n">SectionLines1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="nv">A_Index</span><span class="p">)</span> <span class="s">&quot;,&quot;</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+<span class="w">		 </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">TF_MatchList</span><span class="p">,</span> <span class="n">TF_MatchList</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing ,</span>
+<span class="w">		 </span><span class="nb">Return</span> <span class="n">TF_MatchList</span>
+		<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ; Option #3</span>
+<span class="c-Singleline">	 ; StartLine has comma indicating multiple lines. </span>
+<span class="c-Singleline">	 ; EndLine will be ignored</span>
+<span class="w">	 </span><span class="nb">IfInString</span><span class="p">,</span> <span class="n">Start</span><span class="p">,</span> `<span class="p">,</span>
+		<span class="p">{</span>
+<span class="w">		 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">Start</span>
+<span class="w">		 </span><span class="nb">Return</span> <span class="n">TF_MatchList</span>
+		<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">	 ; Option #4</span>
+<span class="c-Singleline">	 ; parameters passed on as StartLine, EndLine. </span>
+<span class="c-Singleline">	 ; Make TF_MatchList from StartLine to EndLine</span>
+
+	 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">End</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; determine number of lines</span>
+<span class="w">			</span><span class="nl">End:</span><span class="o">=</span> <span class="n">TF_Count</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;`n&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">	 </span><span class="nl">LoopTimes:</span><span class="o">=</span><span class="n">End</span><span class="o">-</span><span class="n">Start</span>
+<span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%LoopTimes%</span>
+		<span class="p">{</span>	
+		 <span class="n">TF_MatchList</span> <span class="o">.=</span> <span class="p">(</span><span class="n">Start</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="nv">A_Index</span><span class="p">)</span> <span class="s">&quot;,&quot;</span>
+		<span class="p">}</span>
+	 <span class="n">TF_MatchList</span> <span class="o">.=</span> <span class="n">End</span> <span class="s">&quot;,&quot;</span>
+<span class="w">	 </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">TF_MatchList</span><span class="p">,</span> <span class="n">TF_MatchList</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing ,</span>
+<span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_MatchList</span>
+	<span class="p">}</span>
+
+<span class="cm">/* -------------- */</span>
+</pre></div>

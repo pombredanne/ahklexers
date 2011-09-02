@@ -1,0 +1,86 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*! TheGood</span>
+<span class="cm">    AHKsock - A simple AHK implementation of Winsock.</span>
+<span class="cm">    AHKsock Example 4 - Hostname &amp; IP Lookups</span>
+<span class="cm">    http://www.autohotkey.com/forum/viewtopic.php?p=355775</span>
+<span class="cm">    Last updated: August 24th, 2010</span>
+<span class="cm">    </span>
+<span class="cm">    This is just a very simple example that demonstrates the use of two inverse functions: AHKsock_GetAddrInfo and</span>
+<span class="cm">    AHKsock_GetNameInfo. The code should be simple enough to follow.</span>
+<span class="cm">*/</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    ;We&#39;ll need to allow more than one instance to test it on the same machine</span>
+<span class="w">    </span><span class="nb">#SingleInstance</span><span class="p">,</span> <span class="n">Off</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Needed if AHKsock isn&#39;t in one of your lib folders</span>
+<span class="c-Singleline">    ;#Include %A_ScriptDir%\AHKsock.ahk</span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Set up an OnExit routine</span>
+<span class="w">    </span><span class="nb">OnExit</span><span class="p">,</span> <span class="n">GuiClose</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Make the GUI</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,,</span> <span class="n">What</span> <span class="n">would</span> <span class="n">you</span> <span class="n">like</span> <span class="n">to</span> <span class="n">do</span>?
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">wp</span> <span class="n">gbtnGAI</span><span class="p">,</span> <span class="n">Hostname</span> <span class="n">to</span> <span class="n">IP</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">wp</span> <span class="n">gbtnGNI</span><span class="p">,</span> <span class="n">IP</span> <span class="n">to</span> <span class="n">Hostname</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span>
+<span class="nb">Return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nl">GuiEscape:</span>
+    <span class="n">AHKsock_Close</span><span class="p">()</span><span class="c-Singleline"> ;No sockets to actually close here. We just do it to cleanup WinSock.</span>
+<span class="nb">ExitApp</span>
+
+<span class="nl">btnGAI:</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">OwnDialogs</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Random examples for the default value of the InputBox</span>
+    <span class="n">sEx1</span> :<span class="o">=</span> <span class="s">&quot;www.google.com&quot;</span>
+    <span class="n">sEx2</span> :<span class="o">=</span> <span class="s">&quot;localhost&quot;</span>
+    <span class="n">sEx3</span> :<span class="o">=</span> <span class="nv">A_ComputerName</span>
+<span class="w">    </span><span class="nb">Random</span><span class="p">,</span> <span class="n">Default</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Ask for the hostname</span>
+<span class="w">    </span><span class="nb">InputBox</span><span class="p">,</span> <span class="n">sName</span><span class="p">,</span> <span class="n">Hostname</span> <span class="n">to</span> <span class="n">IP</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">Please</span> <span class="n">enter</span> <span class="n">the</span> <span class="n">hostname</span> <span class="n">to</span> <span class="n">look</span> <span class="n">up</span>:<span class="p">,,,</span> <span class="mi">120</span><span class="p">,,,,,</span> <span class="o">%</span> <span class="n">sEx</span><span class="nv">%Default%</span>
+<span class="w">    </span><span class="nb">If </span><span class="nv">ErrorLevel</span>
+<span class="w">        </span><span class="nb">Return</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Get the IPs</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="n">AHKsock_GetAddrInfo</span><span class="p">(</span><span class="n">sName</span><span class="p">,</span> <span class="n">sIPList</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">        </span><span class="nb">MsgBox</span> <span class="mh">0x10</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;AHKsock_GetAddrInfo failed.`nReturn value = &quot;</span> <span class="n">i</span> <span class="s">&quot;.`nErrorLevel = &quot;</span> <span class="nv">ErrorLevel</span>
+<span class="w">        </span><span class="nb">Return</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Display</span>
+<span class="w">    </span><span class="nb">MsgBox</span> <span class="mh">0x40</span><span class="p">,</span> <span class="n">Results</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;Hostname:`n&quot;</span> <span class="n">sName</span> <span class="s">&quot;`n`nIP addresses found:`n&quot;</span> <span class="n">sIPList</span>
+<span class="w">    </span>
+<span class="nb">Return</span>
+
+<span class="nl">btnGNI:</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">OwnDialogs</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Random service examples for the default value of the InputBox</span>
+    <span class="n">sEx1</span> :<span class="o">=</span> <span class="mi">7</span><span class="c-Singleline">  ;echo</span>
+    <span class="n">sEx2</span> :<span class="o">=</span> <span class="mi">21</span><span class="c-Singleline"> ;ftp</span>
+    <span class="n">sEx3</span> :<span class="o">=</span> <span class="mi">25</span><span class="c-Singleline"> ;SMTP</span>
+    <span class="n">sEx4</span> :<span class="o">=</span> <span class="mi">80</span><span class="c-Singleline"> ;http</span>
+<span class="w">    </span><span class="nb">Random</span><span class="p">,</span> <span class="n">Default</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Ask for the IP</span>
+<span class="w">    </span><span class="nb">InputBox</span><span class="p">,</span> <span class="n">sIPandPort</span><span class="p">,</span> <span class="n">IP</span> <span class="n">to</span> <span class="n">Hostname</span><span class="p">,</span> <span class="n">Please</span> <span class="n">enter</span> <span class="n">the</span> <span class="n">IP</span> <span class="n">address</span> <span class="p">(</span><span class="ow">and</span> <span class="n">optionally</span> <span class="n">the</span> <span class="n">port</span><span class="p">)</span> <span class="n">to</span> <span class="n">look</span> <span class="n">up</span>:<span class="p">,,,</span> <span class="mi">120</span><span class="p">,,,,,</span> <span class="o">%</span> <span class="s">&quot;127.0.0.1:&quot;</span> <span class="n">sEx</span><span class="nv">%Default%</span>
+<span class="w">    </span><span class="nb">If </span><span class="nv">ErrorLevel</span>
+<span class="w">        </span><span class="nb">Return</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Separate the IP and the port</span>
+<span class="w">    </span><span class="nb">If </span><span class="n">Not</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="nf">InStr(</span><span class="n">sIPandPort</span><span class="p">,</span> <span class="s">&quot;:&quot;</span><span class="p">))</span>
+        <span class="n">sIP</span> :<span class="o">=</span> <span class="n">sIPandPort</span><span class="p">,</span> <span class="n">sPort</span> :<span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="nb">Else</span> <span class="n">sIP</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">sIPandPort</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">sPort</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">sIPandPort</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Get the hostname</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="n">AHKsock_GetNameInfo</span><span class="p">(</span><span class="n">sIP</span><span class="p">,</span> <span class="n">sName</span><span class="p">,</span> <span class="n">sPort</span><span class="p">,</span> <span class="n">sService</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">        </span><span class="nb">MsgBox</span> <span class="mh">0x10</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;AHKsock_GetNameInfo failed.`nReturn value = &quot;</span> <span class="n">i</span> <span class="s">&quot;.`nErrorLevel = &quot;</span> <span class="nv">ErrorLevel</span>
+<span class="w">        </span><span class="nb">Return</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+<span class="c-Singleline">    </span>
+<span class="c-Singleline">    ;Display</span>
+<span class="w">    </span><span class="nb">MsgBox</span> <span class="mh">0x40</span><span class="p">,</span> <span class="n">Results</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;IP address: &quot;</span> <span class="n">sIP</span> <span class="p">(</span><span class="n">sPort</span> ? <span class="s">&quot;`nPort: &quot;</span> <span class="n">sPort</span> : <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="s">&quot;`n`nHostname: &quot;</span> <span class="n">sName</span> <span class="p">(</span><span class="n">sPort</span> ? <span class="s">&quot;`nService: &quot;</span> <span class="n">sService</span> : <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span>
+<span class="nb">Return</span>
+</pre></div>

@@ -1,0 +1,134 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include MCI.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">#SingleInstance</span> <span class="n">Force</span>
+
+<span class="nb">gui</span> <span class="n">Margin</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+<span class="nb">gui</span> <span class="n">Add</span><span class="p">,</span><span class="n">Button</span><span class="p">,</span><span class="n">w70</span> <span class="n">h35</span><span class="p">,</span><span class="n">Open</span>
+<span class="nb">gui</span> <span class="n">Add</span><span class="p">,</span><span class="n">Button</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="mi">0</span> <span class="n">wp</span> <span class="n">hp</span><span class="p">,</span><span class="n">Play</span>
+<span class="nb">gui</span> <span class="n">Add</span><span class="p">,</span><span class="n">Button</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="mi">0</span> <span class="n">wp</span> <span class="n">hp</span><span class="p">,</span><span class="n">Pause</span>
+<span class="nb">gui</span> <span class="n">Add</span><span class="p">,</span><span class="n">Button</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="mi">0</span> <span class="n">wp</span> <span class="n">hp</span><span class="p">,</span><span class="n">Stop</span>
+<span class="nb">gui</span><span class="p">,</span><span class="n">Add</span><span class="p">,</span><span class="n">Button</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="mi">0</span> <span class="n">wp</span> <span class="n">hp</span><span class="p">,</span><span class="n">Rev10</span>
+<span class="nb">gui</span><span class="p">,</span><span class="n">Add</span><span class="p">,</span><span class="n">Button</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="mi">0</span> <span class="n">wp</span> <span class="n">hp</span><span class="p">,</span><span class="n">Middle</span>
+<span class="nb">gui</span><span class="p">,</span><span class="n">Add</span><span class="p">,</span><span class="n">Button</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="mi">0</span> <span class="n">wp</span> <span class="n">hp</span><span class="p">,</span><span class="n">Fwd10</span>
+<span class="nb">gui</span> <span class="n">Show</span>
+
+<span class="nb">gosub</span> <span class="n">ButtonOpen</span>
+<span class="nb">return</span>
+
+
+<span class="nl">GUIEscape:</span>
+<span class="nl">GUIClose:</span>
+<span class="nb">if </span><span class="n">Open</span>
+    <span class="n">MCI_Close</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+
+<span class="nb">ExitApp</span>
+
+
+<span class="nl">ButtonOpen:</span>
+<span class="nb">if </span><span class="n">Open</span>
+    <span class="n">MCI_Close</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+
+<span class="nb">if </span><span class="ow">not</span> <span class="n">DefaultFolder</span>
+<span class="w">    </span><span class="nl">DefaultFolder:</span><span class="o">=</span><span class="nv">A_MyDocuments</span>
+
+<span class="nb">gui</span> <span class="o">+</span><span class="n">OwnDialogs</span>
+<span class="nb">FileSelectFile</span><span class="p">,</span> <span class="n">MediaFile</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nv">%DefaultFolder%</span><span class="p">,</span><span class="n">Choose</span> <span class="n">a</span> <span class="n">media</span> <span class="n">file</span>
+<span class="nb">if </span><span class="n">MediaFile</span><span class="o">=</span>
+<span class="w">   </span><span class="nb">return</span>
+
+<span class="nb">SplitPath</span> <span class="n">MediaFile</span><span class="p">,,</span><span class="n">DefaultFolder</span>
+
+<span class="nl">hMedia:</span><span class="o">=</span><span class="n">MCI_Open</span><span class="p">(</span><span class="n">MediaFile</span><span class="p">)</span>
+<span class="nb">if </span><span class="n">Not</span> <span class="n">hMedia</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nb">MsgBox</span> <span class="n">Error</span> <span class="n">opening</span> <span class="n">media</span> <span class="n">file</span>
+<span class="w">    </span><span class="nb">return</span>
+    <span class="p">}</span>
+
+<span class="nl">Open:</span><span class="o">=</span><span class="nv">true</span>
+<span class="nb">gosub</span> <span class="n">ButtonPlay</span>
+<span class="nb">return</span>
+
+
+<span class="nl">ButtonPlay:</span>
+<span class="nb">if </span><span class="n">Open</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nl">Status:</span><span class="o">=</span><span class="n">MCI_Status</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">Status</span><span class="o">=</span><span class="n">stopped</span>
+        <span class="n">MCI_Play</span><span class="p">(</span><span class="n">hMedia</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;NotifyEndOfPlay&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ;-- Note: The callback option is used here as an example.  This</span>
+<span class="c-Singleline">            ;   script is not a really a good example of how/where the</span>
+<span class="c-Singleline">            ;   callback option should be used because of all of the seek</span>
+<span class="c-Singleline">            ;   interruptions.</span>
+<span class="w">     </span><span class="nb">else</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">Status</span><span class="o">=</span><span class="n">paused</span>
+            <span class="n">MCI_Resume</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="nb">return</span>
+
+
+<span class="nl">ButtonPause:</span>
+<span class="nb">if </span><span class="n">Open</span>
+    <span class="p">{</span>
+<span class="w">    </span><span class="nl">Status:</span><span class="o">=</span><span class="n">MCI_Status</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">Status</span><span class="o">=</span><span class="n">playing</span>
+        <span class="n">MCI_Pause</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+<span class="w">     </span><span class="nb">else</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">Status</span><span class="o">=</span><span class="n">paused</span>
+            <span class="n">MCI_Resume</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="nb">return</span>
+
+
+<span class="nl">ButtonStop:</span>
+<span class="nb">if </span><span class="n">Open</span>
+    <span class="p">{</span>
+    <span class="n">MCI_Stop</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+    <span class="n">MCI_Seek</span><span class="p">(</span><span class="n">hMedia</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="nb">return</span>
+
+
+<span class="nl">ButtonFwd10:</span>
+<span class="nb">if </span><span class="n">Open</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">MCI_Status</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;playing&quot;</span>
+        <span class="n">MCI_Seek</span><span class="p">(</span><span class="n">hMedia</span><span class="p">,</span><span class="n">MCI_Position</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span><span class="o">+</span><span class="mi">10000</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ;-- Note: This seek method works for most (but not all) MCI devices</span>
+
+<span class="nb">return</span>
+
+
+<span class="nl">ButtonMiddle:</span>
+<span class="nb">if </span><span class="n">Open</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">MCI_Status</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;playing&quot;</span>
+        <span class="n">MCI_Seek</span><span class="p">(</span><span class="n">hMedia</span><span class="p">,</span><span class="n">MCI_Length</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ;-- Note: This seek method works for most (but not all) MCI devices</span>
+
+<span class="nb">return</span>
+
+
+<span class="nl">ButtonRev10:</span>
+<span class="nb">if </span><span class="n">Open</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">MCI_Status</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;playing&quot;</span>
+        <span class="n">MCI_Seek</span><span class="p">(</span><span class="n">hMedia</span><span class="p">,</span><span class="n">MCI_Position</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span><span class="o">-</span><span class="mi">10000</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">            ;-- Note: This seek method works for most (but not all) MCI devices</span>
+
+<span class="nb">return</span>
+
+
+<span class="n">NotifyEndOfPlay</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="n">Global</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">flag</span><span class="o">=</span><span class="mi">1</span><span class="c-Singleline">  ;-- 1=play ended normally</span>
+        <span class="p">{</span>
+        <span class="n">MCI_Stop</span><span class="p">(</span><span class="n">hMedia</span><span class="p">)</span>
+        <span class="n">MCI_Seek</span><span class="p">(</span><span class="n">hMedia</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span><span class="c-Singleline"></span>
+
+
+<span class="c-Singleline">;#include MCI.ahk</span>
+</pre></div>

@@ -5,7 +5,7 @@ k::
 ::sdf::
 label:
   Msgbox % "hello" . A_UserName
-Msgbox % "hello escaped "" quotes."
+Msgbox % "hello escaped "" quotes and other escapes `n`r."
 tooltip %mytip%
 foo := regexmatch(bar, "reg")
 Return

@@ -1,0 +1,44 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">	Function: DamerauLevenshteinDistance</span>
+<span class="cm">		Performs fuzzy string searching, see &lt;http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance&gt;</span>
+
+<span class="cm">	License:</span>
+<span class="cm">		- Simplified BSD License &lt;http://www.autohotkey.net/~Titan/license.txt&gt;</span>
+<span class="cm">*/</span>
+<span class="n">DamerauLevenshteinDistance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">	</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span>
+<span class="w">	</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="n">n</span>
+<span class="w">	</span><span class="nb">If </span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">		</span><span class="nb">Return</span><span class="p">,</span> <span class="n">m</span>
+	<span class="n">d0_0</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">m</span>
+		<span class="n">d0_</span><span class="nv">%A_Index%</span> <span class="o">=</span> <span class="nv">%A_Index%</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">n</span>
+		<span class="n">d</span><span class="nv">%A_Index%</span><span class="n">_0</span> <span class="o">=</span> <span class="nv">%A_Index%</span>
+	<span class="n">ix</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">iy</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="w">	</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">s</span>
+	<span class="p">{</span>
+		<span class="n">sc</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="nv">%A_Index%</span>
+		<span class="n">jx</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">jy</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">t</span>
+		<span class="p">{</span>
+			<span class="n">a</span> :<span class="o">=</span> <span class="n">d</span><span class="nv">%ix%</span><span class="n">_</span><span class="nv">%jx%</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">b</span> :<span class="o">=</span> <span class="n">d</span><span class="nv">%i%</span><span class="n">_</span><span class="nv">%jx%</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">c</span> :<span class="o">=</span> <span class="p">(</span><span class="nv">A_LoopField</span> <span class="o">!=</span> <span class="n">sc</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span><span class="nv">%ix%</span><span class="n">_</span><span class="nv">%jx%</span>
+				<span class="p">,</span> <span class="n">d</span><span class="nv">%i%</span><span class="n">_</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="n">d</span> :<span class="o">=</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span> ? <span class="n">a</span> <span class="o">&lt;</span> <span class="n">c</span> ? <span class="n">a</span> : <span class="n">c</span> : <span class="n">b</span> <span class="o">&lt;</span> <span class="n">c</span> ? <span class="n">b</span> : <span class="n">c</span>
+			<span class="n">If</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nv">A_Index</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">sc</span> <span class="o">==</span> <span class="n">tx</span> <span class="ow">and</span> <span class="n">sx</span> <span class="o">==</span> <span class="nv">A_LoopField</span><span class="p">)</span>
+				<span class="n">d</span><span class="nv">%i%</span><span class="n">_</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">c</span> <span class="o">+=</span> <span class="n">d</span><span class="nv">%iy%</span><span class="n">_</span><span class="nv">%ix%</span> ? <span class="n">d</span> : <span class="n">c</span>
+			<span class="n">jx</span><span class="o">++</span>
+			<span class="n">jy</span><span class="o">++</span>
+			<span class="n">tx</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span>
+		<span class="p">}</span>
+		<span class="n">ix</span><span class="o">++</span>
+		<span class="n">iy</span><span class="o">++</span>
+		<span class="n">sx</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span>
+	<span class="p">}</span>
+<span class="w">	</span><span class="nb">Return</span><span class="p">,</span> <span class="n">d</span><span class="nv">%m%</span><span class="n">_</span><span class="nv">%n%</span>
+<span class="p">}</span>
+</pre></div>

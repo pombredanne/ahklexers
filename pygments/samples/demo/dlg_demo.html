@@ -1,0 +1,20 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Dlg.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline"> ;basic usage</span>
+<span class="nb">if </span><span class="n">Dlg_Icon</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">idx</span> :<span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">msgbox</span> <span class="n">Icon</span>:   <span class="nv">%icon%</span>`<span class="n">nIndex</span>:  <span class="nv">%idx%</span>
+
+<span class="nb">if </span><span class="n">Dlg_Color</span><span class="p">(</span> <span class="n">color</span> :<span class="o">=</span> <span class="mh">0xFF00AA</span> <span class="p">)</span>
+<span class="w">	</span><span class="nb">msgbox</span> <span class="n">Color</span>:  <span class="nv">%color%</span>
+
+<span class="nb">if </span><span class="n">Dlg_Font</span><span class="p">(</span> <span class="n">font</span> :<span class="o">=</span> <span class="s">&quot;Courier New&quot;</span><span class="p">,</span> <span class="n">style</span> :<span class="o">=</span> <span class="s">&quot;s16 bold underline italic&quot;</span><span class="p">,</span> <span class="n">color</span>:<span class="o">=</span><span class="mh">0x80</span><span class="p">)</span>
+<span class="w">	</span><span class="nb">msgbox</span> <span class="n">Font</span>:  <span class="nv">%font%</span>`<span class="n">nStyle</span>:  <span class="nv">%style%</span>`<span class="n">nColor</span>:  <span class="nv">%color%</span>
+
+<span class="n">res</span> :<span class="o">=</span> <span class="n">Dlg_Open</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;Select several files&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;c:\Windows\&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;ALLOWMULTISELECT FILEMUSTEXIST HIDEREADONLY&quot;</span><span class="p">)</span>
+<span class="nb">IfNotEqual</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="p">,</span> <span class="n">MsgBox</span><span class="p">,</span> <span class="nv">%res%</span>
+
+<span class="nb">ExitApp</span>
+</pre></div>

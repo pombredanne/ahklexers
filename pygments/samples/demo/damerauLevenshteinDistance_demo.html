@@ -1,0 +1,21 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include DamerauLevenshteinDistance.ahk</span>
+<span class="nb">#NoEnv</span><span class="c-Singleline">  ; Recommended for performance and compatibility with future AutoHotkey releases.</span>
+<span class="nb">SendMode</span> <span class="n">Input</span><span class="c-Singleline">  ; Recommended for new scripts due to its superior speed and reliability.</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline">  ; Ensures a consistent starting directory.</span>
+
+
+<span class="n">tests</span> <span class="o">=</span>
+<span class="g">( LTrim</span>
+<span class="g">   AHK,ahk</span>
+<span class="g">   He,ben</span>
+<span class="g">   this,tihs</span>
+<span class="g">   Toralf,Titan</span>
+<span class="g">   google,goggle</span>
+<span class="g">)</span>
+<span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">tests</span><span class="p">,</span> `<span class="n">n</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> `<span class="p">,</span>
+   <span class="n">l</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">w1</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">   =&gt;   </span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">w2</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">   &quot;</span> <span class="o">.</span> <span class="n">DamerauLevenshteinDistance</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;`n&quot;</span>
+<span class="p">}</span>
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="nv">%l%</span>
+</pre></div>

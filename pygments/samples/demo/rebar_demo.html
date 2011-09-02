@@ -1,0 +1,27 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Rebar.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span> <span class="o">+</span><span class="n">Resize</span>
+    <span class="n">hGui</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">w400</span> <span class="n">h140</span> <span class="n">hide</span><span class="c-Singleline">           ;set window size, mandatory</span>
+
+<span class="c-Singleline">  ;create edit</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">HWNDhEdit</span> <span class="n">w100</span> <span class="n">h100</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">  ;create combo</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">ComboBox</span><span class="p">,</span> <span class="n">HWNDhCombo</span> <span class="n">w80</span><span class="p">,</span> <span class="n">item</span> <span class="mi">1</span> <span class="o">|</span><span class="n">item</span> <span class="mi">2</span><span class="o">|</span><span class="n">item</span> <span class="mi">3</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">  ;create rebar</span>
+    <span class="n">hRebar</span> :<span class="o">=</span> <span class="n">Rebar_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">)</span>
+    <span class="n">ReBar_Insert</span><span class="p">(</span><span class="n">hRebar</span><span class="p">,</span> <span class="n">hEdit</span><span class="p">,</span> <span class="s">&quot;mw 100&quot;</span><span class="p">,</span> <span class="s">&quot;L 400&quot;</span><span class="p">,</span> <span class="s">&quot;T Log &quot;</span><span class="p">)</span><span class="c-Singleline">    ;Insert edit band, set lenght of the band to 400</span>
+<span class="c-Singleline">                                                                ; minimum width of edit to 100, set text to &quot;Log &quot;</span>
+    <span class="n">ReBar_Insert</span><span class="p">(</span><span class="n">hRebar</span><span class="p">,</span> <span class="n">hCombo</span><span class="p">,</span> <span class="s">&quot;L 300&quot;</span><span class="p">,</span> <span class="s">&quot;P 1&quot;</span><span class="p">)</span><span class="c-Singleline">                ;Insert combo band at the top, set length of the band to 300</span>
+
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span>
+<span class="nb">Return</span>
+
+<span class="nl">GuiClose:</span>
+<span class="nb">ExitApp</span>
+</pre></div>

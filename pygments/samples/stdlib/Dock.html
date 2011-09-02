@@ -1,0 +1,325 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; Title:     Dock </span>
+<span class="c-Singleline">;            *Dock desired top level windows (dock clients) to any top level window (dock host)* </span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;			 Using dock module you can glue your or third-party windows to any top level window.</span>
+<span class="c-Singleline">;			 Docked windows in module terminology are called Clients and the window that keeps their </span>
+<span class="c-Singleline">;			 position relative to itself is called Host. Once Clients are connected to the Host, this</span>
+<span class="c-Singleline">;			 group of windows will behave like single window - moving, sizing, focusing, hiding and other</span>
+<span class="c-Singleline">;			 OS events will be handled by the module so that the &quot;composite window&quot; behaves like the single window.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;			 Module uses system hook to monitor windows changes, so it&#39;s idle when it is not aranging windows.</span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;---------------------------------------------------------------------------------------------------------------------------------- </span>
+<span class="c-Singleline">; Function:  Dock </span>
+<span class="c-Singleline">;            Instantiate dock of given client upon host. Multiple clients per one host are supported. </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">; Parameters: </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;            pClientId   - HWND of the Client GUI. Dock is created or updated (if already exists) for that hwnd.    </span>
+<span class="c-Singleline">;                       If &quot;+&quot; is the first char of pClientId, Dock will first show the window if it is hidden (for smoother initialisation) </span>
+<span class="c-Singleline">;            pDockDef   - Dock definition, see bellow. To remove dock client pass &quot;-&quot;. </span>
+<span class="c-Singleline">;                       If you pass empty string, client will be docked to the host according to its current position relative to the host. </span>
+<span class="c-Singleline">;            reset      - internal parameter, do not use. </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">; Globals: </span>
+<span class="c-Singleline">;            Dock_HostID   - Sets docking host </span>
+<span class="c-Singleline">;         Dock_OnHostDeath - Sets label that will be called when host dies. Afterwards, module will disable itself using Dock_Toggle(false).</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Dock definition:  </span>
+<span class="c-Singleline">;			Dock definition is string containing 10 numbers that describe Client positon relative to the Host. The big number of parameters allows</span>
+<span class="c-Singleline">;			fine tuning of Client&#39;s postion and basicly every setup is possible. Parameters are grouped in 4 classes - first 3 influence X coordinate </span>
+<span class="c-Singleline">;			of the client, next 3 Y coordinate, next 2 Client&#39;s width and final 2 Client&#39;s height:</span>
+<span class="c-Singleline">;			</span>
+<span class="c-Singleline">;&gt; 					xhw,xw,xd,  yhh,yh,yd [, whw,wd,  hhh,hd] </span>
+<span class="c-Singleline">;&gt; 						X			Y			W		H</span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;            o The *X* coordinate of the top, left corner of the client window is computed as </span>
+<span class="c-Singleline">;            *HostX + xhw*HostWidth + xw*ClientWidth + xd*, with the parameters xhw, xw and xd </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;            o The *Y* coordinate of the top, left corner of the client window is computed as </span>
+<span class="c-Singleline">;            *HostY + yhh*HostHeight + yh*ClientHeight + yd*, with the parameters yhh, yh and yd </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;            o The width *W* of the client window is computed as *whw*HostWidth + wd*, with the parameters whw and wd. </span>
+<span class="c-Singleline">;              Skip to let the client have its own width (or set to 0,0) </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;            o The height *H* of the client window is computed as *hhh*HostHeight + hd*, with the parameters hhh and hd. </span>
+<span class="c-Singleline">;              Skip to let the client have its own height (or set to 0,0) </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">; Returns: </span>
+<span class="c-Singleline">;            &quot;OK&quot; or &quot;Err&quot; with text describing last succesiful or failed action.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">; Remarks:</span>
+<span class="c-Singleline">;			You must set DetectHiddenWindows if Host is practicing hiding. Otherwise, Dock will treat Host hiding as death.</span>
+<span class="c-Singleline">;			All clients will be hidden once host is terminated or it becomes hidden itself.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;			Use SetBatchLines, -1 with dock module for fluid client movement. You will experience delay in clients moving otherwise.</span>
+<span class="c-Singleline">;			However, if CPU usage is very high, you might experience a delay in client movement anyway.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;			If you are using *Gui, Show* command imediately before registering client, make sure you specify *NoActivate* flag.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;			Currently its not supported to set Client window on top Host window. AlwaysOnTop (or TopMost) flag will not influence </span>
+<span class="c-Singleline">;			behavior of the module so avoid setups in which client is entirely covered by the Host.</span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">; Example: </span>
+<span class="c-Singleline">;&gt;      Dock(Client1ID, &quot;0,-1,-10, 0,0,0, 0,63, 1,0&quot;)      ;top left, host height </span>
+<span class="c-Singleline">;&gt;      Dock(Client2ID, &quot;0,0,0, 0,-1,-5, 1,0,0,30&quot;)        ;top above, host width </span>
+<span class="c-Singleline">; </span>
+<span class="n">Dock</span><span class="p">(</span><span class="n">pClientID</span><span class="p">,</span> <span class="n">pDockDef</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline">                    ;Reset is internal parameter, used by Dock_Shutdown </span>
+   <span class="n">local</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">hx</span><span class="p">,</span> <span class="n">hY</span> 
+   <span class="n">static</span> <span class="n">init</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">idDel</span> 
+
+    <span class="n">if</span> <span class="p">(</span><span class="n">reset</span><span class="p">)</span><span class="c-Singleline">                                             ;Used by Dock Shutdown to reset the function </span>
+<span class="w">		</span><span class="nb">return</span> <span class="n">init</span> :<span class="o">=</span> <span class="mi">0</span> 
+
+	<span class="n">if</span> !<span class="n">init</span>
+		<span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> :<span class="o">=</span> <span class="mi">0</span>
+
+   <span class="n">cnt</span> :<span class="o">=</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">   ;remove dock client ? </span>
+   <span class="n">if</span> <span class="p">(</span><span class="n">pDockDef</span><span class="o">=</span><span class="s">&quot;-&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Dock_</span><span class="nv">%pClientID%</span><span class="p">){</span> 
+
+      <span class="n">idDel</span> :<span class="o">=</span> <span class="n">Dock_</span><span class="nv">%pClientID%</span> 
+
+<span class="w">      </span><span class="nb">loop</span><span class="p">,</span> <span class="mi">10</span> 
+         <span class="n">Dock_</span><span class="nv">%pClientID%</span><span class="n">_</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="mi">0</span> 
+      <span class="n">Dock_</span><span class="nv">%pClientID%</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span><span class="c-Singleline"> </span>
+<span class="c-Singleline">       </span>
+<span class="c-Singleline">      ;move last one to the place of the deleted one </span>
+      <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%idDel%</span><span class="p">]</span> :<span class="o">=</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%cnt%</span><span class="p">],</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%cnt%</span><span class="p">]</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">--</span> 
+<span class="w">      </span><span class="nb">return</span> <span class="s">&quot;OK - Remove&quot;</span> 
+   <span class="p">}</span> 
+
+   <span class="n">if</span> <span class="o">*&amp;</span><span class="n">pClientID</span> <span class="o">=</span> <span class="mi">43</span><span class="c-Singleline">         ; 43 = &quot;+&quot; </span>
+      <span class="nf">DllCall(</span><span class="s">&quot;ShowWindow&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">pClientID</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">pClientID</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline">  ;using this isntead WinShow cuz of A_WinDelay </span>
+
+
+<span class="w">   </span><span class="nb">if </span><span class="n">pDockDef</span> <span class="o">=</span> 
+   <span class="p">{</span> 
+<span class="w">      </span><span class="nb">WinGetPos</span> <span class="n">hX</span><span class="p">,</span> <span class="n">hY</span><span class="p">,,,</span> <span class="n">ahk_id</span> <span class="nv">%Dock_HostID%</span> 
+<span class="w">      </span><span class="nb">WinGetPos</span> <span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">,,,</span> <span class="n">ahk_id</span> <span class="nv">%pClientID%</span> 
+      <span class="n">pDockDef</span> :<span class="o">=</span> <span class="s">&quot;0,0,&quot;</span> <span class="n">cX</span> <span class="o">-</span> <span class="n">hX</span> <span class="s">&quot;,  0,0,&quot;</span> <span class="n">cY</span> <span class="o">-</span> <span class="n">hY</span> 
+   <span class="p">}</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">   ;add new dock client if it not exists, or update its dock settings if it exists </span>
+   <span class="n">pDockDef</span> <span class="o">.=</span> <span class="s">&quot;,0,0,0,0&quot;</span><span class="c-Singleline">      ;if user skiped last 4 params, add them here. If user gave 10 params, bottom loop will exit anyway. </span>
+<span class="w">   </span><span class="nb">loop</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">pDockDef</span><span class="p">,</span> `<span class="p">,,</span><span class="nv">%A_Space%%A_Tab%</span> 
+<span class="w">         </span><span class="nb">if </span><span class="nv">A_Index</span> <span class="o">&gt;</span> <span class="mi">10</span>       
+<span class="w">            </span><span class="nb">break</span> 
+<span class="w">         </span><span class="nb">else</span> <span class="n">Dock_</span><span class="nv">%pClientID%</span><span class="n">_</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="nv">A_LoopField</span> 
+
+
+	<span class="n">if</span> !<span class="n">Dock_</span><span class="nv">%pClientID%</span> <span class="p">{</span>
+		<span class="n">Dock_</span><span class="nv">%pClientID%</span>   :<span class="o">=</span> <span class="o">++</span><span class="n">cnt</span><span class="p">,</span> 
+		<span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%cnt%</span><span class="p">]</span> :<span class="o">=</span> <span class="n">pClientId</span> 
+		<span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">++</span> 
+	<span class="p">}</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">   ;start the dock if its not already started</span>
+   <span class="n">If</span> !<span class="n">init</span> <span class="p">{</span> 
+	
+      <span class="n">init</span><span class="o">++</span><span class="p">,</span> <span class="n">Dock_hookProcAdr</span> :<span class="o">=</span> <span class="nf">RegisterCallback(</span><span class="s">&quot;Dock_HookProc&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">return</span> <span class="n">Dock_Toggle</span><span class="p">(</span><span class="nv">true</span><span class="p">)</span>	 
+   <span class="p">}</span> 
+
+   <span class="n">Dock_Update</span><span class="p">()</span>
+<span class="w">   </span><span class="nb">return</span> <span class="s">&quot;OK&quot;</span> 
+<span class="p">}</span><span class="c-Singleline">       </span>
+
+
+<span class="c-Singleline">;----------------------------------------------------------------------------------------------------- </span>
+<span class="c-Singleline">;Function:  Dock_Shutdown </span>
+<span class="c-Singleline">;			Uninitialize dock module. This will clear all clients and internal data and unregister hooks. </span>
+<span class="c-Singleline">;			Dock_OnHostDeath, Dock_HostId are kept on user values. </span>
+<span class="c-Singleline">; </span>
+<span class="n">Dock_Shutdown</span><span class="p">()</span> <span class="p">{</span> 
+   <span class="n">local</span> <span class="n">cID</span> 
+
+   <span class="n">Dock_Toggle</span><span class="p">(</span><span class="nv">false</span><span class="p">)</span> 
+   <span class="nf">DllCall(</span><span class="s">&quot;GlobalFree&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">Dock_hookProcAdr</span><span class="p">),</span> <span class="n">Dock_hookProcAdr</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span> 
+   <span class="n">Dock</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">         ;reset dock function </span>
+
+<span class="c-Singleline">   ;erase clients </span>
+<span class="w">   </span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+   <span class="p">{</span> 
+      <span class="n">cId</span> :<span class="o">=</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%A_Index%</span><span class="p">],</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%A_Index%</span><span class="p">]</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span> 
+      <span class="n">Dock_</span><span class="nv">%cID%</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span> 
+<span class="w">      </span><span class="nb">loop</span><span class="p">,</span> <span class="mi">10</span> 
+         <span class="n">Dock_</span><span class="nv">%cID%</span><span class="n">_</span><span class="nv">%A_Index%</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span> 
+   <span class="p">}</span>
+<span class="p">}</span><span class="c-Singleline">    </span>
+
+<span class="c-Singleline">;----------------------------------------------------------------------------------------------------- </span>
+<span class="c-Singleline">;Function: Dock_Toggle </span>
+<span class="c-Singleline">;          Toggles the dock module ON or OFF.</span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;Parameters: </span>
+<span class="c-Singleline">;         enable - Set to true to set the dock ON, set to FALSE to turn it OFF. Skip to toggle. </span>
+<span class="c-Singleline">; </span>
+<span class="c-Singleline">;Remarks: </span>
+<span class="c-Singleline">;         Use Dock_Toggle(false) to suspend the dock module (to unregister hook), leaving its internal data in place. </span>
+<span class="c-Singleline">;         This is different from Dock_Shutdown as latest removes module completely from memory and </span>
+<span class="c-Singleline">;         unregisters its clients. </span>
+<span class="c-Singleline">;          </span>
+<span class="c-Singleline">;         You can also use this function to temporary disable module when you don&#39;t want dock update routine to interrupt your time critical sections. </span>
+<span class="c-Singleline">;</span>
+<span class="n">Dock_Toggle</span><span class="p">(</span> <span class="n">enable</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="p">{</span> 
+   <span class="n">global</span> 
+
+<span class="w">   </span><span class="nb">if </span><span class="n">Dock_hookProcAdr</span> <span class="o">=</span> 
+<span class="w">      </span><span class="nb">return</span> <span class="s">&quot;ERR - Dock must be loaded.&quot;</span> 
+
+<span class="w">   </span><span class="nb">if </span><span class="n">enable</span> <span class="o">=</span> 
+      <span class="n">enable</span> :<span class="o">=</span> !<span class="n">Dock_hHook1</span> 
+<span class="w">   </span><span class="nb">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">enable</span> <span class="o">&amp;&amp;</span> <span class="n">Dock_hHook1</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">return</span>	<span class="s">&quot;ERR - Dock already enabled&quot;</span>
+
+   <span class="n">if</span> !<span class="n">enable</span> 
+      <span class="n">API_UnhookWinEvent</span><span class="p">(</span><span class="n">Dock_hHook1</span><span class="p">),</span> <span class="n">API_UnhookWinEvent</span><span class="p">(</span><span class="n">Dock_hHook2</span><span class="p">),</span> <span class="n">API_UnhookWinEvent</span><span class="p">(</span><span class="n">Dock_hHook3</span><span class="p">),</span> <span class="n">Dock_hHook3</span> :<span class="o">=</span> <span class="n">Dock_hHook1</span> :<span class="o">=</span> <span class="n">Dock_hHook2</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span> 
+<span class="w">   </span><span class="nb">else</span>  <span class="p">{</span> 
+      <span class="n">Dock_hHook1</span> :<span class="o">=</span> <span class="n">API_SetWinEventHook</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">Dock_hookProcAdr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">				; EVENT_SYSTEM_FOREGROUND </span>
+      <span class="n">Dock_hHook2</span> :<span class="o">=</span> <span class="n">API_SetWinEventHook</span><span class="p">(</span><span class="mh">0x800B</span><span class="p">,</span><span class="mh">0x800B</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">Dock_hookProcAdr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">	; EVENT_OBJECT_LOCATIONCHANGE </span>
+	  <span class="n">Dock_hHook3</span> :<span class="o">=</span> <span class="n">API_SetWinEventHook</span><span class="p">(</span><span class="mh">0x8002</span><span class="p">,</span><span class="mh">0x8003</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">Dock_hookProcAdr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">	; EVENT_OBJECT_SHOW, EVENT_OBJECT_HIDE</span>
+
+      <span class="n">if</span> !<span class="p">(</span><span class="n">Dock_hHook1</span> <span class="o">&amp;&amp;</span> <span class="n">Dock_hHook2</span> <span class="o">&amp;&amp;</span> <span class="n">Dock_hHook3</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline">	   ;some of them failed, unregister everything</span>
+         <span class="n">API_UnhookWinEvent</span><span class="p">(</span><span class="n">Dock_hHook1</span><span class="p">),</span> <span class="n">API_UnhookWinEvent</span><span class="p">(</span><span class="n">Dock_hHook2</span><span class="p">),</span> <span class="n">API_UnhookWinEvent</span><span class="p">(</span><span class="n">Dock_hHook3</span><span class="p">)</span> 
+<span class="w">         </span><span class="nb">return</span> <span class="s">&quot;ERR - Hook failed&quot;</span> 
+      <span class="p">}</span> 
+
+	 <span class="n">Dock_Update</span><span class="p">()</span> 
+   <span class="p">}</span> 
+<span class="p">}</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">;==================================== INTERNAL ====================================================== </span>
+<span class="n">Dock_Update</span><span class="p">()</span> <span class="p">{</span> 
+   <span class="n">local</span> <span class="n">hX</span><span class="p">,</span> <span class="n">hY</span><span class="p">,</span> <span class="n">hW</span><span class="p">,</span> <span class="n">hh</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cw</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="n">fid</span><span class="p">,</span> <span class="n">wd</span><span class="p">,</span> <span class="n">cid</span> 
+   <span class="n">static</span> <span class="n">gid</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline">   ;fid &amp; gid are function id and global id. I use them to see if the function interupted itself. </span>
+
+   <span class="n">wd</span> :<span class="o">=</span> <span class="nv">A_WinDelay</span> 
+<span class="w">   </span><span class="nb">SetWinDelay</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> 
+   <span class="n">fid</span> :<span class="o">=</span> <span class="n">gid</span> <span class="o">+=</span> <span class="mi">1</span> 
+<span class="w">   </span><span class="nb">WinGetPos</span> <span class="n">hX</span><span class="p">,</span> <span class="n">hY</span><span class="p">,</span> <span class="n">hW</span><span class="p">,</span> <span class="n">hH</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%Dock_HostID%</span><span class="c-Singleline"> </span>
+<span class="c-Singleline">;   OutputDebug %hX% %hY% %hW% %hH%	 %event%</span>
+
+<span class="c-Singleline">   ;xhw,xw,xd,  yhh,yh,yd,  whw,wd,  hhh,hd </span>
+<span class="w">   </span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+   <span class="p">{</span> 
+      <span class="n">cId</span> :<span class="o">=</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%A_Index%</span><span class="p">]</span> 
+<span class="w">      </span><span class="nb">WinGetPos</span> <span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">,</span> <span class="n">cW</span><span class="p">,</span> <span class="n">cH</span><span class="p">,</span> <span class="n">ahk_id</span> <span class="nv">%cID%</span> 
+      <span class="n">W</span> :<span class="o">=</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_7</span><span class="o">*</span><span class="n">hW</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_8</span><span class="p">,</span>  <span class="n">H</span> :<span class="o">=</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_9</span><span class="o">*</span><span class="n">hH</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_10</span> 
+      <span class="n">X</span> :<span class="o">=</span> <span class="n">hX</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_1</span><span class="o">*</span><span class="n">hW</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_2</span><span class="o">*</span> <span class="p">(</span><span class="n">W</span> ? <span class="n">W</span> : <span class="n">cW</span><span class="p">)</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_3</span>
+      <span class="n">Y</span> :<span class="o">=</span> <span class="n">hY</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_4</span><span class="o">*</span><span class="n">hH</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_5</span><span class="o">*</span> <span class="p">(</span><span class="n">H</span> ? <span class="n">H</span> : <span class="n">cH</span><span class="p">)</span> <span class="o">+</span> <span class="n">Dock_</span><span class="nv">%cId%</span><span class="n">_6</span> 
+
+	  <span class="n">if</span> <span class="p">(</span><span class="n">fid</span> <span class="o">!=</span> <span class="n">gid</span><span class="p">)</span>   <span class="p">{</span><span class="c-Singleline">				;some newer instance of the function was running, so just return (function was interupted by itself). Without this, older instance will continue with old host window position and clients will jump to older location. This is not so visible with WinMove as it is very fast, but SetWindowPos shows this in full light. </span>
+<span class="w">         </span><span class="nb">SetWinDelay</span><span class="p">,</span> <span class="nv">%wd%</span> 
+<span class="w">		 </span><span class="nb">break</span>
+      <span class="p">}</span> 
+
+      <span class="n">if</span> <span class="p">(</span><span class="n">W</span><span class="o">+</span><span class="n">H</span><span class="p">)</span>				
+<span class="w">           </span><span class="nb">WinMove</span> <span class="n">ahk_id</span> <span class="nv">%cId%</span><span class="p">,,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">W</span> ? <span class="n">W</span> : <span class="s">&quot;&quot;</span> <span class="p">,</span><span class="n">H</span> ? <span class="n">H</span> : <span class="s">&quot;&quot;</span> 
+<span class="w">      </span><span class="nb">else</span> <span class="n">WinMove</span> <span class="n">ahk_id</span> <span class="nv">%cId%</span><span class="p">,,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span> 
+  <span class="p">}</span> 
+<span class="w">	</span><span class="nb">SetTimer</span><span class="p">,</span> <span class="n">Dock_SetZOrder</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="c-Singleline">		;set z-order in another thread (protects also from spaming z-order changes when host is rapidly moved).</span>
+<span class="w">	</span><span class="nb">SetWinDelay</span><span class="p">,</span> <span class="nv">%wd%</span> 
+<span class="p">}</span> 
+
+
+<span class="nl">Dock_SetZOrder:</span> 
+<span class="w">   </span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+      <span class="nf">DllCall(</span><span class="s">&quot;SetWindowPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%A_Index%</span><span class="p">],</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Dock_HostID</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span><span class="c-Singleline"> ;SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE</span>
+
+<span class="c-Singleline">;   OutputDebug setzorder</span>
+<span class="nb">return</span> 
+
+<span class="nl">Dock_SetZOrder_OnClientFocus:</span>
+<span class="w">   </span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+      <span class="nf">DllCall(</span><span class="s">&quot;SetWindowPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%A_Index%</span><span class="p">],</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">A_Client</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span><span class="c-Singleline"> ;SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE</span>
+
+  <span class="nf">DllCall(</span><span class="s">&quot;SetWindowPos&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Dock_HostID</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">A_Client</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span><span class="c-Singleline"> ;SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE</span>
+<span class="c-Singleline">;  OutputDebug onclientfocus</span>
+<span class="nb">return</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">;-----------------------------------------------------------------------------------------</span>
+<span class="c-Singleline">; Events :</span>
+<span class="c-Singleline">;			3	  - Host is set to foreground</span>
+<span class="c-Singleline">;			32779 - Location change</span>
+<span class="c-Singleline">;			32770 - Show</span>
+<span class="c-Singleline">;			32771 - Hide (also called on exit)</span>
+<span class="c-Singleline">;</span>
+<span class="n">Dock_HookProc</span><span class="p">(</span><span class="n">hWinEventHook</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">hwnd</span><span class="p">,</span> <span class="n">idObject</span><span class="p">,</span> <span class="n">idChild</span><span class="p">,</span> <span class="n">dwEventThread</span><span class="p">,</span> <span class="n">dwmsEventTime</span> <span class="p">)</span> <span class="p">{</span> 
+   <span class="n">global</span> 
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">event</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> 
+<span class="w">		</span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+ 		  <span class="n">if</span> <span class="p">(</span><span class="n">hwnd</span> <span class="o">=</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%A_Index%</span><span class="p">])</span>
+		  <span class="p">{</span>
+			   <span class="n">A_Client</span> :<span class="o">=</span> <span class="n">hwnd</span>
+<span class="w">			   </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="n">Dock_SetZOrder_OnClientFocus</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span> 
+<span class="w">			   </span><span class="nb">return</span>
+		  <span class="p">}</span>			
+
+	<span class="n">If</span> <span class="p">(</span><span class="n">hwnd</span> <span class="o">!=</span> <span class="n">Dock_HostID</span><span class="p">){</span>				
+      <span class="n">if</span> !<span class="nf">WinExist(</span><span class="s">&quot;ahk_id &quot;</span> <span class="n">Dock_HostID</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nf">IsLabel(</span><span class="n">Dock_OnHostDeath</span><span class="p">)</span>
+	  <span class="p">{</span>
+ 		 <span class="n">Dock_Toggle</span><span class="p">(</span><span class="nv">false</span><span class="p">)</span>
+<span class="w">		 </span><span class="nb">gosub</span> <span class="nv">%Dock_OnHostDeath%</span> 
+	  <span class="p">}</span>
+<span class="w">	  </span><span class="nb">return</span> 
+	<span class="p">}</span> 
+
+	<span class="n">if</span> <span class="p">(</span><span class="n">idChild</span> <span class="ow">or</span> <span class="n">idObject</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">return</span>
+<span class="w">	</span>
+
+<span class="w">	</span><span class="nb">if </span><span class="n">event</span> <span class="ow">in</span> <span class="mi">32770</span><span class="p">,</span><span class="mi">32771</span>
+	<span class="p">{</span>
+	   <span class="n">event</span> :<span class="o">=</span> <span class="p">(</span><span class="n">event</span> <span class="o">-</span> <span class="mi">32771</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">5</span>
+<span class="w">	   </span><span class="nb">loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+			<span class="nf">DllCall(</span><span class="s">&quot;ShowWindow&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Dock_aClient</span><span class="p">[</span><span class="nv">%A_Index%</span><span class="p">],</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span>  <span class="n">event</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="n">Dock_Update</span><span class="p">()</span> 
+<span class="p">}</span> 
+
+
+<span class="n">API_SetWinEventHook</span><span class="p">(</span><span class="n">eventMin</span><span class="p">,</span> <span class="n">eventMax</span><span class="p">,</span> <span class="n">hmodWinEventProc</span><span class="p">,</span> <span class="n">lpfnWinEventProc</span><span class="p">,</span> <span class="n">idProcess</span><span class="p">,</span> <span class="n">idThread</span><span class="p">,</span> <span class="n">dwFlags</span><span class="p">)</span> <span class="p">{</span> 
+   <span class="nf">DllCall(</span><span class="s">&quot;CoInitialize&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+<span class="w">   </span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;SetWinEventHook&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">eventMin</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">eventMax</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hmodWinEventProc</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">lpfnWinEventProc</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">idProcess</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">idThread</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">dwFlags</span><span class="p">)</span> 
+<span class="p">}</span> 
+
+<span class="n">API_UnhookWinEvent</span><span class="p">(</span> <span class="n">hWinEventHook</span> <span class="p">)</span> <span class="p">{</span> 
+<span class="w">   </span><span class="nb">return</span> <span class="nf">DllCall(</span><span class="s">&quot;UnhookWinEvent&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hWinEventHook</span><span class="p">)</span> 
+<span class="p">}</span><span class="c-Singleline"> </span>
+
+<span class="c-Singleline">;--------------------------------------------------------------------------------------------------------------------- </span>
+<span class="c-Singleline">; Group: Presets</span>
+<span class="c-Singleline">;		 This section contains some common docking setups. You can just copy/paste dock definition strings in your script.</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;		0,-1,0,   0,0,0					- top left, own size</span>
+<span class="c-Singleline">;		0,-1,10,  0,0,0					- top left, own size, 10px padding </span>
+<span class="c-Singleline">;		0,-1,0,   0,0,0,   0,0,   1,0	- top left, use host&#39;s height, keep own width</span>
+<span class="c-Singleline">;		0,-1,20,  0,0,0,   0,50,  1,0	- top left, use host&#39;s height, set width to 50 and padding to 20px</span>
+<span class="c-Singleline">;		0,-1,0,   .5,-.5,0				- middle left, keep own size</span>
+<span class="c-Singleline">;				</span>
+<span class="c-Singleline">;		0,-1,0,   1,-1,0,  0,20,  0,20	- bottom left, fixed width &amp; height to 20px</span>
+<span class="c-Singleline">;		0,-1,0,   1,-1,0,  0,0,  .5,0   - bottom left, keep height half of the Host&#39;s height, keep own width</span>
+<span class="c-Singleline">;		1,-1,0,   1,0,0,   .25,0  .25,0	- bottom right, width and height 1/5 of the Host</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;		0,0,0,	  1,0,0,    1,0,  0,100 - below the host, use host&#39;s width, height = 100</span>
+<span class="c-Singleline">;		0,0,0,	  0,-1,-5,  1,0   	    - above the host, use host&#39;s width, keep own height, 5px padding</span>
+<span class="c-Singleline">;		.5,-.5,0, 0,-1,0,   0,200, 0,30	- center above the host, width=200, height=30</span>
+<span class="c-Singleline">;		.5,-.5,0, 1,0,0,   0.3,0, 0,30	- center bellow the host, use 1/3 Host&#39;s width, height=30</span>
+<span class="c-Singleline">;</span>
+<span class="c-Singleline">;		1,0,0,   0,0,0					- top right, own size</span>
+<span class="c-Singleline">;		1,0,0,   0,0,0,     0,40,  1,0  - top right, use host&#39;s height, width = 40</span>
+<span class="c-Singleline">;       1,0,0,	 .5,-.5,0				- middle right, keep own size</span>
+
+<span class="c-Singleline">;--------------------------------------------------------------------------------------------------------------------- </span>
+<span class="c-Singleline">; Group: About </span>
+<span class="c-Singleline">;      o Ver 1.0 by majkinetor. See http://www.autohotkey.com/forum/topic19400.html </span>
+<span class="c-Singleline">;	   o Thank You&#39;s: Laszlo, JGR, Joy2World, bmcclure </span>
+<span class="c-Singleline">;      o Licenced under Creative Commons Attribution-Noncommercial &lt;http://creativecommons.org/licenses/by-nc/3.0/&gt;.</span>
+</pre></div>

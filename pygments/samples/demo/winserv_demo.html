@@ -1,0 +1,32 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include WinServ.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">;Start the Task Scheduler service by using its Service Name</span>
+<span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">WinServ</span><span class="p">(</span><span class="s">&quot;Schedule&quot;</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span><span class="c-Singleline"> ;Returns True if started successfully.</span>
+
+<span class="c-Singleline">; More Examples:</span>
+<span class="cm">/*</span>
+<span class="cm">;Start the Task Scheduler service by using its Service Name</span>
+<span class="cm">WinServ(&quot;Schedule&quot;, True) ;Returns True if started successfully.</span>
+
+<span class="cm">;Stop the Task Scheduler service by using its Display Name</span>
+<span class="cm">WinServ(&quot;Task Scheduler&quot;, False) ;Returns True if stopped successfully.</span>
+
+<span class="cm">;Start the Windows Time service silently</span>
+<span class="cm">WinServ(&quot;Windows time&quot;, True, True) ;No popups</span>
+
+<span class="cm">;Start the Task Scheduler service on remote computer name ZOMBIE</span>
+<span class="cm">WinServ(&quot;Schedule&quot;, True, False, &quot;ZOMBIE&quot;) ;Returns True if started successfully.</span>
+
+<span class="cm">;Check if the WebClient service is running</span>
+<span class="cm">If WinServ(&quot;WebClient&quot;)</span>
+<span class="cm">{   MsgBox, WebClient is up &amp; running</span>
+<span class="cm">   ;Do Something</span>
+<span class="cm">}</span>
+
+<span class="cm">;Toggle the DNS Client service</span>
+<span class="cm">WinServ(&quot;DNS Client&quot;, WinServ(&quot;DNS Client&quot;) ? False : True)</span>
+<span class="cm">*/</span>
+</pre></div>

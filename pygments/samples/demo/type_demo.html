@@ -1,0 +1,20 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include type.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Example by MasterFocus, copied from source and adjusted to match renamed functions.</span>
+<span class="n">text</span> :<span class="o">=</span> <span class="s">&quot;* EXAMPLES *&quot;</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`nvar1 = &quot;</span> <span class="p">(</span> <span class="n">var1</span> :<span class="o">=</span> <span class="s">&quot;AB4D&quot;</span> <span class="p">)</span> <span class="s">&quot;: &quot;</span> <span class="n">type_var</span><span class="p">(</span> <span class="n">var1</span> <span class="p">)</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`nvar2 = &quot;</span> <span class="p">(</span> <span class="n">var2</span> :<span class="o">=</span> <span class="s">&quot;8df3K&quot;</span> <span class="p">)</span> <span class="s">&quot;: &quot;</span> <span class="n">type_var</span><span class="p">(</span> <span class="n">var2</span> <span class="p">)</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`nvar3 = &quot;</span> <span class="p">(</span> <span class="n">var3</span> :<span class="o">=</span> <span class="s">&quot;2345&quot;</span> <span class="p">)</span> <span class="s">&quot;: &quot;</span> <span class="n">type_var</span><span class="p">(</span> <span class="n">var3</span> <span class="p">)</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="s">&quot;SameTypes(var1,var2): &quot;</span> <span class="n">type_same</span><span class="p">(</span><span class="n">var1</span><span class="p">,</span><span class="n">var2</span><span class="p">)</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="s">&quot;SameTypes02(var1,var3): &quot;</span> <span class="n">type_same</span><span class="p">(</span><span class="n">var1</span><span class="p">,</span><span class="n">var3</span><span class="p">)</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="s">&quot;CommonTypes(</span><span class="se">&quot;&quot;</span><span class="s">var1,var2,var3</span><span class="se">&quot;&quot;</span><span class="s">): &quot;</span> <span class="n">type_common</span><span class="p">(</span><span class="s">&quot;var1,var2,var3&quot;</span><span class="p">)</span>
+<span class="n">text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="s">&quot;CommonTypes(</span><span class="se">&quot;&quot;</span><span class="s">var3,var1,var2</span><span class="se">&quot;&quot;</span><span class="s">): &quot;</span> <span class="n">type_common</span><span class="p">(</span><span class="s">&quot;var3,var1,var2&quot;</span><span class="p">)</span>
+
+<span class="nb">MsgBox</span> <span class="nv">%text%</span>
+</pre></div>

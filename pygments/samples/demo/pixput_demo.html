@@ -1,0 +1,38 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include PixPut.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Example by SKAN, copied from his first posting at discussion page.</span>
+<span class="nb">#SingleInstance</span><span class="p">,</span> <span class="n">Force</span>
+<span class="nb">SetBatchLines</span> <span class="o">-</span><span class="mi">1</span>
+<span class="nb">Gui</span> <span class="o">+</span><span class="n">LastFound</span> <span class="o">-</span><span class="n">Caption</span>
+<span class="n">Gui1</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">w640</span> <span class="n">h480</span>
+
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0xFF0000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">2</span> <span class="p">)</span><span class="c-Singleline">   ; Frame Top</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0xFF0000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">480</span> <span class="p">)</span><span class="c-Singleline">   ; Frame Left</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0xAA0000</span><span class="p">,</span> <span class="mi">638</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">480</span> <span class="p">)</span><span class="c-Singleline"> ; Frame Right</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0xAA0000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">478</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">2</span> <span class="p">)</span><span class="c-Singleline"> ; Frame Bottom</span>
+
+<span class="c-Singleline">; Create Vertical Lines</span>
+<span class="nb">Loop</span> <span class="mi">309</span>
+   <span class="n">BGR</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;shlwapi.dll\ColorHLSToRGB&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span><span class="nv">A_Index</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span><span class="mi">120</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span><span class="mi">240</span> <span class="p">)</span>
+ <span class="p">,</span> <span class="n">RGB</span> :<span class="o">=</span> <span class="p">(</span> <span class="n">BGR</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span> <span class="o">|</span> <span class="p">((</span> <span class="n">BGR</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="n">BGR</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span> <span class="p">)</span>
+ <span class="p">,</span> <span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="n">BGR</span><span class="p">,</span> <span class="mi">10</span><span class="o">+</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">*</span><span class="mi">2</span><span class="p">),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">25</span> <span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Create Solid Blocks</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0xFF0000</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span> <span class="p">)</span><span class="c-Singleline"> ; R</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0x00FF00</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span> <span class="p">)</span><span class="c-Singleline"> ; G</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0x0000FF</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span> <span class="p">)</span><span class="c-Singleline"> ; B</span>
+
+<span class="c-Singleline">; Create Horizontal Lines</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0xFF00FF</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">461</span><span class="p">,</span> <span class="mi">620</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span><span class="c-Singleline">    ; C</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0xFFFF00</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">462</span><span class="p">,</span> <span class="mi">620</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span><span class="c-Singleline">    ; Y</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0x00FFFF</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">463</span><span class="p">,</span> <span class="mi">620</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span><span class="c-Singleline">    ; M</span>
+<span class="n">PixPut</span><span class="p">(</span> <span class="n">Gui1</span><span class="p">,</span> <span class="mh">0x000000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">464</span><span class="p">,</span> <span class="mi">620</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span><span class="c-Singleline">    ; K</span>
+<span class="nb">Return</span>
+
+<span class="nl">GuiEscape:</span>
+<span class="nb">ExitApp</span>
+</pre></div>

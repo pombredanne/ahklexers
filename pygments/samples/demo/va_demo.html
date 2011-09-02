@@ -1,0 +1,28 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include COM.ahk</span>
+<span class="c-Singleline">; #Include VA.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+
+<span class="n">COM_Init</span><span class="p">()</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Get the master volume of the default playback device.</span>
+<span class="n">volume</span> :<span class="o">=</span> <span class="n">VA_GetMasterVolume</span><span class="p">()</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Get the volume of the first and second channels.</span>
+<span class="n">volume1</span> :<span class="o">=</span> <span class="n">VA_GetMasterVolume</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">volume2</span> :<span class="o">=</span> <span class="n">VA_GetMasterVolume</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Get the master volume of a device by name.</span>
+<span class="n">lineout_volume</span> :<span class="o">=</span> <span class="n">VA_GetMasterVolume</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;Line Out&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Get the master volume of the default recording device.</span>
+<span class="n">recording_volume</span> :<span class="o">=</span> <span class="n">VA_GetMasterVolume</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;capture&quot;</span><span class="p">)</span>
+
+<span class="nb">MsgBox</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;Playback volume:`t&quot;</span> <span class="n">volume</span>
+        <span class="o">.</span> <span class="s">&quot;`n  Channel 1:`t&quot;</span> <span class="n">volume1</span>
+        <span class="o">.</span> <span class="s">&quot;`n  Channel 2:`t&quot;</span> <span class="n">volume2</span>
+        <span class="o">.</span> <span class="s">&quot;`nLine Out volume:`t&quot;</span> <span class="n">lineout_volume</span>
+        <span class="o">.</span> <span class="s">&quot;`nRecording volume:`t&quot;</span> <span class="n">recording_volume</span>
+        
+</pre></div>

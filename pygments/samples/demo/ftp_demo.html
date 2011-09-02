@@ -1,0 +1,40 @@
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ftp.ahk</span>
+<span class="nb">#NoEnv</span>
+<span class="nb">SendMode</span> <span class="n">Input</span>
+<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; General settings</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">www</span><span class="o">.</span><span class="n">autohotkey</span><span class="o">.</span><span class="n">net</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="n">username</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">password</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">file_to_upload</span> <span class="o">=</span> <span class="nv">%A_ScriptName%</span>
+<span class="n">file_remote_path</span> <span class="o">=</span> <span class="nv">%A_ScriptName%</span>
+
+<span class="n">file_to_download</span> <span class="o">=</span> <span class="n">lib</span><span class="o">/</span><span class="n">path</span><span class="o">.</span><span class="n">ahk</span>
+<span class="n">file_local_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">ahk</span><span class="c-Singleline"></span>
+
+<span class="c-Singleline">; Start the processes</span>
+<span class="nb">GoSub</span><span class="p">,</span> <span class="n">Upload</span>
+<span class="nb">GoSub</span><span class="p">,</span> <span class="n">Download</span>
+<span class="nb">Return</span>
+
+<span class="nl">Upload:</span>
+<span class="nl">hConnect:</span><span class="o">=</span><span class="n">FTP_Open</span><span class="p">(</span><span class="n">Server</span><span class="p">,</span> <span class="n">Port</span><span class="p">,</span> <span class="n">Username</span><span class="p">,</span> <span class="n">Password</span><span class="p">)</span>
+<span class="n">FTP_PutFile</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">file_to_upload</span><span class="p">,</span> <span class="n">file_remote_path</span><span class="p">)</span>
+<span class="n">FTP_CloseSocket</span><span class="p">(</span><span class="n">hConnect</span><span class="p">)</span>
+<span class="n">FTP_Close</span><span class="p">()</span>
+<span class="nb">MsgBox</span> <span class="n">Upload</span> <span class="n">completed</span><span class="o">.</span>
+<span class="nb">Return</span>
+
+<span class="nl">Download:</span>
+<span class="n">NewFile</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">ahk</span>
+<span class="n">RemoteFile</span> <span class="o">=</span> <span class="n">lib</span><span class="o">/</span><span class="n">path</span><span class="o">.</span><span class="n">ahk</span>
+<span class="nl">hConnect:</span><span class="o">=</span><span class="n">FTP_Open</span><span class="p">(</span><span class="n">Server</span><span class="p">,</span> <span class="n">Port</span><span class="p">,</span> <span class="n">Username</span><span class="p">,</span> <span class="n">Password</span><span class="p">)</span>
+<span class="n">FTP_GetFile</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">file_to_download</span><span class="p">,</span> <span class="n">file_local_path</span><span class="p">)</span>
+<span class="n">FTP_CloseSocket</span><span class="p">(</span><span class="n">hConnect</span><span class="p">)</span>
+<span class="n">FTP_Close</span><span class="p">()</span>
+<span class="nb">MsgBox</span> <span class="n">Download</span> <span class="n">completed</span><span class="o">.</span>
+<span class="nb">Return</span>
+</pre></div>
