@@ -66,7 +66,7 @@
    <span class="n">Save</span> <span class="o">:=</span> <span class="nv">%ArrayName%%FromIdx%</span>
    <span class="n">pgArray_Shift</span><span class="p">(</span><span class="n">ArrayName</span><span class="p">,</span> <span class="n">FromIdx</span><span class="p">)</span>
    <span class="n">pgArray_Insert</span><span class="p">(</span><span class="n">ArrayName</span><span class="p">,</span> <span class="n">ToIdx</span><span class="p">,</span> <span class="n">Save</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">return</span> <span class="nf">Abs(</span><span class="n">FromIdx</span><span class="o">-</span><span class="n">ToIdx</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">return</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">FromIdx</span><span class="o">-</span><span class="n">ToIdx</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">pgArray_Swap</span><span class="p">(</span> <span class="n">ByRef</span> <span class="n">Var1</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Var2</span> <span class="p">)</span>

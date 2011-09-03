@@ -135,14 +135,14 @@
 <span class="w">    </span><span class="nl">l_Return:</span><span class="o">=</span><span class="n">MCI_SendString</span><span class="p">(</span><span class="s">&quot;close &quot;</span> <span class="o">.</span> <span class="n">p_lpszDeviceID</span> <span class="o">.</span> <span class="s">&quot; wait&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Turn off monitoring of MM_MCINOTIFY message?</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">OnMessage(</span><span class="n">MM_MCINOTIFY</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;MCI_Notify&quot;</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">OnMessage</span><span class="p">(</span><span class="n">MM_MCINOTIFY</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;MCI_Notify&quot;</span>
         <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ;-- Don&#39;t proceed unless all MCI devices are closed</span>
         <span class="n">MCI_SendString</span><span class="p">(</span><span class="s">&quot;sysinfo all quantity open&quot;</span><span class="p">,</span><span class="n">l_OpenMCIDevices</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">if </span><span class="n">l_OpenMCIDevices</span><span class="o">=</span><span class="mi">0</span>
             <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;-- Disable monitoring</span>
-            <span class="nf">OnMessage(</span><span class="n">MM_MCINOTIFY</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+            <span class="nf">OnMessage</span><span class="p">(</span><span class="n">MM_MCINOTIFY</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -324,7 +324,7 @@
             <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">        ;-- &quot;Type&quot; flag not defined?</span>
-<span class="w">        </span><span class="nb">if </span><span class="nf">InStr(</span><span class="nv">A_Space</span> <span class="o">.</span> <span class="n">p_Flags</span> <span class="o">.</span> <span class="nv">A_Space</span><span class="p">,</span><span class="s">&quot; type &quot;</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="nb">if </span><span class="nf">InStr</span><span class="p">(</span><span class="nv">A_Space</span> <span class="o">.</span> <span class="n">p_Flags</span> <span class="o">.</span> <span class="nv">A_Space</span><span class="p">,</span><span class="s">&quot; type &quot;</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
             <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;-- Registered file extension?</span>
 <span class="w">            </span><span class="nb">SplitPath</span> <span class="n">p_MediaFile</span><span class="p">,,,</span><span class="n">l_Extension</span><span class="c-Singleline"></span>
@@ -445,7 +445,7 @@
 
 <span class="c-Singleline">    ;-- Parameters</span>
     <span class="n">p_Drive</span><span class="o">=</span><span class="nv">%p_Drive%</span><span class="c-Singleline">  ;-- Autotrim</span>
-<span class="w">    </span><span class="nl">p_Drive:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">p_Drive</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">p_Drive:</span><span class="o">=</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">p_Drive</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">if </span><span class="n">p_Drive</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Alpha</span>
 <span class="w">        </span><span class="nl">p_Drive:</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="c-Singleline"></span>
 
@@ -466,7 +466,7 @@
             <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">        ;-- Assign the first CDROM drive</span>
-<span class="w">        </span><span class="nl">p_Drive:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">l_ListOfCDROMDrives</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">p_Drive:</span><span class="o">=</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">l_ListOfCDROMDrives</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Is this a CDROM drive?</span>
@@ -694,7 +694,7 @@
         <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Call developer function</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">IsFunc(</span><span class="n">s_Callback</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">IsFunc</span><span class="p">(</span><span class="n">s_Callback</span><span class="p">)</span>
         <span class="nv">%s_Callback%</span><span class="p">(</span><span class="n">wParam</span><span class="p">)</span>
 
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span>
@@ -872,7 +872,7 @@
 
 <span class="c-Singleline">    ;-- Notify</span>
     <span class="n">p_Callback</span><span class="o">=</span><span class="nv">%p_Callback%</span><span class="c-Singleline">  ;-- AutoTrim</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_Callback</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="n">p_Callback</span><span class="p">)</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nl">l_CmdString:</span><span class="o">=</span><span class="n">l_CmdString</span> <span class="o">.</span> <span class="s">&quot; notify&quot;</span><span class="c-Singleline"></span>
 
@@ -880,7 +880,7 @@
         <span class="n">MCI_Notify</span><span class="p">(</span><span class="n">p_Callback</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">        ;-- Monitor for MM_MCINOTIFY message</span>
-        <span class="nf">OnMessage(</span><span class="n">MM_MCINOTIFY</span><span class="p">,</span><span class="s">&quot;MCI_Notify&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+        <span class="nf">OnMessage</span><span class="p">(</span><span class="n">MM_MCINOTIFY</span><span class="p">,</span><span class="s">&quot;MCI_Notify&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;-- Note:  If the MM_MCINOTIFY message was monitored elsewhere,</span>
 <span class="c-Singleline">            ;   this statement will override it.</span>
         <span class="p">}</span><span class="c-Singleline"></span>
@@ -888,13 +888,13 @@
 <span class="c-Singleline">    ;-- Callback handle</span>
 <span class="w">    </span><span class="nb">if </span><span class="ow">not</span> <span class="n">p_hwndCallback</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">if </span><span class="nf">InStr(</span><span class="nv">A_Space</span> <span class="o">.</span> <span class="n">l_CmdString</span> <span class="o">.</span> <span class="nv">A_Space</span><span class="p">,</span><span class="s">&quot; notify &quot;</span><span class="p">)</span>
-        <span class="ow">or</span> <span class="nf">StrLen(</span><span class="n">p_Callback</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">if </span><span class="nf">InStr</span><span class="p">(</span><span class="nv">A_Space</span> <span class="o">.</span> <span class="n">l_CmdString</span> <span class="o">.</span> <span class="nv">A_Space</span><span class="p">,</span><span class="s">&quot; notify &quot;</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">p_Callback</span><span class="p">)</span>
             <span class="p">{</span>
 <span class="w">            </span><span class="nl">l_DetectHiddenWindows:</span><span class="o">=</span><span class="nv">A_DetectHiddenWindows</span>
 <span class="w">            </span><span class="nb">DetectHiddenWindows</span> <span class="n">On</span>
 <span class="w">            </span><span class="nb">Process</span> <span class="n">Exist</span>
-<span class="w">            </span><span class="nl">p_hwndCallback:</span><span class="o">=</span><span class="nf">WinExist(</span><span class="s">&quot;ahk_pid &quot;</span> <span class="o">.</span> <span class="nv">ErrorLevel</span> <span class="o">.</span> <span class="s">&quot; ahk_class AutoHotkey&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="nl">p_hwndCallback:</span><span class="o">=</span><span class="nf">WinExist</span><span class="p">(</span><span class="s">&quot;ahk_pid &quot;</span> <span class="o">.</span> <span class="nv">ErrorLevel</span> <span class="o">.</span> <span class="s">&quot; ahk_class AutoHotkey&quot;</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">DetectHiddenWindows</span> <span class="nv">%l_DetectHiddenWindows%</span>
             <span class="p">}</span>
         <span class="p">}</span><span class="c-Singleline"></span>
@@ -1149,7 +1149,7 @@
 <span class="w">        </span><span class="nb">if </span><span class="n">p_Position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Number</span>
             <span class="n">p_Position</span><span class="o">=</span><span class="mi">0</span>
 
-<span class="w">        </span><span class="nl">p_Position:</span><span class="o">=</span><span class="nf">Round(</span><span class="n">p_Position</span><span class="p">)</span><span class="c-Singleline">  ;-- Integer values only</span>
+<span class="w">        </span><span class="nl">p_Position:</span><span class="o">=</span><span class="nf">Round</span><span class="p">(</span><span class="n">p_Position</span><span class="p">)</span><span class="c-Singleline">  ;-- Integer values only</span>
 
         <span class="n">if</span> <span class="p">(</span><span class="n">p_Position</span><span class="o">&gt;</span><span class="n">MCI_Length</span><span class="p">(</span><span class="n">p_lpszDeviceID</span><span class="p">))</span>
 <span class="w">            </span><span class="nl">p_Position:</span><span class="o">=</span><span class="s">&quot;end&quot;</span>
@@ -1162,7 +1162,7 @@
 
 
 <span class="c-Singleline">    ;-- Seek</span>
-    <span class="n">l_CmdString</span><span class="o">=</span><span class="n">seek</span> <span class="nv">%p_lpszDeviceID%</span> <span class="n">to</span> <span class="nv">%p_Position%</span> <span class="n">wait</span>
+    <span class="n">l_CmdString</span><span class="o">=</span><span class="nf">seek</span> <span class="nv">%p_lpszDeviceID%</span> <span class="n">to</span> <span class="nv">%p_Position%</span> <span class="n">wait</span>
 <span class="w">    </span><span class="nl">l_Return:</span><span class="o">=</span><span class="n">MCI_SendString</span><span class="p">(</span><span class="n">l_CmdString</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Return to mode before seek</span>
@@ -1473,7 +1473,7 @@
 <span class="w">        </span><span class="nb">if </span><span class="n">p_ms</span><span class="o">&lt;</span><span class="mi">0</span>
             <span class="n">l_Seconds</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">         </span><span class="nb">else</span>
-<span class="w">            </span><span class="nl">l_Seconds:</span><span class="o">=</span><span class="nf">floor(</span><span class="n">p_ms</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="w">            </span><span class="nl">l_Seconds:</span><span class="o">=</span><span class="nf">floor</span><span class="p">(</span><span class="n">p_ms</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Initialize and format</span>
     <span class="n">l_Time</span><span class="o">=</span><span class="mi">20121212</span><span class="c-Singleline">  ;-- Midnight of an arbitrary date</span>
@@ -1484,13 +1484,13 @@
 
 <span class="c-Singleline">    ;-- Trim insignificant leading characters</span>
 <span class="w">    </span><span class="nb">loop</span>
-<span class="w">        </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">l_FormattedTime</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">p_MinimumSize</span>
+<span class="w">        </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="n">l_FormattedTime</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">p_MinimumSize</span>
 <span class="w">            </span><span class="nb">break</span>
 <span class="w">         </span><span class="nb">else</span>
-<span class="w">            </span><span class="nb">if </span><span class="nf">SubStr(</span><span class="n">l_FormattedTime</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;0&quot;</span>
+<span class="w">            </span><span class="nb">if </span><span class="nf">SubStr</span><span class="p">(</span><span class="n">l_FormattedTime</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;0&quot;</span>
 <span class="w">                </span><span class="nb">StringTrimLeft</span> <span class="n">l_FormattedTime</span><span class="p">,</span><span class="n">l_FormattedTime</span><span class="p">,</span><span class="mi">1</span>
 <span class="w">             </span><span class="nb">else</span>
-<span class="w">                </span><span class="nb">if </span><span class="nf">SubStr(</span><span class="n">l_FormattedTime</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;:&quot;</span>
+<span class="w">                </span><span class="nb">if </span><span class="nf">SubStr</span><span class="p">(</span><span class="n">l_FormattedTime</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;:&quot;</span>
 <span class="w">                    </span><span class="nb">StringTrimLeft</span> <span class="n">l_FormattedTime</span><span class="p">,</span><span class="n">l_FormattedTime</span><span class="p">,</span><span class="mi">1</span>
 <span class="w">                 </span><span class="nb">else</span>
 <span class="w">                    </span><span class="nb">break</span><span class="c-Singleline"></span>
@@ -1578,8 +1578,8 @@
 <span class="c-Singleline">;------------------------------------------------------------------------------</span>
 <span class="n">MCI_SendString</span><span class="p">(</span><span class="n">p_lpszCommand</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_lpszReturnString</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_hwndCallback</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="nf">VarSetCapacity(</span><span class="n">r_lpszReturnString</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-<span class="w">    </span><span class="nl">l_Return:</span><span class="o">=</span><span class="nf">DllCall(</span><span class="s">&quot;winmm.dll\mciSendStringA&quot;</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">r_lpszReturnString</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">l_Return:</span><span class="o">=</span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;winmm.dll\mciSendStringA&quot;</span>
                      <span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">p_lpszCommand</span><span class="c-Singleline">                   ;-- lpszCommand</span>
                      <span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">r_lpszReturnString</span><span class="c-Singleline">              ;-- lpszReturnString</span>
                      <span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="mi">100</span><span class="c-Singleline">                            ;-- cchReturn</span>
@@ -1601,8 +1601,8 @@
 <span class="c-Singleline">    ;-- Return code?</span>
 <span class="w">    </span><span class="nb">if </span><span class="n">l_Return</span>
         <span class="p">{</span>
-        <span class="nf">VarSetCapacity(</span><span class="n">l_MCIErrorString</span><span class="p">,</span><span class="mi">1024</span><span class="p">)</span>
-        <span class="nf">DllCall(</span><span class="s">&quot;winmm\mciGetErrorStringA&quot;</span>
+        <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">l_MCIErrorString</span><span class="p">,</span><span class="mi">1024</span><span class="p">)</span>
+        <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;winmm\mciGetErrorStringA&quot;</span>
                <span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">l_Return</span><span class="c-Singleline">                             ;-- MCI error number</span>
                <span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">l_MCIErrorString</span><span class="c-Singleline">                      ;-- MCI error text</span>
                <span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="mi">1024</span><span class="p">)</span><span class="c-Singleline"></span>

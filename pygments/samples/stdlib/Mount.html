@@ -137,7 +137,7 @@
 <span class="p">{</span>
 <span class="w">    </span><span class="nb">GoSub</span><span class="p">,</span> <span class="n">SetOptions@Mount</span>
 <span class="w">    </span><span class="nb">GoSub</span><span class="p">,</span> <span class="n">SetMountPath@Mount</span>
-<span class="w">    </span><span class="nb">If </span><span class="n">NOT</span> <span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="n">AND</span> <span class="nf">FileExist(</span><span class="n">Mount_GetMount</span><span class="p">(</span><span class="n">MountPath</span><span class="p">))</span>
+<span class="w">    </span><span class="nb">If </span><span class="n">NOT</span> <span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="n">AND</span> <span class="nf">FileExist</span><span class="p">(</span><span class="n">Mount_GetMount</span><span class="p">(</span><span class="n">MountPath</span><span class="p">))</span>
     <span class="p">{</span>
         <span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="o">:=</span> <span class="nv">True</span>
         <span class="n">Option</span><span class="o">?</span><span class="n">Update</span> <span class="o">:=</span> <span class="nv">True</span>
@@ -159,8 +159,8 @@
         <span class="n">Command</span> <span class="o">=</span> <span class="n">subst</span> <span class="nv">%MountPath%</span> <span class="s">&quot;%SourcePath%&quot;</span>
     <span class="p">}</span>
     
-    <span class="n">If</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="n">AND</span> <span class="n">NOT</span> <span class="nf">FileExist(</span><span class="n">MountPath</span> <span class="o">.</span> <span class="s">&quot;\&quot;</span><span class="p">)</span> <span class="n">AND</span> <span class="nf">FileExist(</span><span class="n">SourcePath</span><span class="p">))</span>
-            <span class="n">OR</span> <span class="p">(</span><span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="n">AND</span> <span class="nf">FileExist(</span><span class="n">MountPath</span><span class="p">))</span>        
+    <span class="n">If</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="n">AND</span> <span class="n">NOT</span> <span class="nf">FileExist</span><span class="p">(</span><span class="n">MountPath</span> <span class="o">.</span> <span class="s">&quot;\&quot;</span><span class="p">)</span> <span class="n">AND</span> <span class="nf">FileExist</span><span class="p">(</span><span class="n">SourcePath</span><span class="p">))</span>
+            <span class="n">OR</span> <span class="p">(</span><span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="n">AND</span> <span class="nf">FileExist</span><span class="p">(</span><span class="n">MountPath</span><span class="p">))</span>        
     <span class="p">{</span>
 <span class="w">        </span><span class="nb">RunWait</span><span class="p">,</span> <span class="s">&quot;%comspec%&quot;</span> <span class="o">/</span><span class="n">c</span> <span class="nv">%Command%</span><span class="p">,,</span> <span class="n">Hide</span> <span class="n">UseErrorLevel</span>
 <span class="w">        </span><span class="nb">If </span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="n">ERROR</span>
@@ -228,13 +228,13 @@
 <span class="c-Singleline">                ; Inner Loop for enabling the short style for grouping of options.</span>
 <span class="w">                </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="nv">A_LoopField</span>
                 <span class="p">{</span>
-<span class="w">                    </span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">OptionsFoundList</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span>
+<span class="w">                    </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">OptionsFoundList</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span>
 <span class="w">                        </span><span class="nb">Continue</span><span class="c-Singleline"></span>
 <span class="c-Singleline">                        </span>
 <span class="c-Singleline">                    ; Option?UnMount</span>
 <span class="c-Singleline">                    ; 0=creates a virtual drive from given path (default)</span>
 <span class="c-Singleline">                    ; 1=deletes the given virtual drive mounted by subst.exe</span>
-<span class="w">                    </span><span class="nb">If </span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span>
+<span class="w">                    </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;u&quot;</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span>
                     <span class="p">{</span>
                         <span class="n">Option</span><span class="o">?</span><span class="n">UnMount</span> <span class="o">:=</span> <span class="nv">True</span>
                         <span class="n">OptionsFoundList</span> <span class="o">.=</span> <span class="nv">A_LoopField</span>
@@ -276,7 +276,7 @@
     <span class="p">{</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Process all drive letters.</span>
-<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="nv">%TempFile%</span>
+<span class="w">        </span><span class="nb">Loop</span><span class="p">,</span> <span class="nf">Read</span><span class="p">,</span> <span class="nv">%TempFile%</span>
         <span class="p">{</span>        
 <span class="w">            </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">Drive</span><span class="p">,</span> <span class="nv">A_LoopReadLine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
 <span class="w">            </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nv">A_LoopReadLine</span><span class="p">,</span> <span class="mi">9</span>
@@ -297,7 +297,7 @@
 <span class="n">Mount_GetMount</span><span class="p">(</span><span class="n">pPath</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">pPath</span>
-        <span class="n">pPath</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">pPath</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;:&quot;</span>
+        <span class="n">pPath</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">pPath</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;:&quot;</span>
 <span class="w">    </span><span class="nb">Else</span>
 <span class="w">        </span><span class="nb">SplitPath</span><span class="p">,</span> <span class="n">pPath</span><span class="p">,,,,,</span> <span class="n">pPath</span>
     <span class="n">TempFile</span> <span class="o">=</span> <span class="nv">%A_Temp%</span>\<span class="p">{</span><span class="n">D74BA6E8</span><span class="o">-</span><span class="mi">2728</span><span class="o">-</span><span class="mi">4</span><span class="n">FC6</span><span class="o">-</span><span class="mi">8185</span><span class="o">-</span><span class="mi">623</span><span class="n">EA7DAD412</span><span class="p">}</span><span class="n">_</span><span class="nv">%A_Now%</span><span class="o">.~</span><span class="n">tmp</span>    
@@ -310,7 +310,7 @@
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">pPath</span>
         <span class="p">{</span>
-<span class="w">            </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="nv">%TempFile%</span>
+<span class="w">            </span><span class="nb">Loop</span><span class="p">,</span> <span class="nf">Read</span><span class="p">,</span> <span class="nv">%TempFile%</span>
             <span class="p">{</span>        
 <span class="w">                </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">MountDrive</span><span class="p">,</span> <span class="nv">A_LoopReadLine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
                 <span class="n">If</span> <span class="p">(</span><span class="n">pPath</span> <span class="o">=</span> <span class="n">MountDrive</span><span class="p">)</span>
@@ -323,11 +323,11 @@
 <span class="w">        </span><span class="nb">Else</span>
         <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ; Get first virtual drive.</span>
-<span class="w">            </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Read</span><span class="p">,</span> <span class="nv">%TempFile%</span>
+<span class="w">            </span><span class="nb">Loop</span><span class="p">,</span> <span class="nf">Read</span><span class="p">,</span> <span class="nv">%TempFile%</span>
             <span class="p">{</span>        
 <span class="w">                </span><span class="nb">DriveGet</span><span class="p">,</span> <span class="n">ActualDrives</span><span class="p">,</span> <span class="n">List</span>
-                <span class="n">MountDrive</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopReadLine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="w">                </span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">ActualDrives</span><span class="p">,</span> <span class="n">MountDrive</span><span class="p">)</span>
+                <span class="n">MountDrive</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopReadLine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">                </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">ActualDrives</span><span class="p">,</span> <span class="n">MountDrive</span><span class="p">)</span>
                 <span class="p">{</span>
                     <span class="n">MountPath</span> <span class="o">=</span> <span class="nv">%MountDrive%</span><span class="o">:</span>
 <span class="w">                    </span><span class="nb">Break</span>

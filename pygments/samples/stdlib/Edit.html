@@ -125,11 +125,11 @@
 <span class="c-Singleline">    ;-- Convert to UInt using known UInt values as reference</span>
 <span class="w">    </span><span class="nl">FirstLine:</span><span class="o">=</span><span class="n">Edit_GetFirstVisibleLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
     <span class="n">if</span> <span class="p">(</span><span class="n">FirstLine</span><span class="o">&gt;</span><span class="n">r_LineIdx</span><span class="p">)</span>
-<span class="w">        </span><span class="nl">r_LineIdx:</span><span class="o">=</span><span class="n">r_LineIdx</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">FirstLine</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_LineIdx</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
+<span class="w">        </span><span class="nl">r_LineIdx:</span><span class="o">=</span><span class="n">r_LineIdx</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor</span><span class="p">((</span><span class="n">FirstLine</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_LineIdx</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
 
 <span class="w">    </span><span class="nl">FirstCharPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">FirstLine</span><span class="o">&lt;</span><span class="mi">0</span> <span class="o">?</span> <span class="mi">0</span><span class="o">:</span><span class="n">FirstLine</span><span class="p">)</span>
     <span class="n">if</span> <span class="p">(</span><span class="n">FirstCharPos</span><span class="o">&gt;</span><span class="n">r_CharPos</span><span class="p">)</span>
-<span class="w">        </span><span class="nl">r_CharPos:</span><span class="o">=</span><span class="n">r_CharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">FirstCharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_CharPos</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
+<span class="w">        </span><span class="nl">r_CharPos:</span><span class="o">=</span><span class="n">r_CharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor</span><span class="p">((</span><span class="n">FirstCharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_CharPos</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
 
 <span class="w">    </span><span class="nb">Return</span> <span class="n">r_CharPos</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -190,7 +190,7 @@
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r`n</span><span class="p">,</span><span class="se">`r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Mac</span>
 <span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="se">`r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Unix to Mac</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_Text</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> <span class="se">`r</span>
             <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`r</span><span class="s">&quot;</span>
 
@@ -212,7 +212,7 @@
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r`n</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Unix</span>
 <span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Mac to Unix</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_Text</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> <span class="se">`n</span>
             <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 
@@ -263,12 +263,12 @@
 <span class="w">                    </span><span class="nb">Loop</span> <span class="n">Parse</span><span class="p">,</span><span class="n">l_SelectedText</span>
                         <span class="p">{</span>
 <span class="w">                        </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nv">A_LoopField</span>
-<span class="w">                        </span><span class="nl">l_Asc:</span><span class="o">=</span><span class="nf">Asc(</span><span class="n">t_Char</span><span class="p">)</span>
+<span class="w">                        </span><span class="nl">l_Asc:</span><span class="o">=</span><span class="nf">Asc</span><span class="p">(</span><span class="n">t_Char</span><span class="p">)</span>
 <span class="w">                        </span><span class="nb">if </span><span class="n">l_Asc</span> <span class="n">between</span> <span class="mi">65</span> <span class="ow">and</span> <span class="mi">90</span>
-<span class="w">                            </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nf">Chr(</span><span class="n">l_Asc</span><span class="o">+</span><span class="mi">32</span><span class="p">)</span>
+<span class="w">                            </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nf">Chr</span><span class="p">(</span><span class="n">l_Asc</span><span class="o">+</span><span class="mi">32</span><span class="p">)</span>
 <span class="w">                         </span><span class="nb">else</span>
 <span class="w">                            </span><span class="nb">if </span><span class="n">l_Asc</span> <span class="n">between</span> <span class="mi">97</span> <span class="ow">and</span> <span class="mi">122</span>
-<span class="w">                                </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nf">Chr(</span><span class="n">l_Asc</span><span class="o">-</span><span class="mi">32</span><span class="p">)</span>
+<span class="w">                                </span><span class="nl">t_Char:</span><span class="o">=</span><span class="nf">Chr</span><span class="p">(</span><span class="n">l_Asc</span><span class="o">-</span><span class="mi">32</span><span class="p">)</span>
 
                         <span class="n">t_SelectedText</span> <span class="o">.=</span> <span class="n">t_Char</span>
                         <span class="p">}</span>
@@ -423,11 +423,11 @@
 
 <span class="c-Singleline">    ;-- Initialize</span>
 <span class="w">    </span><span class="nl">r_RegExOut:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;Reset&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">InStr</span><span class="p">(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;Reset&quot;</span><span class="p">)</span>
 <span class="w">        </span><span class="nl">s_Text:</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Anything to search?</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_SearchText</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="n">p_SearchText</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span>
 
 <span class="w">    </span><span class="nl">l_MaxLen:</span><span class="o">=</span><span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
@@ -446,12 +446,12 @@
 <span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Get text</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;Static&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">InStr</span><span class="p">(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;Static&quot;</span><span class="p">)</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">s_Text</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="n">s_Text</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">            </span><span class="nl">s_Text:</span><span class="o">=</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
 
-<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">s_Text</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">p_Max</span><span class="o">+</span><span class="mi">1</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Max</span><span class="o">:</span><span class="n">p_Min</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">s_Text</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">p_Max</span><span class="o">+</span><span class="mi">1</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Max</span><span class="o">:</span><span class="n">p_Min</span><span class="p">)</span>
         <span class="p">}</span>
 <span class="w">     </span><span class="nb">else</span>
         <span class="p">{</span>
@@ -460,14 +460,14 @@
         <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Look for it</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;RegEx&quot;</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline">  ;-- Not RegEx</span>
-<span class="w">        </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">InStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;MatchCase&quot;</span><span class="p">),(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">InStr</span><span class="p">(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;RegEx&quot;</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline">  ;-- Not RegEx</span>
+<span class="w">        </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">InStr</span><span class="p">(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="nf">InStr</span><span class="p">(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;MatchCase&quot;</span><span class="p">),(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 <span class="w">     </span><span class="nb">else</span><span class="c-Singleline">  ;-- RegEx</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nl">p_SearchText:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="n">p_SearchText</span><span class="p">,</span><span class="s">&quot;^P\)?&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">   ;-- Remove P or P)</span>
+<span class="w">        </span><span class="nl">p_SearchText:</span><span class="o">=</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="n">p_SearchText</span><span class="p">,</span><span class="s">&quot;^P\)?&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">   ;-- Remove P or P)</span>
         <span class="n">if</span> <span class="p">(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span><span class="c-Singleline">  ;-- Search forward</span>
             <span class="p">{</span>
-<span class="w">            </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">r_RegExOut</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">            </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">r_RegExOut</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 <span class="w">            </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
                 <span class="p">{</span>
 <span class="w">                </span><span class="nb">outputdebug</span><span class="p">,</span>
@@ -492,14 +492,14 @@
 <span class="c-Singleline">            ;       1-based values.</span>
 <span class="c-Singleline">            ;</span>
             <span class="n">RE_MinPos</span>     <span class="o">:=</span><span class="mi">1</span>
-            <span class="n">RE_MaxPos</span>     <span class="o">:=</span><span class="nf">StrLen(</span><span class="n">l_Text</span><span class="p">)</span>
+            <span class="n">RE_MaxPos</span>     <span class="o">:=</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">l_Text</span><span class="p">)</span>
             <span class="n">RE_StartPos</span>   <span class="o">:=</span><span class="n">RE_MinPos</span>
 <span class="w">            </span><span class="nl">Saved_FoundPos:</span><span class="o">=-</span><span class="mi">1</span>
 <span class="w">            </span><span class="nl">Saved_RegExOut:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <span class="w">            </span><span class="nb">loop</span>
                 <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">                ;-- Positional search.  Last found match (if any) wins</span>
-<span class="w">                </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">r_RegExOut</span><span class="p">,</span><span class="n">RE_StartPos</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">r_RegExOut</span><span class="p">,</span><span class="n">RE_StartPos</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 <span class="w">                </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
                     <span class="p">{</span>
 <span class="w">                    </span><span class="nb">outputdebug</span><span class="p">,</span>
@@ -523,7 +523,7 @@
 <span class="w">                    </span><span class="nl">RE_MaxPos:</span><span class="o">=</span><span class="n">RE_StartPos</span><span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">                ;-- Are we done?</span>
-                <span class="n">if</span> <span class="p">(</span><span class="n">RE_MinPos</span><span class="o">&gt;</span><span class="n">RE_MaxPos</span> <span class="ow">or</span> <span class="n">RE_MinPos</span><span class="o">&gt;</span><span class="nf">StrLen(</span><span class="n">l_Text</span><span class="p">))</span>
+                <span class="n">if</span> <span class="p">(</span><span class="n">RE_MinPos</span><span class="o">&gt;</span><span class="n">RE_MaxPos</span> <span class="ow">or</span> <span class="n">RE_MinPos</span><span class="o">&gt;</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">l_Text</span><span class="p">))</span>
                     <span class="p">{</span>
 <span class="w">                    </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="n">Saved_FoundPos</span>
 <span class="w">                    </span><span class="nl">r_RegExOut:</span><span class="o">=</span><span class="n">Saved_RegExOut</span>
@@ -531,7 +531,7 @@
                     <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">                ;-- Calculate new start position</span>
-<span class="w">                </span><span class="nl">RE_StartPos:</span><span class="o">=</span><span class="n">RE_MinPos</span><span class="o">+</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">RE_MaxPos</span><span class="o">-</span><span class="n">RE_MinPos</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">                </span><span class="nl">RE_StartPos:</span><span class="o">=</span><span class="n">RE_MinPos</span><span class="o">+</span><span class="nf">Floor</span><span class="p">((</span><span class="n">RE_MaxPos</span><span class="o">-</span><span class="n">RE_MinPos</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span><span class="c-Singleline"></span>
@@ -712,10 +712,10 @@
 <span class="w">    </span><span class="nb">if </span><span class="n">l_Length</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">        </span><span class="nb">Return</span>
 
-    <span class="nf">VarSetCapacity(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="mi">2</span><span class="o">:</span><span class="n">l_Length</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-    <span class="nf">NumPut(</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="mi">2</span><span class="o">:</span><span class="n">l_Length</span><span class="p">,</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;UShort&quot;</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="mi">2</span><span class="o">:</span><span class="n">l_Length</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">NumPut</span><span class="p">(</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="mi">2</span><span class="o">:</span><span class="n">l_Length</span><span class="p">,</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;UShort&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETLINE</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="nf">SubStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">l_Text</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">l_Text</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -821,12 +821,12 @@
 <span class="n">Edit_GetRect</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Left</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Top</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Right</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Bottom</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">Static</span> <span class="n">EM_GETRECT</span><span class="o">:=</span><span class="mh">0xB2</span>
-    <span class="nf">VarSetCapacity(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETRECT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">&amp;</span><span class="n">RECT_Structure</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-    <span class="n">r_Left</span>  <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-    <span class="n">r_Top</span>   <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-    <span class="n">r_Right</span> <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="nl">r_Bottom:</span><span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Left</span>  <span class="o">:=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Top</span>   <span class="o">:=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Right</span> <span class="o">:=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">r_Bottom:</span><span class="o">=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">r_Left</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Top</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Right</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Bottom</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -857,11 +857,11 @@
 <span class="n">Edit_GetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_StartSelPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_EndSelPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
 <span class="w">	</span><span class="nb">Static</span> <span class="n">EM_GETSEL</span><span class="o">:=</span><span class="mh">0xB0</span>
-    <span class="nf">VarSetCapacity(</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-    <span class="nf">VarSetCapacity(</span><span class="n">l_EndSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">l_EndSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETSEL</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_EndSelPos</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-<span class="w">    </span><span class="nl">r_StartSelPos:</span><span class="o">=</span><span class="nf">NumGet(</span><span class="n">l_StartSelPos</span><span class="p">)</span>
-    <span class="n">r_EndSelPos</span>  <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">r_StartSelPos:</span><span class="o">=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">l_StartSelPos</span><span class="p">)</span>
+    <span class="n">r_EndSelPos</span>  <span class="o">:=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">l_EndSelPos</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">r_StartSelPos</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -897,9 +897,9 @@
 <span class="w">    </span><span class="nl">l_FirstPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">)</span>
      <span class="n">if</span> <span class="p">(</span><span class="n">l_FirstSelectedLine</span><span class="o">=</span><span class="n">l_LastSelectedLine</span><span class="p">)</span>
     <span class="ow">and</span> <span class="p">(</span><span class="n">l_EndSelPos</span><span class="o">&lt;=</span><span class="n">l_FirstPos</span><span class="o">+</span><span class="n">Edit_LineLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">))</span>
-<span class="w">        </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">Edit_GetLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="o">-</span><span class="n">l_FirstPos</span><span class="p">),</span><span class="n">l_StartSelPos</span><span class="o">-</span><span class="n">l_FirstPos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">Edit_GetLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="o">-</span><span class="n">l_FirstPos</span><span class="p">),</span><span class="n">l_StartSelPos</span><span class="o">-</span><span class="n">l_FirstPos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 <span class="w">     </span><span class="nb">else</span>
-<span class="w">        </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">),</span><span class="n">l_StartSelPos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">),</span><span class="n">l_StartSelPos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -930,7 +930,7 @@
     <span class="n">if</span> <span class="p">(</span><span class="n">p_Length</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">        </span><span class="nl">p_Length:</span><span class="o">=</span><span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
 
-    <span class="nf">VarSetCapacity(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_Length</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_Length</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_GETTEXT</span><span class="p">,</span><span class="n">p_Length</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">return</span> <span class="n">l_Text</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -982,7 +982,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetTextRange</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_Max</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">{</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Max</span><span class="p">),</span><span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Max</span><span class="p">),</span><span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -1311,7 +1311,7 @@
 <span class="w">    </span><span class="nb">FileRead</span> <span class="n">l_Text</span><span class="p">,</span><span class="nv">%p_FileName%</span>
 <span class="w">    </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span><span class="o">:</span> <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">read</span> <span class="n">from</span> <span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span><span class="o">:</span> <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="nf">read</span> <span class="n">from</span> <span class="s">&quot;%p_FileName%&quot;</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="nv">False</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1526,7 +1526,7 @@
 <span class="w">    </span><span class="nl">l_ScrollLines:</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Pages</span>
-<span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">p_Pages</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">p_Pages</span><span class="p">)</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Pages</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">SB_PAGEDOWN</span><span class="o">:</span><span class="n">SB_PAGEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">        </span><span class="nb">if </span><span class="ow">not</span> <span class="nv">ErrorLevel</span>
@@ -1537,7 +1537,7 @@
         <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Lines</span>
-<span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">p_Lines</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">p_Lines</span><span class="p">)</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Lines</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">SB_LINEDOWN</span><span class="o">:</span><span class="n">SB_LINEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">        </span><span class="nb">if </span><span class="ow">not</span> <span class="nv">ErrorLevel</span>
@@ -1726,7 +1726,7 @@
 <span class="n">Edit_SetPasswordChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Char</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETPASSWORDCHAR</span><span class="o">:=</span><span class="mh">0xCC</span>
-<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETPASSWORDCHAR</span><span class="p">,</span><span class="nf">Asc(</span><span class="n">p_Char</span><span class="p">),</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETPASSWORDCHAR</span><span class="p">,</span><span class="nf">Asc</span><span class="p">(</span><span class="n">p_Char</span><span class="p">),</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1800,11 +1800,11 @@
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETRECT</span><span class="o">:=</span><span class="mh">0xB3</span>
 
-    <span class="nf">VarSetCapacity(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-    <span class="nf">NumPut(</span><span class="n">p_Left</span><span class="p">,</span>  <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-    <span class="nf">NumPut(</span><span class="n">p_Top</span><span class="p">,</span>   <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-    <span class="nf">NumPut(</span><span class="n">p_Right</span><span class="p">,</span> <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-    <span class="nf">NumPut(</span><span class="n">p_Bottom</span><span class="p">,</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">NumPut</span><span class="p">(</span><span class="n">p_Left</span><span class="p">,</span>  <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="nf">NumPut</span><span class="p">(</span><span class="n">p_Top</span><span class="p">,</span>   <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="nf">NumPut</span><span class="p">(</span><span class="n">p_Right</span><span class="p">,</span> <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="nf">NumPut</span><span class="p">(</span><span class="n">p_Bottom</span><span class="p">,</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETRECT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">&amp;</span><span class="n">RECT_Structure</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1845,16 +1845,16 @@
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETTABSTOPS</span><span class="o">:=</span><span class="mh">0xCB</span>
     
-    <span class="nf">VarSetCapacity(</span><span class="n">l_TabStops</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">l_TabStops</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">if </span><span class="n">p_DTU</span> <span class="n">contains</span> <span class="p">,,</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nb">Loop</span> <span class="n">Parse</span><span class="p">,</span><span class="n">p_DTU</span><span class="p">,</span><span class="se">`,</span><span class="p">,</span><span class="nv">%A_Space%</span>
             <span class="n">if</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">&lt;=</span><span class="n">p_NbrOfTabStops</span><span class="p">)</span>
-                <span class="nf">Numput(</span><span class="nv">A_LoopField</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="n">l_TabStops</span><span class="p">,(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+                <span class="nf">Numput</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="n">l_TabStops</span><span class="p">,(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">)</span>
         <span class="p">}</span>
 <span class="w">     </span><span class="nb">else</span>
 <span class="w">        </span><span class="nb">Loop</span> <span class="nv">%p_NbrOfTabStops%</span>
-            <span class="nf">NumPut(</span><span class="n">p_DTU</span><span class="o">*</span><span class="nv">A_Index</span><span class="p">,</span><span class="n">l_TabStops</span><span class="p">,(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">)</span>
+            <span class="nf">NumPut</span><span class="p">(</span><span class="n">p_DTU</span><span class="o">*</span><span class="nv">A_Index</span><span class="p">,</span><span class="n">l_TabStops</span><span class="p">,(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETTABSTOPS</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_TabStops</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
@@ -1997,7 +1997,7 @@
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">WinGet</span> <span class="n">hWindow</span><span class="p">,</span><span class="n">ID</span><span class="p">,</span><span class="n">A</span>
 <span class="w">    </span><span class="nb">ControlGetFocus</span> <span class="n">l_Control</span><span class="p">,</span><span class="n">A</span>
-<span class="w">    </span><span class="nb">if </span><span class="nf">SubStr(</span><span class="n">l_Control</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;Edit&quot;</span>
+<span class="w">    </span><span class="nb">if </span><span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Control</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;Edit&quot;</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nb">ControlGet</span> <span class="n">hEdit</span><span class="p">,</span><span class="n">hWnd</span><span class="p">,,</span><span class="nv">%l_Control%</span><span class="p">,</span><span class="n">A</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="n">hEdit</span>

@@ -27,8 +27,8 @@
 
        
         <span class="n">val</span> <span class="o">=</span> <span class="o">%</span> <span class="n">CSIDL_</span><span class="nv">%csidl%</span>
-        <span class="nf">VarSetCapacity(</span><span class="n">fpath</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
-        <span class="nf">DllCall(</span> <span class="s">&quot;shell32\SHGetFolderPathA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">fpath</span><span class="p">)</span>
+        <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+        <span class="nf">DllCall</span><span class="p">(</span> <span class="s">&quot;shell32\SHGetFolderPathA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">fpath</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">return</span> <span class="nv">%fpath%</span>
 <span class="p">}</span>
 </pre></div>

@@ -24,7 +24,7 @@
 	<span class="p">{</span>
 <span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="mi">94</span>
 		<span class="p">{</span>
-			<span class="n">c</span> <span class="o">:=</span> <span class="nf">Chr(</span><span class="nv">A_Index</span> <span class="o">+</span> <span class="mi">32</span><span class="p">)</span>
+			<span class="n">c</span> <span class="o">:=</span> <span class="nf">Chr</span><span class="p">(</span><span class="nv">A_Index</span> <span class="o">+</span> <span class="mi">32</span><span class="p">)</span>
 <span class="w">			</span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">not</span> <span class="n">between</span> <span class="mi">33</span> <span class="ow">and</span> <span class="mi">58</span>
 <span class="w">				</span><span class="nb">Hotkey</span><span class="p">,</span> <span class="nv">%m%%c%</span><span class="p">,</span> <span class="n">__hs</span>
 		<span class="p">}</span>
@@ -35,10 +35,10 @@
 	<span class="p">}</span>
 	<span class="n">If</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; poll</span>
 	<span class="p">{</span>
-<span class="w">		</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="nv">A_ThisHotkey</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">m</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="nv">A_ThisHotkey</span><span class="p">,</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 <span class="w">		</span><span class="nb">If </span><span class="n">q</span> <span class="o">=</span> <span class="n">BS</span>
 		<span class="p">{</span>
-			<span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;}&quot;</span><span class="p">)</span>
+			<span class="n">If</span> <span class="p">(</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;}&quot;</span><span class="p">)</span>
 <span class="w">				</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">1</span>
 		<span class="p">}</span>
 <span class="w">		</span><span class="nb">Else</span>
@@ -49,21 +49,21 @@
 				<span class="n">q</span> <span class="o">:=</span> <span class="s">&quot;</span><span class="se">`t</span><span class="s">&quot;</span>
 <span class="w">			</span><span class="nb">Else</span> <span class="n">If</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">Enter</span><span class="p">,</span><span class="n">Return</span>
 				<span class="n">q</span> <span class="o">:=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-<span class="w">			</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">q</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="w">			</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
 				<span class="n">q</span> <span class="o">=</span> <span class="p">{</span><span class="nv">%q%</span><span class="p">}</span>
-<span class="w">			</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">GetKeyState(</span><span class="s">&quot;Shift&quot;</span><span class="p">)</span> <span class="o">^</span> <span class="nf">GetKeyState(</span><span class="s">&quot;CapsLock&quot;</span><span class="p">,</span> <span class="s">&quot;T&quot;</span><span class="p">))</span>
+<span class="w">			</span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">GetKeyState</span><span class="p">(</span><span class="s">&quot;Shift&quot;</span><span class="p">)</span> <span class="o">^</span> <span class="nf">GetKeyState</span><span class="p">(</span><span class="s">&quot;CapsLock&quot;</span><span class="p">,</span> <span class="s">&quot;T&quot;</span><span class="p">))</span>
 <span class="w">				</span><span class="nb">StringUpper</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">q</span>
 			<span class="n">s</span> <span class="o">.=</span> <span class="n">q</span>
 		<span class="p">}</span>
 <span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="se">`n</span><span class="c-Singleline"> ; check</span>
 		<span class="p">{</span>
 <span class="w">			</span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="se">`r</span>
-			<span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">s</span><span class="p">,</span> <span class="n">x1</span> <span class="o">.</span> <span class="s">&quot;$&quot;</span><span class="p">,</span> <span class="n">$</span><span class="p">))</span><span class="c-Singleline"> ; match</span>
+			<span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x1</span> <span class="o">.</span> <span class="s">&quot;$&quot;</span><span class="p">,</span> <span class="n">$</span><span class="p">))</span><span class="c-Singleline"> ; match</span>
 			<span class="p">{</span>
 <span class="w">				</span><span class="nb">StringLen</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">$</span>
 <span class="w">				</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span>
 <span class="w">				</span><span class="nb">SendInput</span><span class="p">,</span> <span class="p">{</span><span class="n">BS</span> <span class="nv">%l%</span><span class="p">}</span>
-				<span class="n">If</span> <span class="p">(</span><span class="nf">IsLabel(</span><span class="n">x2</span><span class="p">))</span>
+				<span class="n">If</span> <span class="p">(</span><span class="nf">IsLabel</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span>
 <span class="w">					</span><span class="nb">Gosub</span><span class="p">,</span> <span class="nv">%x2%</span>
 <span class="w">				</span><span class="nb">Else</span>
 				<span class="p">{</span>
@@ -72,7 +72,7 @@
 				<span class="p">}</span>
 			<span class="p">}</span>
 		<span class="p">}</span>
-		<span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">w</span><span class="p">)</span>
+		<span class="n">If</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">w</span><span class="p">)</span>
 <span class="w">			</span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">w</span> <span class="o">//</span> <span class="mi">2</span>
 	<span class="p">}</span>
 <span class="w">	</span><span class="nb">Else</span><span class="c-Singleline"> ; assert</span>
@@ -82,7 +82,7 @@
 <span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="se">`n</span>
 		<span class="p">{</span>
 			<span class="n">l</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span>
-			<span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">l</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">l</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`r</span><span class="s">&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">k</span><span class="p">)</span>
+			<span class="n">If</span> <span class="p">(</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`r</span><span class="s">&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">k</span><span class="p">)</span>
 <span class="w">				</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="se">`n</span><span class="nv">%l%</span>
 		<span class="p">}</span>
 <span class="w">		</span><span class="nb">If </span><span class="n">a</span> <span class="o">!=</span>

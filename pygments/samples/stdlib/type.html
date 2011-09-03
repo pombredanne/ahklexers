@@ -39,7 +39,7 @@
 
 <span class="n">type_is</span><span class="p">(</span> <span class="n">p_Input</span> <span class="p">,</span> <span class="n">p_Type</span> <span class="p">)</span><span class="c-Singleline"> ;?mod IsType( p_Input , p_Type )</span>
 <span class="p">{</span>
-<span class="w">  </span><span class="nb">If </span><span class="nf">InStr(</span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span><span class="p">,</span><span class="n">p_Type</span><span class="p">,</span><span class="nv">false</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span><span class="p">,</span><span class="n">p_Type</span><span class="p">,</span><span class="nv">false</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">p_Input</span> <span class="ow">is</span> <span class="nv">%p_Type%</span>
 <span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
 <span class="w">  </span><span class="nb">Return</span> <span class="mi">0</span>
@@ -68,7 +68,7 @@
 <span class="w">  </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">st_Types</span><span class="p">,</span> <span class="se">`,</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">p_Input</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
       <span class="n">l_Output</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
@@ -96,9 +96,9 @@
 <span class="p">{</span>
   <span class="n">If</span> <span class="p">(</span> <span class="p">(</span><span class="n">l_Type1</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="n">p_Input1</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">l_Type2</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="n">p_Input2</span><span class="p">))</span> <span class="p">)</span><span class="c-Singleline"> ;?mod VarTypes(p_Input2)</span>
 <span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">l_Type1</span><span class="p">,</span> <span class="se">`,</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
         <span class="n">l_Output</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
@@ -124,11 +124,11 @@
 <span class="w">    </span><span class="nb">If </span><span class="n">p_Input2</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
       <span class="n">l_Type2</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
   <span class="p">}</span>
-  <span class="n">If</span> <span class="p">(</span> <span class="p">(</span><span class="n">l_Type1</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">l_Type1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">l_Type2</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">l_Type2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="p">)</span>
+  <span class="n">If</span> <span class="p">(</span> <span class="p">(</span><span class="n">l_Type1</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Type1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">l_Type2</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="p">)</span>
 <span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">l_Type1</span><span class="p">,</span> <span class="se">`,</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
         <span class="n">l_Output</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
@@ -162,11 +162,11 @@
     <span class="n">If</span> <span class="o">!</span><span class="p">(</span> <span class="n">l_CurrentTypes</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="nv">%A_LoopField%</span><span class="p">)</span> <span class="p">)</span><span class="c-Singleline"> ;?mod VarTypes(%A_LoopField%)</span>
 <span class="w">      </span><span class="nb">Return</span>
 <span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">l_CurrentTypes</span><span class="p">,</span> <span class="se">`,</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">InStr(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
         <span class="n">l_NewValidTypes</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
     <span class="n">l_ValidTypes</span> <span class="o">:=</span> <span class="n">l_NewValidTypes</span>  <span class="p">,</span>  <span class="n">l_NewValidTypes</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
   <span class="p">}</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>

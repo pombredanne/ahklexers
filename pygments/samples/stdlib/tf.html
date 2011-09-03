@@ -103,14 +103,14 @@
 <span class="n">TF_RegExReplaceInLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">NeedleRegEx</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Replacement</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 	<span class="p">{</span>
 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
-	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; SearchText not in TextFile so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
 <span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
 <span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`r</span>
 		<span class="p">{</span>
 <span class="w">         	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
 			<span class="p">{</span>
-			 <span class="n">LoopField</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">,</span> <span class="n">Replacement</span><span class="p">)</span>
+			 <span class="n">LoopField</span> <span class="o">:=</span> <span class="nf">RegExReplace</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">,</span> <span class="n">Replacement</span><span class="p">)</span>
 			 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 			<span class="p">}</span>
 <span class="w">		 </span><span class="nb">Else</span>
@@ -122,9 +122,9 @@
 <span class="n">TF_RegExReplace</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Replacement</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 	<span class="p">{</span>
 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
-	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; SearchText not in TextFile so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
-	 <span class="n">Text</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">,</span> <span class="n">Replacement</span><span class="p">)</span>
+	 <span class="n">Text</span> <span class="o">:=</span> <span class="nf">RegExReplace</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">NeedleRegEx</span><span class="p">,</span> <span class="n">Replacement</span><span class="p">)</span>
 <span class="w"> 	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 	<span class="p">}</span>
 
@@ -151,13 +151,13 @@
 <span class="n">TF_RemoveBlankLines</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 	<span class="p">{</span>
 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
-	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">	 	</span><span class="nb">Return</span> <span class="n">Text</span><span class="c-Singleline"> ; No empty lines so return and do nothing, we have to return Text in case of a variable otherwise it would empty the variable contents bug fix 3.3</span>
 <span class="w">	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
 <span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`r</span>
 		<span class="p">{</span> 
 <span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
-         	 	<span class="n">OutPut</span> <span class="o">.=</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">))</span> <span class="o">?</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">:</span>
+         	 	<span class="n">OutPut</span> <span class="o">.=</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">))</span> <span class="o">?</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">:</span>
 <span class="w">	         </span><span class="nb">Else</span>
         		<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 		<span class="p">}</span>
@@ -185,7 +185,7 @@
 				<span class="p">}</span> 
 <span class="w">			 </span><span class="nb">Else</span>
 				<span class="p">{</span>
-				 <span class="n">If</span> <span class="o">!</span><span class="p">(</span><span class="nf">InStr(</span><span class="n">SearchForSection2</span><span class="p">,</span><span class="s">&quot;__bol__&quot;</span> <span class="o">.</span> <span class="nv">A_LoopField</span> <span class="o">.</span> <span class="s">&quot;__eol__&quot;</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; not found</span>
+				 <span class="n">If</span> <span class="o">!</span><span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="n">SearchForSection2</span><span class="p">,</span><span class="s">&quot;__bol__&quot;</span> <span class="o">.</span> <span class="nv">A_LoopField</span> <span class="o">.</span> <span class="s">&quot;__eol__&quot;</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; not found</span>
 				 	<span class="p">{</span>
 				 	 <span class="n">SearchForSection2</span> <span class="o">.=</span> <span class="s">&quot;__bol__&quot;</span> <span class="nv">A_LoopField</span> <span class="s">&quot;__eol__&quot;</span><span class="c-Singleline"> ; this makes it unique otherwise it could be a partial match</span>
 					 <span class="n">Section2</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
@@ -302,7 +302,7 @@
 <span class="w">       	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
 			<span class="p">{</span>
 			 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span><span class="c-Singleline"> ; Make use of AutoTrim, should be faster then a RegExReplace. Trims leading and trailing spaces!</span>
-	       	 <span class="n">SpaceNum</span> <span class="o">:=</span> <span class="n">Columns</span><span class="o">-</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> 
+	       	 <span class="n">SpaceNum</span> <span class="o">:=</span> <span class="n">Columns</span><span class="o">-</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">LoopField</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> 
 	       	 <span class="n">If</span> <span class="p">(</span><span class="n">SpaceNum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Padding</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; requires padding + keep padding</span>
 	        	<span class="p">{</span>
 <span class="w">				 </span><span class="nl">Left:</span><span class="o">=</span><span class="n">TF_SetWidth</span><span class="p">(</span><span class="n">LoopField</span><span class="p">,</span><span class="n">Columns</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; align left</span>
@@ -329,13 +329,13 @@
 <span class="w">         	 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
 				<span class="p">{</span>
 				 <span class="n">LoopField</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span><span class="c-Singleline"> ; Make use of AutoTrim, should be faster then a RegExReplace</span>
-	         	 <span class="n">SpaceNum</span> <span class="o">:=</span> <span class="p">(</span><span class="n">Columns</span><span class="o">-</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+	         	 <span class="n">SpaceNum</span> <span class="o">:=</span> <span class="p">(</span><span class="n">Columns</span><span class="o">-</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">LoopField</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 				 <span class="n">If</span> <span class="p">(</span><span class="n">Padding</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">LoopField</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ; skip emtpy lines, do not fill with spaces</span>
 					<span class="p">{</span>
 					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 <span class="w">					 </span><span class="nb">Continue</span>
 					<span class="p">}</span>
-				 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Columns</span><span class="p">)</span>
+				 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">LoopField</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Columns</span><span class="p">)</span>
 					<span class="p">{</span>
 					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="c-Singleline"> ; add as is 	</span>
 <span class="w">					 </span><span class="nb">Continue</span>
@@ -366,7 +366,7 @@
 					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 <span class="w">					 </span><span class="nb">Continue</span>
 					<span class="p">}</span>
-				 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">LoopField</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Columns</span><span class="p">)</span> 
+				 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">LoopField</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Columns</span><span class="p">)</span> 
 					<span class="p">{</span>
 					 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="c-Singleline"> ; add as is 	</span>
 <span class="w">					 </span><span class="nb">Continue</span>
@@ -429,7 +429,7 @@
 <span class="w">	 </span><span class="nb">global</span> <span class="n">t</span>
 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
 <span class="w">	 </span><span class="nl">Lines:</span><span class="o">=</span><span class="n">TF_Count</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="w">	 </span><span class="nl">Padding:</span><span class="o">=</span><span class="nf">StrLen(</span><span class="n">Lines</span><span class="p">)</span>
+<span class="w">	 </span><span class="nl">Padding:</span><span class="o">=</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">Lines</span><span class="p">)</span>
 	 <span class="n">If</span> <span class="p">(</span><span class="n">Leading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Char</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 		<span class="n">Char</span> <span class="o">:=</span> <span class="nv">A_Space</span>
 <span class="w">         </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%Padding%</span>
@@ -448,12 +448,12 @@
 		 <span class="n">If</span> <span class="p">(</span><span class="n">Leading</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 			<span class="p">{</span>
 			 <span class="n">LineNumber</span> <span class="o">:=</span> <span class="n">Padlines</span> <span class="n">LineNumber</span><span class="c-Singleline">  ; add padding</span>
-<span class="w">			 </span><span class="nb">StringRight</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">Lines</span><span class="p">)</span><span class="c-Singleline"> ; remove excess padding</span>
+<span class="w">			 </span><span class="nb">StringRight</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">Lines</span><span class="p">)</span><span class="c-Singleline"> ; remove excess padding</span>
 			<span class="p">}</span>
 		 <span class="n">If</span> <span class="p">(</span><span class="n">Leading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 			<span class="p">{</span>
 			 <span class="n">LineNumber</span> <span class="o">:=</span> <span class="n">LineNumber</span> <span class="n">Padlines</span><span class="c-Singleline"> ; add padding</span>
-<span class="w">			 </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="nf">StrLen(</span><span class="n">Lines</span><span class="p">)</span><span class="c-Singleline"> ; remove excess padding</span>
+<span class="w">			 </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="n">LineNumber</span><span class="p">,</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">Lines</span><span class="p">)</span><span class="c-Singleline"> ; remove excess padding</span>
 			<span class="p">}</span>         
 		 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">LineNumber</span> <span class="nv">A_Space</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 		<span class="p">}</span>
@@ -471,7 +471,7 @@
 <span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
 			<span class="p">{</span>
 <span class="w">		     </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">StartColumn</span><span class="p">,</span> <span class="n">EndColumn</span>
-			 <span class="n">If</span> <span class="p">(</span><span class="n">Skip</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">StartColumn</span><span class="p">)</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">Skip</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">StartColumn</span><span class="p">)</span>
 <span class="w">		        </span><span class="nb">Continue</span>
 	         <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Section</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>               
 			<span class="p">}</span>
@@ -495,7 +495,7 @@
 			<span class="p">{</span>
 <span class="w">			 </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">Section1</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">StartColumn</span>
 <span class="w">			 </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">Section2</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">StartColumn</span><span class="o">+</span><span class="mi">1</span>
-			 <span class="n">If</span> <span class="p">(</span><span class="n">Skip</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">StartColumn</span><span class="p">)</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="n">Skip</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">StartColumn</span><span class="p">)</span>
                 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Section1</span> <span class="n">Section2</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 <span class="w">			 </span><span class="nb">Else</span>
                 <span class="n">OutPut</span> <span class="o">.=</span> <span class="n">Section1</span> <span class="n">InsertText</span> <span class="n">Section2</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
@@ -671,7 +671,7 @@
 <span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`r</span>
 		<span class="p">{</span>
          	 <span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-<span class="w">         	 </span><span class="nl">FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">)</span>
+<span class="w">         	 </span><span class="nl">FoundPos:</span><span class="o">=</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SplitAt</span><span class="p">)</span>
          	 <span class="n">If</span> <span class="p">(</span><span class="n">FoundPos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
            		<span class="p">{</span>
 			 <span class="n">If</span> <span class="p">(</span><span class="n">InFile</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
@@ -728,14 +728,14 @@
 <span class="n">TF_Find</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">EndLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SearchText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ReturnFirst</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ReturnText</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 	<span class="p">{</span><span class="c-Singleline"> ; complete rewrite for 3.1</span>
 	 <span class="n">TF_GetData</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
-	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">	 	</span><span class="nb">Return</span> <span class="s">&quot;0&quot;</span><span class="c-Singleline"> ; SearchText not in file or error, do nothing</span>
 <span class="w">     	 </span><span class="nl">TF_MatchList:</span><span class="o">=</span><span class="n">_MakeMatchList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">StartLine</span><span class="p">,</span> <span class="n">EndLine</span><span class="p">)</span><span class="c-Singleline"> ; create MatchList</span>
 <span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="se">`n</span>
 		<span class="p">{</span>
 <span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
 		 	<span class="p">{</span>
-			 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchText</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 				<span class="p">{</span>
 				 <span class="n">If</span> <span class="p">(</span><span class="n">ReturnText</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 					<span class="n">Lines</span> <span class="o">.=</span> <span class="nv">A_Index</span> <span class="s">&quot;,&quot;</span><span class="c-Singleline"> ; line number</span>
@@ -811,9 +811,9 @@
 			<span class="p">}</span>
 		<span class="p">}</span>
 
-	 <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">FileName</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span><span class="c-Singleline"> ; check if we want to delete the target file before we start</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">FileName</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span><span class="c-Singleline"> ; check if we want to delete the target file before we start</span>
 		<span class="p">{</span>
-<span class="w">		 </span><span class="nl">FileName:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">FileName</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">		 </span><span class="nl">FileName:</span><span class="o">=</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">FileName</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 		 <span class="n">OW</span><span class="o">=</span><span class="mi">1</span>	 
 		<span class="p">}</span>
 <span class="w">	 </span><span class="nb">Return</span> <span class="n">TF_ReturnOutPut</span><span class="p">(</span><span class="n">OW</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -832,10 +832,10 @@
 	 	<span class="p">{</span>
 <span class="w">		 </span><span class="nb">If </span><span class="nv">A_Index</span> <span class="ow">in</span> <span class="nv">%TF_MatchList%</span>
 		 	<span class="p">{</span>
-			 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">Columns</span><span class="p">)</span>
+			 <span class="n">If</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">Columns</span><span class="p">)</span>
 				<span class="p">{</span>
 				 <span class="n">LoopField</span> <span class="o">:=</span> <span class="nv">A_LoopField</span> <span class="s">&quot; &quot;</span><span class="c-Singleline"> ; just seems to work better by adding a space</span>
-				 <span class="n">OutPut</span> <span class="o">.=</span> <span class="nf">RegExReplace(</span><span class="n">LoopField</span><span class="p">,</span> <span class="s">&quot;(.{1,&quot;</span> <span class="o">.</span> <span class="n">Columns</span> <span class="o">.</span> <span class="s">&quot;})&quot;</span> <span class="o">.</span> <span class="n">Break</span> <span class="p">,</span> <span class="s">&quot;$1`n&quot;</span><span class="p">)</span>
+				 <span class="n">OutPut</span> <span class="o">.=</span> <span class="nf">RegExReplace</span><span class="p">(</span><span class="n">LoopField</span><span class="p">,</span> <span class="s">&quot;(.{1,&quot;</span> <span class="o">.</span> <span class="n">Columns</span> <span class="o">.</span> <span class="s">&quot;})&quot;</span> <span class="o">.</span> <span class="n">Break</span> <span class="p">,</span> <span class="s">&quot;$1`n&quot;</span><span class="p">)</span>
 				<span class="p">}</span>
 <span class="w">			 </span><span class="nb">Else</span>
 				<span class="n">OutPut</span> <span class="o">.=</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
@@ -911,7 +911,7 @@
 		<span class="p">{</span> 
 <span class="w">		 </span><span class="nl">search:</span><span class="o">=</span><span class="s">&quot;m)^(.*)$&quot;</span>
 		 <span class="n">replace</span><span class="o">=</span><span class="n">__bol__$1__eol__</span>
-<span class="w">		 </span><span class="nl">Output:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="n">Output</span><span class="p">,</span> <span class="n">search</span><span class="p">,</span> <span class="n">replace</span><span class="p">)</span>
+<span class="w">		 </span><span class="nl">Output:</span><span class="o">=</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="n">Output</span><span class="p">,</span> <span class="n">search</span><span class="p">,</span> <span class="n">replace</span><span class="p">)</span>
 <span class="w">		 </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="se">`n</span><span class="n">__eol__</span><span class="p">,</span><span class="n">__eol__</span> <span class="p">,</span> <span class="n">All</span><span class="c-Singleline"> ; strange fix but seems to be needed.</span>
 <span class="w">		 </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Str1</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`r</span>
 <span class="w">		 	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">__bol__</span><span class="nv">%A_LoopField%</span><span class="n">__eol__</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span><span class="c-Singleline"> ; remove lines from file1 in file2</span>
@@ -962,15 +962,15 @@
 	 		<span class="p">}</span>
 		 <span class="n">If</span> <span class="p">(</span><span class="n">Start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; start hasn&#39;t been found</span>
 		 	<span class="p">{</span>
-		 	 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="n">SearchTextBegin</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; start has been found</span>
+		 	 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="n">SearchTextBegin</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; start has been found</span>
 	 			<span class="p">{</span>
 		 		 <span class="n">Start</span> <span class="o">=</span> <span class="mi">1</span>
-		 		 <span class="n">KeepSection</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextBegin</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
-		 		 <span class="n">EndSection</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextBegin</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> </span>
+		 		 <span class="n">KeepSection</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextBegin</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+		 		 <span class="n">EndSection</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextBegin</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> </span>
 <span class="c-Singleline">		 		 ; check if SearchEndText is in second part of line</span>
-		 		 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">EndSection</span><span class="p">,</span><span class="n">SearchTextEnd</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; end found</span>
+		 		 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="n">EndSection</span><span class="p">,</span><span class="n">SearchTextEnd</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; end found</span>
 		 		 	<span class="p">{</span>
-		 		 	 <span class="n">EndSection</span> <span class="o">:=</span> <span class="n">ReplaceText</span> <span class="n">KeepEnd</span> <span class="nf">SubStr(</span><span class="n">EndSection</span><span class="p">,</span> <span class="nf">InStr(</span><span class="n">EndSection</span><span class="p">,</span> <span class="n">SearchTextEnd</span><span class="p">)</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">SearchTextEnd</span><span class="p">)</span> <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
+		 		 	 <span class="n">EndSection</span> <span class="o">:=</span> <span class="n">ReplaceText</span> <span class="n">KeepEnd</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">EndSection</span><span class="p">,</span> <span class="nf">InStr</span><span class="p">(</span><span class="n">EndSection</span><span class="p">,</span> <span class="n">SearchTextEnd</span><span class="p">)</span> <span class="o">+</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">SearchTextEnd</span><span class="p">)</span> <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 		 		 	 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span>	
 		 		 	 	<span class="n">End</span><span class="o">=</span><span class="mi">1</span>
 		 		 	 <span class="n">If</span> <span class="p">(</span><span class="n">End</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>	
@@ -986,10 +986,10 @@
 	         	<span class="p">}</span>
 		 <span class="n">If</span> <span class="p">(</span><span class="n">Start</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">End</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ; start has been found, now look for end if end isn&#39;t an empty string</span>
 			<span class="p">{</span>
-		 	 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="n">SearchTextEnd</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; end found</span>
+		 	 <span class="n">If</span> <span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="n">SearchTextEnd</span><span class="p">,</span><span class="n">CaseSensitive</span><span class="p">))</span><span class="c-Singleline"> ; end found</span>
 		 		<span class="p">{</span>
 			 	 <span class="n">End</span> <span class="o">=</span> <span class="mi">1</span>
-				 <span class="n">Output</span> <span class="o">.=</span> <span class="n">ReplaceText</span> <span class="n">KeepEnd</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextEnd</span><span class="p">)</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">SearchTextEnd</span><span class="p">)</span> <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
+				 <span class="n">Output</span> <span class="o">.=</span> <span class="n">ReplaceText</span> <span class="n">KeepEnd</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="nf">InStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="n">SearchTextEnd</span><span class="p">)</span> <span class="o">+</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">SearchTextEnd</span><span class="p">)</span> <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 			 	<span class="p">}</span>
         		<span class="p">}</span>
 		<span class="p">}</span>   
@@ -1062,7 +1062,7 @@
     <span class="n">If</span> <span class="p">(</span><span class="n">ReturnEmpty</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; remove blank lines first so we can&#39;t return any blank lines anyway</span>
       <span class="p">{</span>
 <span class="w">       </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`r</span>
-            <span class="n">OutPut</span> <span class="o">.=</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">))</span> <span class="o">?</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">:</span>
+            <span class="n">OutPut</span> <span class="o">.=</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;[\S]+?\r?\n?&quot;</span><span class="p">))</span> <span class="o">?</span> <span class="nv">A_LoopField</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">:</span>
 <span class="w">	   </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="n">OutPut</span><span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ; remove trailing `n added by loop above</span>
 <span class="w">	   </span><span class="nl">Text:</span><span class="o">=</span><span class="n">OutPut</span>
 	   <span class="n">OutPut</span><span class="o">=</span>
@@ -1119,9 +1119,9 @@
 	<span class="n">OW</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline"> ; default setting: asume it is a file and create file_copy</span>
 <span class="w">	</span><span class="nb">IfNotInString</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="se">`n</span><span class="c-Singleline"> ; it can be a file as the Text doesn&#39;t contact a newline character</span>
 		<span class="p">{</span>
-		 <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span><span class="c-Singleline"> ; first we check for &quot;overwrite&quot; </span>
+		 <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span><span class="c-Singleline"> ; first we check for &quot;overwrite&quot; </span>
 			<span class="p">{</span>
-<span class="w">			 </span><span class="nl">Text:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">			 </span><span class="nl">Text:</span><span class="o">=</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 			 <span class="n">OW</span><span class="o">=</span><span class="mi">1</span><span class="c-Singleline"> ; overwrite file (if it is a file)</span>
 			<span class="p">}</span> 
 <span class="w">		 </span><span class="nb">IfNotExist</span><span class="p">,</span> <span class="nv">%Text%</span><span class="c-Singleline"> ; now we can check if the file exists, it doesn&#39;t so it is a var</span>
@@ -1137,7 +1137,7 @@
 		<span class="p">}</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">OW</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; it is a file, so we have to read into var Text</span>
 		<span class="p">{</span>
-	 	 <span class="n">Text</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">Text</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">:</span> <span class="n">Text</span>
+	 	 <span class="n">Text</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;!&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">:</span> <span class="n">Text</span>
 		 <span class="n">FileName</span><span class="o">=</span><span class="nv">%Text%</span><span class="c-Singleline"> ; Store FileName</span>
 <span class="w">		 </span><span class="nb">FileRead</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="nv">%Text%</span><span class="c-Singleline"> ; Read file and return as var Text</span>
 		 <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
@@ -1165,8 +1165,8 @@
 		<span class="p">}</span>
 <span class="w">	 </span><span class="nb">If </span><span class="n">AlignText</span><span class="o">=</span><span class="mi">1</span>         
 		<span class="p">{</span>
-<span class="w">		 </span><span class="nl">Spaces:</span><span class="o">=</span><span class="p">(</span><span class="n">Width</span><span class="o">-</span><span class="p">(</span><span class="nf">StrLen(</span><span class="n">Text</span><span class="p">)))</span>
-		 <span class="n">RetStr</span><span class="o">=</span> <span class="o">%</span> <span class="n">TF_Space</span><span class="p">(</span><span class="nf">Round(</span><span class="n">Spaces</span><span class="o">/</span><span class="mi">2</span><span class="p">))(</span><span class="n">Text</span><span class="p">)</span><span class="n">TF_Space</span><span class="p">(</span><span class="n">Spaces</span><span class="o">-</span><span class="p">(</span><span class="nf">Round(</span><span class="n">Spaces</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
+<span class="w">		 </span><span class="nl">Spaces:</span><span class="o">=</span><span class="p">(</span><span class="n">Width</span><span class="o">-</span><span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">Text</span><span class="p">)))</span>
+		 <span class="n">RetStr</span><span class="o">=</span> <span class="o">%</span> <span class="n">TF_Space</span><span class="p">(</span><span class="nf">Round</span><span class="p">(</span><span class="n">Spaces</span><span class="o">/</span><span class="mi">2</span><span class="p">))(</span><span class="n">Text</span><span class="p">)</span><span class="n">TF_Space</span><span class="p">(</span><span class="n">Spaces</span><span class="o">-</span><span class="p">(</span><span class="nf">Round</span><span class="p">(</span><span class="n">Spaces</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
 		<span class="p">}</span>
 <span class="w">	 </span><span class="nb">If </span><span class="n">AlignText</span><span class="o">=</span><span class="mi">2</span>         
 		<span class="p">{</span>
@@ -1182,7 +1182,7 @@
 <span class="n">TF_Space</span><span class="p">(</span><span class="n">Width</span><span class="p">)</span>
 	<span class="p">{</span>
 <span class="w">	 </span><span class="nb">Loop</span><span class="p">,</span><span class="nv">%Width%</span>
-	 <span class="n">Space</span><span class="o">=%</span> <span class="n">Space</span> <span class="nf">Chr(</span><span class="mi">32</span><span class="p">)</span>
+	 <span class="n">Space</span><span class="o">=%</span> <span class="n">Space</span> <span class="nf">Chr</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
 <span class="w">	 </span><span class="nb">Return</span> <span class="n">Space</span>
 	<span class="p">}</span>
 	
@@ -1262,10 +1262,10 @@
 <span class="c-Singleline">	 ; some basic error checking</span>
 <span class="c-Singleline">	 </span>
 <span class="c-Singleline">	 ; error: only digits - and + allowed</span>
-	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExReplace(</span><span class="n">Start</span><span class="p">,</span> <span class="s">&quot;[ 0-9+\-\,]&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="s">&quot;[ 0-9+\-\,]&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 		 <span class="n">Error</span> <span class="o">=</span> <span class="mi">1</span>
 		 
-	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExReplace(</span><span class="n">End</span><span class="p">,</span> <span class="s">&quot;[0-9 ]&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+	 <span class="n">If</span> <span class="p">(</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="n">End</span><span class="p">,</span> <span class="s">&quot;[0-9 ]&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 		 <span class="n">Error</span> <span class="o">=</span> <span class="mi">2</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">	 ; error: only one + allowed</span>

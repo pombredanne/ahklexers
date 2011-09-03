@@ -61,8 +61,8 @@
 <span class="w">  </span><span class="nb">IfInString</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="o">=</span>
   <span class="p">{</span>
 <span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">Options</span><span class="p">,</span><span class="nv">%A_Space%</span>
-    <span class="n">If</span> <span class="p">(</span><span class="n">Option</span><span class="o">:=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
-<span class="w">     </span><span class="nl">%Option%:</span><span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">Option</span><span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">     </span><span class="nl">%Option%:</span><span class="o">=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">If </span><span class="n">NO</span> <span class="o">=</span> <span class="n">Reset</span>
    <span class="p">{</span>
     <span class="n">Options</span> <span class="o">:=</span> <span class="s">&quot;GF=50 GL=74 GC=FFFFAA GR=9 GT=Off &quot;</span>
@@ -93,7 +93,7 @@
  <span class="n">Prev_TitleMatchMode</span> <span class="o">:=</span> <span class="nv">A_TitleMatchMode</span>
 <span class="w"> </span><span class="nb">DetectHiddenWindows</span> <span class="n">On</span>
 <span class="w"> </span><span class="nb">SetTitleMatchMode</span> <span class="mi">1</span>
- <span class="n">If</span> <span class="p">(</span><span class="nf">WinExist(</span><span class="s">&quot;NotifyGui&quot;</span><span class="p">))</span><span class="c-Singleline">  ;=== find all Notifications from ALL scripts, for placement</span>
+ <span class="n">If</span> <span class="p">(</span><span class="nf">WinExist</span><span class="p">(</span><span class="s">&quot;NotifyGui&quot;</span><span class="p">))</span><span class="c-Singleline">  ;=== find all Notifications from ALL scripts, for placement</span>
 <span class="w">  </span><span class="nb">WinGetPos</span><span class="p">,</span> <span class="n">OtherX</span><span class="p">,</span> <span class="n">OtherY</span><span class="c-Singleline">  ;=== change this to a loop for all open notifications?</span>
 <span class="w"> </span><span class="nb">DetectHiddenWindows</span> <span class="nv">%Prev_DetectHiddenWindows%</span>
 <span class="w"> </span><span class="nb">SetTitleMatchMode</span> <span class="nv">%Prev_TitleMatchMode%</span>
@@ -103,7 +103,7 @@
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Font</span><span class="p">,</span> <span class="n">w</span><span class="nv">%TW%</span> <span class="n">s</span><span class="nv">%TS%</span> <span class="n">c</span><span class="nv">%TC%</span><span class="p">,</span> <span class="nv">%TF%</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Image</span><span class="p">)</span>
  <span class="p">{</span>
-<span class="w">  </span><span class="nb">If </span><span class="nf">FileExist(</span><span class="n">Image</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">If </span><span class="nf">FileExist</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Picture</span><span class="p">,</span> <span class="n">w</span><span class="nv">%IW%</span> <span class="n">h</span><span class="nv">%IH%</span> <span class="n">Icon</span><span class="nv">%IN%</span><span class="p">,</span> <span class="o">%</span> <span class="n">Image</span>
 <span class="w">  </span><span class="nb">Else</span>
 <span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Picture</span><span class="p">,</span> <span class="n">w</span><span class="nv">%IW%</span> <span class="n">h</span><span class="nv">%IH%</span> <span class="n">Icon</span><span class="nv">%Image%</span><span class="p">,</span> <span class="n">c</span><span class="o">:</span>\<span class="n">windows</span>\<span class="n">system32</span>\<span class="n">shell32</span><span class="o">.</span><span class="n">dll</span>
@@ -156,7 +156,7 @@
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span>  <span class="o">%</span> <span class="s">&quot;Hide x&quot;</span> <span class="n">NewX</span> <span class="s">&quot; y&quot;</span> <span class="n">NewY</span> <span class="s">&quot; w&quot;</span> <span class="n">GW</span><span class="p">,</span> <span class="n">NotifyGui</span>
 <span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GN%</span><span class="o">:+</span><span class="n">LastFound</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">SI</span>
-  <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist(</span><span class="p">),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SI</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00040008&quot;</span><span class="p">)</span>
+  <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist</span><span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SI</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00040008&quot;</span><span class="p">)</span>
 <span class="w"> </span><span class="nb">Else</span>
 <span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NotifyGui</span>
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="n">NA</span>
@@ -165,7 +165,7 @@
  <span class="n">If</span> <span class="p">((</span><span class="n">Duration</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="n">OR</span> <span class="p">(</span><span class="n">Duration</span> <span class="o">=</span> <span class="s">&quot;-0&quot;</span><span class="p">))</span>
 <span class="w">  </span><span class="nb">Exit</span> <span class="o">:=</span> <span class="n">GN</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Duration</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;_Notify_Kill_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">%</span> <span class="o">-</span> <span class="nf">Abs(</span><span class="n">Duration</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+<span class="w">   </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;_Notify_Kill_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">%</span> <span class="o">-</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">Duration</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
 <span class="w"> </span><span class="nb">Else</span>
 <span class="w">  </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;_Notify_Flash_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">%</span> <span class="n">BF</span>
 
@@ -179,15 +179,15 @@
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="nv">A_Gui</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
 <span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%A_Gui%</span><span class="o">:+</span><span class="n">LastFound</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">SC</span>
-  <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist(</span><span class="p">),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SC</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+  <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist</span><span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SC</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%A_Gui%</span><span class="o">:</span><span class="n">Destroy</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">ActionList</span><span class="p">)</span>
 <span class="w">  </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">ActionList</span><span class="p">,</span><span class="o">|</span>
-   <span class="n">If</span> <span class="p">((</span><span class="n">Action</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">=</span> <span class="nv">A_Gui</span><span class="p">)</span>
+   <span class="n">If</span> <span class="p">((</span><span class="n">Action</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">=</span> <span class="nv">A_Gui</span><span class="p">)</span>
    <span class="p">{</span>
-<span class="w">    </span><span class="nl">Temp_Notify_Action:</span><span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">Temp_Notify_Action:</span><span class="o">=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">ActionList</span><span class="p">,</span> <span class="n">ActionList</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;|&quot;</span> <span class="nv">A_Gui</span> <span class="s">&quot;=&quot;</span> <span class="n">Temp_Notify_Action</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
-<span class="w">    </span><span class="nb">If </span><span class="nf">IsLabel(</span><span class="n">_Notify_Action</span> <span class="o">:=</span> <span class="n">Temp_Notify_Action</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">If </span><span class="nf">IsLabel</span><span class="p">(</span><span class="n">_Notify_Action</span> <span class="o">:=</span> <span class="n">Temp_Notify_Action</span><span class="p">)</span>
 <span class="w">     </span><span class="nb">Gosub</span><span class="p">,</span> <span class="nv">%_Notify_Action%</span>
     <span class="n">_Notify_Action</span> <span class="o">=</span>
 <span class="w">    </span><span class="nb">Break</span>
@@ -232,7 +232,7 @@
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="n">GK</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
 <span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GK%</span><span class="o">:+</span><span class="n">LastFound</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">ST</span>
-  <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist(</span><span class="p">),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+  <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist</span><span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GK%</span><span class="o">:</span><span class="n">Destroy</span>
 <span class="w"> </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">NotifyList</span><span class="p">,</span> <span class="n">NotifyList</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;|&quot;</span> <span class="n">GK</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Exit</span> <span class="o">=</span> <span class="n">GK</span><span class="p">)</span>
@@ -282,13 +282,13 @@
  <span class="n">If</span> <span class="p">(</span><span class="n">Image</span><span class="p">)</span>
  <span class="p">{</span>
 <span class="w">  </span><span class="nb">Gui</span> <span class="nv">%Image%</span><span class="o">:+</span><span class="n">LastFound</span>
-<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> <span class="o">:=</span> <span class="nf">WinExist</span><span class="p">()</span>
   <span class="p">{</span>
-<span class="w">   </span><span class="nb">WinWaitClose</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">Duration</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">WinWaitClose</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="o">%</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">Duration</span><span class="p">)</span>
    <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">&amp;&amp;</span> <span class="n">Duration</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
    <span class="p">{</span>
 <span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="n">Image</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
-    <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+    <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%Image%</span><span class="o">:</span><span class="n">Destroy</span>
    <span class="p">}</span>
   <span class="p">}</span>
@@ -298,13 +298,13 @@
  <span class="p">{</span>
   <span class="n">Image</span> <span class="o">:=</span> <span class="n">GL</span> <span class="o">-</span> <span class="p">(</span><span class="nv">A_Index</span><span class="p">)</span><span class="c-Singleline"> ;+ GF - 1)</span>
 <span class="w">  </span><span class="nb">Gui</span> <span class="nv">%Image%</span><span class="o">:+</span><span class="n">LastFound</span>
-<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> <span class="o">:=</span> <span class="nf">WinExist</span><span class="p">()</span>
   <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;WinWaitClose, , , % Abs(Duration)</span>
 <span class="c-Singleline">   ;If (ErrorLevel &amp;&amp; Duration &lt; 1)</span>
 <span class="c-Singleline">   ;{</span>
 <span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="n">Image</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
-    <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+    <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%Image%</span><span class="o">:</span><span class="n">Destroy</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;}</span>
   <span class="p">}</span>

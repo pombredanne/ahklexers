@@ -4,15 +4,15 @@
 <span class="n">Exec</span><span class="p">(</span><span class="n">_#_1</span><span class="p">,</span><span class="n">_#_2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_3</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_4</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_5</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_6</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_7</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_8</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_9</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_10</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_11</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_12</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_13</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_14</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_15</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_16</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_17</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_18</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_19</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_20</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>
 <span class="w">   </span><span class="nb">global</span>
 <span class="w">   </span><span class="nb">local</span> <span class="n">_#_T</span><span class="p">,</span> <span class="n">_#_F</span><span class="p">,</span> <span class="n">_#_L</span><span class="p">,</span> <span class="n">_#_O</span><span class="p">,</span><span class="n">_#_C</span><span class="p">,</span><span class="n">_#_I</span><span class="p">,</span><span class="n">_#_P</span><span class="p">,</span><span class="n">_#_V</span>
-<span class="w">   </span><span class="nb">If </span><span class="nf">IsLabel(</span><span class="n">_#_1</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">If </span><span class="nf">IsLabel</span><span class="p">(</span><span class="n">_#_1</span><span class="p">)</span>
 <span class="w">      </span><span class="nb">GoTo</span> <span class="o">%</span> <span class="n">_#_1</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">if</span> <span class="nf">IsLabel(RegExReplace(</span><span class="n">_#_1</span><span class="p">,</span><span class="s">&quot;[\s`,].*&quot;</span><span class="p">)){</span>
+<span class="w">   </span><span class="nb">else</span> <span class="n">if</span> <span class="nf">IsLabel</span><span class="p">(</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="n">_#_1</span><span class="p">,</span><span class="s">&quot;[\s`,].*&quot;</span><span class="p">)){</span>
       <span class="n">_#_I</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">      </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">_#_1</span><span class="p">,</span><span class="se">`n</span>
       <span class="p">{</span>
-<span class="w">         </span><span class="nl">_#_P:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;^(\w+)\s&quot;</span><span class="p">,</span><span class="s">&quot;$1,&quot;</span><span class="p">)</span>
-<span class="w">         </span><span class="nb">While</span> <span class="p">(</span><span class="n">_#_I</span><span class="o">:=</span><span class="nf">RegExMatch(</span><span class="n">_#_P</span><span class="p">,</span><span class="s">&quot;(%[\w#@]+%)&quot;</span><span class="p">)){</span>
-<span class="w">            </span><span class="nl">_#_V:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">_#_P</span><span class="p">,</span><span class="n">_#_I</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">_#_P</span><span class="p">,</span><span class="s">&quot;%&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">_#_I</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">_#_I</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="nl">_#_P:</span><span class="o">=</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;^(\w+)\s&quot;</span><span class="p">,</span><span class="s">&quot;$1,&quot;</span><span class="p">)</span>
+<span class="w">         </span><span class="nb">While</span> <span class="p">(</span><span class="n">_#_I</span><span class="o">:=</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">_#_P</span><span class="p">,</span><span class="s">&quot;(%[\w#@]+%)&quot;</span><span class="p">)){</span>
+<span class="w">            </span><span class="nl">_#_V:</span><span class="o">=</span><span class="nf">SubStr</span><span class="p">(</span><span class="n">_#_P</span><span class="p">,</span><span class="n">_#_I</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nf">InStr</span><span class="p">(</span><span class="n">_#_P</span><span class="p">,</span><span class="s">&quot;%&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">_#_I</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">_#_I</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">StringReplace</span><span class="p">,</span><span class="n">_#_P</span><span class="p">,</span><span class="n">_#_P</span><span class="p">,</span><span class="se">`%</span><span class="nv">%_#_V%</span><span class="se">`%</span><span class="p">,</span><span class="o">%</span> <span class="nv">%_#_V%</span>
             <span class="n">_#_I</span><span class="o">++</span>
          <span class="p">}</span>
@@ -27,7 +27,7 @@
 <span class="w">               </span><span class="nb">StringTrimRight</span><span class="p">,</span><span class="n">_#_</span><span class="nv">%_#_I%</span><span class="p">,</span><span class="n">_#_</span><span class="nv">%_#_I%</span><span class="p">,</span><span class="mi">1</span>
                <span class="n">_#_</span><span class="nv">%_#_I%</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span><span class="p">,</span><span class="n">_#_T</span><span class="o">:=</span><span class="s">&quot;&quot;</span>
             <span class="p">}</span>
-            <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;</span><span class="se">``</span><span class="s">&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">_#_T</span><span class="o">:=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;</span><span class="se">``</span><span class="s">&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">_#_T</span><span class="o">:=</span><span class="mi">1</span><span class="p">)</span>
 <span class="w">               </span><span class="nb">Continue</span>
          <span class="p">}</span>
 <span class="w">         </span><span class="nl">_#_T:</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_I</span><span class="o">:=</span><span class="mi">0</span><span class="p">,</span><span class="n">_#_P</span><span class="o">:=</span><span class="s">&quot;&quot;</span>
@@ -313,7 +313,7 @@
          <span class="n">_#_</span><span class="nv">%A_Index%</span> <span class="o">:=</span> <span class="n">_#_</span><span class="nv">%_#_C%</span>
          <span class="n">_#_C</span><span class="o">++</span>
       <span class="p">}</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">IsLabel(</span><span class="n">_#_1</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">If </span><span class="nf">IsLabel</span><span class="p">(</span><span class="n">_#_1</span><span class="p">)</span>
 <span class="w">         </span><span class="nb">GoSub</span><span class="p">,</span> <span class="nv">%_#_1%</span>
    <span class="p">}</span>
 <span class="w">   </span><span class="nb">Return</span>
@@ -535,7 +535,7 @@
    <span class="n">_#_O</span> <span class="o">=</span>
 <span class="w">   </span><span class="nb">If </span><span class="n">_#_L</span> <span class="o">=</span>
 <span class="w">      </span><span class="nb">Return</span>
-   <span class="nf">IsLabel(</span><span class="n">_#_1</span><span class="p">)</span>
+   <span class="nf">IsLabel</span><span class="p">(</span><span class="n">_#_1</span><span class="p">)</span>
 <span class="w">         </span><span class="nb">GoSub</span><span class="p">,</span> <span class="nv">%_#_1%</span>
    <span class="n">_#_L</span><span class="o">=</span>
 <span class="w">   </span><span class="nb">Return</span>
@@ -655,14 +655,14 @@
 <span class="w">   </span><span class="nl">PWC:</span>
 <span class="w">   </span><span class="nl">PixelWaitColor:</span><span class="c-Singleline">  ;(ByRef _#_2, ByRef _#_3, p_x1, p_y1, p_x2, p_y2, p_color, p_shades=&quot;&quot;, p_opts=&quot;&quot;, p_waitms=0, p_checkinterval=&quot;&quot;)</span>
    <span class="p">{</span>
-      <span class="n">if</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="n">_#_8</span><span class="p">,</span> <span class="s">&quot;i)^[0-9a-f]{6}$&quot;</span><span class="p">))</span>
+      <span class="n">if</span> <span class="p">(</span><span class="nf">RegExMatch</span><span class="p">(</span><span class="n">_#_8</span><span class="p">,</span> <span class="s">&quot;i)^[0-9a-f]{6}$&quot;</span><span class="p">))</span>
 <span class="w">         </span><span class="nl">_#_8:</span><span class="o">=</span><span class="s">&quot;0x&quot;</span> <span class="n">_#_8</span>
 <span class="w">      </span><span class="nl">_#_8_bkp:</span><span class="o">=</span><span class="n">_#_8</span>
-<span class="w">      </span><span class="nl">_#_8:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="n">_#_8</span><span class="p">,</span> <span class="s">&quot;i)\bSlow\b&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="nl">_#_8:</span><span class="o">=</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="n">_#_8</span><span class="p">,</span> <span class="s">&quot;i)\bSlow\b&quot;</span><span class="p">)</span>
       <span class="n">if</span> <span class="p">(</span><span class="n">_#_8</span><span class="o">=</span><span class="n">_#_8_bkp</span><span class="p">)</span>
 <span class="w">         </span><span class="nl">_#_8:</span><span class="o">=</span><span class="n">_#_8</span> <span class="s">&quot; Fast&quot;</span>
 <span class="w">      </span><span class="nl">_#_8_bkp:</span><span class="o">=</span><span class="n">_#_8</span>
-<span class="w">      </span><span class="nl">_#_8:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="n">_#_8</span><span class="p">,</span> <span class="s">&quot;i)\bBGR\b&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="nl">_#_8:</span><span class="o">=</span><span class="nf">RegExReplace</span><span class="p">(</span><span class="n">_#_8</span><span class="p">,</span> <span class="s">&quot;i)\bBGR\b&quot;</span><span class="p">)</span>
       <span class="n">if</span> <span class="p">(</span><span class="n">_#_8</span><span class="o">=</span><span class="n">_#_8_bkp</span><span class="p">)</span>
 <span class="w">         </span><span class="nl">_#_8:</span><span class="o">=</span><span class="n">_#_8</span> <span class="s">&quot; RGB&quot;</span>
       <span class="n">if</span> <span class="p">(</span><span class="n">_#_12</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
@@ -850,7 +850,7 @@
 <span class="w">   </span><span class="nb">Goto</span><span class="p">,</span> <span class="n">Return</span>
 <span class="w">   </span><span class="nl">VSC:</span>
 <span class="w">   </span><span class="nl">VarSetCapacity:</span>
-      <span class="nf">VarSetCapacity(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="n">_#_3</span><span class="p">,</span> <span class="n">_#_4</span><span class="p">)</span>
+      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="n">_#_3</span><span class="p">,</span> <span class="n">_#_4</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">Return</span>
 <span class="w">   </span><span class="nl">WA:</span>
 <span class="w">   </span><span class="nb">WinActivate</span><span class="o">:</span>
@@ -1032,7 +1032,7 @@
          <span class="n">_#_</span><span class="nv">%A_Index%</span> <span class="o">:=</span> <span class="n">_#_</span><span class="nv">%_#_C%</span>
          <span class="n">_#_C</span><span class="o">++</span>
       <span class="p">}</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">IsLabel(</span><span class="n">_#_1</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">If </span><span class="nf">IsLabel</span><span class="p">(</span><span class="n">_#_1</span><span class="p">)</span>
 <span class="w">         </span><span class="nb">GoTo</span><span class="p">,</span> <span class="nv">%_#_1%</span>
 <span class="w">   </span><span class="nb">Return</span>
 <span class="w">   </span><span class="nl">KH:</span>
@@ -1080,17 +1080,17 @@
 <span class="w">   </span><span class="nb">Goto</span><span class="p">,</span> <span class="n">Return</span>
 <span class="w">   </span><span class="nl">REM:</span>
 <span class="w">   </span><span class="nl">RegExMatch:</span>
-      <span class="nf">RegExMatch(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="nv">%_#_3%</span><span class="p">,</span> <span class="nv">%_#_4%</span><span class="p">,</span> <span class="nv">%_#_5%</span><span class="p">)</span>
+      <span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="nv">%_#_3%</span><span class="p">,</span> <span class="nv">%_#_4%</span><span class="p">,</span> <span class="nv">%_#_5%</span><span class="p">)</span>
 
 <span class="w">   </span><span class="nb">Goto</span><span class="p">,</span> <span class="n">Return</span>
 <span class="w">   </span><span class="nl">RER:</span>
 <span class="w">   </span><span class="nl">RegExReplace:</span>
-      <span class="nf">RegExReplace(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="nv">%_#_3%</span><span class="p">,</span> <span class="nv">%_#_4%</span><span class="p">,</span> <span class="nv">%_#_5%</span><span class="p">,</span> <span class="nv">%_#_6%</span><span class="p">,</span> <span class="nv">%_#_7%</span><span class="p">)</span>
+      <span class="nf">RegExReplace</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="nv">%_#_3%</span><span class="p">,</span> <span class="nv">%_#_4%</span><span class="p">,</span> <span class="nv">%_#_5%</span><span class="p">,</span> <span class="nv">%_#_6%</span><span class="p">,</span> <span class="nv">%_#_7%</span><span class="p">)</span>
 
 <span class="w">   </span><span class="nb">Goto</span><span class="p">,</span> <span class="n">Return</span>
 <span class="w">   </span><span class="nl">RC:</span>
 <span class="w">   </span><span class="nl">RegisterCallback:</span>
-      <span class="nf">RegisterCallback(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="nv">%_#_3%</span><span class="p">,</span> <span class="nv">%_#_4%</span><span class="p">,</span> <span class="nv">%_#_5%</span><span class="p">)</span>
+      <span class="nf">RegisterCallback</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span> <span class="nv">%_#_3%</span><span class="p">,</span> <span class="nv">%_#_4%</span><span class="p">,</span> <span class="nv">%_#_5%</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">Return</span>
 <span class="w">   </span><span class="nl">RR:</span>
 <span class="w">   </span><span class="nb">RegRead</span><span class="o">:</span>

@@ -1,5 +1,5 @@
 import os, sys, subprocess, re, codecs
-from ahkLexer import AhkLexer, ahkcommands
+from ahkLexer import AhkLexer 
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.style import Style

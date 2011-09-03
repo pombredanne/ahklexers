@@ -85,7 +85,7 @@
 <span class="w">        </span><span class="nb">Else</span>
 <span class="w">        </span><span class="nb">return</span>
     <span class="p">}</span>
-    <span class="n">deg</span> <span class="o">:=</span> <span class="nf">ATan(</span><span class="n">y</span><span class="o">/</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mf">57.295779513</span>
+    <span class="n">deg</span> <span class="o">:=</span> <span class="nf">ATan</span><span class="p">(</span><span class="n">y</span><span class="o">/</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mf">57.295779513</span>
 <span class="w">    </span><span class="nb">if </span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">return</span> <span class="n">deg</span> <span class="o">+</span> <span class="mi">90</span>
 <span class="w">    </span><span class="nb">Else</span>
@@ -94,7 +94,7 @@
 
 <span class="n">MG_GetRadius</span><span class="p">(</span><span class="n">StartX</span><span class="p">,</span> <span class="n">StartY</span><span class="p">,</span> <span class="n">EndX</span><span class="p">,</span> <span class="n">EndY</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">a</span> <span class="o">:=</span> <span class="nf">Abs(</span><span class="n">endX</span><span class="o">-</span><span class="n">startX</span><span class="p">),</span> <span class="n">b</span> <span class="o">:=</span> <span class="nf">Abs(</span><span class="n">endY</span><span class="o">-</span><span class="n">startY</span><span class="p">),</span> <span class="n">Radius</span> <span class="o">:=</span> <span class="nf">Sqrt(</span><span class="n">a</span><span class="o">*</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">:=</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">endX</span><span class="o">-</span><span class="n">startX</span><span class="p">),</span> <span class="n">b</span> <span class="o">:=</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">endY</span><span class="o">-</span><span class="n">startY</span><span class="p">),</span> <span class="n">Radius</span> <span class="o">:=</span> <span class="nf">Sqrt</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">Radius</span>    
 <span class="p">}</span>
 
@@ -103,10 +103,10 @@
 <span class="w">   </span><span class="nb">CoordMode</span><span class="p">,</span> <span class="n">mouse</span><span class="p">,</span> <span class="n">Screen</span>
 <span class="w">   </span><span class="nb">MouseGetPos</span><span class="p">,</span> <span class="n">mx1</span><span class="p">,</span> <span class="n">my1</span>
 <span class="w">   </span><span class="nb">if </span><span class="n">MGHotkey</span> <span class="o">=</span>
-   <span class="n">MGHotkey</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="nv">A_ThisHotkey</span><span class="p">,</span><span class="s">&quot;^(\w* &amp; |\W)&quot;</span><span class="p">)</span>
+   <span class="n">MGHotkey</span> <span class="o">:=</span> <span class="nf">RegExReplace</span><span class="p">(</span><span class="nv">A_ThisHotkey</span><span class="p">,</span><span class="s">&quot;^(\w* &amp; |\W)&quot;</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">Loop</span>
    <span class="p">{</span>
-		<span class="n">if</span> <span class="o">!</span><span class="p">(</span><span class="nf">GetKeyState(</span><span class="n">MGHotkey</span><span class="p">,</span> <span class="s">&quot;p&quot;</span><span class="p">))</span>
+		<span class="n">if</span> <span class="o">!</span><span class="p">(</span><span class="nf">GetKeyState</span><span class="p">(</span><span class="n">MGHotkey</span><span class="p">,</span> <span class="s">&quot;p&quot;</span><span class="p">))</span>
 		<span class="p">{</span>
 <span class="w">			</span><span class="nb">if </span><span class="n">Gesture</span> <span class="o">=</span>
 			<span class="p">{</span>
@@ -122,7 +122,7 @@
 			<span class="p">}</span>
 <span class="w">			</span><span class="nb">if </span><span class="n">ToolTip</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="w">			</span><span class="nb">ToolTip</span>
-			<span class="n">if</span> <span class="p">(</span><span class="nf">IsFunc(</span><span class="s">&quot;MG_&quot;</span> <span class="n">Gesture</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ExecuteMGFunction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+			<span class="n">if</span> <span class="p">(</span><span class="nf">IsFunc</span><span class="p">(</span><span class="s">&quot;MG_&quot;</span> <span class="n">Gesture</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ExecuteMGFunction</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 			<span class="n">MG_</span><span class="nv">%Gesture%</span><span class="p">()</span>
 <span class="w">			</span><span class="nb">Return</span> <span class="n">Gesture</span>
 		<span class="p">}</span>
@@ -141,7 +141,7 @@
 			<span class="n">Gesture</span> <span class="o">.=</span> <span class="n">CurMove</span>
 			<span class="n">LastMove</span> <span class="o">:=</span> <span class="n">CurMove</span>
 			<span class="p">{</span>
-				<span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">Gesture</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MaxMoves</span><span class="p">)</span>  
+				<span class="n">if</span> <span class="p">(</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">Gesture</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MaxMoves</span><span class="p">)</span>  
 				<span class="p">{</span>
 <span class="w">					</span><span class="nb">if </span><span class="n">ToolTip</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="w">					</span><span class="nb">ToolTip</span>

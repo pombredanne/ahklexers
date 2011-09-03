@@ -42,7 +42,7 @@
 <span class="w">        </span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">4096</span> <span class="p">,</span> <span class="p">,</span> <span class="n">Error</span><span class="o">!</span> <span class="se">`n`n</span><span class="n">Only</span> <span class="n">alphanumeric</span> <span class="n">Symbols</span> <span class="n">will</span> <span class="n">be</span> <span class="n">accepted</span><span class="o">!</span>
 <span class="w">        </span><span class="nb">Exit</span>
     <span class="p">}</span><span class="c-Singleline">                                                           ;------------------------------------------------------------------------------------</span>
-    <span class="n">if</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">from</span><span class="p">,</span> <span class="s">&quot;base&quot;</span><span class="p">))</span><span class="c-Singleline">                                            ;if the word &quot;base&quot; is in &quot;from&quot;...</span>
+    <span class="n">if</span> <span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="s">&quot;base&quot;</span><span class="p">))</span><span class="c-Singleline">                                            ;if the word &quot;base&quot; is in &quot;from&quot;...</span>
     <span class="p">{</span>
 <span class="w">        </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">base_check</span><span class="p">,</span> <span class="n">from</span><span class="p">,</span> <span class="mi">4</span><span class="c-Singleline">                   ;...then cut &quot;base&quot; to have ONLY the number</span>
 <span class="w">        </span><span class="nb">if </span><span class="n">base_check</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Integer</span><span class="c-Singleline">                               ;if &quot;from&quot; not integer now</span>
@@ -53,7 +53,7 @@
 <span class="w">        </span><span class="nb">else</span><span class="c-Singleline">                                                                  ;else replace the value from &quot;from&quot;</span>
             <span class="n">from</span> <span class="o">:=</span> <span class="n">base_check</span><span class="c-Singleline">                                       ;with the number in base_check</span>
     <span class="p">}</span><span class="c-Singleline">                                                           ;------------------------------------------------------------------------------------</span>
-    <span class="n">if</span> <span class="p">(</span><span class="nf">InStr(</span><span class="n">to</span><span class="p">,</span> <span class="s">&quot;base&quot;</span><span class="p">))</span><span class="c-Singleline">                                               ;the same as above again for the destination number system</span>
+    <span class="n">if</span> <span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="s">&quot;base&quot;</span><span class="p">))</span><span class="c-Singleline">                                               ;the same as above again for the destination number system</span>
     <span class="p">{</span>
 <span class="w">        </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">base_check</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="mi">4</span>
 <span class="w">        </span><span class="nb">if </span><span class="n">base_check</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Integer</span>
@@ -96,7 +96,7 @@
         <span class="p">}</span>
     <span class="n">con_letter</span> <span class="o">:=</span> <span class="s">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span><span class="c-Singleline"> ;allowed letters</span>
     <span class="n">result_dec</span><span class="o">=</span>
-    <span class="n">length</span> <span class="o">:=</span> <span class="nf">StrLen(</span><span class="n">value</span><span class="p">)</span><span class="c-Singleline"> ;count the characters</span>
+    <span class="n">length</span> <span class="o">:=</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="c-Singleline"> ;count the characters</span>
     <span class="n">counter</span> <span class="o">:=</span> <span class="mi">0</span>
     <span class="n">parenthesis</span> <span class="o">:=</span> <span class="nv">False</span><span class="c-Singleline">    ;no parenthesis yet</span>
 <span class="w">    </span><span class="nb">loop</span><span class="p">,</span> <span class="nv">%length%</span><span class="c-Singleline">           ;loop by any character from &quot;value&quot;</span>
@@ -167,13 +167,13 @@
     <span class="n">result</span><span class="o">=</span><span class="c-Singleline">                                                  ;else convert it to destination number system</span>
 <span class="w">    </span><span class="nb">while</span> <span class="p">(</span><span class="n">result_dec</span><span class="p">)</span>
     <span class="p">{</span>       
-        <span class="n">char</span> <span class="o">:=</span> <span class="nf">Mod(</span><span class="n">result_dec</span> <span class="p">,</span> <span class="n">to</span><span class="p">)</span><span class="c-Singleline">                        ; first number from destination number system</span>
+        <span class="n">char</span> <span class="o">:=</span> <span class="nf">Mod</span><span class="p">(</span><span class="n">result_dec</span> <span class="p">,</span> <span class="n">to</span><span class="p">)</span><span class="c-Singleline">                        ; first number from destination number system</span>
         <span class="n">if</span> <span class="p">(</span><span class="n">char</span> <span class="o">&gt;</span> <span class="mi">35</span><span class="p">)</span><span class="c-Singleline">                                               ;if it greater than 35...</span>
             <span class="n">char</span> <span class="o">:=</span> <span class="s">&quot;(&quot;</span> <span class="o">.</span> <span class="n">char</span> <span class="o">.</span> <span class="s">&quot;)&quot;</span><span class="c-Singleline">                               ;...put it between parenthesis</span>
 <span class="w">        </span><span class="nb">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">char</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">)</span><span class="c-Singleline">                                          ;if it less than 36 , but greater than 9,</span>
 <span class="w">            </span><span class="nb">StringMid</span><span class="p">,</span> <span class="n">char</span><span class="p">,</span> <span class="n">con_letter</span><span class="p">,</span> <span class="p">(</span><span class="n">char</span> <span class="o">-</span> <span class="mi">9</span><span class="p">),</span> <span class="mi">1</span><span class="c-Singleline">    ;...replace it with a letter</span>
         <span class="n">result</span> <span class="o">:=</span>  <span class="n">char</span> <span class="o">.</span> <span class="n">result</span><span class="c-Singleline">                                   ;combine the characters to the result</span>
-        <span class="n">result_dec</span> <span class="o">:=</span> <span class="nf">Floor(</span><span class="n">result_dec</span> <span class="o">/</span> <span class="n">to</span><span class="p">)</span><span class="c-Singleline">               ;calculate the remain to continue the converting with this</span>
+        <span class="n">result_dec</span> <span class="o">:=</span> <span class="nf">Floor</span><span class="p">(</span><span class="n">result_dec</span> <span class="o">/</span> <span class="n">to</span><span class="p">)</span><span class="c-Singleline">               ;calculate the remain to continue the converting with this</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">%result%</span><span class="c-Singleline">                                             ;return result</span>
 <span class="p">}</span>
