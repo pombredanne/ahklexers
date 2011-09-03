@@ -4,7 +4,7 @@
 <span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; ----- User Configuration -----</span>
-<span class="n">ConfigFilePath</span> :<span class="o">=</span> <span class="s">&quot;settings.ini&quot;</span><span class="c-Singleline"></span>
+<span class="n">ConfigFilePath</span> <span class="o">:=</span> <span class="s">&quot;settings.ini&quot;</span><span class="c-Singleline"></span>
 
 
 <span class="c-Singleline">; ----- Main -----</span>
@@ -12,13 +12,13 @@
     <span class="n">createConfigFile</span><span class="p">(</span><span class="n">ConfigFilePath</span><span class="p">)</span>
 
 <span class="nb">FileRead</span><span class="p">,</span> <span class="n">ini</span><span class="p">,</span> <span class="nv">%ConfigFilePath%</span>
-<span class="n">value</span> :<span class="o">=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="s">&quot;Started&quot;</span><span class="p">)</span>
+<span class="n">value</span> <span class="o">:=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="s">&quot;Started&quot;</span><span class="p">)</span>
 <span class="n">value</span><span class="o">++</span>
 <span class="n">ini_replaceValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="s">&quot;Started&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 <span class="n">updateConfigFile</span><span class="p">(</span><span class="n">ConfigFilePath</span><span class="p">,</span> <span class="n">ini</span><span class="p">)</span>
 
 <span class="nb">FileRead</span><span class="p">,</span> <span class="n">ini</span><span class="p">,</span> <span class="nv">%ConfigFilePath%</span>
-<span class="n">value</span> :<span class="o">=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="s">&quot;Started&quot;</span><span class="p">)</span>
+<span class="n">value</span> <span class="o">:=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="s">&quot;Started&quot;</span><span class="p">)</span>
 <span class="nb">MsgBox</span> <span class="n">This</span> <span class="n">script</span> <span class="n">was</span> <span class="n">started</span> <span class="nv">%value%</span> <span class="n">time</span><span class="o">/</span><span class="n">s</span><span class="o">.</span>
 
 

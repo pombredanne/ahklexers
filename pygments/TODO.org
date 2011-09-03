@@ -1,0 +1,16 @@
+* TODO
+** parser
+*** token stream
+*** filter 1: merge continuation sections, and line continuations
+*** filter 2: abstract syntax tree
+*** filter 3: code generation
+** LALR parser : PLY
+** LL(k) parser: antlr
+** extend pygments
+
+** BNF grammar
+*** script : lines
+*** lines  : commands | expressions
+*** commands : commandname ,? param+ $
+*** expressions : similar to other languages
+

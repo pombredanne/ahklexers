@@ -24,7 +24,7 @@
 <span class="c-Singleline">; Icons in the Tray menu!</span>
 <span class="c-Singleline">;</span>
 <span class="c-Singleline">; Refer to a menu by handle for efficiency.</span>
-<span class="n">hTM</span> :<span class="o">=</span> <span class="n">MI_GetMenuHandle</span><span class="p">(</span><span class="s">&quot;Tray&quot;</span><span class="p">)</span>
+<span class="n">hTM</span> <span class="o">:=</span> <span class="n">MI_GetMenuHandle</span><span class="p">(</span><span class="s">&quot;Tray&quot;</span><span class="p">)</span>
 
 <span class="n">if</span> <span class="p">(</span><span class="nv">A_OSVersion</span> <span class="o">!=</span> <span class="s">&quot;WIN_VISTA&quot;</span><span class="p">)</span>
 <span class="p">{</span><span class="c-Singleline">   ; It is necessary to hook the tray icon for owner-drawing to work.</span>
@@ -35,7 +35,7 @@
 <span class="p">}</span>
 
 <span class="nb">SplitPath</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,,</span> <span class="n">SpyPath</span>
-<span class="n">SpyPath</span> <span class="o">=</span> <span class="nv">%SpyPath%</span>\<span class="n">AU3_Spy</span><span class="o">.</span><span class="n">exe</span>
+<span class="n">SpyPath</span> <span class="o">=</span> <span class="nv">%SpyPath%</span><span class="err">\</span><span class="n">AU3_Spy</span><span class="o">.</span><span class="n">exe</span>
 
 <span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">A_AhkPath</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; open</span>
 <span class="n">MI_SetMenuItemIcon</span><span class="p">(</span><span class="n">hTM</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nv">A_WinDir</span> <span class="s">&quot;\hh.exe&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="c-Singleline"> ; help</span>
@@ -62,8 +62,8 @@
     <span class="n">if</span> <span class="p">(</span><span class="n">lParam</span> <span class="o">=</span> <span class="mh">0x205</span><span class="p">)</span><span class="c-Singleline"> ; WM_RBUTTONUP</span>
     <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Update &quot;Suspend Script&quot; and &quot;Pause Script&quot; checkmarks.</span>
-        <span class="nf">DllCall(</span><span class="s">&quot;CheckMenuItem&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hTM</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">65305</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="nv">A_IsSuspended</span> ? <span class="mi">8</span>:<span class="mi">0</span><span class="p">)</span>
-        <span class="nf">DllCall(</span><span class="s">&quot;CheckMenuItem&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hTM</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">65306</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">M_IsPaused</span> ? <span class="mi">8</span>:<span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
+        <span class="nf">DllCall(</span><span class="s">&quot;CheckMenuItem&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hTM</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">65305</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="nv">A_IsSuspended</span> <span class="o">?</span> <span class="mi">8</span><span class="o">:</span><span class="mi">0</span><span class="p">)</span>
+        <span class="nf">DllCall(</span><span class="s">&quot;CheckMenuItem&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hTM</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">65306</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">M_IsPaused</span> <span class="o">?</span> <span class="mi">8</span><span class="o">:</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Show menu to allow owner-drawing.</span>
         <span class="n">MI_ShowMenu</span><span class="p">(</span><span class="n">hTM</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">return</span> <span class="mi">0</span>
@@ -74,7 +74,7 @@
 <span class="p">{</span>
 <span class="w">    </span><span class="nb">Critical</span>
     <span class="n">global</span> <span class="n">M_IsPaused</span>
-    <span class="n">id</span> :<span class="o">=</span> <span class="n">wParam</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+    <span class="n">id</span> <span class="o">:=</span> <span class="n">wParam</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
 <span class="w">    </span><span class="nb">if </span><span class="n">id</span> <span class="ow">in</span> <span class="mi">65306</span><span class="p">,</span><span class="mi">65403</span><span class="c-Singleline">  ; tray pause, file menu pause</span>
     <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; When the script is not paused, WM_COMMAND() is called once for</span>
@@ -85,7 +85,7 @@
 <span class="w">            </span><span class="nb">return</span><span class="c-Singleline"></span>
 <span class="c-Singleline">       </span>
 <span class="c-Singleline">        ; This will become incorrect if &quot;pause&quot; is used from the script.</span>
-        <span class="n">M_IsPaused</span> :<span class="o">=</span> ! <span class="n">M_IsPaused</span>
+        <span class="n">M_IsPaused</span> <span class="o">:=</span> <span class="o">!</span> <span class="n">M_IsPaused</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

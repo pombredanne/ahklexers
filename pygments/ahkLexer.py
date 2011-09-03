@@ -30,15 +30,15 @@ class AhkLexer(ExtendedRegexLexer):
             (r'^;.*?$', Comment.Singleline),
             (r'[]{}(),;[]', Punctuation),
             (r'(in|is|and|or|not)\b', Operator.Word),
-            ('\%[a-zA-Z_][a-zA-Z0-9_]*\%', Name.Variable), 
-            (r'!=|==|<<|>>|[-~+/*%=<>&^|.]', Operator),            
+            ('\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable), 
+            (r'!=|==|:=|\.=|<<|>>|[-~+/*%=<>&^|?:!.]', Operator),            
             include('commands'),
             include('labels'),
             include('builtInFunctions'),
             include('builtInVariables'),
             ('"', String, combined('stringescape', 'dqs')),
             include('numbers'),
-            ('[a-zA-Z_][a-zA-Z0-9_]*', Name),            
+            ('[a-zA-Z_#@$][a-zA-Z0-9_#@$]*', Name),            
             include('garbage'),
         ],		       
         'incomment': [	       
@@ -64,7 +64,7 @@ class AhkLexer(ExtendedRegexLexer):
         'labels': [
             # hotkeys and labels 
             # technically, hotkey names are limited to named keys and buttons
-            (r'(^\s*)([^:\s]+?:{1,2})', bygroups(Whitespace, Name.Label)), 
+            (r'(^\s*)([^:\s\(\"]+?:{1,2})', bygroups(Whitespace, Name.Label)), 
             (r'(^\s*)(::[^:\s]+?::)', bygroups(Whitespace, Name.Label)),  
             ],
         
@@ -88,8 +88,7 @@ class AhkLexer(ExtendedRegexLexer):
         ],        
         'garbage': [
             (r'[^\S\n]', Text),
-            (r'/', Text),      
-            (r'[^/(]', Text), 
+#            (r'.', Text),      
             ],
     }
 

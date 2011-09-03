@@ -4,17 +4,17 @@
 <span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
 
 <span class="n">COM_Init</span><span class="p">()</span>
-<span class="n">pwb</span> :<span class="o">=</span> <span class="n">COM_CreateObject</span><span class="p">(</span><span class="s">&quot;InternetExplorer.Application&quot;</span><span class="p">)</span>
+<span class="n">pwb</span> <span class="o">:=</span> <span class="n">COM_CreateObject</span><span class="p">(</span><span class="s">&quot;InternetExplorer.Application&quot;</span><span class="p">)</span>
 <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span> <span class="p">,</span> <span class="s">&quot;Visible=&quot;</span><span class="p">,</span> <span class="s">&quot;True&quot;</span><span class="p">)</span><span class="c-Singleline"> ;&quot;False&quot; ;&quot;True&quot; ;</span>
 <span class="nl">url:</span><span class="o">=</span><span class="s">&quot;http://www.google.com&quot;</span>
 <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span><span class="p">,</span> <span class="s">&quot;Navigate&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
 <span class="nb">loop</span>
-      <span class="n">If</span> <span class="p">(</span><span class="n">rdy</span>:<span class="o">=</span><span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span><span class="p">,</span><span class="s">&quot;readyState&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+      <span class="n">If</span> <span class="p">(</span><span class="n">rdy</span><span class="o">:=</span><span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span><span class="p">,</span><span class="s">&quot;readyState&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
 <span class="w">         </span><span class="nb">break</span>
 <span class="nl">url:</span><span class="o">=</span><span class="s">&quot;http://www.Yahoo.com&quot;</span>
 <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span><span class="p">,</span> <span class="s">&quot;Navigate&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
 <span class="nb">loop</span>
-      <span class="n">If</span> <span class="p">(</span><span class="n">rdy</span>:<span class="o">=</span><span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span><span class="p">,</span><span class="s">&quot;readyState&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+      <span class="n">If</span> <span class="p">(</span><span class="n">rdy</span><span class="o">:=</span><span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span><span class="p">,</span><span class="s">&quot;readyState&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
 <span class="w">         </span><span class="nb">break</span>
 <span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">262208</span><span class="p">,</span> <span class="n">Done</span><span class="p">,</span> <span class="n">Goodbye</span><span class="p">,</span><span class="mi">5</span>
 <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pwb</span><span class="p">,</span> <span class="s">&quot;Quit&quot;</span><span class="p">)</span>

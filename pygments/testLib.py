@@ -5,7 +5,7 @@ from pygments.formatters import HtmlFormatter
 from pygments.style import Style
 from pygments.token import *
 import os, os.path, glob
-samplesDir = 'samples/demo/'
+samplesDir = 'samples/stdlib/'
 for f in glob.glob( os.path.join(samplesDir, '*.ahk') ):
     print "current file is: " + f
     fh = open(f, 'r')

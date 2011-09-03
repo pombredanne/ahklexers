@@ -7,7 +7,7 @@
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">x398</span> <span class="n">y110</span> <span class="n">h377</span> <span class="n">w477</span><span class="p">,</span> <span class="n">CMDret</span> <span class="o">-</span> <span class="n">AHK</span> <span class="n">version</span> <span class="o">-</span> <span class="n">Streaming</span> <span class="n">Test</span> <span class="n">App</span>
 
 <span class="nb">Gui</span> <span class="o">+</span><span class="n">LastFound</span>
-<span class="n">StrOut</span> :<span class="o">=</span> <span class="n">CMDret_Stream</span><span class="p">(</span><span class="s">&quot;cmd /c dir c:\&quot;</span><span class="p">)</span>
+<span class="n">StrOut</span> <span class="o">:=</span> <span class="n">CMDret_Stream</span><span class="p">(</span><span class="s">&quot;cmd /c dir c:\&quot;</span><span class="p">)</span>
 <span class="nb">MsgBox</span> <span class="nv">%StrOut%</span>
 
 <span class="nb">Return</span>

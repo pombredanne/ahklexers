@@ -1,0 +1,8 @@
+    pygments.lexers.autohotkey
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Lexers for autohotkey.
+
+    :copyright: Copyright 2011 by Naveen Garg.
+    :license: BSD
+

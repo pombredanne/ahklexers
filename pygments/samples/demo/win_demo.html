@@ -10,7 +10,7 @@
 <span class="nb">Msgbox</span><span class="p">,,</span> <span class="nv">%A_ScriptName%</span><span class="p">,</span> <span class="n">Close</span> <span class="n">Gui</span> <span class="n">with</span> <span class="n">a</span> <span class="mf">2.5</span> <span class="n">second</span> <span class="n">blend</span> <span class="n">effect</span> <span class="ow">and</span> <span class="n">exit</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
-<span class="n">hwnd</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="s">&quot;A&quot;</span><span class="p">)</span>
+<span class="n">hwnd</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="s">&quot;A&quot;</span><span class="p">)</span>
 <span class="nb">Sleep</span><span class="p">,</span> <span class="mi">1500</span>
 
 <span class="n">Win_Animate</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="s">&quot;hide blend&quot;</span><span class="p">,</span> <span class="mi">2500</span><span class="p">)</span>
