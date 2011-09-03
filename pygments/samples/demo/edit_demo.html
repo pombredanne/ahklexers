@@ -5,7 +5,7 @@
 
 <span class="c-Singleline">; Start Notepad and get handle of the editor.</span>
 <span class="nb">Run</span><span class="p">,</span> <span class="n">notepad</span><span class="o">.</span><span class="n">exe</span><span class="p">,,</span> <span class="p">,</span> <span class="n">pid</span>
-<span class="n">WinWait</span> <span class="n">ahk_pid</span> <span class="nv">%pid%</span>
+<span class="nb">WinWait</span> <span class="n">ahk_pid</span> <span class="nv">%pid%</span>
 <span class="nb">ControlGet</span><span class="p">,</span> <span class="n">hEdit</span><span class="p">,</span> <span class="n">Hwnd</span><span class="p">,,</span> <span class="n">Edit1</span><span class="p">,</span> <span class="n">ahk_pid</span> <span class="nv">%pid%</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Set default text to opened editor.</span>

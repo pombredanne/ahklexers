@@ -2,9 +2,9 @@
 <span class="c-Singleline">; http://www.autohotkey.com/forum/topic10325.html</span>
 <span class="n">GetCommonPath</span><span class="p">(</span> <span class="n">csidl</span> <span class="p">)</span>
 <span class="p">{</span>
-        <span class="n">static</span> <span class="n">init</span>
+<span class="w">        </span><span class="nb">static</span> <span class="n">init</span>
 
-        <span class="n">if</span> !<span class="n">init</span>
+        <span class="n">if</span> <span class="o">!</span><span class="n">init</span>
         <span class="p">{</span>
                 <span class="n">CSIDL_APPDATA</span>                 <span class="o">=</span><span class="mh">0x001A</span><span class="c-Singleline">     ; Application Data, new for NT4</span>
                 <span class="n">CSIDL_COMMON_APPDATA</span>          <span class="o">=</span><span class="mh">0x0023</span><span class="c-Singleline">     ; All Users\Application Data</span>

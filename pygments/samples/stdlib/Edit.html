@@ -58,7 +58,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_CanUndo</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_CANUNDO</span>:<span class="o">=</span><span class="mh">0xC6</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_CANUNDO</span><span class="o">:=</span><span class="mh">0xC6</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_CANUNDO</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -107,7 +107,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_CharFromPos</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_CharPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_LineIdx</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_CHARFROMPOS</span>:<span class="o">=</span><span class="mh">0xD7</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_CHARFROMPOS</span><span class="o">:=</span><span class="mh">0xD7</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_CHARFROMPOS</span><span class="p">,</span><span class="mi">0</span><span class="p">,(</span><span class="n">Y</span><span class="o">&lt;&lt;</span><span class="mi">16</span><span class="p">)</span><span class="o">|</span><span class="n">X</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Out of bounds?</span>
@@ -127,7 +127,7 @@
     <span class="n">if</span> <span class="p">(</span><span class="n">FirstLine</span><span class="o">&gt;</span><span class="n">r_LineIdx</span><span class="p">)</span>
 <span class="w">        </span><span class="nl">r_LineIdx:</span><span class="o">=</span><span class="n">r_LineIdx</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">FirstLine</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_LineIdx</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
 
-<span class="w">    </span><span class="nl">FirstCharPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">FirstLine</span><span class="o">&lt;</span><span class="mi">0</span> ? <span class="mi">0</span>:<span class="n">FirstLine</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">FirstCharPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">FirstLine</span><span class="o">&lt;</span><span class="mi">0</span> <span class="o">?</span> <span class="mi">0</span><span class="o">:</span><span class="n">FirstLine</span><span class="p">)</span>
     <span class="n">if</span> <span class="p">(</span><span class="n">FirstCharPos</span><span class="o">&gt;</span><span class="n">r_CharPos</span><span class="p">)</span>
 <span class="w">        </span><span class="nl">r_CharPos:</span><span class="o">=</span><span class="n">r_CharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65536</span><span class="o">*</span><span class="nf">Floor(</span><span class="p">(</span><span class="n">FirstCharPos</span><span class="o">+</span><span class="p">(</span><span class="mi">65535</span><span class="o">-</span><span class="n">r_CharPos</span><span class="p">))</span><span class="o">/</span><span class="mi">65536</span><span class="p">))</span>
 
@@ -152,7 +152,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Clear</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">WM_CLEAR</span>:<span class="o">=</span><span class="mh">0x303</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">WM_CLEAR</span><span class="o">:=</span><span class="mh">0x303</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_CLEAR</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -169,9 +169,9 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Convert2DOS</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
     <span class="p">{</span>
-<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Unix</span>
-<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Mac to Unix</span>
-<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert Unix to DOS</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r`n</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Unix</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Mac to Unix</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="se">`r`n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert Unix to DOS</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">p_Text</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -188,11 +188,11 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Convert2Mac</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
     <span class="p">{</span>
-<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Mac</span>
-<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Unix to Mac</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r`n</span><span class="p">,</span><span class="se">`r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Mac</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="se">`r</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Unix to Mac</span>
 <span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_Text</span><span class="p">)</span>
-<span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> `<span class="n">r</span>
-            <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;`r&quot;</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> <span class="se">`r</span>
+            <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`r</span><span class="s">&quot;</span>
 
 <span class="w">    </span><span class="nb">Return</span> <span class="n">p_Text</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -210,11 +210,11 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Convert2Unix</span><span class="p">(</span><span class="n">p_Text</span><span class="p">)</span>
     <span class="p">{</span>
-<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span>`<span class="n">n</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Unix</span>
-<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span>`<span class="n">r</span><span class="p">,</span>`<span class="n">n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Mac to Unix</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r`n</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">     ;-- Convert DOS to Unix</span>
+<span class="w">    </span><span class="nb">StringReplace</span> <span class="n">p_Text</span><span class="p">,</span><span class="n">p_Text</span><span class="p">,</span><span class="se">`r</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="n">All</span><span class="c-Singleline">       ;-- Convert Mac to Unix</span>
 <span class="w">    </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">p_Text</span><span class="p">)</span>
-<span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> `<span class="n">n</span>
-            <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">p_Text</span> <span class="ow">not</span> <span class="n">Contains</span> <span class="se">`n</span>
+            <span class="n">p_Text</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 
 <span class="w">    </span><span class="nb">Return</span> <span class="n">p_Text</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -296,7 +296,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Copy</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span> 
-    <span class="n">Static</span> <span class="n">WM_COPY</span>:<span class="o">=</span><span class="mh">0x301</span> 
+<span class="w">    </span><span class="nb">Static</span> <span class="n">WM_COPY</span><span class="o">:=</span><span class="mh">0x301</span> 
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_COPY</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"> </span>
 
@@ -314,7 +314,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Cut</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span> 
-    <span class="n">Static</span> <span class="n">WM_CUT</span>:<span class="o">=</span><span class="mh">0x300</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">WM_CUT</span><span class="o">:=</span><span class="mh">0x300</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_CUT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -332,7 +332,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_EmptyUndoBuffer</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_EMPTYUNDOBUFFER</span>:<span class="o">=</span><span class="mh">0xCD</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_EMPTYUNDOBUFFER</span><span class="o">:=</span><span class="mh">0xCD</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_EMPTYUNDOBUFFER</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -419,7 +419,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_FindText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="n">p_Min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_Max</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">p_Flags</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_RegExOut</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">s_Text</span><span class="c-Singleline"></span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">s_Text</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Initialize</span>
 <span class="w">    </span><span class="nl">r_RegExOut:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
@@ -451,17 +451,17 @@
 <span class="w">        </span><span class="nb">if </span><span class="nf">StrLen(</span><span class="n">s_Text</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">            </span><span class="nl">s_Text:</span><span class="o">=</span><span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
 
-<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">s_Text</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span>:<span class="n">p_Max</span><span class="o">+</span><span class="mi">1</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Max</span>:<span class="n">p_Min</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="nf">SubStr(</span><span class="n">s_Text</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Min</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">p_Max</span><span class="o">+</span><span class="mi">1</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Max</span><span class="o">:</span><span class="n">p_Min</span><span class="p">)</span>
         <span class="p">}</span>
 <span class="w">     </span><span class="nb">else</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nl">s_Text:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
-<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="n">Edit_GetTextRange</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Min</span>:<span class="n">p_Max</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Max</span>:<span class="n">p_Min</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">l_Text:</span><span class="o">=</span><span class="n">Edit_GetTextRange</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Min</span><span class="o">:</span><span class="n">p_Max</span><span class="p">,(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Max</span><span class="o">:</span><span class="n">p_Min</span><span class="p">)</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Look for it</span>
 <span class="w">    </span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;RegEx&quot;</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="c-Singleline">  ;-- Not RegEx</span>
-<span class="w">        </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">InStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;MatchCase&quot;</span><span class="p">),(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="mi">1</span>:<span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">        </span><span class="nl">l_FoundPos:</span><span class="o">=</span><span class="nf">InStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">p_SearchText</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">p_Flags</span><span class="p">,</span><span class="s">&quot;MatchCase&quot;</span><span class="p">),(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 <span class="w">     </span><span class="nb">else</span><span class="c-Singleline">  ;-- RegEx</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nl">p_SearchText:</span><span class="o">=</span><span class="nf">RegExReplace(</span><span class="n">p_SearchText</span><span class="p">,</span><span class="s">&quot;^P\)?&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">   ;-- Remove P or P)</span>
@@ -491,9 +491,9 @@
 <span class="c-Singleline">            ;    -  The RE_MinPos, RE_MaxPos, and RE_StartPos variables contain</span>
 <span class="c-Singleline">            ;       1-based values.</span>
 <span class="c-Singleline">            ;</span>
-            <span class="n">RE_MinPos</span>     :<span class="o">=</span><span class="mi">1</span>
-            <span class="n">RE_MaxPos</span>     :<span class="o">=</span><span class="nf">StrLen(</span><span class="n">l_Text</span><span class="p">)</span>
-            <span class="n">RE_StartPos</span>   :<span class="o">=</span><span class="n">RE_MinPos</span>
+            <span class="n">RE_MinPos</span>     <span class="o">:=</span><span class="mi">1</span>
+            <span class="n">RE_MaxPos</span>     <span class="o">:=</span><span class="nf">StrLen(</span><span class="n">l_Text</span><span class="p">)</span>
+            <span class="n">RE_StartPos</span>   <span class="o">:=</span><span class="n">RE_MinPos</span>
 <span class="w">            </span><span class="nl">Saved_FoundPos:</span><span class="o">=-</span><span class="mi">1</span>
 <span class="w">            </span><span class="nl">Saved_RegExOut:</span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <span class="w">            </span><span class="nb">loop</span>
@@ -517,7 +517,7 @@
                     <span class="p">{</span>
 <span class="w">                    </span><span class="nl">Saved_FoundPos:</span><span class="o">=</span><span class="n">l_FoundPos</span>
 <span class="w">                    </span><span class="nl">Saved_RegExOut:</span><span class="o">=</span><span class="n">r_RegExOut</span>
-                    <span class="n">RE_MinPos</span>     :<span class="o">=</span><span class="n">l_FoundPos</span><span class="o">+</span><span class="mi">2</span>
+                    <span class="n">RE_MinPos</span>     <span class="o">:=</span><span class="n">l_FoundPos</span><span class="o">+</span><span class="mi">2</span>
                     <span class="p">}</span>
 <span class="w">                </span><span class="nb">else</span>
 <span class="w">                    </span><span class="nl">RE_MaxPos:</span><span class="o">=</span><span class="n">RE_StartPos</span><span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
@@ -538,7 +538,7 @@
 
 <span class="c-Singleline">    ;-- Adjust FoundPos</span>
     <span class="n">if</span> <span class="p">(</span><span class="n">l_FoundPos</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">l_FoundPos</span> <span class="o">+=</span> <span class="p">(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> ? <span class="n">p_Min</span>:<span class="n">p_Max</span>
+        <span class="n">l_FoundPos</span> <span class="o">+=</span> <span class="p">(</span><span class="n">p_Max</span><span class="o">&gt;</span><span class="n">p_Min</span><span class="p">)</span> <span class="o">?</span> <span class="n">p_Min</span><span class="o">:</span><span class="n">p_Max</span>
 
 <span class="w">    </span><span class="nb">Return</span> <span class="n">l_FoundPos</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -593,7 +593,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_FmtLines</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_FMTLINES</span>:<span class="o">=</span><span class="mh">0xC8</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_FMTLINES</span><span class="o">:=</span><span class="mh">0xC8</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_FMTLINES</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -613,7 +613,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetFirstVisibleLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_GETFIRSTVISIBLELINE</span>:<span class="o">=</span><span class="mh">0xCE</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_GETFIRSTVISIBLELINE</span><span class="o">:=</span><span class="mh">0xCE</span>
 <span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_GETFIRSTVISIBLELINE</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -664,7 +664,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetLimitText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_GETLIMITTEXT</span>:<span class="o">=</span><span class="mh">0xD5</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_GETLIMITTEXT</span><span class="o">:=</span><span class="mh">0xD5</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETLIMITTEXT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span><span class="o">&lt;&lt;</span><span class="mi">32</span><span class="o">&gt;&gt;</span><span class="mi">32</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -700,7 +700,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetLine</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">p_Length</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_GETLINE</span>:<span class="o">=</span><span class="mh">0xC4</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_GETLINE</span><span class="o">:=</span><span class="mh">0xC4</span>
     <span class="n">if</span> <span class="p">(</span><span class="n">p_LineIdx</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">        </span><span class="nl">p_LineIdx:</span><span class="o">=</span><span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">))</span>
 
@@ -712,10 +712,10 @@
 <span class="w">    </span><span class="nb">if </span><span class="n">l_Length</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">        </span><span class="nb">Return</span>
 
-    <span class="nf">VarSetCapacity(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> ? <span class="mi">2</span>:<span class="n">l_Length</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-    <span class="nf">NumPut(</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> ? <span class="mi">2</span>:<span class="n">l_Length</span><span class="p">,</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;UShort&quot;</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity(</span><span class="n">l_Text</span><span class="p">,</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="mi">2</span><span class="o">:</span><span class="n">l_Length</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nf">NumPut(</span><span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="mi">2</span><span class="o">:</span><span class="n">l_Length</span><span class="p">,</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;UShort&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETLINE</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> ? <span class="nf">SubStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>:<span class="n">l_Text</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Length</span><span class="o">=</span><span class="mi">1</span> <span class="o">?</span> <span class="nf">SubStr(</span><span class="n">l_Text</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">l_Text</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -739,7 +739,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetLineCount</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_GETLINECOUNT</span>:<span class="o">=</span><span class="mh">0xBA</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_GETLINECOUNT</span><span class="o">:=</span><span class="mh">0xBA</span>
 <span class="w">   	</span><span class="nb">SendMessage</span> <span class="n">EM_GETLINECOUNT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -770,9 +770,9 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetMargins</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_LeftMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_RightMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_GETMARGINS</span>:<span class="o">=</span><span class="mh">0xD4</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_GETMARGINS</span><span class="o">:=</span><span class="mh">0xD4</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETMARGINS</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-    <span class="n">r_LeftMargin</span> :<span class="o">=</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="c-Singleline">      ;-- LOWORD of result</span>
+    <span class="n">r_LeftMargin</span> <span class="o">:=</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="c-Singleline">      ;-- LOWORD of result</span>
 <span class="w">    </span><span class="nl">r_RightMargin:</span><span class="o">=</span><span class="nv">ErrorLevel</span><span class="o">&gt;&gt;</span><span class="mi">16</span><span class="c-Singleline">           ;-- HIWORD of result</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">r_LeftMargin</span><span class="c-Singleline">  ; ##### --------------------------------------- Really?</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -792,7 +792,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetModify</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_GETMODIFY</span>:<span class="o">=</span><span class="mh">0xB8</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_GETMODIFY</span><span class="o">:=</span><span class="mh">0xB8</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETMODIFY</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -820,12 +820,12 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetRect</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Left</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Top</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Right</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_Bottom</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_GETRECT</span>:<span class="o">=</span><span class="mh">0xB2</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_GETRECT</span><span class="o">:=</span><span class="mh">0xB2</span>
     <span class="nf">VarSetCapacity(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETRECT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">&amp;</span><span class="n">RECT_Structure</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-    <span class="n">r_Left</span>  :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-    <span class="n">r_Top</span>   :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
-    <span class="n">r_Right</span> :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Left</span>  <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Top</span>   <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
+    <span class="n">r_Right</span> <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nl">r_Bottom:</span><span class="o">=</span><span class="nf">NumGet(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">r_Left</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Top</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Right</span> <span class="o">.</span> <span class="nv">A_Space</span> <span class="o">.</span> <span class="n">r_Bottom</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -856,12 +856,12 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_StartSelPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">r_EndSelPos</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_GETSEL</span>:<span class="o">=</span><span class="mh">0xB0</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_GETSEL</span><span class="o">:=</span><span class="mh">0xB0</span>
     <span class="nf">VarSetCapacity(</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
     <span class="nf">VarSetCapacity(</span><span class="n">l_EndSelPos</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_GETSEL</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_StartSelPos</span><span class="p">,</span><span class="o">&amp;</span><span class="n">l_EndSelPos</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nl">r_StartSelPos:</span><span class="o">=</span><span class="nf">NumGet(</span><span class="n">l_StartSelPos</span><span class="p">)</span>
-    <span class="n">r_EndSelPos</span>  :<span class="o">=</span><span class="nf">NumGet(</span><span class="n">l_EndSelPos</span><span class="p">)</span>
+    <span class="n">r_EndSelPos</span>  <span class="o">:=</span><span class="nf">NumGet(</span><span class="n">l_EndSelPos</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">r_StartSelPos</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -891,7 +891,7 @@
 
 <span class="c-Singleline">    ;-- Get line indexes of the selection</span>
 <span class="w">    </span><span class="nl">l_FirstSelectedLine:</span><span class="o">=</span><span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_StartSelPos</span><span class="p">)</span>
-    <span class="n">l_LastSelectedLine</span> :<span class="o">=</span><span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">)</span><span class="c-Singleline"></span>
+    <span class="n">l_LastSelectedLine</span> <span class="o">:=</span><span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_EndSelPos</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Get selected text</span>
 <span class="w">    </span><span class="nl">l_FirstPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">l_FirstSelectedLine</span><span class="p">)</span>
@@ -925,7 +925,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Length</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">WM_GETTEXT</span>:<span class="o">=</span><span class="mh">0xD</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">WM_GETTEXT</span><span class="o">:=</span><span class="mh">0xD</span>
 
     <span class="n">if</span> <span class="p">(</span><span class="n">p_Length</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">        </span><span class="nl">p_Length:</span><span class="o">=</span><span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
@@ -948,7 +948,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">WM_GETTEXTLENGTH</span>:<span class="o">=</span><span class="mh">0xE</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">WM_GETTEXTLENGTH</span><span class="o">:=</span><span class="mh">0xE</span>
 <span class="w">	</span><span class="nb">SendMessage</span> <span class="n">WM_GETTEXTLENGTH</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -998,7 +998,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_IsMultiline</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">ES_MULTILINE</span>:<span class="o">=</span><span class="mh">0x4</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">ES_MULTILINE</span><span class="o">:=</span><span class="mh">0x4</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">Edit_IsStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ES_MULTILINE</span><span class="p">)</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1015,7 +1015,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_IsReadOnly</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">ES_READONLY</span>:<span class="o">=</span><span class="mh">0x800</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">ES_READONLY</span><span class="o">:=</span><span class="mh">0x800</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">Edit_IsStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">ES_READONLY</span><span class="p">)</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1060,10 +1060,10 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_IsStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Style</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">GWL_STYLE</span>:<span class="o">=-</span><span class="mi">16</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">GWL_STYLE</span><span class="o">:=-</span><span class="mi">16</span>
 <span class="w">    </span><span class="nb">ControlGet</span> <span class="n">l_Style</span><span class="p">,</span><span class="n">Style</span><span class="p">,,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span><span class="c-Singleline"></span>
 <span class="c-Singleline">;;;;;    l_Style:=DllCall(&quot;GetWindowLong&quot;,&quot;UInt&quot;,hEdit,&quot;Int&quot;,GWL_STYLE)</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Style</span> <span class="o">&amp;</span> <span class="n">p_Style</span> ? <span class="nv">True</span>:<span class="nv">False</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="n">l_Style</span> <span class="o">&amp;</span> <span class="n">p_Style</span> <span class="o">?</span> <span class="nv">True</span><span class="o">:</span><span class="nv">False</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -1110,7 +1110,7 @@
 <span class="n">Edit_SetStyle</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Style</span><span class="p">,</span><span class="n">p_Option</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)</span>
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">Control</span> <span class="n">Style</span><span class="p">,</span><span class="nv">%p_Option%%p_Style%</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span> ? <span class="nv">False</span>:<span class="nv">True</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">False</span><span class="o">:</span><span class="nv">True</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -1141,7 +1141,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_LineFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_CharPos</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_LINEFROMCHAR</span>:<span class="o">=</span><span class="mh">0xC9</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_LINEFROMCHAR</span><span class="o">:=</span><span class="mh">0xC9</span>
 <span class="w">   	</span><span class="nb">SendMessage</span> <span class="n">EM_LINEFROMCHAR</span><span class="p">,</span><span class="n">p_CharPos</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -1189,7 +1189,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hedit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_LINEINDEX</span>:<span class="o">=</span><span class="mh">0xBB</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_LINEINDEX</span><span class="o">:=</span><span class="mh">0xBB</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_LINEINDEX</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span><span class="o">&lt;&lt;</span><span class="mi">32</span><span class="o">&gt;&gt;</span><span class="mi">32</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -1220,7 +1220,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_LineLength</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_LINELENGTH</span>:<span class="o">=</span><span class="mh">0xC1</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_LINELENGTH</span><span class="o">:=</span><span class="mh">0xC1</span>
 
 <span class="w">    </span><span class="nl">l_CharPos:</span><span class="o">=</span><span class="n">Edit_LineIndex</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LineIdx</span><span class="p">)</span>
     <span class="n">if</span> <span class="p">(</span><span class="n">l_CharPos</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">  ;-- Invalid p_LineIdx</span>
@@ -1258,7 +1258,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_LineScroll</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">xScroll</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">yScroll</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_LINESCROLL</span>:<span class="o">=</span><span class="mh">0xB6</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_LINESCROLL</span><span class="o">:=</span><span class="mh">0xB6</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_LINESCROLL</span><span class="p">,</span><span class="n">xScroll</span><span class="p">,</span><span class="n">yScroll</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -1303,7 +1303,7 @@
     <span class="p">{</span>
 <span class="w">    </span><span class="nb">IfNotExist</span> <span class="nv">%p_FileName%</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">File</span> <span class="s">&quot;%p_FileName%&quot;</span> <span class="ow">not</span> <span class="n">found</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span><span class="o">:</span> <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">File</span> <span class="s">&quot;%p_FileName%&quot;</span> <span class="ow">not</span> <span class="n">found</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="nv">False</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1311,24 +1311,24 @@
 <span class="w">    </span><span class="nb">FileRead</span> <span class="n">l_Text</span><span class="p">,</span><span class="nv">%p_FileName%</span>
 <span class="w">    </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">read</span> <span class="n">from</span> <span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span><span class="o">:</span> <span class="nv">%A_ThiSFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">read</span> <span class="n">from</span> <span class="s">&quot;%p_FileName%&quot;</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="nv">False</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">    ;-- Determine file format</span>
-<span class="w">    </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> `<span class="n">r</span>`<span class="n">n</span>
+<span class="w">    </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> <span class="se">`r`n</span>
         <span class="p">{</span>
 <span class="w">        </span><span class="nl">r_FileFormat:</span><span class="o">=</span><span class="s">&quot;DOS&quot;</span>
 <span class="w">        </span><span class="nb">outputdebug</span> <span class="n">DOS</span> <span class="n">file</span> <span class="n">format</span> <span class="n">detected</span>
         <span class="p">}</span>
 <span class="w">     </span><span class="nb">else</span>
-<span class="w">        </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> `<span class="n">n</span>
+<span class="w">        </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> <span class="se">`n</span>
             <span class="p">{</span>
 <span class="w">            </span><span class="nl">r_FileFormat:</span><span class="o">=</span><span class="s">&quot;UNIX&quot;</span>
 <span class="w">            </span><span class="nb">outputdebug</span> <span class="n">Unix</span> <span class="n">file</span> <span class="n">format</span> <span class="n">detected</span>
             <span class="p">}</span>
 <span class="w">         </span><span class="nb">else</span>
-<span class="w">            </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> `<span class="n">r</span>
+<span class="w">            </span><span class="nb">if </span><span class="n">l_Text</span> <span class="n">Contains</span> <span class="se">`r</span>
                 <span class="p">{</span>
 <span class="w">                </span><span class="nl">r_FileFormat:</span><span class="o">=</span><span class="s">&quot;MAC&quot;</span>
 <span class="w">                </span><span class="nb">outputdebug</span> <span class="n">Mac</span> <span class="n">file</span> <span class="n">format</span> <span class="n">detected</span>
@@ -1363,7 +1363,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Paste</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span> 
-    <span class="n">Static</span> <span class="n">WM_PASTE</span>:<span class="o">=</span><span class="mh">0x302</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">WM_PASTE</span><span class="o">:=</span><span class="mh">0x302</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_PASTE</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"> </span>
 
@@ -1397,7 +1397,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_PosFromChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_CharPos</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">X</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">Y</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_POSFROMCHAR</span>:<span class="o">=</span><span class="mh">0xD6</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_POSFROMCHAR</span><span class="o">:=</span><span class="mh">0xD6</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_POSFROMCHAR</span><span class="p">,</span><span class="n">p_CharPos</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nl">X:</span><span class="o">=</span><span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="mi">48</span><span class="o">&gt;&gt;</span><span class="mi">48</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ;-- LOWORD of result and converted from UShort to Short</span>
@@ -1425,7 +1425,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_ReplaceSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Text</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_CanUndo</span><span class="o">=</span><span class="nv">True</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_REPLACESEL</span>:<span class="o">=</span><span class="mh">0xC2</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_REPLACESEL</span><span class="o">:=</span><span class="mh">0xC2</span>
 <span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_REPLACESEL</span><span class="p">,</span><span class="n">p_CanUndo</span><span class="p">,</span><span class="o">&amp;</span><span class="n">p_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span> 
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1462,7 +1462,7 @@
 <span class="w">        </span><span class="nb">FileDelete</span> <span class="nv">%p_FileName%</span>
 <span class="w">        </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
             <span class="p">{</span>
-<span class="w">            </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThisFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">delete</span> <span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">            </span><span class="nb">outputdebug</span> <span class="n">Function</span><span class="o">:</span> <span class="nv">%A_ThisFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">delete</span> <span class="s">&quot;%p_FileName%&quot;</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="nv">False</span>        
             <span class="p">}</span>
         <span class="p">}</span><span class="c-Singleline"></span>
@@ -1481,7 +1481,7 @@
 <span class="w">    </span><span class="nb">FileAppend</span> <span class="nv">%l_Text%</span><span class="p">,</span><span class="o">*</span><span class="nv">%p_FileName%</span><span class="c-Singleline">  ;-- Save in binary mode</span>
 <span class="w">    </span><span class="nb">if </span><span class="nv">ErrorLevel</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span>: <span class="nv">%A_ThisFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">save</span> <span class="n">to</span> <span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">        </span><span class="nb">outputdebug</span> <span class="n">Function</span><span class="o">:</span> <span class="nv">%A_ThisFunc%</span> <span class="o">-</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">save</span> <span class="n">to</span> <span class="s">&quot;%p_FileName%&quot;</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="nv">False</span>        
         <span class="p">}</span>
 
@@ -1516,10 +1516,10 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Scroll</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Pages</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_Lines</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_SCROLL</span>  :<span class="o">=</span><span class="mh">0xB5</span>
-          <span class="p">,</span><span class="n">SB_LINEUP</span>  :<span class="o">=</span><span class="mh">0x0</span><span class="c-Singleline">     ;-- Scroll up one line</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SCROLL</span>  <span class="o">:=</span><span class="mh">0xB5</span>
+          <span class="p">,</span><span class="n">SB_LINEUP</span>  <span class="o">:=</span><span class="mh">0x0</span><span class="c-Singleline">     ;-- Scroll up one line</span>
 <span class="w">          </span><span class="nl">,SB_LINEDOWN:</span><span class="o">=</span><span class="mh">0x1</span><span class="c-Singleline">     ;-- Scroll down one line</span>
-          <span class="p">,</span><span class="n">SB_PAGEUP</span>  :<span class="o">=</span><span class="mh">0x2</span><span class="c-Singleline">     ;-- Scroll up one page</span>
+          <span class="p">,</span><span class="n">SB_PAGEUP</span>  <span class="o">:=</span><span class="mh">0x2</span><span class="c-Singleline">     ;-- Scroll up one page</span>
 <span class="w">          </span><span class="nl">,SB_PAGEDOWN:</span><span class="o">=</span><span class="mh">0x3</span><span class="c-Singleline">     ;-- Scroll down one page</span>
 
 <span class="c-Singleline">    ;-- Initialize</span>
@@ -1528,7 +1528,7 @@
 <span class="c-Singleline">    ;-- Pages</span>
 <span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">p_Pages</span><span class="p">)</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Pages</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> ? <span class="n">SB_PAGEDOWN</span>:<span class="n">SB_PAGEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Pages</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">SB_PAGEDOWN</span><span class="o">:</span><span class="n">SB_PAGEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">        </span><span class="nb">if </span><span class="ow">not</span> <span class="nv">ErrorLevel</span>
 <span class="w">            </span><span class="nb">Break</span>
 
@@ -1539,7 +1539,7 @@
 <span class="c-Singleline">    ;-- Lines</span>
 <span class="w">    </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">p_Lines</span><span class="p">)</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Lines</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> ? <span class="n">SB_LINEDOWN</span>:<span class="n">SB_LINEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
+<span class="w">        </span><span class="nb">SendMessage</span> <span class="n">EM_SCROLL</span><span class="p">,(</span><span class="n">p_Lines</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">SB_LINEDOWN</span><span class="o">:</span><span class="n">SB_LINEUP</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">        </span><span class="nb">if </span><span class="ow">not</span> <span class="nv">ErrorLevel</span>
 <span class="w">            </span><span class="nb">Break</span>
 
@@ -1563,7 +1563,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_ScrollCaret</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_SCROLLCARET</span>:<span class="o">=</span><span class="mh">0xB7</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_SCROLLCARET</span><span class="o">:=</span><span class="mh">0xB7</span>
 <span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_SCROLLCARET</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span> 
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1603,7 +1603,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetLimitText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Limit</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_LIMITTEXT</span>:<span class="o">=</span><span class="mh">0xC5</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_LIMITTEXT</span><span class="o">:=</span><span class="mh">0xC5</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_LIMITTEXT</span><span class="p">,</span><span class="n">p_Limit</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1637,13 +1637,13 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetMargins</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_LeftMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_RightMargin</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_SETMARGINS</span> :<span class="o">=</span><span class="mh">0xD3</span>
-          <span class="p">,</span><span class="n">EC_LEFTMARGIN</span> :<span class="o">=</span><span class="mh">0x1</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETMARGINS</span> <span class="o">:=</span><span class="mh">0xD3</span>
+          <span class="p">,</span><span class="n">EC_LEFTMARGIN</span> <span class="o">:=</span><span class="mh">0x1</span>
 <span class="w">          </span><span class="nl">,EC_RIGHTMARGIN:</span><span class="o">=</span><span class="mh">0x2</span>
 <span class="w">          </span><span class="nl">,EC_USEFONTINFO:</span><span class="o">=</span><span class="mh">0xFFFF</span>
 
 <span class="w">    </span><span class="nl">l_Margins:</span><span class="o">=</span><span class="mi">0</span>
-    <span class="n">l_Flags</span>  :<span class="o">=</span><span class="mi">0</span>
+    <span class="n">l_Flags</span>  <span class="o">:=</span><span class="mi">0</span>
 <span class="w">    </span><span class="nb">if </span><span class="n">p_LeftMargin</span> <span class="ow">is</span> <span class="n">Integer</span>
         <span class="p">{</span>
         <span class="n">l_Flags</span> <span class="o">|=</span> <span class="n">EC_LEFTMARGIN</span>
@@ -1680,7 +1680,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetModify</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_SETMODIFY</span>:<span class="o">=</span><span class="mh">0xB9</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETMODIFY</span><span class="o">:=</span><span class="mh">0xB9</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETMODIFY</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1725,7 +1725,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetPasswordChar</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Char</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_SETPASSWORDCHAR</span>:<span class="o">=</span><span class="mh">0xCC</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETPASSWORDCHAR</span><span class="o">:=</span><span class="mh">0xCC</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETPASSWORDCHAR</span><span class="p">,</span><span class="nf">Asc(</span><span class="n">p_Char</span><span class="p">),</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -1765,9 +1765,9 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetReadOnly</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_SETREADONLY</span>:<span class="o">=</span><span class="mh">0xCF</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETREADONLY</span><span class="o">:=</span><span class="mh">0xCF</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">EM_SETREADONLY</span><span class="p">,</span><span class="n">p_Flag</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span> ? <span class="nv">True</span>:<span class="nv">False</span>
+<span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">True</span><span class="o">:</span><span class="nv">False</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -1798,7 +1798,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetRect</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Left</span><span class="p">,</span><span class="n">p_Top</span><span class="p">,</span><span class="n">p_Right</span><span class="p">,</span><span class="n">p_Bottom</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_SETRECT</span>:<span class="o">=</span><span class="mh">0xB3</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETRECT</span><span class="o">:=</span><span class="mh">0xB3</span>
 
     <span class="nf">VarSetCapacity(</span><span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
     <span class="nf">NumPut(</span><span class="n">p_Left</span><span class="p">,</span>  <span class="n">RECT_Structure</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">)</span>
@@ -1843,12 +1843,12 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetTabStops</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_DTU</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">EM_SETTABSTOPS</span>:<span class="o">=</span><span class="mh">0xCB</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">EM_SETTABSTOPS</span><span class="o">:=</span><span class="mh">0xCB</span>
     
     <span class="nf">VarSetCapacity(</span><span class="n">l_TabStops</span><span class="p">,</span><span class="n">p_NbrOfTabStops</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">if </span><span class="n">p_DTU</span> <span class="n">contains</span> <span class="p">,,</span>
         <span class="p">{</span>
-<span class="w">        </span><span class="nb">Loop</span> <span class="n">Parse</span><span class="p">,</span><span class="n">p_DTU</span><span class="p">,</span>`<span class="p">,,</span><span class="nv">%A_Space%</span>
+<span class="w">        </span><span class="nb">Loop</span> <span class="n">Parse</span><span class="p">,</span><span class="n">p_DTU</span><span class="p">,</span><span class="se">`,</span><span class="p">,</span><span class="nv">%A_Space%</span>
             <span class="n">if</span> <span class="p">(</span><span class="nv">A_Index</span><span class="o">&lt;=</span><span class="n">p_NbrOfTabStops</span><span class="p">)</span>
                 <span class="nf">Numput(</span><span class="nv">A_LoopField</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="n">l_TabStops</span><span class="p">,(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">)</span>
         <span class="p">}</span>
@@ -1884,7 +1884,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_Text</span><span class="p">)</span>
     <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">WM_SETTEXT</span>:<span class="o">=</span><span class="mh">0xC</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">WM_SETTEXT</span><span class="o">:=</span><span class="mh">0xC</span>
 <span class="w">    </span><span class="nb">SendMessage</span> <span class="n">WM_SETTEXT</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">&amp;</span><span class="n">p_Text</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>
@@ -1911,7 +1911,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_SetSel</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span><span class="n">p_StartSelPos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_EndSelPos</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_SETSEL</span>:<span class="o">=</span><span class="mh">0x0B1</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_SETSEL</span><span class="o">:=</span><span class="mh">0x0B1</span>
 <span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_SETSEL</span><span class="p">,</span><span class="n">p_StartSelPos</span><span class="p">,</span><span class="n">p_EndSelPos</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1953,7 +1953,7 @@
 <span class="c-Singleline">;-------------------------------------------------------------------------------</span>
 <span class="n">Edit_Undo</span><span class="p">(</span><span class="n">hEdit</span><span class="p">)</span>
     <span class="p">{</span>
-	<span class="n">Static</span> <span class="n">EM_UNDO</span>:<span class="o">=</span><span class="mh">0xC7</span>
+<span class="w">	</span><span class="nb">Static</span> <span class="n">EM_UNDO</span><span class="o">:=</span><span class="mh">0xC7</span>
 <span class="w">	</span><span class="nb">SendMessage</span> <span class="n">EM_UNDO</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,,</span><span class="n">ahk_id</span> <span class="nv">%hEdit%</span>
 <span class="w">	</span><span class="nb">Return</span> <span class="nv">ErrorLevel</span>
     <span class="p">}</span><span class="c-Singleline"></span>

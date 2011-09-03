@@ -418,7 +418,7 @@
 <span class="n">AHKsock_Listen</span><span class="p">(</span><span class="n">sPort</span><span class="p">,</span> <span class="n">sFunction</span> <span class="o">=</span> <span class="nv">False</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Check if there is already a socket listening on this port</span>
-    <span class="n">If</span> <span class="p">(</span><span class="n">sktListen</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetSocketFromNamePort&quot;</span><span class="p">,</span> <span class="nv">A_Space</span><span class="p">,</span> <span class="n">sPort</span><span class="p">))</span> <span class="p">{</span><span class="c-Singleline"></span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">sktListen</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetSocketFromNamePort&quot;</span><span class="p">,</span> <span class="nv">A_Space</span><span class="p">,</span> <span class="n">sPort</span><span class="p">))</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Check if we&#39;re stopping the listening</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="n">sFunction</span> <span class="p">{</span>
@@ -440,9 +440,9 @@
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">2</span><span class="c-Singleline"> ;sFunction is not a valid function.</span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Make sure Winsock has been started up</span>
-    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span>
-<span class="w">        </span><span class="nb">Return</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> ? <span class="mi">3</span><span class="c-Singleline"> ;The WSAStartup() call failed. The error is in ErrorLevel.</span>
-                       : <span class="mi">4</span><span class="c-Singleline"> ;The Winsock DLL does not support version 2.2.</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> <span class="o">:=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span>
+<span class="w">        </span><span class="nb">Return</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="mi">3</span><span class="c-Singleline"> ;The WSAStartup() call failed. The error is in ErrorLevel.</span>
+                       <span class="o">:</span> <span class="mi">4</span><span class="c-Singleline"> ;The Winsock DLL does not support version 2.2.</span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Resolve the local address and port to be used by the server</span>
     <span class="nf">VarSetCapacity(</span><span class="n">aiHints</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -450,29 +450,29 @@
     <span class="nf">NumPut(</span><span class="mi">2</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_family = AF_INET</span>
     <span class="nf">NumPut(</span><span class="mi">1</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_socktype = SOCK_STREAM</span>
     <span class="nf">NumPut(</span><span class="mi">6</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_protocol = IPPROTO_TCP</span>
-    <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sPort</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">aiHints</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
+    <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sPort</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">aiHints</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for error</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">iResult</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">iResult</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">5</span><span class="c-Singleline"> ;The getaddrinfo() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span>
     
-    <span class="n">sktListen</span> :<span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="c-Singleline"> ;INVALID_SOCKET</span>
-    <span class="n">sktListen</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\socket&quot;</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
+    <span class="n">sktListen</span> <span class="o">:=</span> <span class="mh">0xFFFFFFFF</span><span class="c-Singleline"> ;INVALID_SOCKET</span>
+    <span class="n">sktListen</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\socket&quot;</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
                                         <span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">),</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">sktListen</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for INVALID_SOCKET</span>
-        <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+        <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\freeaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">6</span><span class="c-Singleline"> ;The socket() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Setup the TCP listening socket</span>
-    <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\bind&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">24</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">))</span>
+    <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\bind&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">24</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">))</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for SOCKET_ERROR</span>
-        <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+        <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;ushort&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">)</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\freeaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">7</span><span class="c-Singleline"> ;The bind() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span>
     
@@ -483,27 +483,27 @@
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;We must now actually register the socket</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">AHKsock_RegisterAsyncSelect</span><span class="p">(</span><span class="n">sktListen</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
+        <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">)</span>
         <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Delete&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">)</span><span class="c-Singleline"> ;Remove from array</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">8</span><span class="c-Singleline"> ;The WSAAsyncSelect() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Start listening for incoming connections</span>
-    <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\listen&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mh">0x7FFFFFFF</span><span class="p">)</span><span class="c-Singleline"> ;SOMAXCONN</span>
+    <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\listen&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mh">0x7FFFFFFF</span><span class="p">)</span><span class="c-Singleline"> ;SOMAXCONN</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for SOCKET_ERROR</span>
-        <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+        <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">)</span>
         <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Delete&quot;</span><span class="p">,</span> <span class="n">sktListen</span><span class="p">)</span><span class="c-Singleline"> ;Remove from array</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">9</span><span class="c-Singleline"> ;The listen() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">AHKsock_Connect</span><span class="p">(</span><span class="n">sName</span><span class="p">,</span> <span class="n">sPort</span><span class="p">,</span> <span class="n">sFunction</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">aiResult</span><span class="p">,</span> <span class="n">iPointer</span><span class="p">,</span> <span class="n">bProcessing</span><span class="p">,</span> <span class="n">iMessage</span>
-    <span class="n">Static</span> <span class="n">sCurName</span><span class="p">,</span> <span class="n">sCurPort</span><span class="p">,</span> <span class="n">sCurFunction</span><span class="p">,</span> <span class="n">sktConnect</span><span class="c-Singleline"></span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">aiResult</span><span class="p">,</span> <span class="n">iPointer</span><span class="p">,</span> <span class="n">bProcessing</span><span class="p">,</span> <span class="n">iMessage</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">sCurName</span><span class="p">,</span> <span class="n">sCurPort</span><span class="p">,</span> <span class="n">sCurFunction</span><span class="p">,</span> <span class="n">sktConnect</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Check if it&#39;s just to inquire whether or not a call is possible</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">Not</span> <span class="n">sName</span> <span class="n">And</span> <span class="n">Not</span> <span class="n">sPort</span> <span class="n">And</span> <span class="n">Not</span> <span class="n">sFunction</span><span class="p">)</span>
@@ -511,19 +511,19 @@
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Check if we&#39;re busy</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">bProcessing</span> <span class="n">And</span> <span class="p">(</span><span class="n">sFunction</span> <span class="o">!=</span> <span class="n">iMessage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sCurName</span> <span class="nv">A_Tab</span> <span class="n">sCurPort</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sCurName</span> <span class="nv">A_Tab</span> <span class="n">sCurPort</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">1</span><span class="c-Singleline"> ;AHKsock_Connect is still processing a connection attempt. ErrorLevel contains the name and the port,</span>
 <span class="c-Singleline">                 ;delimited by a tab.</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="n">bProcessing</span> <span class="p">{</span><span class="c-Singleline"> ;sFunction = iMessage. The connect operation has finished.</span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Check if it was successful</span>
-        <span class="n">If</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="n">sPort</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
+        <span class="n">If</span> <span class="p">(</span><span class="n">i</span> <span class="o">:=</span> <span class="n">sPort</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Close the socket that failed</span>
             <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Get the next pointer. ai_next</span>
-            <span class="n">iPointer</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">28</span><span class="p">)</span><span class="c-Singleline"></span>
+            <span class="n">iPointer</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">28</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Check if we reached the end of the linked structs</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">iPointer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
@@ -532,10 +532,10 @@
                 <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\freeaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">                </span>
 <span class="c-Singleline">                ;This is to ensure that the user can call AHKsock_Connect() right away upon receiving the message.</span>
-                <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">False</span><span class="c-Singleline"></span>
+                <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">False</span><span class="c-Singleline"></span>
 <span class="c-Singleline">                </span>
 <span class="c-Singleline">                ;Raise an error (can&#39;t use Return 1 because we were called asynchronously)</span>
-                <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">i</span>
+                <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">i</span>
                 <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ;The connect() call failed. The error is in ErrorLevel.</span>
 <span class="c-Singleline">                </span>
 <span class="c-Singleline">                ;Call the function to signal that connection failed</span>
@@ -548,7 +548,7 @@
         <span class="p">}</span> <span class="n">Else</span> <span class="p">{</span><span class="c-Singleline"> ;Successful connection!</span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Get the IP we successfully connected to</span>
-            <span class="n">sIP</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+            <span class="n">sIP</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;We can now free the chain of ADDRINFO structs</span>
             <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\freeaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span><span class="c-Singleline"></span>
@@ -557,7 +557,7 @@
             <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Add&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">,</span> <span class="n">sCurName</span><span class="p">,</span> <span class="n">sIP</span><span class="p">,</span> <span class="n">sCurPort</span><span class="p">,</span> <span class="n">sCurFunction</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;This is to ensure that the user can call AHKsock_Connect() right away upon receiving the message.</span>
-            <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">False</span><span class="c-Singleline"></span>
+            <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">False</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Do this small bit in Critical so that AHKsock_AsyncSelect doesn&#39;t receive</span>
 <span class="c-Singleline">            ;any FD messages before we call the user function</span>
@@ -565,10 +565,10 @@
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;We must now actually register the socket</span>
 <span class="w">            </span><span class="nb">If </span><span class="n">AHKsock_RegisterAsyncSelect</span><span class="p">(</span><span class="n">sktConnect</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+                <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
                 <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">)</span>
                 <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Delete&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">)</span><span class="c-Singleline"> ;Remove from array</span>
-                <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+                <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
                 <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ;The WSAAsyncSelect() call failed. The error is in ErrorLevel.</span>
 <span class="w">                </span>
 <span class="w">                </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sCurFunction</span><span class="p">)</span><span class="c-Singleline"> ;Call the function to signal that connection failed</span>
@@ -586,18 +586,18 @@
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="nf">IsFunc(</span><span class="n">sFunction</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="mi">2</span><span class="c-Singleline"> ;sFunction is not a valid function.</span>
         
-        <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">True</span><span class="c-Singleline"> ;Block future calls to AHKsock_Connect() until we&#39;re done</span>
+        <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">True</span><span class="c-Singleline"> ;Block future calls to AHKsock_Connect() until we&#39;re done</span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Keep the values</span>
-        <span class="n">sCurName</span> :<span class="o">=</span> <span class="n">sName</span>
-        <span class="n">sCurPort</span> :<span class="o">=</span> <span class="n">sPort</span>
-        <span class="n">sCurFunction</span> :<span class="o">=</span> <span class="n">sFunction</span><span class="c-Singleline"></span>
+        <span class="n">sCurName</span> <span class="o">:=</span> <span class="n">sName</span>
+        <span class="n">sCurPort</span> <span class="o">:=</span> <span class="n">sPort</span>
+        <span class="n">sCurFunction</span> <span class="o">:=</span> <span class="n">sFunction</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Make sure Winsock has been started up</span>
-        <span class="n">If</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span> <span class="p">{</span>
-            <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">False</span>
-<span class="w">            </span><span class="nb">Return</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> ? <span class="mi">3</span><span class="c-Singleline"> ;The WSAStartup() call failed. The error is in ErrorLevel.</span>
-                           : <span class="mi">4</span><span class="c-Singleline"> ;The Winsock DLL does not support version 2.2.</span>
+        <span class="n">If</span> <span class="p">(</span><span class="n">i</span> <span class="o">:=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">False</span>
+<span class="w">            </span><span class="nb">Return</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="mi">3</span><span class="c-Singleline"> ;The WSAStartup() call failed. The error is in ErrorLevel.</span>
+                           <span class="o">:</span> <span class="mi">4</span><span class="c-Singleline"> ;The Winsock DLL does not support version 2.2.</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Resolve the server address and port    </span>
@@ -605,25 +605,25 @@
         <span class="nf">NumPut(</span><span class="mi">2</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_family = AF_INET</span>
         <span class="nf">NumPut(</span><span class="mi">1</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_socktype = SOCK_STREAM</span>
         <span class="nf">NumPut(</span><span class="mi">6</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_protocol = IPPROTO_TCP</span>
-        <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sName</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sPort</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">aiHints</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
+        <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sName</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sPort</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">aiHints</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for error</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">iResult</span>
-            <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">False</span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">iResult</span>
+            <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">False</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="mi">5</span><span class="c-Singleline"> ;The getaddrinfo() call failed. The error is in ErrorLevel.</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Start with the first struct</span>
-        <span class="n">iPointer</span> :<span class="o">=</span> <span class="n">aiResult</span>
+        <span class="n">iPointer</span> <span class="o">:=</span> <span class="n">aiResult</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Create a SOCKET for connecting to server</span>
-    <span class="n">sktConnect</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\socket&quot;</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
+    <span class="n">sktConnect</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\socket&quot;</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
                                          <span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">),</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">sktConnect</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for INVALID_SOCKET</span>
-        <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+        <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\freeaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
-        <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">False</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+        <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">False</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">sFunction</span> <span class="o">=</span> <span class="n">iMessage</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;Check if we were called asynchronously</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="c-Singleline"> ;The socket() call failed. The error is in ErrorLevel.</span>
 <span class="c-Singleline">            </span>
@@ -635,13 +635,13 @@
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Register the socket to know when the connect() function is done. FD_CONNECT = 16</span>
-    <span class="n">iMessage</span> :<span class="o">=</span> <span class="n">AHKsock_Settings</span><span class="p">(</span><span class="s">&quot;Message&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">iMessage</span> <span class="o">:=</span> <span class="n">AHKsock_Settings</span><span class="p">(</span><span class="s">&quot;Message&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">AHKsock_RegisterAsyncSelect</span><span class="p">(</span><span class="n">sktConnect</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="s">&quot;AHKsock_Connect&quot;</span><span class="p">,</span> <span class="n">iMessage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
+        <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\freeaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">)</span>
-        <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">False</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+        <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">False</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">sFunction</span> <span class="o">=</span> <span class="n">iMessage</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;Check if we were called asynchronously</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="c-Singleline"> ;The WSAAsyncSelect() call failed. The error is in ErrorLevel.</span>
 <span class="c-Singleline">            </span>
@@ -653,13 +653,13 @@
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Connect to server</span>
-    <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\connect&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">24</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">))</span>
+    <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\connect&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">24</span><span class="p">),</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">))</span>
 <span class="w">    </span><span class="nb">If </span><span class="nv">ErrorLevel</span> <span class="n">Or</span> <span class="p">((</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">And</span> <span class="p">(</span><span class="n">AHKsock_LastError</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">10035</span><span class="p">))</span> <span class="p">{</span><span class="c-Singleline"> ;Check for any error other than WSAEWOULDBLOCK</span>
-        <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+        <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\freeaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sktConnect</span><span class="p">)</span>
-        <span class="n">bProcessing</span> :<span class="o">=</span> <span class="nv">False</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+        <span class="n">bProcessing</span> <span class="o">:=</span> <span class="nv">False</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">sFunction</span> <span class="o">=</span> <span class="n">iMessage</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;Check if we were called asynchronously</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ;The connect() call failed. The error is in ErrorLevel.</span>
 <span class="c-Singleline">            </span>
@@ -693,12 +693,12 @@
 <span class="cm">    }</span>
 <span class="cm">    */</span>
     
-    <span class="n">iSendResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\send&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;char&quot;</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">iLength</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">If</span> <span class="p">(</span><span class="n">iSendResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">And</span> <span class="p">((</span><span class="n">iErr</span> :<span class="o">=</span> <span class="n">AHKsock_LastError</span><span class="p">())</span> <span class="o">=</span> <span class="mi">10035</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;Check specifically for WSAEWOULDBLOCK</span>
+    <span class="n">iSendResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\send&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;char&quot;</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">iLength</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">iSendResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">And</span> <span class="p">((</span><span class="n">iErr</span> <span class="o">:=</span> <span class="n">AHKsock_LastError</span><span class="p">())</span> <span class="o">=</span> <span class="mi">10035</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;Check specifically for WSAEWOULDBLOCK</span>
         <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;SetSend&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="nv">False</span><span class="p">)</span><span class="c-Singleline"> ;Update socket&#39;s send status</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">2</span><span class="c-Singleline"> ;Calling send() would have blocked the thread. Try again once you get the proper update.</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">iSendResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">iErr</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">iErr</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">3</span><span class="c-Singleline"> ;The send() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="n">Return</span> <span class="n">iSendResult</span><span class="c-Singleline"> ;The send() operation was successful</span>
 <span class="p">}</span>
@@ -724,7 +724,7 @@
 <span class="c-Singleline">    ;http://support.microsoft.com/kb/823764</span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Get the socket&#39;s send buffer size</span>
-    <span class="n">If</span> <span class="p">((</span><span class="n">iMaxChunk</span> :<span class="o">=</span> <span class="n">AHKsock_SockOpt</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;SO_SNDBUF&quot;</span><span class="p">))</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">If</span> <span class="p">((</span><span class="n">iMaxChunk</span> <span class="o">:=</span> <span class="n">AHKsock_SockOpt</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;SO_SNDBUF&quot;</span><span class="p">))</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">6</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Check if we&#39;ll be sending in chunks or not</span>
@@ -739,7 +739,7 @@
 <span class="w">                </span><span class="nb">Sleep</span> <span class="o">-</span><span class="mi">1</span>
 <span class="w">            </span>
 <span class="w">            </span><span class="nb">Loop</span> <span class="p">{</span><span class="c-Singleline"> ;Keep sending the data until we get WSAEWOULDBLOCK or until an error occurs</span>
-                <span class="n">If</span> <span class="p">((</span><span class="n">iSendResult</span> :<span class="o">=</span> <span class="n">AHKsock_Send</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="n">iLength</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">If</span> <span class="p">((</span><span class="n">iSendResult</span> <span class="o">:=</span> <span class="n">AHKsock_Send</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="n">iLength</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                     <span class="n">If</span> <span class="p">(</span><span class="n">iSendResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ;Check specifically for WSAEWOULDBLOCK</span>
 <span class="w">                        </span><span class="nb">Break</span><span class="c-Singleline"> ;Calling send() would have blocked the thread. Break the loop and we&#39;ll try again after we</span>
 <span class="c-Singleline">                              ;receive FD_WRITE</span>
@@ -769,7 +769,7 @@
 <span class="w">                </span>
 <span class="w">                </span><span class="nb">Loop</span> <span class="p">{</span><span class="c-Singleline"> ;Keep sending the data until we get WSAEWOULDBLOCK or until an error occurs</span>
 <span class="c-Singleline">                    ;Send using the traditional offset method</span>
-                    <span class="n">If</span> <span class="p">((</span><span class="n">iSendResult</span> :<span class="o">=</span> <span class="n">AHKsock_Send</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="n">iLength</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">If</span> <span class="p">((</span><span class="n">iSendResult</span> <span class="o">:=</span> <span class="n">AHKsock_Send</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="n">iLength</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                         <span class="n">If</span> <span class="p">(</span><span class="n">iSendResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ;Check specifically for WSAEWOULDBLOCK</span>
 <span class="w">                            </span><span class="nb">Break</span><span class="c-Singleline"> ;Calling send() would have blocked the thread. Break the loop and we&#39;ll try again after we</span>
 <span class="c-Singleline">                                  ;receive FD_WRITE</span>
@@ -785,7 +785,7 @@
             <span class="p">}</span> <span class="n">Else</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">                </span>
 <span class="c-Singleline">                ;Send up to max chunk</span>
-                <span class="n">If</span> <span class="p">((</span><span class="n">iSendResult</span> :<span class="o">=</span> <span class="n">AHKsock_Send</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="n">iMaxChunk</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">If</span> <span class="p">((</span><span class="n">iSendResult</span> <span class="o">:=</span> <span class="n">AHKsock_Send</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">ptrData</span><span class="p">,</span> <span class="n">iMaxChunk</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                     <span class="n">If</span> <span class="p">(</span><span class="n">iSendResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="c-Singleline"> ;Check specifically for WSAEWOULDBLOCK</span>
 <span class="w">                        </span><span class="nb">Continue</span><span class="c-Singleline"> ;Calling send() would have blocked the thread. Continue the loop and we&#39;ll try again after</span>
 <span class="c-Singleline">                                 ;we receive FD_WRITE</span>
@@ -812,7 +812,7 @@
         <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Take the current time (needed for time-outing)</span>
-        <span class="n">iStartClose</span> :<span class="o">=</span> <span class="nv">A_TickCount</span>
+        <span class="n">iStartClose</span> <span class="o">:=</span> <span class="nv">A_TickCount</span>
 <span class="w">        </span>
 <span class="w">        </span><span class="nb">Loop</span> <span class="o">%</span> <span class="n">AHKsock_Sockets</span><span class="p">()</span><span class="c-Singleline"> ;Close all sockets and cleanup</span>
             <span class="n">AHKsock_ShutdownSocket</span><span class="p">(</span><span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetSocketFromIndex&quot;</span><span class="p">,</span> <span class="nv">A_Index</span><span class="p">))</span><span class="c-Singleline"></span>
@@ -820,7 +820,7 @@
 <span class="c-Singleline">        ;Check if we&#39;re in the OnExit subroutine</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="nv">A_ExitReason</span> <span class="p">{</span>
             
-            <span class="n">A_IsCriticalOld</span> :<span class="o">=</span> <span class="nv">A_IsCritical</span><span class="c-Singleline"></span>
+            <span class="n">A_IsCriticalOld</span> <span class="o">:=</span> <span class="nv">A_IsCritical</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Make sure we can still receive FD_CLOSE msgs</span>
 <span class="w">            </span><span class="nb">Critical</span><span class="p">,</span> <span class="n">Off</span>
@@ -858,7 +858,7 @@
 <span class="n">AHKsock_GetAddrInfo</span><span class="p">(</span><span class="n">sHostName</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">sIPList</span><span class="p">,</span> <span class="n">bOne</span> <span class="o">=</span> <span class="nv">False</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Make sure Winsock has been started up</span>
-    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> <span class="o">:=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="n">i</span><span class="c-Singleline"> ;Return the same error (error 1 and 2)</span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Resolve the address and port    </span>
@@ -866,24 +866,24 @@
     <span class="nf">NumPut(</span><span class="mi">2</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_family = AF_INET</span>
     <span class="nf">NumPut(</span><span class="mi">1</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_socktype = SOCK_STREAM</span>
     <span class="nf">NumPut(</span><span class="mi">6</span><span class="p">,</span> <span class="n">aiHints</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"> ;ai_protocol = IPPROTO_TCP</span>
-    <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sHostName</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">aiHints</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
+    <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getaddrinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sHostName</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">aiHints</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">aiResult</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="mi">11001</span><span class="p">)</span><span class="c-Singleline"> ;Check specifically for WSAHOST_NOT_FOUND since it&#39;s the most common error</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">3</span><span class="c-Singleline"> ;Received WSAHOST_NOT_FOUND. No such host is known.</span>
 <span class="w">    </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for any other error</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">iResult</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">iResult</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">4</span><span class="c-Singleline"> ;The getaddrinfo() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span>
 <span class="w">    </span>
 <span class="w">    </span><span class="nb">If </span><span class="n">bOne</span>
-        <span class="n">sIPList</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span>
+        <span class="n">sIPList</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">aiResult</span><span class="o">+</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Else</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Start with the first addrinfo struct</span>
-        <span class="n">iPointer</span> :<span class="o">=</span> <span class="n">aiResult</span><span class="p">,</span> <span class="n">sIPList</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">iPointer</span> <span class="o">:=</span> <span class="n">aiResult</span><span class="p">,</span> <span class="n">sIPList</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
 <span class="w">        </span><span class="nb">While</span> <span class="n">iPointer</span> <span class="p">{</span>
-            <span class="n">s</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span>
-            <span class="n">iPointer</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">28</span><span class="p">)</span><span class="c-Singleline"> ;Go to the next addrinfo struct</span>
-            <span class="n">sIPList</span> <span class="o">.=</span>  <span class="n">s</span> <span class="p">(</span><span class="n">iPointer</span> ? <span class="s">&quot;`n&quot;</span> : <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ;Add newline only if it&#39;s not the last one</span>
+            <span class="n">s</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span>
+            <span class="n">iPointer</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">iPointer</span><span class="o">+</span><span class="mi">28</span><span class="p">)</span><span class="c-Singleline"> ;Go to the next addrinfo struct</span>
+            <span class="n">sIPList</span> <span class="o">.=</span>  <span class="n">s</span> <span class="p">(</span><span class="n">iPointer</span> <span class="o">?</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">:</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="c-Singleline"> ;Add newline only if it&#39;s not the last one</span>
         <span class="p">}</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
@@ -894,11 +894,11 @@
 <span class="n">AHKsock_GetNameInfo</span><span class="p">(</span><span class="n">sIP</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">sHostName</span><span class="p">,</span> <span class="n">sPort</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">sService</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Make sure Winsock has been started up</span>
-    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> :<span class="o">=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">i</span> <span class="o">:=</span> <span class="n">AHKsock_Startup</span><span class="p">())</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="n">i</span><span class="c-Singleline"> ;Return the same error (error 1 and 2)</span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Translate to IN_ADDR</span>
-    <span class="n">iIP</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_addr&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sIP</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+    <span class="n">iIP</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_addr&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sIP</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iIP</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">Or</span> <span class="n">iIP</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="p">)</span><span class="c-Singleline"> ;Check for INADDR_NONE or INADDR_ANY</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">3</span><span class="c-Singleline"> ;The IP address supplied in sIP is invalid.</span>
 <span class="c-Singleline">    </span>
@@ -916,10 +916,10 @@
 <span class="w">    </span><span class="nb">If </span><span class="n">sPort</span>
         <span class="nf">VarSetCapacity(</span><span class="n">sService</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;NI_MAXSERV</span>
     
-    <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getnameinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">sHostName</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1025</span>
-                                           <span class="p">,</span> <span class="n">sPort</span> ? <span class="s">&quot;str&quot;</span> : <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sPort</span> ? <span class="n">sService</span> : <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getnameinfo&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">sHostName</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1025</span>
+                                           <span class="p">,</span> <span class="n">sPort</span> <span class="o">?</span> <span class="s">&quot;str&quot;</span> <span class="o">:</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">sPort</span> <span class="o">?</span> <span class="n">sService</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\WSAGetLastError&quot;</span><span class="p">)</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\WSAGetLastError&quot;</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">4</span><span class="c-Singleline"> ;The getnameinfo() call failed. The error is in ErrorLevel.</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -927,37 +927,37 @@
 <span class="n">AHKsock_SockOpt</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">sOption</span><span class="p">,</span> <span class="n">iValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Prep variable</span>
-    <span class="nf">VarSetCapacity(</span><span class="n">iOptVal</span><span class="p">,</span> <span class="n">iOptValLength</span> :<span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">VarSetCapacity(</span><span class="n">iOptVal</span><span class="p">,</span> <span class="n">iOptValLength</span> <span class="o">:=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iValue</span> <span class="o">&lt;&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="nf">NumPut(</span><span class="n">iValue</span><span class="p">,</span> <span class="n">iOptVal</span><span class="p">)</span>
     
     <span class="n">If</span> <span class="p">(</span><span class="n">sOption</span> <span class="o">=</span> <span class="s">&quot;SO_KEEPALIVE&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">intLevel</span> :<span class="o">=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;SOL_SOCKET</span>
-        <span class="n">intOptName</span> :<span class="o">=</span> <span class="mh">0x0008</span><span class="c-Singleline"> ;SO_KEEPALIVE</span>
+        <span class="n">intLevel</span> <span class="o">:=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;SOL_SOCKET</span>
+        <span class="n">intOptName</span> <span class="o">:=</span> <span class="mh">0x0008</span><span class="c-Singleline"> ;SO_KEEPALIVE</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sOption</span> <span class="o">=</span> <span class="s">&quot;SO_SNDBUF&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">intLevel</span> :<span class="o">=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;SOL_SOCKET</span>
-        <span class="n">intOptName</span> :<span class="o">=</span> <span class="mh">0x1001</span><span class="c-Singleline"> ;SO_SNDBUF</span>
+        <span class="n">intLevel</span> <span class="o">:=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;SOL_SOCKET</span>
+        <span class="n">intOptName</span> <span class="o">:=</span> <span class="mh">0x1001</span><span class="c-Singleline"> ;SO_SNDBUF</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sOption</span> <span class="o">=</span> <span class="s">&quot;SO_RCVBUF&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">intLevel</span> :<span class="o">=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;SOL_SOCKET</span>
-        <span class="n">intOptName</span> :<span class="o">=</span> <span class="mh">0x1002</span><span class="c-Singleline"> ;SO_SNDBUF</span>
+        <span class="n">intLevel</span> <span class="o">:=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;SOL_SOCKET</span>
+        <span class="n">intOptName</span> <span class="o">:=</span> <span class="mh">0x1002</span><span class="c-Singleline"> ;SO_SNDBUF</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sOption</span> <span class="o">=</span> <span class="s">&quot;TCP_NODELAY&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">intLevel</span> :<span class="o">=</span> <span class="mi">6</span><span class="c-Singleline"> ;IPPROTO_TCP</span>
-        <span class="n">intOptName</span> :<span class="o">=</span> <span class="mh">0x0001</span><span class="c-Singleline"> ;TCP_NODELAY</span>
+        <span class="n">intLevel</span> <span class="o">:=</span> <span class="mi">6</span><span class="c-Singleline"> ;IPPROTO_TCP</span>
+        <span class="n">intOptName</span> <span class="o">:=</span> <span class="mh">0x0001</span><span class="c-Singleline"> ;TCP_NODELAY</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Check if we&#39;re getting or setting</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getsockopt&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intLevel</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intOptName</span>
+        <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\getsockopt&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intLevel</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intOptName</span>
                                               <span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span>  <span class="n">iOptVal</span><span class="p">,</span> <span class="s">&quot;int*&quot;</span><span class="p">,</span> <span class="n">iOptValLength</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for SOCKET_ERROR</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span>
         <span class="p">}</span> <span class="n">Else</span> <span class="n">Return</span> <span class="n">iOptVal</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="p">{</span>
-        <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\setsockopt&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intLevel</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intOptName</span>
+        <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\setsockopt&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intLevel</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">intOptName</span>
                                               <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span>  <span class="o">&amp;</span><span class="n">iOptVal</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span>  <span class="n">iOptValLength</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for SOCKET_ERROR</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">2</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -968,7 +968,7 @@
 <span class="cm">                  */</span>
 
 <span class="n">AHKsock_Startup</span><span class="p">(</span><span class="n">iMode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">bAlreadyStarted</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">bAlreadyStarted</span>
 <span class="w">    </span>
 <span class="w">    </span><span class="cm">/*</span>
 <span class="cm">    iMode = 0 ;Turns on WSAStartup()</span>
@@ -977,41 +977,41 @@
 <span class="cm">    */</span>
     
     <span class="n">If</span> <span class="p">(</span><span class="n">iMode</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">bAlreadyStarted</span> :<span class="o">=</span> <span class="nv">False</span>
+        <span class="n">bAlreadyStarted</span> <span class="o">:=</span> <span class="nv">False</span>
 <span class="w">    </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">iMode</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="n">bAlreadyStarted</span>
 <span class="w">    </span><span class="nb">Else</span> <span class="n">If</span> <span class="n">Not</span> <span class="n">bAlreadyStarted</span> <span class="p">{</span><span class="c-Singleline"> ;iMode = 0. Call the function only if it hasn&#39;t already been called.</span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Start it up - request version 2.2</span>
         <span class="nf">VarSetCapacity(</span><span class="n">wsaData</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\WSAStartup&quot;</span><span class="p">,</span> <span class="s">&quot;ushort&quot;</span><span class="p">,</span> <span class="mh">0x0202</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wsaData</span><span class="p">)</span>
+        <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\WSAStartup&quot;</span><span class="p">,</span> <span class="s">&quot;ushort&quot;</span><span class="p">,</span> <span class="mh">0x0202</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wsaData</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">iResult</span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">iResult</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="mi">1</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Make sure the Winsock DLL supports at least version 2.2</span>
         <span class="n">If</span> <span class="p">(</span><span class="nf">NumGet(</span><span class="n">wsaData</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;ushort&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mh">0x0202</span><span class="p">)</span> <span class="p">{</span>
             <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\WSACleanup&quot;</span><span class="p">)</span><span class="c-Singleline"> ;Abort</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="s">&quot;The Winsock DLL does not support version 2.2.&quot;</span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="s">&quot;The Winsock DLL does not support version 2.2.&quot;</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="mi">2</span>
         <span class="p">}</span>
         
-        <span class="n">bAlreadyStarted</span> :<span class="o">=</span> <span class="nv">True</span>
+        <span class="n">bAlreadyStarted</span> <span class="o">:=</span> <span class="nv">True</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">AHKsock_ShutdownSocket</span><span class="p">(</span><span class="n">iSocket</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    </span>
 <span class="c-Singleline">    ;Check if it&#39;s a listening socket</span>
-    <span class="n">sName</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetName&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+    <span class="n">sName</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetName&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">sName</span> <span class="o">!=</span> <span class="nv">A_Space</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;It&#39;s not a listening socket. Shutdown send operations.</span>
-        <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\shutdown&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ;SD_SEND</span>
+        <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\shutdown&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ;SD_SEND</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span>
-            <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+            <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
             <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
             <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Delete&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="mi">1</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
@@ -1029,20 +1029,20 @@
 <span class="cm">                      */</span><span class="c-Singleline"></span>
 <span class="c-Singleline">                                     ;FD_READ | FD_WRITE | FD_ACCEPT | FD_CLOSE</span>
 <span class="n">AHKsock_RegisterAsyncSelect</span><span class="p">(</span><span class="n">iSocket</span><span class="p">,</span> <span class="n">fFlags</span> <span class="o">=</span> <span class="mi">43</span><span class="p">,</span> <span class="n">sFunction</span> <span class="o">=</span> <span class="s">&quot;AHKsock_AsyncSelect&quot;</span><span class="p">,</span> <span class="n">iMsg</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">hGui</span> :<span class="o">=</span> <span class="nv">False</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">hGui</span> <span class="o">:=</span> <span class="nv">False</span>
 <span class="w">    </span>
 <span class="w">    </span><span class="nb">If </span><span class="n">Not</span> <span class="n">hGui</span> <span class="p">{</span>
 <span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
-        <span class="n">hGui</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+        <span class="n">hGui</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="p">)</span>
     <span class="p">}</span>
     
-    <span class="n">iMsg</span> :<span class="o">=</span> <span class="n">iMsg</span> ? <span class="n">iMsg</span> : <span class="n">AHKsock_Settings</span><span class="p">(</span><span class="s">&quot;Message&quot;</span><span class="p">)</span>
+    <span class="n">iMsg</span> <span class="o">:=</span> <span class="n">iMsg</span> <span class="o">?</span> <span class="n">iMsg</span> <span class="o">:</span> <span class="n">AHKsock_Settings</span><span class="p">(</span><span class="s">&quot;Message&quot;</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="nf">OnMessage(</span><span class="n">iMsg</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="n">sFunction</span><span class="p">)</span>
         <span class="nf">OnMessage(</span><span class="n">iMsg</span><span class="p">,</span> <span class="n">sFunction</span><span class="p">)</span>
     
-    <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\WSAAsyncSelect&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hGui</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iMsg</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">fFlags</span><span class="p">)</span>
+    <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\WSAAsyncSelect&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hGui</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">iMsg</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">fFlags</span><span class="p">)</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for SOCKET_ERROR</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="mi">1</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -1058,7 +1058,7 @@
 <span class="w">    </span><span class="nb">If </span><span class="n">Not</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">Return</span>
     
-    <span class="n">iEvent</span> :<span class="o">=</span> <span class="n">lParam</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">,</span> <span class="n">iErrorCode</span> :<span class="o">=</span> <span class="n">lParam</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span>
+    <span class="n">iEvent</span> <span class="o">:=</span> <span class="n">lParam</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">,</span> <span class="n">iErrorCode</span> <span class="o">:=</span> <span class="n">lParam</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span>
 <span class="w">    </span>
 <span class="w">    </span><span class="cm">/*! Used for debugging purposes</span>
 <span class="cm">    OutputDebug, % &quot;AsyncSelect - A network event &quot; iEvent &quot; has occurred on socket &quot; wParam</span>
@@ -1070,26 +1070,26 @@
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Check for error</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">iErrorCode</span> <span class="p">{</span><span class="c-Singleline"> ;WSAENETDOWN is the only possible</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">iErrorCode</span><span class="c-Singleline"></span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">iErrorCode</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;FD_READ event received with an error. The error is in ErrorLevel. The socket is in iSocket.</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">Return</span>
         <span class="p">}</span>
         
-        <span class="nf">VarSetCapacity(</span><span class="n">bufReceived</span><span class="p">,</span> <span class="n">bufReceivedLength</span> :<span class="o">=</span> <span class="n">AHKsock_Settings</span><span class="p">(</span><span class="s">&quot;Buffer&quot;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\recv&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="s">&quot;char&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">bufReceived</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">bufReceivedLength</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">bufReceived</span><span class="p">,</span> <span class="n">bufReceivedLength</span> <span class="o">:=</span> <span class="n">AHKsock_Settings</span><span class="p">(</span><span class="s">&quot;Buffer&quot;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\recv&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="s">&quot;char&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">bufReceived</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">bufReceivedLength</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;We received data!</span>
             <span class="nf">VarSetCapacity(</span><span class="n">bufReceived</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ;Update the internal length</span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Get associated function and call it</span>
-<span class="w">            </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span>
+<span class="w">            </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span>
                 <span class="nv">%sFunc%</span><span class="p">(</span><span class="s">&quot;RECEIVED&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetName&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
                                           <span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetAddr&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
                                           <span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetPort&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">),</span> <span class="n">bufReceived</span><span class="p">,</span> <span class="n">iResult</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">        ;Check for error other than WSAEWOULDBLOCK</span>
-        <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="nv">ErrorLevel</span> <span class="n">Or</span> <span class="p">((</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">And</span> <span class="n">Not</span> <span class="p">((</span><span class="n">iErrorCode</span> :<span class="o">=</span> <span class="n">AHKsock_LastError</span><span class="p">())</span> <span class="o">=</span> <span class="mi">10035</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">iErrorCode</span>
+        <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="nv">ErrorLevel</span> <span class="n">Or</span> <span class="p">((</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">And</span> <span class="n">Not</span> <span class="p">((</span><span class="n">iErrorCode</span> <span class="o">:=</span> <span class="n">AHKsock_LastError</span><span class="p">())</span> <span class="o">=</span> <span class="mi">10035</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">iErrorCode</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span><span class="c-Singleline"> ;The recv() call failed. The error is in ErrorLevel. The socket is in iSocket.</span>
             <span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="c-Singleline"> ;So that if it&#39;s a spoofed call from FD_CLOSE, we exit the loop and close the socket</span>
         <span class="p">}</span><span class="c-Singleline"></span>
@@ -1101,7 +1101,7 @@
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Check for error</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">iErrorCode</span> <span class="p">{</span><span class="c-Singleline"> ;WSAENETDOWN is the only possible</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">iErrorCode</span><span class="c-Singleline"></span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">iErrorCode</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;FD_WRITE event received with an error. The error is in ErrorLevel. The socket is in iSocket.</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">Return</span>
@@ -1112,7 +1112,7 @@
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Make sure the socket isn&#39;t already shut down</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetShutdown&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
-<span class="w">            </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span>
+<span class="w">            </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span>
                 <span class="nv">%sFunc%</span><span class="p">(</span><span class="s">&quot;SEND&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetName&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
                                       <span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetAddr&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
                                       <span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetPort&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span>
@@ -1121,38 +1121,38 @@
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Check for error</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">iErrorCode</span> <span class="p">{</span><span class="c-Singleline"> ;WSAENETDOWN is the only possible</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">iErrorCode</span><span class="c-Singleline"></span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">iErrorCode</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;FD_ACCEPT event received with an error. The error is in ErrorLevel. The socket is in iSocket.</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">Return</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;We need to accept the connection</span>
-        <span class="nf">VarSetCapacity(</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="n">tSockAddrLength</span> :<span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">sktClient</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\accept&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="s">&quot;int*&quot;</span><span class="p">,</span> <span class="n">tSockAddrLength</span><span class="p">)</span>
-        <span class="n">If</span> <span class="p">(</span><span class="n">sktClient</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">And</span> <span class="p">((</span><span class="n">iErrorCode</span> :<span class="o">=</span> <span class="n">AHKsock_LastError</span><span class="p">())</span> <span class="o">=</span> <span class="mi">10035</span><span class="p">)</span><span class="c-Singleline"> ;Check specifically for WSAEWOULDBLOCK</span>
+        <span class="nf">VarSetCapacity(</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="n">tSockAddrLength</span> <span class="o">:=</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sktClient</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\accept&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="s">&quot;int*&quot;</span><span class="p">,</span> <span class="n">tSockAddrLength</span><span class="p">)</span>
+        <span class="n">If</span> <span class="p">(</span><span class="n">sktClient</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">And</span> <span class="p">((</span><span class="n">iErrorCode</span> <span class="o">:=</span> <span class="n">AHKsock_LastError</span><span class="p">())</span> <span class="o">=</span> <span class="mi">10035</span><span class="p">)</span><span class="c-Singleline"> ;Check specifically for WSAEWOULDBLOCK</span>
 <span class="w">            </span><span class="nb">Return</span><span class="c-Singleline"> ;We&#39;ll be called again next time we can retry accept()</span>
 <span class="w">        </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sktClient</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for INVALID_SOCKET</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">iErrorCode</span><span class="c-Singleline"></span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">iErrorCode</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;The accept() call failed. The error is in ErrorLevel. The listening socket is in iSocket.</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">Return</span>
         <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Add to array</span>
-        <span class="n">sName</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
-        <span class="n">sAddr</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span>
-        <span class="n">sPort</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetPort&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
-        <span class="n">sFunc</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
+        <span class="n">sName</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">sAddr</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\inet_ntoa&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">tSockAddr</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s">&quot;str&quot;</span><span class="p">)</span>
+        <span class="n">sPort</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetPort&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
+        <span class="n">sFunc</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
         <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Add&quot;</span><span class="p">,</span> <span class="n">sktClient</span><span class="p">,</span> <span class="n">sName</span><span class="p">,</span> <span class="n">sAddr</span><span class="p">,</span> <span class="n">sPort</span><span class="p">,</span> <span class="n">sFunc</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Go back to listening</span>
-        <span class="n">iResult</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\listen&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mh">0x7FFFFFFF</span><span class="p">)</span><span class="c-Singleline"> ;SOMAXCONN       </span>
+        <span class="n">iResult</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\listen&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="mh">0x7FFFFFFF</span><span class="p">)</span><span class="c-Singleline"> ;SOMAXCONN       </span>
         <span class="n">If</span> <span class="p">(</span><span class="n">iResult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">Or</span> <span class="nv">ErrorLevel</span> <span class="p">{</span><span class="c-Singleline"> ;Check for SOCKET_ERROR</span>
-            <span class="n">sErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="n">AHKsock_LastError</span><span class="p">()</span>
+            <span class="n">sErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="n">AHKsock_LastError</span><span class="p">()</span>
             <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
             <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Delete&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span><span class="c-Singleline"> ;Remove from array</span>
-            <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">sErrorLevel</span><span class="c-Singleline"></span>
+            <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">sErrorLevel</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            ;The listen() call failed. The error is in ErrorLevel. The listening socket is in iSocket.</span>
             <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
 <span class="w">            </span><span class="nb">Return</span>
@@ -1172,7 +1172,7 @@
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetShutdown&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">            </span>
 <span class="c-Singleline">            ;Last chance to send data. Get associated function and call it.</span>
-<span class="w">            </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span>
+<span class="w">            </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span>
                 <span class="nv">%sFunc%</span><span class="p">(</span><span class="s">&quot;SENDLAST&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetName&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
                                           <span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetAddr&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
                                           <span class="p">,</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetPort&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">))</span><span class="c-Singleline"></span>
@@ -1189,10 +1189,10 @@
         <span class="nf">DllCall(</span><span class="s">&quot;Ws2_32\closesocket&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;Get associated data before deleting</span>
-        <span class="n">sFunc</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
-        <span class="n">sName</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetName&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
-        <span class="n">sAddr</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetAddr&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
-        <span class="n">sPort</span> :<span class="o">=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetPort&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span><span class="c-Singleline"></span>
+        <span class="n">sFunc</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetFunction&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
+        <span class="n">sName</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetName&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
+        <span class="n">sAddr</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetAddr&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
+        <span class="n">sPort</span> <span class="o">:=</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;GetPort&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;We can remove it from the array</span>
         <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Delete&quot;</span><span class="p">,</span> <span class="n">wParam</span><span class="p">)</span>
@@ -1207,120 +1207,120 @@
 <span class="cm">                 */</span>
 
 <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;Count&quot;</span><span class="p">,</span> <span class="n">iSocket</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">sName</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">sAddr</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">sPort</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">sFunction</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Static</span>
-    <span class="n">Static</span> <span class="n">aSockets0</span> :<span class="o">=</span> <span class="mi">0</span>
-    <span class="n">Static</span> <span class="n">iLastSocket</span> :<span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="c-Singleline"> ;Cache to lessen index lookups on the same socket</span>
-    <span class="n">Local</span> <span class="n">i</span><span class="p">,</span> <span class="n">ret</span>
+<span class="w">    </span><span class="nb">Static</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">aSockets0</span> <span class="o">:=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">iLastSocket</span> <span class="o">:=</span> <span class="mh">0xFFFFFFFF</span><span class="c-Singleline"> ;Cache to lessen index lookups on the same socket</span>
+<span class="w">    </span><span class="nb">Local</span> <span class="n">i</span><span class="p">,</span> <span class="n">ret</span>
     
-    <span class="n">A_IsCriticalOld</span> :<span class="o">=</span> <span class="nv">A_IsCritical</span>
+    <span class="n">A_IsCriticalOld</span> <span class="o">:=</span> <span class="nv">A_IsCritical</span>
 <span class="w">    </span><span class="nb">Critical</span>
     
     <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;Count&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets0</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets0</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;Add&quot;</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">aSockets0</span> <span class="o">+=</span> <span class="mi">1</span><span class="c-Singleline"> ;Expand array</span>
-        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Sock</span> :<span class="o">=</span> <span class="n">iSocket</span>
-        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Name</span> :<span class="o">=</span> <span class="n">sName</span>
-        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Addr</span> :<span class="o">=</span> <span class="n">sAddr</span>
-        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Port</span> :<span class="o">=</span> <span class="n">sPort</span>
-        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Func</span> :<span class="o">=</span> <span class="n">sFunction</span>
-        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Shutdown</span> :<span class="o">=</span> <span class="nv">False</span>
-        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Send</span> :<span class="o">=</span> <span class="nv">False</span>
+        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Sock</span> <span class="o">:=</span> <span class="n">iSocket</span>
+        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Name</span> <span class="o">:=</span> <span class="n">sName</span>
+        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Addr</span> <span class="o">:=</span> <span class="n">sAddr</span>
+        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Port</span> <span class="o">:=</span> <span class="n">sPort</span>
+        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Func</span> <span class="o">:=</span> <span class="n">sFunction</span>
+        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Shutdown</span> <span class="o">:=</span> <span class="nv">False</span>
+        <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Send</span> <span class="o">:=</span> <span class="nv">False</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;Delete&quot;</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        </span>
 <span class="c-Singleline">        ;First we need the index</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
 <span class="w">        </span>
 <span class="w">        </span><span class="nb">If </span><span class="n">i</span> <span class="p">{</span>
-            <span class="n">iLastSocket</span> :<span class="o">=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;Clear cache</span>
+            <span class="n">iLastSocket</span> <span class="o">:=</span> <span class="mh">0xFFFF</span><span class="c-Singleline"> ;Clear cache</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">aSockets0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ;Let the last item overwrite this one</span>
-                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Sock</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Sock</span>
-                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Name</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Name</span>
-                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Addr</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Addr</span>
-                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Port</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Port</span>
-                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Func</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Func</span>
-                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Shutdown</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Shutdown</span>
-                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Send</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Send</span>
+                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Sock</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Sock</span>
+                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Name</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Name</span>
+                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Addr</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Addr</span>
+                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Port</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Port</span>
+                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Func</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Func</span>
+                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Shutdown</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Shutdown</span>
+                <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Send</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%aSockets0%</span><span class="n">_Send</span>
                 
             <span class="p">}</span>
             <span class="n">aSockets0</span> <span class="o">-=</span> <span class="mi">1</span><span class="c-Singleline"> ;Remove element</span>
         <span class="p">}</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetName&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Name</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Name</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetAddr&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Addr</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Addr</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetPort&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Port</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Port</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetFunction&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Func</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Func</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;SetFunction&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Func</span> :<span class="o">=</span> <span class="n">sName</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Func</span> <span class="o">:=</span> <span class="n">sName</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetSend&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Send</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Send</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;SetSend&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Send</span> :<span class="o">=</span> <span class="n">sName</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Send</span> <span class="o">:=</span> <span class="n">sName</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetShutdown&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Shutdown</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Shutdown</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;SetShutdown&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span> :<span class="o">=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
-        ? <span class="n">iLastSocketIndex</span>
-        : <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
-        <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Shutdown</span> :<span class="o">=</span> <span class="nv">True</span>
+        <span class="n">i</span> <span class="o">:=</span> <span class="p">(</span><span class="n">iSocket</span> <span class="o">=</span> <span class="n">iLastSocket</span><span class="p">)</span><span class="c-Singleline"> ;Check cache</span>
+        <span class="o">?</span> <span class="n">iLastSocketIndex</span>
+        <span class="o">:</span> <span class="n">AHKsock_Sockets</span><span class="p">(</span><span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
+        <span class="n">aSockets</span><span class="nv">%i%</span><span class="n">_Shutdown</span> <span class="o">:=</span> <span class="nv">True</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetSocketFromNamePort&quot;</span><span class="p">)</span> <span class="p">{</span>
 <span class="w">        </span><span class="nb">Loop</span> <span class="o">%</span> <span class="n">aSockets0</span> <span class="p">{</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">aSockets</span><span class="nv">%A_Index%</span><span class="n">_Name</span> <span class="o">=</span> <span class="n">iSocket</span><span class="p">)</span>
             <span class="n">And</span> <span class="p">(</span><span class="n">aSockets</span><span class="nv">%A_Index%</span><span class="n">_Port</span> <span class="o">=</span> <span class="n">sName</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%A_Index%</span><span class="n">_Sock</span>
+                <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%A_Index%</span><span class="n">_Sock</span>
 <span class="w">                </span><span class="nb">Break</span>
             <span class="p">}</span>
         <span class="p">}</span>
         
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;GetSocketFromIndex&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">ret</span> :<span class="o">=</span> <span class="n">aSockets</span><span class="nv">%iSocket%</span><span class="n">_Sock</span>
+        <span class="n">ret</span> <span class="o">:=</span> <span class="n">aSockets</span><span class="nv">%iSocket%</span><span class="n">_Sock</span>
     
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sAction</span> <span class="o">=</span> <span class="s">&quot;Index&quot;</span><span class="p">)</span> <span class="p">{</span>
 <span class="w">        </span><span class="nb">Loop</span> <span class="o">%</span> <span class="n">aSockets0</span> <span class="p">{</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">aSockets</span><span class="nv">%A_Index%</span><span class="n">_Sock</span> <span class="o">=</span> <span class="n">iSocket</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">iLastSocketIndex</span> :<span class="o">=</span> <span class="nv">A_Index</span><span class="p">,</span> <span class="n">iLastSocket</span> :<span class="o">=</span> <span class="n">iSocket</span>
-                <span class="n">ret</span> :<span class="o">=</span> <span class="nv">A_Index</span>
+                <span class="n">iLastSocketIndex</span> <span class="o">:=</span> <span class="nv">A_Index</span><span class="p">,</span> <span class="n">iLastSocket</span> <span class="o">:=</span> <span class="n">iSocket</span>
+                <span class="n">ret</span> <span class="o">:=</span> <span class="nv">A_Index</span>
 <span class="w">                </span><span class="nb">Break</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1340,14 +1340,14 @@
 <span class="p">}</span>
 
 <span class="n">AHKsock_ErrorHandler</span><span class="p">(</span><span class="n">sFunction</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">sCurrentFunction</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">sCurrentFunction</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">sFunction</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">Return</span> <span class="n">sCurrentFunction</span>
-<span class="w">    </span><span class="nb">Else</span> <span class="n">sCurrentFunction</span> :<span class="o">=</span> <span class="n">sFunction</span>
+<span class="w">    </span><span class="nb">Else</span> <span class="n">sCurrentFunction</span> <span class="o">:=</span> <span class="n">sFunction</span>
 <span class="p">}</span>
 
 <span class="n">AHKsock_RaiseError</span><span class="p">(</span><span class="n">iError</span><span class="p">,</span> <span class="n">iSocket</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">    </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> :<span class="o">=</span> <span class="n">AHKsock_ErrorHandler</span><span class="p">())</span>
+<span class="w">    </span><span class="nb">If </span><span class="nf">IsFunc(</span><span class="n">sFunc</span> <span class="o">:=</span> <span class="n">AHKsock_ErrorHandler</span><span class="p">())</span>
         <span class="nv">%sFunc%</span><span class="p">(</span><span class="n">iError</span><span class="p">,</span> <span class="n">iSocket</span><span class="p">)</span>
 <span class="p">}</span>
 
@@ -1356,17 +1356,17 @@
 <span class="cm">                  */</span>
 
 <span class="n">AHKsock_Settings</span><span class="p">(</span><span class="n">sSetting</span><span class="p">,</span> <span class="n">sValue</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Static</span> <span class="n">iMessage</span> :<span class="o">=</span> <span class="mh">0x8000</span>
-    <span class="n">Static</span> <span class="n">iBuffer</span> :<span class="o">=</span> <span class="mi">65536</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">iMessage</span> <span class="o">:=</span> <span class="mh">0x8000</span>
+<span class="w">    </span><span class="nb">Static</span> <span class="n">iBuffer</span> <span class="o">:=</span> <span class="mi">65536</span>
     
     <span class="n">If</span> <span class="p">(</span><span class="n">sSetting</span> <span class="o">=</span> <span class="s">&quot;Message&quot;</span><span class="p">)</span> <span class="p">{</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="n">sValue</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="n">iMessage</span>
-<span class="w">        </span><span class="nb">Else</span> <span class="n">iMessage</span> :<span class="o">=</span> <span class="p">(</span><span class="n">sValue</span> <span class="o">=</span> <span class="s">&quot;Reset&quot;</span><span class="p">)</span> ? <span class="mh">0x8000</span> : <span class="n">sValue</span>
+<span class="w">        </span><span class="nb">Else</span> <span class="n">iMessage</span> <span class="o">:=</span> <span class="p">(</span><span class="n">sValue</span> <span class="o">=</span> <span class="s">&quot;Reset&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="mh">0x8000</span> <span class="o">:</span> <span class="n">sValue</span>
     <span class="p">}</span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">sSetting</span> <span class="o">=</span> <span class="s">&quot;Buffer&quot;</span><span class="p">)</span> <span class="p">{</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="n">sValue</span>
 <span class="w">            </span><span class="nb">Return</span> <span class="n">iBuffer</span>
-<span class="w">        </span><span class="nb">Else</span> <span class="n">iBuffer</span> :<span class="o">=</span> <span class="p">(</span><span class="n">sValue</span> <span class="o">=</span> <span class="s">&quot;Reset&quot;</span><span class="p">)</span> ? <span class="mi">65536</span> : <span class="n">sValue</span>
+<span class="w">        </span><span class="nb">Else</span> <span class="n">iBuffer</span> <span class="o">:=</span> <span class="p">(</span><span class="n">sValue</span> <span class="o">=</span> <span class="s">&quot;Reset&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">65536</span> <span class="o">:</span> <span class="n">sValue</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

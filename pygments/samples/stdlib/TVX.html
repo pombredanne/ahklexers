@@ -27,21 +27,21 @@
 <span class="c-Singleline">;&gt;	 	TVX(&quot;MyTree&quot;, &quot;Handler&quot;, &quot;HasRoot CollapseOnMove&quot;)</span>
 <span class="c-Singleline">;&gt;</span>
 <span class="n">TVX</span><span class="p">(</span> <span class="n">pTree</span><span class="p">,</span> <span class="n">pSub</span><span class="p">,</span> <span class="n">pOptions</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">pUserData</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="p">{</span>
-	<span class="n">global</span>
+<span class="w">	</span><span class="nb">global</span>
 
 <span class="w">	</span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">pOptions</span><span class="p">,</span> <span class="s">&quot;HasRoot&quot;</span><span class="p">)</span>	<span class="p">{</span>
-		<span class="n">TVX_HasRoot</span>  :<span class="o">=</span> <span class="mi">1</span>
-		<span class="n">TVX_root</span> :<span class="o">=</span> <span class="nf">TV_GetNext(</span><span class="p">)</span>
+		<span class="n">TVX_HasRoot</span>  <span class="o">:=</span> <span class="mi">1</span>
+		<span class="n">TVX_root</span> <span class="o">:=</span> <span class="nf">TV_GetNext(</span><span class="p">)</span>
 	<span class="p">}</span>
 <span class="w">	</span>
 <span class="w">	</span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">pOptions</span><span class="p">,</span> <span class="s">&quot;CollapseOnMove&quot;</span><span class="p">)</span>
-	  	<span class="n">TVX_CollapseOnMove</span> :<span class="o">=</span> <span class="mi">1</span>
+	  	<span class="n">TVX_CollapseOnMove</span> <span class="o">:=</span> <span class="mi">1</span>
 
 <span class="w">	</span><span class="nb">if </span><span class="nf">InStr(</span><span class="n">pOptions</span><span class="p">,</span> <span class="s">&quot;EditOnInsert&quot;</span><span class="p">)</span>
-		<span class="n">TVX_EditOnInsert</span>	:<span class="o">=</span> 	<span class="mi">1</span>
+		<span class="n">TVX_EditOnInsert</span>	<span class="o">:=</span> 	<span class="mi">1</span>
 
-	<span class="n">TVX_userData</span> :<span class="o">=</span> <span class="n">pUserData</span>
-	<span class="n">TVX_sub</span> :<span class="o">=</span> <span class="n">pSub</span>
+	<span class="n">TVX_userData</span> <span class="o">:=</span> <span class="n">pUserData</span>
+	<span class="n">TVX_sub</span> <span class="o">:=</span> <span class="n">pSub</span>
 <span class="w">	</span><span class="nb">GuiControl</span><span class="p">,</span> <span class="o">+</span><span class="n">AltSubmit</span> <span class="o">-</span><span class="n">ReadOnly</span> <span class="o">+</span><span class="n">gTVX_OnEvent</span><span class="p">,</span> <span class="nv">%pTree%</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -65,33 +65,33 @@
 <span class="c-Singleline">;			-  - Iteration end				root handle			(pseudo item)</span>
 <span class="c-Singleline">;</span>
 <span class="n">TVX_Walk</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">event_type</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">event_param</span><span class="p">){</span>
-	<span class="n">local</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span>	<span class="n">pref</span><span class="p">,</span> <span class="n">bSetEnd</span><span class="p">,</span> <span class="n">lastParent</span><span class="p">,</span> <span class="n">rootsParent</span><span class="p">,</span> <span class="n">tmp</span><span class="c-Singleline"></span>
+<span class="w">	</span><span class="nb">local</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span>	<span class="n">pref</span><span class="p">,</span> <span class="n">bSetEnd</span><span class="p">,</span> <span class="n">lastParent</span><span class="p">,</span> <span class="n">rootsParent</span><span class="p">,</span> <span class="n">tmp</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">	; start event for menus</span>
-	<span class="n">event_type</span> :<span class="o">=</span> <span class="s">&quot;+&quot;</span>
-	<span class="n">event_param</span> :<span class="o">=</span> <span class="n">root</span>
+	<span class="n">event_type</span> <span class="o">:=</span> <span class="s">&quot;+&quot;</span>
+	<span class="n">event_param</span> <span class="o">:=</span> <span class="n">root</span>
 <span class="w">	</span><span class="nb">GoSub</span> <span class="nv">%label%</span>
 
-	<span class="n">if</span> !<span class="nf">TV_GetChild(</span><span class="n">root</span><span class="p">)</span>
+	<span class="n">if</span> <span class="o">!</span><span class="nf">TV_GetChild(</span><span class="n">root</span><span class="p">)</span>
 <span class="w">		</span><span class="nb">return</span><span class="c-Singleline"></span>
 <span class="c-Singleline">	</span>
 <span class="c-Singleline">	; this will be exit condition. If we come to roots parent, stop walking.</span>
-	<span class="n">rootsParent</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">root</span><span class="p">)</span>
+	<span class="n">rootsParent</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">root</span><span class="p">)</span>
 	
-	<span class="n">lastParent</span> :<span class="o">=</span> <span class="n">root</span>
-	<span class="n">c</span> :<span class="o">=</span> <span class="n">root</span>
+	<span class="n">lastParent</span> <span class="o">:=</span> <span class="n">root</span>
+	<span class="n">c</span> <span class="o">:=</span> <span class="n">root</span>
 <span class="w">	</span><span class="nb">loop</span> <span class="p">{</span>
-		<span class="n">c</span> :<span class="o">=</span> <span class="nf">TV_GetNext(</span><span class="n">c</span><span class="p">,</span> <span class="s">&quot;Full&quot;</span><span class="p">)</span>
+		<span class="n">c</span> <span class="o">:=</span> <span class="nf">TV_GetNext(</span><span class="n">c</span><span class="p">,</span> <span class="s">&quot;Full&quot;</span><span class="p">)</span>
 		<span class="nf">TV_GetText(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">		; Check if this item is submenu. If so, set the lastParent</span>
 		<span class="n">if</span> <span class="p">(</span> <span class="nf">TV_GetChild(</span><span class="n">c</span><span class="p">)</span> <span class="p">){</span>	
-			<span class="n">lastParent</span> :<span class="o">=</span> <span class="n">c</span>
-			<span class="n">event_type</span> :<span class="o">=</span> <span class="s">&quot;M&quot;</span>
+			<span class="n">lastParent</span> <span class="o">:=</span> <span class="n">c</span>
+			<span class="n">event_type</span> <span class="o">:=</span> <span class="s">&quot;M&quot;</span>
 		<span class="p">}</span>
-<span class="w">		</span><span class="nb">else</span> <span class="n">event_type</span> :<span class="o">=</span> <span class="s">&quot;I&quot;</span><span class="c-Singleline">			; not a submenu, it is normal item</span>
+<span class="w">		</span><span class="nb">else</span> <span class="n">event_type</span> <span class="o">:=</span> <span class="s">&quot;I&quot;</span><span class="c-Singleline">			; not a submenu, it is normal item</span>
 
-		<span class="n">event_param</span> :<span class="o">=</span> <span class="n">c</span>
+		<span class="n">event_param</span> <span class="o">:=</span> <span class="n">c</span>
 <span class="w">		</span><span class="nb">GoSub</span> <span class="nv">%label%</span><span class="c-Singleline">		</span>
 <span class="c-Singleline">	</span>
 
@@ -99,26 +99,26 @@
 <span class="c-Singleline">		; Do so by taking the next item and checking its parent.</span>
 <span class="c-Singleline">		; If the parent is different then &quot;lastParent&quot; current item is </span>
 <span class="c-Singleline">		;  at the end of the its submenu. </span>
-		<span class="n">n</span> :<span class="o">=</span> <span class="nf">TV_GetNext(</span><span class="n">c</span><span class="p">,</span> <span class="s">&quot;FULL&quot;</span><span class="p">)</span>
+		<span class="n">n</span> <span class="o">:=</span> <span class="nf">TV_GetNext(</span><span class="n">c</span><span class="p">,</span> <span class="s">&quot;FULL&quot;</span><span class="p">)</span>
 		<span class="n">if</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
 		<span class="p">{</span>
-			<span class="n">p</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">n</span><span class="p">)</span>
+			<span class="n">p</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">n</span><span class="p">)</span>
 			<span class="n">if</span> <span class="p">(</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">lastParent</span><span class="p">){</span>	
-				<span class="n">t</span> :<span class="o">=</span> <span class="n">lastParent</span>
-				<span class="n">lastParent</span> :<span class="o">=</span> <span class="n">p</span>
+				<span class="n">t</span> <span class="o">:=</span> <span class="n">lastParent</span>
+				<span class="n">lastParent</span> <span class="o">:=</span> <span class="n">p</span>
 			<span class="p">}</span>
 <span class="w">			</span><span class="nb">else</span> <span class="n">continue</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">			; It is the last child</span>
 <span class="w">			</span><span class="nb">Loop</span> <span class="p">{</span><span class="c-Singleline">	; rise &quot;E&quot; (end of menu) event </span>
-				<span class="n">event_type</span> :<span class="o">=</span> <span class="s">&quot;E&quot;</span>
-				<span class="n">event_param</span> :<span class="o">=</span> <span class="n">t</span>
+				<span class="n">event_type</span> <span class="o">:=</span> <span class="s">&quot;E&quot;</span>
+				<span class="n">event_param</span> <span class="o">:=</span> <span class="n">t</span>
 <span class="w">				</span><span class="nb">GoSub</span> <span class="nv">%label%</span>
 
-				<span class="n">t</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">t</span><span class="p">)</span>
+				<span class="n">t</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">t</span><span class="p">)</span>
 				<span class="n">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">=</span> <span class="n">rootsParent</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline">	; rise &quot;-&quot; (end of walk) event</span>
-					<span class="n">event_type</span> :<span class="o">=</span> <span class="s">&quot;-&quot;</span>
-					<span class="n">event_param</span> :<span class="o">=</span> <span class="n">t</span>
+					<span class="n">event_type</span> <span class="o">:=</span> <span class="s">&quot;-&quot;</span>
+					<span class="n">event_param</span> <span class="o">:=</span> <span class="n">t</span>
 <span class="w">					</span><span class="nb">GoSub</span> <span class="nv">%label%</span>
 <span class="w">					</span><span class="nb">return</span>
 				<span class="p">}</span>
@@ -130,16 +130,16 @@
 <span class="w">			</span><span class="nb">Loop</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">				 ;this is the end of the complite menu, so close all open submenus, if any</span>
 				 <span class="n">if</span> <span class="p">(</span><span class="n">lastParent</span> <span class="o">=</span> <span class="n">root</span><span class="p">)</span>	 <span class="p">{</span>
-					<span class="n">event_type</span> :<span class="o">=</span> <span class="s">&quot;-&quot;</span> 
-					<span class="n">event_param</span> :<span class="o">=</span> <span class="n">root</span>
+					<span class="n">event_type</span> <span class="o">:=</span> <span class="s">&quot;-&quot;</span> 
+					<span class="n">event_param</span> <span class="o">:=</span> <span class="n">root</span>
 <span class="w">					</span><span class="nb">GoSub</span> <span class="nv">%label%</span>
 <span class="w">					</span><span class="nb">return</span>
 				 <span class="p">}</span>
 				
-				 <span class="n">event_type</span> :<span class="o">=</span> <span class="s">&quot;E&quot;</span>
-				 <span class="n">event_param</span> :<span class="o">=</span> <span class="n">lastParent</span>
+				 <span class="n">event_type</span> <span class="o">:=</span> <span class="s">&quot;E&quot;</span>
+				 <span class="n">event_param</span> <span class="o">:=</span> <span class="n">lastParent</span>
 <span class="w">				 </span><span class="nb">GoSub</span> <span class="nv">%label%</span>
-				 <span class="n">lastParent</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">lastParent</span><span class="p">)</span>
+				 <span class="n">lastParent</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">lastParent</span><span class="p">)</span>
 			<span class="p">}</span>	
 	<span class="p">}</span>
 <span class="p">}</span><span class="c-Singleline"></span>
@@ -160,10 +160,10 @@
 <span class="c-Singleline">;				creates new handle for the moved item. New handle will be returned by the function.</span>
 <span class="c-Singleline">;</span>
 <span class="n">TVX_Move</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">direction</span><span class="p">){</span>
-	<span class="n">local</span> <span class="n">newc</span><span class="p">,</span> <span class="n">newp</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">n</span>
+<span class="w">	</span><span class="nb">local</span> <span class="n">newc</span><span class="p">,</span> <span class="n">newp</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">n</span>
 
-	<span class="n">p</span> :<span class="o">=</span> <span class="nf">TV_GetPrev(</span><span class="n">item</span><span class="p">)</span>
-	<span class="n">n</span> :<span class="o">=</span> <span class="nf">TV_GetNext(</span><span class="n">item</span><span class="p">)</span>
+	<span class="n">p</span> <span class="o">:=</span> <span class="nf">TV_GetPrev(</span><span class="n">item</span><span class="p">)</span>
+	<span class="n">n</span> <span class="o">:=</span> <span class="nf">TV_GetNext(</span><span class="n">item</span><span class="p">)</span>
 
 	<span class="n">if</span> <span class="p">(</span><span class="n">TVX_HasRoot</span><span class="p">)</span>
 	<span class="p">{</span>
@@ -192,9 +192,9 @@
 	<span class="n">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;d&quot;</span><span class="p">)</span>
 	<span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">		; handle end of submenu</span>
-		<span class="n">if</span> !<span class="n">n</span>
+		<span class="n">if</span> <span class="o">!</span><span class="n">n</span>
 		<span class="p">{</span>
-			<span class="n">newc</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">item</span><span class="p">)</span><span class="c-Singleline"></span>
+			<span class="n">newc</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">item</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">			; check the end of the entire list</span>
 			<span class="n">if</span> <span class="p">(</span><span class="n">TVX_HasRoot</span> <span class="o">&amp;&amp;</span> <span class="n">newc</span> <span class="o">=</span> <span class="n">TVX_root</span><span class="p">)</span>
@@ -203,23 +203,23 @@
 <span class="w">			</span><span class="nb">if </span><span class="n">TVX_CollapseOnMove</span>
 				<span class="nf">TV_Modify(</span><span class="n">newc</span><span class="p">,</span> <span class="s">&quot;-Expand&quot;</span><span class="p">)</span>
 
-			<span class="n">newp</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">newc</span><span class="p">)</span>
+			<span class="n">newp</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">newc</span><span class="p">)</span>
 		<span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">		; somewhere in the middle </span>
 <span class="w">		</span><span class="nb">else</span> 
 		<span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   			; if submenu, go into it</span>
-			<span class="n">t</span> :<span class="o">=</span> <span class="nf">TV_Get(</span><span class="n">n</span><span class="p">,</span> <span class="s">&quot;E&quot;</span><span class="p">)</span>
+			<span class="n">t</span> <span class="o">:=</span> <span class="nf">TV_Get(</span><span class="n">n</span><span class="p">,</span> <span class="s">&quot;E&quot;</span><span class="p">)</span>
 			<span class="n">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">=</span> <span class="n">n</span><span class="p">)</span>
 			<span class="p">{</span>
-				<span class="n">newp</span> :<span class="o">=</span> <span class="n">n</span>
-				<span class="n">newc</span> :<span class="o">=</span> <span class="s">&quot;First&quot;</span>
+				<span class="n">newp</span> <span class="o">:=</span> <span class="n">n</span>
+				<span class="n">newc</span> <span class="o">:=</span> <span class="s">&quot;First&quot;</span>
 			<span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">			; not a submenu</span>
 <span class="w">			</span><span class="nb">else</span>
 			<span class="p">{</span>
-				<span class="n">newc</span> :<span class="o">=</span> <span class="n">n</span>
-				<span class="n">newp</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">n</span><span class="p">)</span>
+				<span class="n">newc</span> <span class="o">:=</span> <span class="n">n</span>
+				<span class="n">newp</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">n</span><span class="p">)</span>
 			<span class="p">}</span>    
 		<span class="p">}</span>
 	<span class="p">}</span><span class="c-Singleline"></span>
@@ -228,52 +228,52 @@
 	<span class="n">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;u&quot;</span><span class="p">)</span>
 	<span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">		;going up - handle start of the submenu</span>
-		<span class="n">if</span> !<span class="n">p</span>
+		<span class="n">if</span> <span class="o">!</span><span class="n">p</span>
 		<span class="p">{</span>
-			<span class="n">t</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">item</span><span class="p">)</span>
+			<span class="n">t</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">item</span><span class="p">)</span>
 <span class="w">			</span><span class="nb">if </span><span class="n">TVX_CollapseOnMove</span>
 				<span class="nf">TV_Modify(</span><span class="n">t</span><span class="p">,</span> <span class="s">&quot;-Expand&quot;</span><span class="p">)</span>
 																					  
-			<span class="n">newc</span> :<span class="o">=</span> <span class="nf">TV_GetPrev(</span><span class="n">t</span><span class="p">)</span><span class="c-Singleline"></span>
+			<span class="n">newc</span> <span class="o">:=</span> <span class="nf">TV_GetPrev(</span><span class="n">t</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">																											  </span>
 <span class="c-Singleline">			; handle start of the menu again</span>
-			<span class="n">if</span> !<span class="n">newc</span>
+			<span class="n">if</span> <span class="o">!</span><span class="n">newc</span>
 			<span class="p">{</span>
-				<span class="n">newp</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">t</span><span class="p">)</span>
-				<span class="n">newc</span> :<span class="o">=</span> <span class="s">&quot;First&quot;</span>
+				<span class="n">newp</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">t</span><span class="p">)</span>
+				<span class="n">newc</span> <span class="o">:=</span> <span class="s">&quot;First&quot;</span>
 			<span class="p">}</span>
 <span class="w">			</span><span class="nb">else</span>
-				<span class="n">newp</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">newc</span><span class="p">)</span>
+				<span class="n">newp</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">newc</span><span class="p">)</span>
 		<span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">		; somewhere in the middle</span>
 <span class="w">		</span><span class="nb">else</span>
 		<span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   			; if submenu is expanded, go into it</span>
-			<span class="n">t</span> :<span class="o">=</span> <span class="nf">TV_Get(</span><span class="n">p</span><span class="p">,</span> <span class="s">&quot;E&quot;</span><span class="p">)</span>
+			<span class="n">t</span> <span class="o">:=</span> <span class="nf">TV_Get(</span><span class="n">p</span><span class="p">,</span> <span class="s">&quot;E&quot;</span><span class="p">)</span>
 			<span class="n">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">=</span> <span class="n">p</span><span class="p">)</span>
 			<span class="p">{</span>
-				<span class="n">newc</span> :<span class="o">=</span> <span class="s">&quot;First&quot;</span>
-				<span class="n">newp</span> :<span class="o">=</span> <span class="n">t</span>
+				<span class="n">newc</span> <span class="o">:=</span> <span class="s">&quot;First&quot;</span>
+				<span class="n">newp</span> <span class="o">:=</span> <span class="n">t</span>
 			<span class="p">}</span>
 <span class="w">			</span><span class="nb">else</span>
 			<span class="p">{</span>
-				<span class="n">t</span> :<span class="o">=</span> <span class="nf">TV_GetPrev(</span><span class="n">p</span><span class="p">)</span><span class="c-Singleline"></span>
+				<span class="n">t</span> <span class="o">:=</span> <span class="nf">TV_GetPrev(</span><span class="n">p</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">				;check the top of the list</span>
-				<span class="n">if</span> !<span class="n">t</span>
+				<span class="n">if</span> <span class="o">!</span><span class="n">t</span>
 				<span class="p">{</span>
-					<span class="n">newc</span> :<span class="o">=</span> <span class="s">&quot;First&quot;</span>
-					<span class="n">newp</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">p</span><span class="p">)</span>				
+					<span class="n">newc</span> <span class="o">:=</span> <span class="s">&quot;First&quot;</span>
+					<span class="n">newp</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">p</span><span class="p">)</span>				
 				<span class="p">}</span>
 <span class="w">				</span><span class="nb">else</span> 
 				<span class="p">{</span>
-					<span class="n">newc</span> :<span class="o">=</span> <span class="n">t</span>
-					<span class="n">newp</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">newc</span><span class="p">)</span>
+					<span class="n">newc</span> <span class="o">:=</span> <span class="n">t</span>
+					<span class="n">newp</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">newc</span><span class="p">)</span>
 				<span class="p">}</span>
 			<span class="p">}</span>
 		<span class="p">}</span>
 	<span class="p">}</span>
 
-	<span class="n">newc</span> :<span class="o">=</span> <span class="n">TVX_CopyItem</span><span class="p">(</span><span class="n">newc</span><span class="p">,</span> <span class="n">newp</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+	<span class="n">newc</span> <span class="o">:=</span> <span class="n">TVX_CopyItem</span><span class="p">(</span><span class="n">newc</span><span class="p">,</span> <span class="n">newp</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 	<span class="nf">TV_Delete(</span><span class="n">item</span><span class="p">)</span>
 <span class="w">	</span><span class="nb">return</span> <span class="n">newc</span>
 <span class="p">}</span><span class="c-Singleline"></span>
@@ -286,37 +286,37 @@
 <span class="c-Singleline">; Handle of destination item is specified in the global variable TVX_copyDest.</span>
 <span class="c-Singleline">; </span>
 <span class="n">TVX_CopyProc</span><span class="p">(</span><span class="n">iType</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="p">{</span>
-	<span class="n">local</span> <span class="n">c</span><span class="p">,</span> <span class="n">txt</span>
-	<span class="n">static</span> <span class="n">lastParent</span>
+<span class="w">	</span><span class="nb">local</span> <span class="n">c</span><span class="p">,</span> <span class="n">txt</span>
+<span class="w">	</span><span class="nb">static</span> <span class="n">lastParent</span>
 	
 	<span class="nf">TV_GetText(</span><span class="n">txt</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 <span class="w">	</span><span class="nb">if </span><span class="n">iType</span> <span class="ow">in</span> <span class="o">+</span>
 	<span class="p">{</span>
-		<span class="n">lastParent</span> :<span class="o">=</span> <span class="n">TVX_copyDest</span>
+		<span class="n">lastParent</span> <span class="o">:=</span> <span class="n">TVX_copyDest</span>
 		<span class="nf">TV_Modify(</span><span class="n">TVX_copyDest</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">txt</span><span class="p">)</span>
 <span class="w">		</span>
 <span class="w">		</span><span class="nb">if </span><span class="n">TVX_userData</span>
 		<span class="p">{</span>
-			<span class="nv">%TVX_userData%%TVX_copyDest%</span> :<span class="o">=</span> <span class="nv">%TVX_userData%%item%</span>
-			<span class="nv">%TVX_userData%%item%</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+			<span class="nv">%TVX_userData%%TVX_copyDest%</span> <span class="o">:=</span> <span class="nv">%TVX_userData%%item%</span>
+			<span class="nv">%TVX_userData%%item%</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
 		<span class="p">}</span>
 	<span class="p">}</span>
 
 <span class="w">	</span><span class="nb">if </span><span class="n">iType</span> <span class="ow">in</span> <span class="n">I</span><span class="p">,</span><span class="n">M</span>
 	<span class="p">{</span>
-		<span class="n">c</span> :<span class="o">=</span> <span class="nf">TV_Add(</span><span class="n">txt</span><span class="p">,</span> <span class="n">lastParent</span><span class="p">)</span>
+		<span class="n">c</span> <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="n">txt</span><span class="p">,</span> <span class="n">lastParent</span><span class="p">)</span>
 <span class="w">		</span><span class="nb">if </span><span class="n">iType</span> <span class="o">=</span> <span class="n">M</span>
-			<span class="n">lastParent</span> :<span class="o">=</span> <span class="n">c</span>
+			<span class="n">lastParent</span> <span class="o">:=</span> <span class="n">c</span>
 
 <span class="w">		</span><span class="nb">if </span><span class="n">TVX_userData</span>
 		<span class="p">{</span>
-			<span class="nv">%TVX_userData%%c%</span> :<span class="o">=</span> <span class="nv">%TVX_userData%%item%</span>
-			<span class="nv">%TVX_userData%%item%</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+			<span class="nv">%TVX_userData%%c%</span> <span class="o">:=</span> <span class="nv">%TVX_userData%%item%</span>
+			<span class="nv">%TVX_userData%%item%</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
 		<span class="p">}</span>
 	<span class="p">}</span>
 
 <span class="w">	</span><span class="nb">if </span><span class="n">iType</span> <span class="o">=</span> <span class="n">E</span>
-		<span class="n">lastParent</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">lastParent</span><span class="p">)</span>	
+		<span class="n">lastParent</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">lastParent</span><span class="p">)</span>	
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;----------------------------------------------</span>
@@ -329,10 +329,10 @@
 <span class="c-Singleline">; Create new item after the child &quot;destc&quot; with parent &quot;destp&quot; and copy the &quot;source&quot; item into it</span>
 <span class="c-Singleline">;</span>
 <span class="n">TVX_CopyItem</span><span class="p">(</span><span class="n">destc</span><span class="p">,</span> <span class="n">destp</span><span class="p">,</span> <span class="n">source</span><span class="p">){</span>
-	<span class="n">global</span><span class="c-Singleline"> </span>
+<span class="w">	</span><span class="nb">global</span><span class="c-Singleline"> </span>
 
 <span class="c-Singleline">	;create the holder and call the copy function</span>
-	<span class="n">TVX_copyDest</span> :<span class="o">=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">destp</span> <span class="p">,</span> <span class="n">destc</span> <span class="p">)</span>
+	<span class="n">TVX_copyDest</span> <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">destp</span> <span class="p">,</span> <span class="n">destc</span> <span class="p">)</span>
 	<span class="n">TVX_Walk</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s">&quot;_TVX_CopyProc&quot;</span><span class="p">,</span> <span class="n">TVX_itemType</span><span class="p">,</span> <span class="n">TVX_param</span><span class="p">)</span>
 
 <span class="w">	</span><span class="nb">return</span> <span class="n">TVX_copyDest</span>
@@ -342,24 +342,24 @@
 <span class="c-Singleline">; Used to control moving</span>
 <span class="c-Singleline">;</span>
 <span class="n">TVX_OnItemSelect</span><span class="p">(</span><span class="n">pItemId</span><span class="p">){</span>
-	<span class="n">global</span>
+<span class="w">	</span><span class="nb">global</span>
 
 	<span class="n">if</span> <span class="p">(</span><span class="n">TVX_bSelfSelect</span><span class="p">)</span>	<span class="p">{</span>	
-		<span class="n">TVX_bSelfSelect</span> :<span class="o">=</span> <span class="nv">false</span>
+		<span class="n">TVX_bSelfSelect</span> <span class="o">:=</span> <span class="nv">false</span>
 <span class="w">		</span><span class="nb">return</span> <span class="nv">true</span>
 	<span class="p">}</span>	
 
-	<span class="n">TVX_prevSel</span> :<span class="o">=</span> <span class="n">TVX_sel</span>
-	<span class="n">TVX_sel</span> :<span class="o">=</span> <span class="n">pItemId</span>
+	<span class="n">TVX_prevSel</span> <span class="o">:=</span> <span class="n">TVX_sel</span>
+	<span class="n">TVX_sel</span> <span class="o">:=</span> <span class="n">pItemId</span>
 
 <span class="w">	</span><span class="nb">if </span><span class="nf">GetKeyState(</span><span class="s">&quot;Shift&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">TVX_lastKey</span><span class="o">=</span><span class="mi">38</span> <span class="o">||</span> <span class="n">TVX_lastKey</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
 	 <span class="n">if</span> <span class="p">(</span><span class="n">pItemId</span> <span class="o">!=</span> <span class="n">TVX_root</span><span class="p">)</span>
 	 <span class="p">{</span>
-	  	<span class="n">TVX_sel</span> :<span class="o">=</span> <span class="n">TVX_Move</span><span class="p">(</span> <span class="n">TVX_prevSel</span><span class="p">,</span> <span class="n">TVX_lastKey</span><span class="o">=</span><span class="mi">40</span> ? <span class="s">&quot;d&quot;</span> : <span class="s">&quot;u&quot;</span><span class="p">)</span>
-		<span class="n">TVX_prevSel</span> :<span class="o">=</span> <span class="n">pItemId</span>
+	  	<span class="n">TVX_sel</span> <span class="o">:=</span> <span class="n">TVX_Move</span><span class="p">(</span> <span class="n">TVX_prevSel</span><span class="p">,</span> <span class="n">TVX_lastKey</span><span class="o">=</span><span class="mi">40</span> <span class="o">?</span> <span class="s">&quot;d&quot;</span> <span class="o">:</span> <span class="s">&quot;u&quot;</span><span class="p">)</span>
+		<span class="n">TVX_prevSel</span> <span class="o">:=</span> <span class="n">pItemId</span>
 
 		
-		<span class="n">TVX_bSelfSelect</span> :<span class="o">=</span> <span class="nv">true</span>
+		<span class="n">TVX_bSelfSelect</span> <span class="o">:=</span> <span class="nv">true</span>
 		<span class="nf">TV_Modify(</span><span class="n">TVX_sel</span><span class="p">,</span> <span class="s">&quot;Select Bold&quot;</span><span class="p">)</span>
 <span class="w">		</span><span class="nb">return</span> <span class="nv">true</span>
 	 <span class="p">}</span>
@@ -370,12 +370,12 @@
 <span class="c-Singleline">;----------------------------------------------------------------------------------------------</span>
 
 <span class="n">TVX_OnKeyPress</span><span class="p">(</span><span class="n">pKey</span><span class="p">){</span>
-	<span class="n">local</span> <span class="n">tp</span><span class="p">,</span> <span class="n">sel</span>
+<span class="w">	</span><span class="nb">local</span> <span class="n">tp</span><span class="p">,</span> <span class="n">sel</span>
 
-	<span class="n">TVX_lastKey</span> :<span class="o">=</span> <span class="n">pKey</span>
+	<span class="n">TVX_lastKey</span> <span class="o">:=</span> <span class="n">pKey</span>
 
 	<span class="n">if</span> <span class="p">(</span><span class="n">TVX_bSelfPress</span><span class="p">)</span>	<span class="p">{</span>	
-		<span class="n">TVX_bSelfPress</span> :<span class="o">=</span> <span class="nv">false</span>
+		<span class="n">TVX_bSelfPress</span> <span class="o">:=</span> <span class="nv">false</span>
 <span class="w">		</span><span class="nb">return</span> <span class="nv">true</span>
 	<span class="p">}</span><span class="c-Singleline">	</span>
 
@@ -385,7 +385,7 @@
 <span class="c-Singleline">		; use GetSelection instead Editor_sel since if key is pressed and hold</span>
 <span class="c-Singleline">		; TVX_OnSelect handler may not be called before delete to set the TVX_sel</span>
 
-		<span class="n">sel</span> :<span class="o">=</span> <span class="nf">TV_GetSelection(</span><span class="p">)</span>
+		<span class="n">sel</span> <span class="o">:=</span> <span class="nf">TV_GetSelection(</span><span class="p">)</span>
 		<span class="n">if</span> <span class="p">(</span><span class="n">TVX_HasRoot</span> <span class="o">&amp;&amp;</span> <span class="n">sel</span> <span class="o">=</span> <span class="n">TVX_root</span><span class="p">)</span>
 <span class="w">			</span><span class="nb">return</span> <span class="nv">false</span><span class="c-Singleline"></span>
 
@@ -400,11 +400,11 @@
 <span class="c-Singleline">	;insert</span>
 <span class="w">	</span><span class="nb">if </span><span class="n">pKey</span> <span class="o">=</span> <span class="mi">45</span>
 	<span class="p">{</span>
-		<span class="n">tp</span> :<span class="o">=</span> <span class="nf">TV_GetParent(</span><span class="n">TVX_sel</span><span class="p">)</span>
+		<span class="n">tp</span> <span class="o">:=</span> <span class="nf">TV_GetParent(</span><span class="n">TVX_sel</span><span class="p">)</span>
 		<span class="n">if</span> <span class="p">(</span><span class="n">TVX_sel</span> <span class="o">=</span> <span class="n">TVX_root</span><span class="p">)</span>
-			<span class="n">tp</span> :<span class="o">=</span> <span class="n">TVX_root</span>
+			<span class="n">tp</span> <span class="o">:=</span> <span class="n">TVX_root</span>
 
-		<span class="n">tp</span> :<span class="o">=</span> <span class="nf">TV_Add(</span><span class="s">&quot;__ new item __&quot;</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="s">&quot;Bold &quot;</span> <span class="o">.</span> <span class="n">TVX_sel</span><span class="p">)</span>
+		<span class="n">tp</span> <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;__ new item __&quot;</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="s">&quot;Bold &quot;</span> <span class="o">.</span> <span class="n">TVX_sel</span><span class="p">)</span>
 <span class="w">		</span><span class="nb">if </span><span class="nf">GetKeyState(</span><span class="s">&quot;Shift&quot;</span><span class="p">)</span>
 		<span class="p">{</span>
 			<span class="nf">TV_Add(</span><span class="s">&quot;__ new item __&quot;</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="s">&quot;Bold First &quot;</span><span class="p">)</span>
@@ -413,7 +413,7 @@
 
 		<span class="n">if</span> <span class="p">(</span><span class="n">TVX_EditOnInsert</span><span class="p">)</span>
 		<span class="p">{</span>
-			<span class="n">TVX_bSelfPress</span> :<span class="o">=</span> <span class="n">TVX_bSelfSelect</span> :<span class="o">=</span> <span class="nv">true</span>
+			<span class="n">TVX_bSelfPress</span> <span class="o">:=</span> <span class="n">TVX_bSelfSelect</span> <span class="o">:=</span> <span class="nv">true</span>
 			<span class="nf">TV_Modify(</span><span class="n">tp</span><span class="p">,</span> <span class="s">&quot;Select&quot;</span><span class="p">)</span>
 <span class="w">			</span><span class="nb">Send</span><span class="p">,</span> <span class="p">{</span><span class="n">F2</span><span class="p">}</span>
 		<span class="p">}</span>

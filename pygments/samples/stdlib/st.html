@@ -12,7 +12,7 @@
 <span class="w">      </span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="n">ST</span> <span class="n">Error</span><span class="p">,</span> <span class="n">Specified</span> <span class="n">Stack</span> <span class="ow">is</span> <span class="n">already</span> <span class="n">declared</span><span class="o">.</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span>
   <span class="p">}</span>
-  <span class="n">Stack</span> :<span class="o">=</span><span class="s">&quot;[]&quot;</span>
+  <span class="n">Stack</span> <span class="o">:=</span><span class="s">&quot;[]&quot;</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 
@@ -24,7 +24,7 @@
 <span class="n">ST_Undim</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Stack</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">If</span> <span class="p">(</span><span class="n">ST_IsValid</span><span class="p">(</span><span class="n">Stack</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span>
-  <span class="n">Stack</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+  <span class="n">Stack</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;-----------------------------------------------------------------------------------------------------------------------------</span>
@@ -35,7 +35,7 @@
 <span class="n">ST_Del</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">Stack</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">If</span> <span class="p">(</span><span class="n">ST_IsValid</span><span class="p">(</span><span class="n">Stack</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span>
-  <span class="n">Stack</span> :<span class="o">=</span> <span class="s">&quot;[]&quot;</span>
+  <span class="n">Stack</span> <span class="o">:=</span> <span class="s">&quot;[]&quot;</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;-----------------------------------------------------------------------------------------------------------------------------</span>
@@ -49,7 +49,7 @@
   <span class="n">If</span> <span class="p">(</span><span class="n">ST_IsValid</span><span class="p">(</span><span class="n">Stack</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span><span class="c-Singleline"></span>
 <span class="c-Singleline">  ;Add the value</span>
-  <span class="n">Stack</span> :<span class="o">=</span> <span class="s">&quot;[&quot;</span> <span class="o">.</span> <span class="n">ST_Convert</span><span class="p">(</span><span class="n">Value</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;|&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">Stack</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nf">StrLen(</span><span class="n">Stack</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;]&quot;</span>
+  <span class="n">Stack</span> <span class="o">:=</span> <span class="s">&quot;[&quot;</span> <span class="o">.</span> <span class="n">ST_Convert</span><span class="p">(</span><span class="n">Value</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;|&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">Stack</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nf">StrLen(</span><span class="n">Stack</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;]&quot;</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;-----------------------------------------------------------------------------------------------------------------------------</span>
@@ -64,9 +64,9 @@
 <span class="w">  </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">ST_Len</span><span class="p">(</span><span class="n">Stack</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">1</span><span class="c-Singleline"></span>
 <span class="c-Singleline">  ;Get first entry</span>
-  <span class="n">Value</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">Stack</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">Stack</span><span class="p">,</span><span class="s">&quot;|&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"></span>
+  <span class="n">Value</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">Stack</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">Stack</span><span class="p">,</span><span class="s">&quot;|&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">  ;Remove from stack</span>
-  <span class="n">Stack</span> :<span class="o">=</span> <span class="s">&quot;[&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">Stack</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">Stack</span><span class="p">,</span><span class="s">&quot;|&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="nf">StrLen(</span><span class="n">Stack</span><span class="p">))</span>
+  <span class="n">Stack</span> <span class="o">:=</span> <span class="s">&quot;[&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">Stack</span><span class="p">,</span><span class="nf">InStr(</span><span class="n">Stack</span><span class="p">,</span><span class="s">&quot;|&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="nf">StrLen(</span><span class="n">Stack</span><span class="p">))</span>
 <span class="w">  </span><span class="nb">Return</span> <span class="n">ST_Convert</span><span class="p">(</span><span class="n">Value</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -111,10 +111,10 @@
 <span class="c-Singleline">;Description: Actiavtes error messages</span>
 <span class="c-Singleline">;-----------------------------------------------------------------------------------------------------------------------------</span>
 <span class="n">ST_Debug</span><span class="p">(</span><span class="n">OnOff</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
- <span class="n">static</span> <span class="n">Debug</span><span class="c-Singleline"></span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">Debug</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">  ;Change Debug State</span>
-  <span class="n">Debug</span> :<span class="o">=</span> <span class="p">(</span><span class="n">OnOff</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> ? <span class="n">Debug</span> : <span class="n">OnOff</span><span class="c-Singleline"></span>
+  <span class="n">Debug</span> <span class="o">:=</span> <span class="p">(</span><span class="n">OnOff</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="n">Debug</span> <span class="o">:</span> <span class="n">OnOff</span><span class="c-Singleline"></span>
 <span class="c-Singleline">  ;Return Debug State</span>
 <span class="w">  </span><span class="nb">Return</span> <span class="n">Debug</span>
 <span class="p">}</span><span class="c-Singleline"></span>

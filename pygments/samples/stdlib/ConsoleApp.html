@@ -39,13 +39,13 @@
 <span class="c-Singleline">;;; &lt;/example&gt;</span>
 <span class="n">ConsoleApp_RunWait</span><span class="p">(</span><span class="n">CmdLine</span><span class="p">,</span> <span class="n">WorkingDir</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">byref</span> <span class="n">ExitCode</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">global</span>
-   <span class="n">local</span> <span class="n">ConsoleAppHandle</span><span class="p">,</span> <span class="n">ConsoleAppStillRunning</span><span class="p">,</span> <span class="n">StdOut</span><span class="p">,</span> <span class="n">BytesAppended</span><span class="p">,</span> <span class="n">FirstWin32Error</span>
+<span class="w">   </span><span class="nb">global</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">ConsoleAppHandle</span><span class="p">,</span> <span class="n">ConsoleAppStillRunning</span><span class="p">,</span> <span class="n">StdOut</span><span class="p">,</span> <span class="n">BytesAppended</span><span class="p">,</span> <span class="n">FirstWin32Error</span>
 
    <span class="n">ConsoleApps_Initialize</span><span class="p">()</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Create the process</span>
-   <span class="n">ConsoleAppHandle</span> :<span class="o">=</span> <span class="n">ConsoleApp_Run</span><span class="p">(</span><span class="n">CmdLine</span><span class="p">,</span> <span class="n">WorkingDir</span><span class="p">)</span><span class="c-Singleline"></span>
+   <span class="n">ConsoleAppHandle</span> <span class="o">:=</span> <span class="n">ConsoleApp_Run</span><span class="p">(</span><span class="n">CmdLine</span><span class="p">,</span> <span class="n">WorkingDir</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ; In reality, this function will never return with a ConsoleAppHandle value of 0, but</span>
 <span class="c-Singleline">   ; it is good to check for this possibility in case future versions do return a value of</span>
 <span class="c-Singleline">   ; 0 for failure.</span>
@@ -57,9 +57,9 @@
 <span class="w">   </span><span class="nb">Loop</span>
    <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">      ; Append the ConsoleApps standard output to StdOut.</span>
-      <span class="n">ConsoleAppStillRunning</span> :<span class="o">=</span> <span class="n">ConsoleApp_GetStdOut</span><span class="p">(</span><span class="n">ConsoleAppHandle</span><span class="p">,</span> <span class="n">StdOut</span><span class="p">,</span> <span class="n">BytesAppended</span><span class="p">,</span> <span class="n">ExitCode</span><span class="p">)</span><span class="c-Singleline"></span>
+      <span class="n">ConsoleAppStillRunning</span> <span class="o">:=</span> <span class="n">ConsoleApp_GetStdOut</span><span class="p">(</span><span class="n">ConsoleAppHandle</span><span class="p">,</span> <span class="n">StdOut</span><span class="p">,</span> <span class="n">BytesAppended</span><span class="p">,</span> <span class="n">ExitCode</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">      ; If the ConsoleApp is no longer running, then stop checking for output.</span>
-      <span class="n">if</span> <span class="p">(</span>!<span class="n">ConsoleAppStillRunning</span><span class="p">)</span>
+      <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ConsoleAppStillRunning</span><span class="p">)</span>
 <span class="w">         </span><span class="nb">break</span><span class="c-Singleline"></span>
 <span class="c-Singleline">      ; Give up remainder of time-slice to give the child process a chance to generate more output</span>
 <span class="c-Singleline">      ; before checking again.</span>
@@ -105,13 +105,13 @@
 <span class="c-Singleline">;;; &lt;/example&gt;</span>
 <span class="n">ConsoleApp_Run</span><span class="p">(</span><span class="n">CmdLine</span><span class="p">,</span> <span class="n">WorkingDir</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Reserved</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">byref</span> <span class="n">PID</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">global</span>
-   <span class="n">local</span> <span class="n">sa</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">si</span><span class="p">,</span> <span class="n">lpCurrentDirectory</span>
-   <span class="n">local</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">hStdoutWrite</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="nb">global</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">sa</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">si</span><span class="p">,</span> <span class="n">lpCurrentDirectory</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">hStdoutWrite</span><span class="c-Singleline"></span>
 <span class="c-Singleline">;   local hStdinRead, hStdinWrite</span>
-   <span class="n">local</span> <span class="n">FirstWin32Error</span>
-   <span class="n">local</span> <span class="n">hHeap</span><span class="p">,</span> <span class="n">lpCAPI</span>
-   <span class="n">static</span> <span class="n">RedProcNextHandle</span> :<span class="o">=</span> <span class="mi">1</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">FirstWin32Error</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">hHeap</span><span class="p">,</span> <span class="n">lpCAPI</span>
+<span class="w">   </span><span class="nb">static</span> <span class="n">RedProcNextHandle</span> <span class="o">:=</span> <span class="mi">1</span>
 
    <span class="n">ConsoleApps_Initialize</span><span class="p">()</span>
 
@@ -134,13 +134,13 @@
    <span class="nf">NumPut(</span><span class="nv">true</span><span class="p">,</span> <span class="n">sa</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ;CREATE PIPE FOR STDOUT</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;CreatePipe&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hStdoutRead</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hStdoutWrite</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sa</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;CreatePipe&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hStdoutRead</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hStdoutWrite</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sa</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span><span class="p">,</span> <span class="s">&quot;Unable to create stdout pipe: &quot;</span><span class="p">)</span>
-   <span class="n">hStdoutRead</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">hStdoutRead</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
-   <span class="n">hStdoutWrite</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">hStdoutWrite</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;SetHandleInformation&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">))</span>
+   <span class="n">hStdoutRead</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">hStdoutRead</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">hStdoutWrite</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">hStdoutWrite</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;SetHandleInformation&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">))</span>
    <span class="p">{</span>
-      <span class="n">FirstWin32Error</span> :<span class="o">=</span> <span class="nv">A_LastError</span>
+      <span class="n">FirstWin32Error</span> <span class="o">:=</span> <span class="nv">A_LastError</span>
       <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">)</span><span class="c-Singleline"> ;HANDLE hThread</span>
       <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutWrite</span><span class="p">)</span><span class="c-Singleline"> ;HANDLE hThread</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span><span class="p">,</span> <span class="s">&quot;Unable to set handle information: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">FirstWin32Error</span><span class="p">)</span>
@@ -173,10 +173,10 @@
    <span class="nf">NumPut(</span><span class="n">hStdoutWrite</span><span class="p">,</span> <span class="n">si</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="mi">16</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span><span class="c-Singleline"> ;STARTUP_INFO {HANDLE hStdError}</span>
    
    <span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">WorkingDir</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-      <span class="n">lpCurrentDirectory</span> :<span class="o">=</span> <span class="mi">0</span>
+      <span class="n">lpCurrentDirectory</span> <span class="o">:=</span> <span class="mi">0</span>
 <span class="w">   </span><span class="nb">else</span>
-      <span class="n">lpCurrentDirectory</span> :<span class="o">=</span> <span class="o">&amp;</span><span class="n">WorkingDir</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;CreateProcess&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span>
+      <span class="n">lpCurrentDirectory</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">WorkingDir</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;CreateProcess&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span>
                                <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CmdLine</span>
                                <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span>
                                <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span>
@@ -187,16 +187,16 @@
                                <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">si</span>
                                <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pi</span><span class="p">))</span>
    <span class="p">{</span>
-      <span class="n">FirstWin32Error</span> :<span class="o">=</span> <span class="nv">A_LastError</span>
+      <span class="n">FirstWin32Error</span> <span class="o">:=</span> <span class="nv">A_LastError</span>
       <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">)</span><span class="c-Singleline"> ;HANDLE hThread</span>
       <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutWrite</span><span class="p">)</span><span class="c-Singleline"> ;HANDLE hThread</span>
 <span class="c-Singleline">;      DllCall(&quot;CloseHandle&quot;, &quot;uint&quot;, hStdinRead) ;HANDLE hThread</span>
 <span class="c-Singleline">;      DllCall(&quot;CloseHandle&quot;, &quot;uint&quot;, hStdinWrite) ;HANDLE hThread</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span><span class="p">,</span> <span class="s">&quot;Unable to run process: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">FirstWin32Error</span><span class="p">)</span>
    <span class="p">}</span>
-   <span class="n">hProcess</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
-   <span class="n">hThread</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">pi</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
-   <span class="n">PID</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">pi</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span><span class="c-Singleline"> ;DWORD dwProcessId</span>
+   <span class="n">hProcess</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">hThread</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">pi</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">PID</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">pi</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span><span class="c-Singleline"> ;DWORD dwProcessId</span>
    <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hThread</span><span class="p">)</span><span class="c-Singleline"> ;HANDLE hThread</span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ;    struct ConsoleAppsProcessInfo</span>
@@ -207,8 +207,8 @@
 <span class="c-Singleline">   ;        //int hStdinRead;</span>
 <span class="c-Singleline">   ;        //int hStdinWrite;</span>
 <span class="c-Singleline">   ;    }</span>
-   <span class="n">hHeap</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcessHeap&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
-   <span class="n">lpCAPI</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;HeapAlloc&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hHeap</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0xC</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">hHeap</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcessHeap&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">lpCAPI</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;HeapAlloc&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hHeap</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0xC</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
    
    <span class="nf">NumPut(</span><span class="n">hProcess</span><span class="p">,</span> <span class="n">lpCAPI</span> <span class="o">+</span> <span class="mh">0x0</span><span class="p">)</span>
    <span class="nf">NumPut(</span><span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">lpCAPI</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">)</span>
@@ -309,42 +309,42 @@
 <span class="c-Singleline">;;; &lt;/example&gt;</span>
 <span class="n">ConsoleApp_GetStdOut</span><span class="p">(</span><span class="n">ConsoleAppHandle</span><span class="p">,</span> <span class="n">byref</span> <span class="n">Stdout</span><span class="p">,</span> <span class="n">byref</span> <span class="n">BytesAppended</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">byref</span> <span class="n">ExitCode</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">global</span>
-   <span class="n">local</span> <span class="n">hProcess</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">FirstWin32Error</span>
+<span class="w">   </span><span class="nb">global</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">hProcess</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">FirstWin32Error</span>
    
    <span class="n">ConsoleApps_Initialize</span><span class="p">()</span>
 
-   <span class="n">hProcess</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x0</span><span class="p">)</span>
-   <span class="n">hStdoutRead</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">)</span><span class="c-Singleline"></span>
+   <span class="n">hProcess</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x0</span><span class="p">)</span>
+   <span class="n">hStdoutRead</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">;   hStdoutWrite := NumGet(ConsoleAppHandle + 0x8)</span>
 <span class="c-Singleline">;   hStdinRead := NumGet(ConsoleAppHandle + 0xC)</span>
 <span class="c-Singleline">;   hStdinWrite := NumGet(ConsoleAppHandle + 0x10)</span>
    
    <span class="n">CONSOLEAPPS_PRIVATE_malloc</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-   <span class="n">BytesAppended</span> :<span class="o">=</span> <span class="mi">0</span>
+   <span class="n">BytesAppended</span> <span class="o">:=</span> <span class="mi">0</span>
 <span class="w">   </span><span class="nb">Loop</span>
    <span class="p">{</span>
       <span class="nf">DllCall(</span><span class="s">&quot;PeekNamedPipe&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cb</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-      <span class="n">if</span> <span class="p">(</span>!<span class="nf">NumGet(</span><span class="n">cb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">))</span>
+      <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">NumGet(</span><span class="n">cb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">))</span>
 <span class="w">         </span><span class="nb">break</span>
-      <span class="n">if</span> <span class="p">(</span>!<span class="n">CONSOLEAPPS_PRIVATE_ReadFile</span><span class="p">(</span><span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+      <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="n">CONSOLEAPPS_PRIVATE_ReadFile</span><span class="p">(</span><span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
       <span class="p">{</span>
-         <span class="n">FirstWin32Error</span> :<span class="o">=</span> <span class="nv">A_LastError</span>
+         <span class="n">FirstWin32Error</span> <span class="o">:=</span> <span class="nv">A_LastError</span>
          <span class="n">ConsoleApp_CloseHandle</span><span class="p">(</span><span class="n">ConsoleAppHandle</span><span class="p">)</span>
          <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span><span class="p">,</span> <span class="s">&quot;Error reading process stdout: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">FirstWin32Error</span><span class="p">)</span>
       <span class="p">}</span>
-      <span class="n">stdout</span> :<span class="o">=</span> <span class="n">stdout</span> <span class="o">.</span> <span class="n">buf</span>
+      <span class="n">stdout</span> <span class="o">:=</span> <span class="n">stdout</span> <span class="o">.</span> <span class="n">buf</span>
       <span class="n">BytesAppended</span> <span class="o">+=</span> <span class="nf">NumGet(</span><span class="n">cb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
    <span class="p">}</span>
    
    <span class="n">CONSOLEAPPS_PRIVATE_malloc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;GetExitCodeProcess&quot;</span><span class="p">,</span> <span class="n">uint</span><span class="p">,</span> <span class="n">hProcess</span><span class="p">,</span> <span class="n">uint</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ec</span><span class="p">))</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;GetExitCodeProcess&quot;</span><span class="p">,</span> <span class="n">uint</span><span class="p">,</span> <span class="n">hProcess</span><span class="p">,</span> <span class="n">uint</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ec</span><span class="p">))</span>
    <span class="p">{</span>
-      <span class="n">FirstWin32Error</span> :<span class="o">=</span> <span class="nv">A_LastError</span>
+      <span class="n">FirstWin32Error</span> <span class="o">:=</span> <span class="nv">A_LastError</span>
       <span class="n">ConsoleApp_CloseHandle</span><span class="p">(</span><span class="n">ConsoleAppHandle</span><span class="p">)</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span><span class="p">,</span> <span class="s">&quot;Error getting process exit code: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">FirstWin32Error</span><span class="p">)</span>
    <span class="p">}</span>
-   <span class="n">ExitCode</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ec</span><span class="p">)</span><span class="c-Singleline"></span>
+   <span class="n">ExitCode</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ec</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ; If the exit code of the process is STILL_ACTIVE (0x103) then the process is still running</span>
    <span class="n">if</span> <span class="p">(</span><span class="n">ExitCode</span> <span class="o">==</span> <span class="mh">0x103</span><span class="p">)</span>
@@ -367,25 +367,25 @@
 <span class="c-Singleline">;;; &lt;/remarks&gt;</span>
 <span class="n">ConsoleApp_CloseHandle</span><span class="p">(</span><span class="n">ConsoleAppHandle</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">global</span>
-   <span class="n">local</span> <span class="n">hProcess</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">hStdOutWrite</span>
+<span class="w">   </span><span class="nb">global</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">hProcess</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">,</span> <span class="n">hStdOutWrite</span>
 
    <span class="n">ConsoleApps_Initialize</span><span class="p">()</span>
 
-   <span class="n">hProcess</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x0</span><span class="p">)</span>
-   <span class="n">hStdoutRead</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">)</span>
-   <span class="n">hStdoutWrite</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">)</span><span class="c-Singleline"></span>
+   <span class="n">hProcess</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x0</span><span class="p">)</span>
+   <span class="n">hStdoutRead</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">)</span>
+   <span class="n">hStdoutWrite</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ConsoleAppHandle</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">;   hStdinRead := NumGet(ConsoleAppHandle + 0xC)</span>
 <span class="c-Singleline">;   hStdinWrite := NumGet(ConsoleAppHandle + 0x10)</span>
 <span class="c-Singleline">   ; If any of the following functions fail, then the ConsoleAppProcessInfo structure must</span>
 <span class="c-Singleline">   ; not be valid, or has already been closed. In this case we raise an error to alert the</span>
 <span class="c-Singleline">   ; user of a possible mis-handling of the handle and prevent further corruption and memory </span>
 <span class="c-Singleline">   ; leaks.</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hProcess</span><span class="p">))</span><span class="c-Singleline"> ;HANDLE hThread</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hProcess</span><span class="p">))</span><span class="c-Singleline"> ;HANDLE hThread</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">ERROR_GENERIC_ERROR</span><span class="p">,</span> <span class="s">&quot;Error ConsoleAppHandle is corrupt or has already been closed.&quot;</span><span class="p">)</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">))</span><span class="c-Singleline"> ;HANDLE hThread</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutRead</span><span class="p">))</span><span class="c-Singleline"> ;HANDLE hThread</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">ERROR_GENERIC_ERROR</span><span class="p">,</span> <span class="s">&quot;Error ConsoleAppHandle is corrupt or has already been closed.&quot;</span><span class="p">)</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutWrite</span><span class="p">))</span><span class="c-Singleline"> ;HANDLE hThread</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hStdoutWrite</span><span class="p">))</span><span class="c-Singleline"> ;HANDLE hThread</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">ERROR_GENERIC_ERROR</span><span class="p">,</span> <span class="s">&quot;Error ConsoleAppHandle is corrupt or has already been closed.&quot;</span><span class="p">)</span>
 <span class="w">   </span><span class="cm">/*</span>
 <span class="cm">   if (!DllCall(&quot;CloseHandle&quot;, &quot;uint&quot;, hStdinRead)) ;HANDLE hThread</span>
@@ -393,8 +393,8 @@
 <span class="cm">   if (!DllCall(&quot;CloseHandle&quot;, &quot;uint&quot;, hStdinWrite)) ;HANDLE hThread</span>
 <span class="cm">      CONSOLEAPPS_PRIVATE_throw(ERROR_GENERIC_ERROR, &quot;Error ConsoleAppHandle is corrupt or has already been closed.&quot;)</span>
 <span class="cm">   */</span>
-   <span class="n">hHeap</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcessHeap&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;HeapFree&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hHeap</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">ConsoleAppHandle</span><span class="p">))</span>
+   <span class="n">hHeap</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcessHeap&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;HeapFree&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hHeap</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">ConsoleAppHandle</span><span class="p">))</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span><span class="p">,</span> <span class="s">&quot;Error deallocating heap. This is a serious error which can cause heap corruption. This program will now close. Specifically: &quot;</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -405,23 +405,23 @@
 
 <span class="n">ConsoleApps_Initialize</span><span class="p">()</span>
 <span class="p">{</span>
-   <span class="n">global</span>
+<span class="w">   </span><span class="nb">global</span>
    
    <span class="n">if</span> <span class="p">(</span><span class="n">ConsoleApps_Initialized</span><span class="p">)</span>
 <span class="w">      </span><span class="nb">Return</span>
-   <span class="n">ConsoleApps_Initialized</span> :<span class="o">=</span> <span class="nv">True</span>
+   <span class="n">ConsoleApps_Initialized</span> <span class="o">:=</span> <span class="nv">True</span>
    
-   <span class="n">CONSOLEAPPS_PRIVATE_EXIT_FAILURE</span> :<span class="o">=</span> <span class="mi">1</span>
-   <span class="n">CONSOLEAPPS_PRIVATE_MAXIMUM_INTEGER</span> :<span class="o">=</span> <span class="mh">0x7FFFFFFF</span><span class="c-Singleline">  ; 2147483647</span>
-   <span class="n">CONSOLEAPPS_PRIVATE_MAXIMUM_UNSIGNED_INTEGER</span> :<span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="c-Singleline">  ; 4294967295</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_EXIT_FAILURE</span> <span class="o">:=</span> <span class="mi">1</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_MAXIMUM_INTEGER</span> <span class="o">:=</span> <span class="mh">0x7FFFFFFF</span><span class="c-Singleline">  ; 2147483647</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_MAXIMUM_UNSIGNED_INTEGER</span> <span class="o">:=</span> <span class="mh">0xFFFFFFFF</span><span class="c-Singleline">  ; 4294967295</span>
 
-   <span class="n">CONSOLEAPPS_PRIVATE_ERROR_NOT_ENOUGH_MEMORY</span> :<span class="o">=</span> <span class="mh">0x8</span>
-   <span class="n">CONSOLEAPPS_PRIVATE_ERROR_INVALID_PARAMETER</span>	:<span class="o">=</span> <span class="mh">0x57</span>
-   <span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span> :<span class="o">=</span> <span class="n">CONSOLEAPPS_PRIVATE_MAXIMUM_UNSIGNED_INTEGER</span> <span class="o">+</span> <span class="mi">1</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_ERROR_NOT_ENOUGH_MEMORY</span> <span class="o">:=</span> <span class="mh">0x8</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_ERROR_INVALID_PARAMETER</span>	<span class="o">:=</span> <span class="mh">0x57</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span> <span class="o">:=</span> <span class="n">CONSOLEAPPS_PRIVATE_MAXIMUM_UNSIGNED_INTEGER</span> <span class="o">+</span> <span class="mi">1</span>
 
-   <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%CONSOLEAPPS_PRIVATE_ERROR_NOT_ENOUGH_MEMORY%</span><span class="p">]</span> :<span class="o">=</span> <span class="s">&quot;Not enough storage is available to process this command.&quot;</span>
-   <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%CONSOLEAPPS_PRIVATE_ERROR_INVALID_PARAMETER%</span><span class="p">]</span> :<span class="o">=</span> <span class="s">&quot;Invalid parameter value.&quot;</span>
-   <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR%</span><span class="p">]</span> :<span class="o">=</span> <span class="s">&quot;Unspecified exception.&quot;</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%CONSOLEAPPS_PRIVATE_ERROR_NOT_ENOUGH_MEMORY%</span><span class="p">]</span> <span class="o">:=</span> <span class="s">&quot;Not enough storage is available to process this command.&quot;</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%CONSOLEAPPS_PRIVATE_ERROR_INVALID_PARAMETER%</span><span class="p">]</span> <span class="o">:=</span> <span class="s">&quot;Invalid parameter value.&quot;</span>
+   <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR%</span><span class="p">]</span> <span class="o">:=</span> <span class="s">&quot;Unspecified exception.&quot;</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;BufferSize is including the terminating null character.</span>
@@ -431,9 +431,9 @@
 <span class="w">      </span><span class="nb">return</span> <span class="nv">false</span>
    <span class="n">CONSOLEAPPS_PRIVATE_malloc</span><span class="p">(</span><span class="n">Buf</span><span class="p">,</span> <span class="n">BufferSize</span><span class="p">)</span>
    <span class="n">CONSOLEAPPS_PRIVATE_malloc</span><span class="p">(</span><span class="n">BytesRead</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-   <span class="n">if</span> <span class="p">(</span>!<span class="nf">DllCall(</span><span class="s">&quot;ReadFile&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hFile</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">BufferSize</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">BytesRead</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+   <span class="n">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">DllCall(</span><span class="s">&quot;ReadFile&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hFile</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">BufferSize</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">BytesRead</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <span class="w">      </span><span class="nb">return</span> <span class="nv">false</span>
-   <span class="n">BytesRead</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">BytesRead</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
+   <span class="n">BytesRead</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">BytesRead</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">)</span>
    <span class="nf">NumPut(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Buf</span><span class="p">,</span> <span class="n">BytesRead</span><span class="p">,</span> <span class="s">&quot;uchar&quot;</span><span class="p">)</span><span class="c-Singleline"> ;terminate data read with a null</span>
    <span class="nf">VarSetCapacity(</span><span class="n">buf</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">return</span> <span class="nv">true</span>
@@ -441,9 +441,9 @@
 
 <span class="n">CONSOLEAPPS_PRIVATE_abort</span><span class="p">()</span>
 <span class="p">{</span>
-	<span class="n">global</span>
+<span class="w">	</span><span class="nb">global</span>
 <span class="w">	</span><span class="nb">Critical</span><span class="p">,</span> <span class="nv">%CONSOLEAPPS_PRIVATE_MAXIMUM_INTEGER%</span>
-	<span class="n">CONSOLEAPPS_PRIVATE_STD_Exiting</span> :<span class="o">=</span> <span class="nv">True</span>
+	<span class="n">CONSOLEAPPS_PRIVATE_STD_Exiting</span> <span class="o">:=</span> <span class="nv">True</span>
 <span class="w">	</span><span class="nb">OnExit</span>
 <span class="w">	</span><span class="nb">BlockInput</span><span class="p">,</span> <span class="n">MouseMoveOff</span>
 <span class="w">	</span><span class="nb">BlockInput</span><span class="p">,</span> <span class="n">Off</span>
@@ -452,9 +452,9 @@
 
 <span class="n">CONSOLEAPPS_PRIVATE_calloc</span><span class="p">(</span><span class="n">byref</span> <span class="n">Var</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">fillbyte</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">global</span>
-   <span class="n">local</span> <span class="n">cb</span>
-   <span class="n">if</span> <span class="p">(</span><span class="n">cb</span> :<span class="o">=</span> <span class="nf">VarSetCapacity(</span><span class="n">Var</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">fillbyte</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">global</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">cb</span>
+   <span class="n">if</span> <span class="p">(</span><span class="n">cb</span> <span class="o">:=</span> <span class="nf">VarSetCapacity(</span><span class="n">Var</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">fillbyte</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">)</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_NOT_ENOUGH_MEMORY</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">return</span> <span class="n">cb</span>
 <span class="p">}</span>
@@ -471,8 +471,8 @@
 
 <span class="n">CONSOLEAPPS_PRIVATE_malloc</span><span class="p">(</span><span class="n">byref</span> <span class="n">var</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">global</span>
-   <span class="n">if</span> <span class="p">(</span><span class="n">cb</span> :<span class="o">=</span> <span class="nf">VarSetCapacity(</span><span class="n">var</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">global</span>
+   <span class="n">if</span> <span class="p">(</span><span class="n">cb</span> <span class="o">:=</span> <span class="nf">VarSetCapacity(</span><span class="n">var</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">)</span>
       <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">CONSOLEAPPS_PRIVATE_ERROR_NOT_ENOUGH_MEMORY</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">return</span> <span class="n">cb</span>
 <span class="p">}</span><span class="c-Singleline"></span>
@@ -494,22 +494,22 @@
 <span class="c-Singleline">; and the A_LastError built-in variable is no longer valid.</span>
 <span class="n">CONSOLEAPPS_PRIVATE_throw</span><span class="p">(</span><span class="n">ErrorCode</span><span class="p">,</span> <span class="n">ErrorMessage</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ParamName</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">LastWin32Error</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">global</span>
-   <span class="n">local</span> <span class="n">lpMsg</span>
+<span class="w">   </span><span class="nb">global</span>
+<span class="w">   </span><span class="nb">local</span> <span class="n">lpMsg</span>
 <span class="w">   </span><span class="nb">Critical</span><span class="p">,</span> <span class="nv">%CONSOLEAPPS_PRIVATE_MAXIMUM_INTEGER%</span>
    <span class="n">if</span> <span class="p">(</span><span class="n">ErrorCode</span> <span class="o">==</span> <span class="n">CONSOLEAPPS_PRIVATE_ERROR_INVALID_PARAMETER</span><span class="p">)</span>
    <span class="p">{</span>
       <span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">ErrorMessage</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-         <span class="n">ErrorMessage</span> :<span class="o">=</span> <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%ErrorCode%</span><span class="p">]</span>
+         <span class="n">ErrorMessage</span> <span class="o">:=</span> <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%ErrorCode%</span><span class="p">]</span>
       <span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">ParamName</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
          <span class="n">ErrorMessage</span> <span class="o">.=</span> <span class="s">&quot;\nParameter: &quot;</span> <span class="o">.</span> <span class="n">ParamName</span>
    <span class="p">}</span>
 <span class="w">   </span><span class="nb">else</span> <span class="n">if</span> <span class="p">(</span><span class="n">ErrorCode</span> <span class="o">==</span> <span class="n">CONSOLEAPPS_PRIVATE_ERROR_WIN32_ERROR</span><span class="p">)</span>
    <span class="p">{</span>
       <span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">ErrorMessage</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-         <span class="n">ErrorMessage</span> :<span class="o">=</span> <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%ErrorCode%</span><span class="p">]</span>
+         <span class="n">ErrorMessage</span> <span class="o">:=</span> <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%ErrorCode%</span><span class="p">]</span>
       <span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">LastWin32Error</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-         <span class="n">LastWin32Error</span> :<span class="o">=</span> <span class="nv">A_LastError</span>
+         <span class="n">LastWin32Error</span> <span class="o">:=</span> <span class="nv">A_LastError</span>
       <span class="n">CONSOLEAPPS_PRIVATE_malloc</span><span class="p">(</span><span class="n">lpMsg</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="w">      </span><span class="cm">/* DWORD TCharsCopied = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,</span>
 <span class="cm">       *                                    0,</span>
@@ -519,7 +519,7 @@
 <span class="cm">       *                                    0,</span>
 <span class="cm">       *                                    NULL)</span>
 <span class="cm">       */</span>
-      <span class="n">if</span> <span class="p">(</span><span class="n">t</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;FormatMessageA&quot;</span>
+      <span class="n">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;FormatMessageA&quot;</span>
                 <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0x1300</span>
                 <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span>
                 <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">LastWin32Error</span>
@@ -540,7 +540,7 @@
 <span class="w">   </span><span class="nb">else</span>
    <span class="p">{</span>
       <span class="n">if</span> <span class="p">(</span><span class="nf">StrLen(</span><span class="n">ErrorMessage</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-         <span class="n">ErrorMessage</span> :<span class="o">=</span> <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%ErrorCode%</span><span class="p">]</span>
+         <span class="n">ErrorMessage</span> <span class="o">:=</span> <span class="n">CONSOLEAPPS_PRIVATE_STD_ERROR_CODES</span><span class="p">[</span><span class="nv">%ErrorCode%</span><span class="p">]</span>
    <span class="p">}</span>
 <span class="w">   </span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mh">0x1010</span><span class="p">,</span> <span class="nv">%A_ScriptName%</span><span class="p">,</span> <span class="nv">%ErrorMessage%</span>
    <span class="n">CONSOLEAPPS_PRIVATE_abort</span><span class="p">()</span>

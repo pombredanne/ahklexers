@@ -1,138 +1,19 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="nb">#NoEnv</span>
-<span class="nb">#SingleInstance</span> <span class="n">force</span>
-<span class="w">	</span>
-<span class="w">	</span><span class="nb">gosub</span> <span class="n">CreateGui</span>
-<span class="w">	</span><span class="nb">gosub</span> <span class="n">FillTV</span>
-
-
-	<span class="n">TVX</span><span class="p">(</span><span class="s">&quot;MyTree&quot;</span><span class="p">,</span> <span class="s">&quot;Handler&quot;</span><span class="p">,</span> <span class="s">&quot;HasRoot CollapseOnMove &quot;</span><span class="p">,</span> <span class="s">&quot;aTooltip&quot;</span><span class="p">)</span><span class="c-Singleline">		;!!!!!</span>
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">h410</span> <span class="n">w430</span>
-<span class="nb">return</span>
-
-
-<span class="nl">Handler:</span>
-<span class="w">	</span><span class="nb">if </span><span class="nv">A_GuiEvent</span> <span class="o">=</span> <span class="n">S</span>
-<span class="w">		</span><span class="nb">Tooltip</span> <span class="o">%</span> <span class="n">aTooltip</span><span class="nv">%A_EventInfo%</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-<span class="nb">return</span><span class="c-Singleline"></span>
-
-<span class="c-Singleline">;-------------------------------------------------------------------------------</span>
-
-<span class="nl">Save:</span>
-	<span class="n">TVX_Walk</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&quot;SaveHandler&quot;</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Item</span><span class="p">)</span>
-<span class="nb">return</span>
-
-<span class="nl">SaveHandler:</span>
-	<span class="nf">TV_GetText(</span><span class="n">txt</span><span class="p">,</span> <span class="n">Item</span><span class="p">)</span>
-<span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="o">=</span> <span class="o">+</span>
-	<span class="p">{</span>
-<span class="w">		</span><span class="nb">FileDelete</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span> 
-<span class="w">		</span><span class="nb">FileAppend</span> <span class="nv">%txt%</span><span class="se">`n</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
-		<span class="n">line</span> <span class="o">:=</span> <span class="s">&quot;|-&quot;</span>
-	<span class="p">}</span>
-
-<span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="o">=</span> <span class="n">E</span>
-<span class="w">		</span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="mi">2</span>
-<span class="w">	</span>
-<span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="ow">in</span> <span class="n">I</span><span class="p">,</span><span class="n">M</span>
-	<span class="p">{</span>
-<span class="w">		</span><span class="nb">FileAppend</span> <span class="nv">%line%%txt%</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
-<span class="w">		</span><span class="nb">FileAppend</span> <span class="o">%</span> <span class="s">&quot;    &quot;</span> <span class="n">aTooltip</span><span class="nv">%item%</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
-	<span class="p">}</span>
-
-<span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="o">=</span> <span class="n">M</span>
-		<span class="n">line</span> <span class="o">.=</span> <span class="s">&quot;--&quot;</span>
-<span class="w">	</span>
-<span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="o">=</span> <span class="o">-</span>
-<span class="w">	  	</span><span class="nb">Msgbox</span><span class="p">,</span> <span class="n">TVX</span> <span class="n">saved</span> <span class="ow">in</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
-<span class="nb">return</span><span class="c-Singleline"></span>
-
-<span class="c-Singleline">;---------------------------------------------------------------------------------</span>
-
-<span class="nl">OnButton:</span>
-<span class="w">    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="n">SHIFT</span> <span class="n">down</span><span class="p">}</span>
-<span class="w">	</span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="nv">%A_GuiControl%</span><span class="p">}</span>
-<span class="w">	</span><span class="nb">sleep</span> <span class="mi">50</span>	
-<span class="w">    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="n">SHIFT</span> <span class="n">up</span><span class="p">}</span><span class="c-Singleline"></span>
-
-<span class="c-Singleline">;	h := TVX_Move(TV_GetSelection(), A_GuiControl=&quot;Up&quot; ? &quot;u&quot; : &quot;d&quot;)</span>
-<span class="c-Singleline">;   TV_Modify(h, &quot;Select&quot;)</span>
-<span class="nb">return</span>
-
-<span class="nl">Modify:</span>
-
-<span class="w">	</span><span class="nb">if </span><span class="nv">A_GuiControl</span><span class="o">=</span><span class="n">Delete</span>
-<span class="w">	    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="n">DELETE</span><span class="p">}</span>
-
-<span class="w">	</span><span class="nb">if </span><span class="nv">A_GuiControl</span><span class="o">=</span><span class="n">Insert</span>
-<span class="w">	    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="n">INSERT</span><span class="p">}</span>
-
-<span class="w">	</span><span class="nb">if </span><span class="nv">A_GuiControl</span><span class="o">=</span><span class="n">Insert</span> <span class="n">Submenu</span>
-	<span class="p">{</span>
-<span class="w">	    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="n">SHIFT</span> <span class="n">down</span><span class="p">}</span>
-<span class="w">	    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="n">INSERT</span><span class="p">}</span>
-<span class="w">		</span><span class="nb">Sleep</span> <span class="mi">50</span>
-<span class="w">	    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">SysTreeView321</span><span class="p">,</span> <span class="p">{</span><span class="n">SHIFT</span> <span class="n">up</span><span class="p">}</span>
-	<span class="p">}</span>
-<span class="nb">return</span><span class="c-Singleline"></span>
-
-<span class="c-Singleline">;---------------------------------------------------------------------------------</span>
-
-<span class="nl">FillTV:</span>
-	<span class="n">root</span>  <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;Root&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span> <span class="p">,</span> <span class="s">&quot;Expand&quot;</span><span class="p">)</span>
-	<span class="nf">TV_Modify(</span> <span class="n">root</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="nv">A_Index</span> <span class="s">&quot;    &quot;</span> <span class="n">root</span><span class="p">)</span>
-<span class="w">	</span><span class="nb">loop</span><span class="p">,</span> <span class="mi">10</span> <span class="p">{</span>
-		<span class="n">P</span>     <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
-		<span class="nf">TV_Modify(</span> <span class="n">P</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="nv">A_Index</span> <span class="s">&quot;    &quot;</span> <span class="n">P</span><span class="p">)</span>
-		<span class="n">aTooltip</span><span class="nv">%P%</span> <span class="o">:=</span> <span class="s">&quot;My Tooltip &quot;</span> <span class="nv">A_Index</span>
-	<span class="p">}</span>
-
-	
-	<span class="n">P2</span>  <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">P</span><span class="p">),</span>		<span class="n">aTooltip</span><span class="nv">%P2%</span> <span class="o">:=</span> <span class="s">&quot;My Tooltip 2.1&quot;</span>
-	<span class="nf">TV_Modify(</span> <span class="n">P2</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;2.1    &quot;</span> <span class="n">P2</span><span class="p">)</span>
-
-	<span class="n">P2</span>   <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">P</span><span class="p">),</span> 		<span class="n">aTooltip</span><span class="nv">%P2%</span> <span class="o">:=</span> <span class="s">&quot;My Tooltip 2.2&quot;</span>
-	<span class="nf">TV_Modify(</span> <span class="n">P2</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;2.2    &quot;</span> <span class="n">P2</span><span class="p">)</span>
-	
-	<span class="n">P3</span>   <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">P2</span><span class="p">),</span>		<span class="n">aTooltip</span><span class="nv">%P3%</span> <span class="o">:=</span> <span class="s">&quot;My Tooltip 2.2.1&quot;</span>
-	<span class="nf">TV_Modify(</span> <span class="n">P3</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;2.2.1    &quot;</span> <span class="n">P3</span><span class="p">)</span>
-	
-	<span class="n">P3</span>   <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">P2</span><span class="p">),</span>		<span class="n">aTooltip</span><span class="nv">%P3%</span> <span class="o">:=</span> <span class="s">&quot;My Tooltip 2.2.2&quot;</span>
-	<span class="nf">TV_Modify(</span> <span class="n">P3</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;2.2.2   &quot;</span> <span class="n">P3</span><span class="p">)</span>
-	
-	<span class="n">P3</span>   <span class="o">:=</span> <span class="nf">TV_Add(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">P2</span><span class="p">),</span>		<span class="n">aTooltip</span><span class="nv">%P3%</span> <span class="o">:=</span> <span class="s">&quot;My Tooltip 2.2.3&quot;</span>
-	<span class="nf">TV_Modify(</span> <span class="n">P3</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;2.2.3    &quot;</span> <span class="n">P3</span><span class="p">)</span>
-<span class="nb">return</span><span class="c-Singleline"></span>
-
-<span class="c-Singleline">;---------------------------------------------------------------------------------</span>
-
-<span class="nl">CreateGui:</span>
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">TreeView</span><span class="p">,</span> <span class="n">h400</span> <span class="n">w300</span> <span class="n">vMyTree</span>
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">w100</span> <span class="n">gOnButton</span> <span class="n">x</span><span class="o">+</span><span class="mi">10</span> <span class="p">,</span> <span class="n">Up</span>
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">wp</span> <span class="n">gOnButton</span><span class="p">,</span><span class="n">Down</span>
-
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="mi">20</span> <span class="n">wp</span> <span class="n">gModify</span><span class="p">,</span> <span class="n">Insert</span>
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">wp</span> <span class="n">gModify</span><span class="p">,</span> <span class="n">Insert</span> <span class="n">Submenu</span>
-
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="mi">20</span> <span class="n">wp</span> <span class="n">gModify</span><span class="p">,</span> <span class="n">Delete</span>
-
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="mi">50</span> <span class="n">wp</span> <span class="n">vMyEdit</span> <span class="n">gEdit</span><span class="p">,</span> 
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">yp</span><span class="o">-</span><span class="mi">30</span> <span class="n">wp</span><span class="p">,</span> <span class="n">Change</span> <span class="n">tooltip</span> <span class="n">for</span> <span class="n">selection</span>
-
-<span class="w">	</span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="mi">150</span> <span class="n">w100</span> <span class="n">gSave</span><span class="p">,</span> <span class="n">Save</span> <span class="n">to</span> <span class="n">file</span>
-<span class="nb">return</span><span class="c-Singleline"></span>
-
-<span class="c-Singleline">;---------------------------------------------------------------------------------</span>
-
-<span class="nb">Edit</span><span class="o">:</span>
-<span class="w">	 </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Submit</span><span class="p">,</span> <span class="n">Nohide</span>
-	 <span class="n">c</span> <span class="o">:=</span> <span class="nf">TV_GetSelection(</span><span class="p">)</span>
-	 <span class="n">aTooltip</span><span class="nv">%c%</span> <span class="o">:=</span> <span class="n">MyEdit</span>
-<span class="nb">return</span>
-
-<span class="nl">GuiClose:</span>
-<span class="nl">GuiEscape:</span>
-<span class="w">	 </span><span class="nb">ExitApp</span>
-<span class="nb">return</span><span class="c-Singleline"></span>
-
-<span class="c-Singleline">; #include TVX.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline"> ; single line comment</span>
+<span class="c-Singleline">; single line comment</span>
+<span class="nb">#NoTrayIcon</span><span class="c-Singleline">  ; single line comment</span>
+<span class="nl">k::</span>
+<span class="o">::</span><span class="n">sdf</span><span class="o">::</span>
+<span class="nl">label:</span>
+<span class="w">  </span><span class="nb">Msgbox</span> <span class="o">%</span> <span class="s">&quot;A_ScriptDir\lib\&quot;</span> <span class="o">.</span> <span class="nv">A_UserName</span>
+<span class="nb">Msgbox</span> <span class="o">%</span> <span class="s">&quot;hello escaped </span><span class="se">&quot;&quot;</span><span class="s"> quotes and other escapes `n`r.&quot;</span>
+<span class="nb">tooltip</span> <span class="nv">%mytip%</span>
+<span class="n">foo</span> <span class="o">:=</span> <span class="nf">regexmatch(</span><span class="n">bar</span><span class="p">,</span> <span class="s">&quot;reg&quot;</span><span class="p">)</span>
+<span class="nb">Return</span>
+<span class="cm">/*  multiline</span>
+<span class="cm">comment</span>
+<span class="cm">*/</span>
+<span class="g">(</span>
+<span class="g">continuation</span>
+<span class="g">section</span>
+<span class="g">)</span>
 </pre></div>

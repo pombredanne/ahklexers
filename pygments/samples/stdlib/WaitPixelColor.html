@@ -35,25 +35,25 @@
 
 <span class="n">WaitPixelColor</span><span class="p">(</span><span class="n">p_DesiredColor</span><span class="p">,</span><span class="n">p_PosX</span><span class="p">,</span><span class="n">p_PosY</span><span class="p">,</span><span class="n">p_TimeOut</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_GetMode</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_ReturnColor</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">l_Start</span> :<span class="o">=</span> <span class="nv">A_TickCount</span>
+    <span class="n">l_Start</span> <span class="o">:=</span> <span class="nv">A_TickCount</span>
 <span class="w">    </span><span class="nb">Loop</span>
     <span class="p">{</span>
 <span class="w">        </span><span class="nb">PixelGetColor</span><span class="p">,</span> <span class="n">l_RetrievedColor</span><span class="p">,</span> <span class="nv">%p_PosX%</span><span class="p">,</span> <span class="nv">%p_PosY%</span><span class="p">,</span> <span class="nv">%p_GetMode%</span>
 <span class="w">        </span><span class="nb">If </span><span class="nv">ErrorLevel</span>
         <span class="p">{</span>
-            <span class="n">If</span> !<span class="n">p_ReturnColor</span>
+            <span class="n">If</span> <span class="o">!</span><span class="n">p_ReturnColor</span>
 <span class="w">                </span><span class="nb">Return</span> <span class="mi">1</span>
 <span class="w">            </span><span class="nb">Break</span>
         <span class="p">}</span>
         <span class="n">If</span> <span class="p">(</span> <span class="n">l_RetrievedColor</span> <span class="o">=</span> <span class="n">p_DesiredColor</span> <span class="p">)</span>
         <span class="p">{</span>
-            <span class="n">If</span> !<span class="n">p_ReturnColor</span>
+            <span class="n">If</span> <span class="o">!</span><span class="n">p_ReturnColor</span>
 <span class="w">                </span><span class="nb">Return</span> <span class="mi">0</span>
 <span class="w">            </span><span class="nb">Break</span>
         <span class="p">}</span>
         <span class="n">If</span> <span class="p">(</span> <span class="n">p_TimeOut</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span> <span class="nv">A_TickCount</span> <span class="o">-</span> <span class="n">l_Start</span> <span class="o">&gt;=</span> <span class="n">p_TimeOut</span> <span class="p">)</span>
         <span class="p">{</span>
-            <span class="n">If</span> !<span class="n">p_ReturnColor</span>
+            <span class="n">If</span> <span class="o">!</span><span class="n">p_ReturnColor</span>
 <span class="w">                </span><span class="nb">Return</span> <span class="mi">2</span>
 <span class="w">            </span><span class="nb">Break</span>
         <span class="p">}</span>

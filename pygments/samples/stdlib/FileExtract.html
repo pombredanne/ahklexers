@@ -19,17 +19,17 @@
 <span class="cm">        and does not cause Ahk2Exe to include a file into the executable.</span>
 <span class="cm">*/</span>
 <span class="n">FileExtract</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Dest</span><span class="p">,</span> <span class="n">Flag</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">static</span> <span class="n">init</span>
-    <span class="n">if</span> !<span class="n">init</span>
-        <span class="n">cb</span> :<span class="o">=</span> <span class="nf">RegisterCallback(</span><span class="s">&quot;FileExtract_&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="w">    </span><span class="nb">static</span> <span class="n">init</span>
+    <span class="n">if</span> <span class="o">!</span><span class="n">init</span>
+        <span class="n">cb</span> <span class="o">:=</span> <span class="nf">RegisterCallback(</span><span class="s">&quot;FileExtract_&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; cb-&gt;func-&gt;mJumpToLine-&gt;mActionType := ACT_FILEINSTALL</span>
-        <span class="p">,</span> <span class="nf">NumPut(</span><span class="nv">A_AhkVersion</span><span class="o">&gt;=</span><span class="s">&quot;1.0.48&quot;</span> ? <span class="mi">160</span>:<span class="mi">159</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">cb</span><span class="o">+</span><span class="mi">28</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span><span class="c-Singleline"> ; Fixed for AutoHotkey v1.0.48: ACT_FILEINSTALL has changed to 160.</span>
+        <span class="p">,</span> <span class="nf">NumPut(</span><span class="nv">A_AhkVersion</span><span class="o">&gt;=</span><span class="s">&quot;1.0.48&quot;</span> <span class="o">?</span> <span class="mi">160</span><span class="o">:</span><span class="mi">159</span><span class="p">,</span> <span class="nf">NumGet(NumGet(</span><span class="n">cb</span><span class="o">+</span><span class="mi">28</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;UChar&quot;</span><span class="p">)</span><span class="c-Singleline"> ; Fixed for AutoHotkey v1.0.48: ACT_FILEINSTALL has changed to 160.</span>
         <span class="p">,</span> <span class="nf">DllCall(</span><span class="s">&quot;GlobalFree&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">return</span> <span class="n">FileExtract_</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Dest</span><span class="p">,</span> <span class="n">Flag</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="n">FileExtract_</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Dest</span><span class="p">,</span> <span class="n">Flag</span><span class="p">)</span> <span class="p">{</span>
 <span class="w">    </span><span class="nb">FileCopy</span><span class="p">,</span> <span class="nv">%Source%</span><span class="p">,</span> <span class="nv">%Dest%</span><span class="p">,</span> <span class="nv">%Flag%</span>
-<span class="w">    </span><span class="nb">return</span> !<span class="nv">ErrorLevel</span>
+<span class="w">    </span><span class="nb">return</span> <span class="o">!</span><span class="nv">ErrorLevel</span>
 <span class="p">}</span>
 <span class="w"> </span>
 <span class="cm">/*</span>
@@ -64,8 +64,8 @@
 <span class="cm">*/</span>
 <span class="n">FileExtract_ToMem</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">pData</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">DataSize</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">static</span> <span class="n">ReadPipe</span><span class="p">,</span> <span class="n">ConnectNamedPipe</span><span class="p">,</span> <span class="n">ReadFile</span><span class="p">,</span> <span class="n">GlobalReAlloc</span>
-    <span class="n">if</span> !<span class="nf">VarSetCapacity(</span><span class="n">ReadPipe</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">static</span> <span class="n">ReadPipe</span><span class="p">,</span> <span class="n">ConnectNamedPipe</span><span class="p">,</span> <span class="n">ReadFile</span><span class="p">,</span> <span class="n">GlobalReAlloc</span>
+    <span class="n">if</span> <span class="o">!</span><span class="nf">VarSetCapacity(</span><span class="n">ReadPipe</span><span class="p">)</span>
     <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Initialize the machine code function for reading from the pipe.</span>
         <span class="n">hex</span> <span class="o">=</span>
@@ -83,23 +83,23 @@
 <span class="c-Singleline">        ;~ end</span>
 <span class="c-Singleline"> </span>
 <span class="c-Singleline">        ; Resolve ReadPipe()&#39;s dependencies for later.</span>
-        <span class="n">hKernel32</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetModuleHandle&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;kernel32.dll&quot;</span><span class="p">)</span>
-        <span class="n">astr</span> :<span class="o">=</span> <span class="nv">A_IsUnicode</span> ? <span class="s">&quot;astr&quot;</span> : <span class="s">&quot;str&quot;</span>
-        <span class="n">ConnectNamedPipe</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hKernel32</span><span class="p">,</span> <span class="n">astr</span><span class="p">,</span> <span class="s">&quot;ConnectNamedPipe&quot;</span><span class="p">)</span>
-        <span class="n">ReadFile</span>         :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hKernel32</span><span class="p">,</span> <span class="n">astr</span><span class="p">,</span> <span class="s">&quot;ReadFile&quot;</span><span class="p">)</span>
-        <span class="n">GlobalReAlloc</span>    :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hKernel32</span><span class="p">,</span> <span class="n">astr</span><span class="p">,</span> <span class="s">&quot;GlobalReAlloc&quot;</span><span class="p">)</span>
+        <span class="n">hKernel32</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetModuleHandle&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;kernel32.dll&quot;</span><span class="p">)</span>
+        <span class="n">astr</span> <span class="o">:=</span> <span class="nv">A_IsUnicode</span> <span class="o">?</span> <span class="s">&quot;astr&quot;</span> <span class="o">:</span> <span class="s">&quot;str&quot;</span>
+        <span class="n">ConnectNamedPipe</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hKernel32</span><span class="p">,</span> <span class="n">astr</span><span class="p">,</span> <span class="s">&quot;ConnectNamedPipe&quot;</span><span class="p">)</span>
+        <span class="n">ReadFile</span>         <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hKernel32</span><span class="p">,</span> <span class="n">astr</span><span class="p">,</span> <span class="s">&quot;ReadFile&quot;</span><span class="p">)</span>
+        <span class="n">GlobalReAlloc</span>    <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GetProcAddress&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hKernel32</span><span class="p">,</span> <span class="n">astr</span><span class="p">,</span> <span class="s">&quot;GlobalReAlloc&quot;</span><span class="p">)</span>
     <span class="p">}</span>
  
-    <span class="n">UserOwnsData</span> :<span class="o">=</span> !!<span class="n">pData</span><span class="c-Singleline"> ; True if pData is not [blank or zero].</span>
-    <span class="n">if</span> !<span class="n">pData</span>
+    <span class="n">UserOwnsData</span> <span class="o">:=</span> <span class="o">!!</span><span class="n">pData</span><span class="c-Singleline"> ; True if pData is not [blank or zero].</span>
+    <span class="n">if</span> <span class="o">!</span><span class="n">pData</span>
     <span class="p">{</span><span class="c-Singleline">   ; If DataSize is non-numeric or &lt; 1, default to 1024.</span>
         <span class="n">if</span> <span class="p">(</span><span class="n">DataSize</span><span class="o">+</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">DataSize</span> :<span class="o">=</span> <span class="mi">1024</span>
-        <span class="n">pData</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GlobalAlloc&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">DataSize</span><span class="p">)</span>
+            <span class="n">DataSize</span> <span class="o">:=</span> <span class="mi">1024</span>
+        <span class="n">pData</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GlobalAlloc&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">DataSize</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">else</span>
     <span class="p">{</span><span class="c-Singleline">   ; Get the actual size of the memory block,</span>
-        <span class="n">DataSize</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;GlobalSize&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">pData</span><span class="p">)</span>
+        <span class="n">DataSize</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;GlobalSize&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">pData</span><span class="p">)</span>
     <span class="p">}</span>
  
     <span class="nf">VarSetCapacity(</span><span class="n">ReadPipeStruct</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; ReadPipeStruct</span>
@@ -112,7 +112,7 @@
 <span class="w">    </span><span class="nb">Random</span><span class="p">,</span> <span class="n">pipe_name</span><span class="c-Singleline"></span>
 <span class="c-Singleline"> </span>
 <span class="c-Singleline">    ; Create a named pipe (with an unpredictable name) for writing the file into.</span>
-    <span class="n">hNamedPipe</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;CreateNamedPipe&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;\\.\pipe\&quot;</span> <span class="n">pipe_name</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">3</span>
+    <span class="n">hNamedPipe</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;CreateNamedPipe&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;\\.\pipe\&quot;</span> <span class="n">pipe_name</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">3</span>
                     <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    ; Set the parameters for the pipe-reading thread.</span>
     <span class="nf">NumPut(</span><span class="n">hNamedPipe</span><span class="p">,</span> <span class="n">ReadPipeStruct</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -121,20 +121,20 @@
 <span class="c-Singleline"> </span>
 <span class="c-Singleline">    ; Create a thread to read from the pipe into memory.</span>
 <span class="c-Singleline">    ; The thread will start immediately, but will wait for a pipe connection.</span>
-    <span class="n">hReadThread</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;CreateThread&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ReadPipe</span>
+    <span class="n">hReadThread</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;CreateThread&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ReadPipe</span>
                             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ReadPipeStruct</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">ReadThreadID</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline"> </span>
 <span class="c-Singleline">    ; &quot;Replace flag&quot; *must* be specified since the pipe... exists.</span>
-    <span class="n">FileExtractResult</span> :<span class="o">=</span> <span class="n">FileExtract</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="s">&quot;\\.\pipe\&quot;</span> <span class="n">pipe_name</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">FileExtractResult</span> <span class="o">:=</span> <span class="n">FileExtract</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="s">&quot;\\.\pipe\&quot;</span> <span class="n">pipe_name</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
  
-    <span class="n">if</span> !<span class="n">FileExtractResult</span>
+    <span class="n">if</span> <span class="o">!</span><span class="n">FileExtractResult</span>
     <span class="p">{</span><span class="c-Singleline">   ; Open and close a connection to the pipe to terminate the thread.</span>
 <span class="w">        </span><span class="nb">FileAppend</span><span class="p">,,</span> \\<span class="o">.</span>\<span class="n">pipe</span>\<span class="nv">%pipe_name%</span>
     <span class="p">}</span>
 <span class="w"> </span>
 <span class="w">    </span><span class="nb">Loop</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Wait for the thread to terminate, or any window message to be received.</span>
-        <span class="n">r</span> :<span class="o">=</span> <span class="nf">DllCall(</span><span class="s">&quot;MsgWaitForMultipleObjectsEx&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">hReadThread</span>
+        <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall(</span><span class="s">&quot;MsgWaitForMultipleObjectsEx&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uint*&quot;</span><span class="p">,</span> <span class="n">hReadThread</span>
                                             <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0x4FF</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0x6</span><span class="p">)</span>
         <span class="n">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline"> ; WAIT_OBJECT_0 or WAIT_FAILED</span>
 <span class="w">            </span><span class="nb">break</span>
@@ -150,15 +150,15 @@
 <span class="c-Singleline">        ; Either it was a success and we are returning the extracted data,</span>
 <span class="c-Singleline">        ; or it failed and we are returning the memory to the caller, since</span>
 <span class="c-Singleline">        ; they may want to reuse it.</span>
-        <span class="n">pData</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ReadPipeStruct</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
-        <span class="n">DataSize</span> :<span class="o">=</span> <span class="nf">NumGet(</span><span class="n">ReadPipeStruct</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">pData</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ReadPipeStruct</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">DataSize</span> <span class="o">:=</span> <span class="nf">NumGet(</span><span class="n">ReadPipeStruct</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">else</span>
     <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; If ReadPipe() fails because of low memory, pData may have been reallocated,</span>
 <span class="c-Singleline">        ; so always use the value in the structure.</span>
         <span class="nf">DllCall(</span><span class="s">&quot;GlobalFree&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="nf">NumGet(</span><span class="n">ReadPipeStruct</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-        <span class="n">pData</span> :<span class="o">=</span> <span class="n">DataSize</span> :<span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pData</span> <span class="o">:=</span> <span class="n">DataSize</span> <span class="o">:=</span> <span class="mi">0</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">return</span> <span class="n">FileExtractResult</span>
 <span class="p">}</span>

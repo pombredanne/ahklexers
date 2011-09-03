@@ -32,9 +32,9 @@
 
 <span class="n">CMDret_Stream</span><span class="p">(</span><span class="n">CMDin</span><span class="p">,</span> <span class="n">CMDname</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">WorkingDir</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="p">{</span>
-  <span class="n">Global</span> <span class="n">cmdretPID</span>
-  <span class="n">tcWrk</span> :<span class="o">=</span> <span class="n">WorkingDir</span><span class="o">=</span><span class="mi">0</span> ? <span class="s">&quot;Int&quot;</span> : <span class="s">&quot;Str&quot;</span>
-  <span class="n">idltm</span> :<span class="o">=</span> <span class="nv">A_TickCount</span> <span class="o">+</span> <span class="mi">20</span>
+<span class="w">  </span><span class="nb">Global</span> <span class="n">cmdretPID</span>
+  <span class="n">tcWrk</span> <span class="o">:=</span> <span class="n">WorkingDir</span><span class="o">=</span><span class="mi">0</span> <span class="o">?</span> <span class="s">&quot;Int&quot;</span> <span class="o">:</span> <span class="s">&quot;Str&quot;</span>
+  <span class="n">idltm</span> <span class="o">:=</span> <span class="nv">A_TickCount</span> <span class="o">+</span> <span class="mi">20</span>
   <span class="n">LivePos</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="nf">VarSetCapacity(</span><span class="n">CMDout</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
   <span class="nf">VarSetCapacity(</span><span class="n">sui</span><span class="p">,</span><span class="mi">68</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -58,7 +58,7 @@
 <span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="mi">4</span>
         <span class="n">cmdretPID</span> <span class="o">+=</span> <span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pi</span><span class="o">+</span><span class="mi">8</span><span class="o">+</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="o">*</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">8</span>
 <span class="w">      </span><span class="nb">Loop</span> <span class="p">{</span>
-        <span class="n">idltm2</span> :<span class="o">=</span> <span class="nv">A_TickCount</span> <span class="o">-</span> <span class="n">idltm</span>
+        <span class="n">idltm2</span> <span class="o">:=</span> <span class="nv">A_TickCount</span> <span class="o">-</span> <span class="n">idltm</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">idltm2</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">)</span> <span class="p">{</span>
           <span class="nf">DllCall(</span><span class="s">&quot;Sleep&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 <span class="w">          </span><span class="nb">Continue</span>
@@ -75,8 +75,8 @@
                     <span class="n">bRead2</span> <span class="o">=</span> <span class="nv">%bRead%</span>
 <span class="w">                    </span><span class="nb">Loop</span> <span class="p">{</span>
                       <span class="nf">DllCall(</span><span class="s">&quot;RtlZeroMemory&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CMcpy</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">bRead</span><span class="p">)</span>
-                      <span class="n">NULLptr</span> :<span class="o">=</span> <span class="nf">StrLen(</span><span class="n">lpBuffer</span><span class="p">)</span>
-                      <span class="n">cpsize</span> :<span class="o">=</span> <span class="n">bread</span> <span class="o">-</span> <span class="n">NULLptr</span>
+                      <span class="n">NULLptr</span> <span class="o">:=</span> <span class="nf">StrLen(</span><span class="n">lpBuffer</span><span class="p">)</span>
+                      <span class="n">cpsize</span> <span class="o">:=</span> <span class="n">bread</span> <span class="o">-</span> <span class="n">NULLptr</span>
                       <span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CMcpy</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">lpBuffer</span> <span class="o">+</span> <span class="n">NULLptr</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">cpsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
                       <span class="nf">DllCall(</span><span class="s">&quot;RtlZeroMemory&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">lpBuffer</span> <span class="o">+</span> <span class="n">NULLptr</span><span class="p">),</span> <span class="n">Int</span><span class="p">,</span> <span class="n">cpsize</span><span class="p">)</span>
                       <span class="nf">DllCall(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">lpBuffer</span> <span class="o">+</span> <span class="n">NULLptr</span><span class="p">),</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CMcpy</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">cpsize</span><span class="p">)</span>
@@ -97,8 +97,8 @@
         <span class="p">}</span>
 <span class="w">        </span><span class="nb">ELSE</span>
 <span class="w">          </span><span class="nb">break</span>
-        <span class="n">idltm</span> :<span class="o">=</span> <span class="nv">A_TickCount</span>
-        <span class="n">LiveFound</span> :<span class="o">=</span> <span class="nf">RegExMatch(</span><span class="n">CMDout</span><span class="p">,</span> <span class="s">&quot;m)^(.*)&quot;</span><span class="p">,</span> <span class="n">LiveOut</span><span class="p">,</span> <span class="n">LivePos</span><span class="p">)</span>
+        <span class="n">idltm</span> <span class="o">:=</span> <span class="nv">A_TickCount</span>
+        <span class="n">LiveFound</span> <span class="o">:=</span> <span class="nf">RegExMatch(</span><span class="n">CMDout</span><span class="p">,</span> <span class="s">&quot;m)^(.*)&quot;</span><span class="p">,</span> <span class="n">LiveOut</span><span class="p">,</span> <span class="n">LivePos</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">LiveFound</span><span class="p">)</span>
 <span class="w">          </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="n">cmdretSTR</span><span class="p">,</span> <span class="mi">5</span>
       <span class="p">}</span>
@@ -109,7 +109,7 @@
   <span class="p">}</span>
 <span class="w">  </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">LiveRes</span><span class="p">,</span> <span class="n">CMDout</span><span class="p">,</span> <span class="nv">%LivePos%</span>
 <span class="w">  </span><span class="nb">If </span><span class="n">LiveRes</span> <span class="o">&lt;&gt;</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">LiveRes</span><span class="p">,</span> `<span class="n">n</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">LiveRes</span><span class="p">,</span> <span class="se">`n</span>
     <span class="p">{</span>
       <span class="n">FileLine</span> <span class="o">=</span> <span class="nv">%A_LoopField%</span>
 <span class="w">      </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">FileLine</span><span class="p">,</span> <span class="n">FileLine</span><span class="p">,</span> <span class="mi">1</span>
@@ -122,8 +122,8 @@
 <span class="nb">SetTimer</span><span class="p">,</span> <span class="n">cmdretSTR</span><span class="p">,</span> <span class="n">Off</span>
 <span class="n">If</span> <span class="p">(</span><span class="n">LivePosLast</span> <span class="o">&lt;&gt;</span> <span class="n">LiveFound</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">FileLine</span> <span class="o">=</span> <span class="nv">%LiveOut1%</span>
-  <span class="n">LivePos</span> :<span class="o">=</span> <span class="n">LiveFound</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">FileLine</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-  <span class="n">LivePosLast</span> :<span class="o">=</span> <span class="n">LivePos</span>
+  <span class="n">LivePos</span> <span class="o">:=</span> <span class="n">LiveFound</span> <span class="o">+</span> <span class="nf">StrLen(</span><span class="n">FileLine</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="n">LivePosLast</span> <span class="o">:=</span> <span class="n">LivePos</span>
   <span class="n">CMDret_Output</span><span class="p">(</span><span class="n">FileLine</span><span class="p">,</span> <span class="n">CMDname</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="nb">Return</span>

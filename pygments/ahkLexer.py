@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pygments.lexer import ExtendedRegexLexer, RegexLexer, \
      bygroups, using, include, combined
 from pygments.token import *   
@@ -39,8 +40,8 @@ class AhkLexer(ExtendedRegexLexer):
             (r'"', String, combined('stringescape', 'dqs')),
             include('numbers'),
             (r'[a-zA-Z_#@$][a-zA-Z0-9_#@$]*', Name),  
-            (r'\\', Text),
-            (r'\`([\,\%\`abfnrtv])', String.Escape),
+            (r'\\|\'', Text),
+            (r'\`([\,\%\`abfnrtv\-\+;])', String.Escape),
             include('garbage'),
         ],		       
         'incomment': [	       
@@ -54,7 +55,85 @@ class AhkLexer(ExtendedRegexLexer):
 	    (r'[)]', Generic),
 	    ],
         'commands': [
-            (r'(?i)^(\s*)(' + ahkcommands + r')\b',
+            (r'(?i)^(\s*)(global|local|static|'
+        r'#AllowSameLineComments|#ClipboardTimeout|#CommentFlag|'
+        r'#ErrorStdOut|#EscapeChar|#HotkeyInterval|'
+        r'#HotkeyModifierTimeout|#Hotstring|#IfWinActive|'
+        r'#IfWinExist|#IfWinNotActive|#IfWinNotExist|'
+        r'#IncludeAgain|#Include|#InstallKeybdHook|'
+        r'#InstallMouseHook|#KeyHistory|#LTrim|'
+        r'#MaxHotkeysPerInterval|#MaxMem|#MaxThreads|'
+        r'#MaxThreadsBuffer|#MaxThreadsPerHotkey|#NoEnv|'
+        r'#NoTrayIcon|#Persistent|#SingleInstance|'
+        r'#UseHook|#WinActivateForce|AutoTrim|'
+        r'BlockInput|Break|Click|'
+        r'ClipWait|Continue|Control|'
+        r'ControlClick|ControlFocus|ControlGetFocus|'
+        r'ControlGetPos|ControlGetText|ControlGet|'
+        r'ControlMove|ControlSend|ControlSendRaw|'
+        r'ControlSetText|CoordMode|Critical|'
+        r'DetectHiddenText|DetectHiddenWindows|Drive|'
+        r'DriveGet|DriveSpaceFree|Edit|'
+        r'Else|EnvAdd|EnvDiv|'
+        r'EnvGet|EnvMult|EnvSet|'
+        r'EnvSub|EnvUpdate|Exit|'
+        r'ExitApp|FileAppend|FileCopy|'
+        r'FileCopyDir|FileCreateDir|FileCreateShortcut|'
+        r'FileDelete|FileGetAttrib|FileGetShortcut|'
+        r'FileGetSize|FileGetTime|FileGetVersion|'
+        r'FileInstall|FileMove|FileMoveDir|'
+        r'FileRead|FileReadLine|FileRecycle|'
+        r'FileRecycleEmpty|FileRemoveDir|FileSelectFile|'
+        r'FileSelectFolder|FileSetAttrib|FileSetTime|'
+        r'FormatTime|GetKeyState|Gosub|'
+        r'Goto|GroupActivate|GroupAdd|'
+        r'GroupClose|GroupDeactivate|Gui|'
+        r'GuiControl|GuiControlGet|Hotkey|'
+        r'IfEqual|IfExist|IfGreaterOrEqual|'
+        r'IfGreater|IfInString|IfLess|'
+        r'IfLessOrEqual|IfMsgBox|IfNotEqual|'
+        r'IfNotExist|IfNotInString|IfWinActive|'
+        r'IfWinExist|IfWinNotActive|IfWinNotExist|'
+        r'If |ImageSearch|IniDelete|'
+        r'IniRead|IniWrite|InputBox|'
+        r'Input|KeyHistory|KeyWait|'
+        r'ListHotkeys|ListLines|ListVars|'
+        r'Loop|Menu|MouseClickDrag|'
+        r'MouseClick|MouseGetPos|MouseMove|'
+        r'MsgBox|OnExit|OutputDebug|'
+        r'Pause|PixelGetColor|PixelSearch|'
+        r'PostMessage|Process|Progress|'
+        r'Random|RegDelete|RegRead|'
+        r'RegWrite|Reload|Repeat|'
+        r'Return|RunAs|RunWait|'
+        r'Run|SendEvent|SendInput|'
+        r'SendMessage|SendMode|SendPlay|'
+        r'SendRaw|Send|SetBatchLines|'
+        r'SetCapslockState|SetControlDelay|SetDefaultMouseSpeed|'
+        r'SetEnv|SetFormat|SetKeyDelay|'
+        r'SetMouseDelay|SetNumlockState|SetScrollLockState|'
+        r'SetStoreCapslockMode|SetTimer|SetTitleMatchMode|'
+        r'SetWinDelay|SetWorkingDir|Shutdown|'
+        r'Sleep|Sort|SoundBeep|'
+        r'SoundGet|SoundGetWaveVolume|SoundPlay|'
+        r'SoundSet|SoundSetWaveVolume|SplashImage|'
+        r'SplashTextOff|SplashTextOn|SplitPath|'
+        r'StatusBarGetText|StatusBarWait|StringCaseSense|'
+        r'StringGetPos|StringLeft|StringLen|'
+        r'StringLower|StringMid|StringReplace|'
+        r'StringRight|StringSplit|StringTrimLeft|'
+        r'StringTrimRight|StringUpper|Suspend|'
+        r'SysGet|Thread|ToolTip|'
+        r'Transform|TrayTip|URLDownloadToFile|'
+        r'While|WinActivate|WinActivateBottom|'
+        r'WinClose|WinGetActiveStats|WinGetActiveTitle|'
+        r'WinGetClass|WinGetPos|WinGetText|'
+        r'WinGetTitle|WinGet|WinHide|'
+        r'WinKill|WinMaximize|WinMenuSelectItem|'
+        r'WinMinimizeAllUndo|WinMinimizeAll|WinMinimize|'
+        r'WinMove|WinRestore|WinSetTitle|'
+        r'WinSet|WinShow|WinWaitActive|'
+        r'WinWaitClose|WinWaitNotActive|WinWait)\b',
              bygroups(Whitespace,  Name.Builtin)),
             ],
         'builtInFunctions': [
@@ -90,7 +169,7 @@ class AhkLexer(ExtendedRegexLexer):
         ],        
         'garbage': [
             (r'[^\S\n]', Text),
-#            (r'.', Text),      
+#            (r'.', Text),      # no cheating
             ],
     }
 

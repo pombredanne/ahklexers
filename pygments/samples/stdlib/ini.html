@@ -315,13 +315,13 @@
 <span class="n">ini_getValue</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">,</span> <span class="n">_PreserveSpace</span> <span class="o">=</span> <span class="nv">False</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span><span class="p">])</span>?
+        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*</span><span class="p">])</span><span class="o">?</span>
 <span class="w">    </span><span class="nb">Else</span>
     <span class="p">{</span>
-         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>
+         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    ; Note: The regex of this function was rewritten by Mystiq.</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aiU</span><span class="p">)(</span>?:\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?:\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*</span>?\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span>#<span class="p">]</span><span class="o">.*</span>?<span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=</span><span class="p">(</span><span class="o">.*</span><span class="p">)(</span>?<span class="o">=</span>\<span class="n">R</span><span class="o">|</span>$<span class="p">)</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">iU</span><span class="p">)(</span><span class="o">?:</span>\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?:</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*?</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span><span class="n">#</span><span class="p">]</span><span class="o">.*?</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=</span><span class="p">(</span><span class="o">.*</span><span class="p">)(</span><span class="o">?=</span>\<span class="n">R</span><span class="o">|</span><span class="n">$</span><span class="p">)</span>
 <span class="cm">/*</span>
 <span class="cm">    RegEx := &quot;`aiU)&quot;</span>
 <span class="cm">      . &quot;(?:\R|^)\s*&quot; . _Section . &quot;\s*&quot;         ;-- section</span>
@@ -338,7 +338,7 @@
 <span class="w">        </span><span class="nb">If </span><span class="n">Not</span> <span class="n">_PreserveSpace</span>
         <span class="p">{</span>
             <span class="n">Value1</span> <span class="o">=</span> <span class="nv">%Value1%</span><span class="c-Singleline"> ; Trim spaces.</span>
-            <span class="n">FirstChar</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">Value1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">FirstChar</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">Value1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">Value1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span>
                 <span class="n">OR</span> <span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;&#39;&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">Value1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;&#39;&quot;</span><span class="p">)</span>
             <span class="p">{</span>
@@ -380,12 +380,12 @@
 <span class="n">ini_getKey</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span><span class="p">])</span>?
+        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*</span><span class="p">])</span><span class="o">?</span>
 <span class="w">    </span><span class="nb">Else</span>
-         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span><span class="c-Singleline"></span>
+         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">    ; Note: The regex of this function was rewritten by Mystiq.</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aiU</span><span class="p">)(</span>?:\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?:\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*</span>?\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span>#<span class="p">]</span><span class="o">.*</span>?<span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span><span class="p">(</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=.*</span><span class="p">)(</span>?<span class="o">=</span>\<span class="n">R</span><span class="o">|</span>$<span class="p">)</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">iU</span><span class="p">)(</span><span class="o">?:</span>\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?:</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*?</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span><span class="n">#</span><span class="p">]</span><span class="o">.*?</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span><span class="p">(</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=.*</span><span class="p">)(</span><span class="o">?=</span>\<span class="n">R</span><span class="o">|</span><span class="n">$</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="nf">RegExMatch(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="n">Value</span><span class="p">)</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">Else</span>
@@ -420,10 +420,10 @@
 <span class="n">ini_getSection</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span><span class="p">])</span>?
+        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*</span><span class="p">])</span><span class="o">?</span>
 <span class="w">    </span><span class="nb">Else</span>
-         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aisUS</span><span class="p">)</span><span class="o">^.*</span><span class="p">(</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">R</span>?<span class="o">.*</span><span class="p">)(</span>?:\<span class="n">R</span><span class="o">*</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span>?<span class="o">|</span>\<span class="n">R</span><span class="p">))</span>?$
+         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">isUS</span><span class="p">)</span><span class="o">^.*</span><span class="p">(</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">R</span><span class="o">?.*</span><span class="p">)(</span><span class="o">?:</span>\<span class="n">R</span><span class="o">*</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*?|</span>\<span class="n">R</span><span class="p">))</span><span class="o">?</span><span class="n">$</span>
 <span class="w">    </span><span class="nb">If </span><span class="nf">RegExMatch(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="n">Value</span><span class="p">)</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">Else</span>
@@ -465,18 +465,18 @@
 <span class="cm">*/</span>
 <span class="n">ini_getAllValues</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">_count</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aisUmS</span><span class="p">)</span><span class="o">^</span><span class="p">(</span>?<span class="o">=.*</span><span class="p">)(</span>?:\<span class="n">s</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?<span class="o">.*</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">s</span><span class="o">*</span>?<span class="o">.+</span>\<span class="n">s</span><span class="o">*</span>?<span class="o">=</span><span class="p">(</span><span class="o">.*</span><span class="p">))(</span>?<span class="o">=.*</span><span class="p">)</span>$
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">isUmS</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="o">?=.*</span><span class="p">)(</span><span class="o">?:</span>\<span class="n">s</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*?.*</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">s</span><span class="o">*?.+</span>\<span class="n">s</span><span class="o">*?=</span><span class="p">(</span><span class="o">.*</span><span class="p">))(</span><span class="o">?=.*</span><span class="p">)</span><span class="n">$</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">Values</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">),</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1`n&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
+        <span class="n">Values</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">),</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1`n&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Else</span>
-        <span class="n">Values</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1`n&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
+        <span class="n">Values</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1`n&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">Match</span>
     <span class="p">{</span>
-        <span class="n">Values</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">Values</span><span class="p">,</span> <span class="s">&quot;`aS)\R+&quot;</span><span class="p">,</span> <span class="s">&quot;`n&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+        <span class="n">Values</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">Values</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`a</span><span class="s">S)\R+&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Workaround, sometimes it catches sections. Whitespaces only should be eliminated also.</span>
-        <span class="n">Values</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">Values</span><span class="p">,</span> <span class="s">&quot;`aS)\[.*?]\R+|\R+$|\R+ +$&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
-<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Values</span><span class="p">,</span> <span class="n">Values</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
-        <span class="n">_count</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="mi">0</span>
+        <span class="n">Values</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">Values</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`a</span><span class="s">S)\[.*?]\R+|\R+$|\R+ +$&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
+<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Values</span><span class="p">,</span> <span class="n">Values</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+        <span class="n">_count</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="mi">0</span>
 <span class="w">        </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">Values</span><span class="p">,</span> <span class="n">Values</span><span class="p">,</span> <span class="mi">1</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">}</span>
@@ -513,18 +513,18 @@
 <span class="cm">*/</span>
 <span class="n">ini_getAllKeyNames</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">_count</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aisUmS</span><span class="p">)</span><span class="o">^.*</span><span class="p">(</span>?:\<span class="n">s</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?<span class="o">.*</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">(</span><span class="o">.+</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span>?<span class="o">=.*</span><span class="p">)</span><span class="o">.*</span>$
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">isUmS</span><span class="p">)</span><span class="o">^.*</span><span class="p">(</span><span class="o">?:</span>\<span class="n">s</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*?.*</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">s</span><span class="o">*?</span><span class="p">(</span><span class="o">.+</span><span class="p">)</span>\<span class="n">s</span><span class="o">*?=.*</span><span class="p">)</span><span class="o">.*</span><span class="n">$</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">KeyNames</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">),</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
+        <span class="n">KeyNames</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">),</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Else</span>
-        <span class="n">KeyNames</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
+        <span class="n">KeyNames</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">Match</span>
     <span class="p">{</span>
-        <span class="n">KeyNames</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">KeyNames</span><span class="p">,</span> <span class="s">&quot;S)\R+&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+        <span class="n">KeyNames</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">KeyNames</span><span class="p">,</span> <span class="s">&quot;S)\R+&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Workaround, sometimes it catches sections. Whitespaces only should be eliminated also.</span>
-        <span class="n">KeyNames</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">KeyNames</span><span class="p">,</span> <span class="s">&quot;S)\[.*?],+|,+$|,+ +&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
-<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">KeyNames</span><span class="p">,</span> <span class="n">KeyNames</span><span class="p">,</span> `<span class="p">,,</span> `<span class="p">,,</span> <span class="n">UseErrorLevel</span>
-        <span class="n">_count</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="mi">0</span>
+        <span class="n">KeyNames</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">KeyNames</span><span class="p">,</span> <span class="s">&quot;S)\[.*?],+|,+$|,+ +&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
+<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">KeyNames</span><span class="p">,</span> <span class="n">KeyNames</span><span class="p">,</span> <span class="se">`,</span><span class="p">,</span> <span class="se">`,</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+        <span class="n">_count</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="mi">0</span>
 <span class="w">        </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">KeyNames</span><span class="p">,</span> <span class="n">KeyNames</span><span class="p">,</span> <span class="mi">1</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">}</span>
@@ -559,16 +559,16 @@
 <span class="cm">*/</span>
 <span class="n">ini_getAllSectionNames</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">_count</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aisUmS</span><span class="p">)</span><span class="o">^.*</span><span class="p">(</span>?:\<span class="n">s</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">(</span><span class="o">.*</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>\<span class="n">s</span><span class="o">*|.+=.*</span><span class="p">)</span><span class="o">.*</span>$
-    <span class="n">SectionNames</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">,</span> <span class="n">MatchNum</span><span class="p">)</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">isUmS</span><span class="p">)</span><span class="o">^.*</span><span class="p">(</span><span class="o">?:</span>\<span class="n">s</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span><span class="p">(</span><span class="o">.*</span><span class="p">)</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>\<span class="n">s</span><span class="o">*|.+=.*</span><span class="p">)</span><span class="o">.*</span><span class="n">$</span>
+    <span class="n">SectionNames</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">,</span> <span class="n">MatchNum</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">MatchNum</span>
     <span class="p">{</span>
-        <span class="n">SectionNames</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">SectionNames</span><span class="p">,</span> <span class="s">&quot;S)\R+&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">_count</span><span class="p">)</span><span class="c-Singleline"></span>
+        <span class="n">SectionNames</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">SectionNames</span><span class="p">,</span> <span class="s">&quot;S)\R+&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">_count</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">        ; Workaround, whitespaces only should be eliminated.</span>
-        <span class="n">SectionNames</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">SectionNames</span><span class="p">,</span> <span class="s">&quot;S),+ +&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
-<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">SectionNames</span><span class="p">,</span> <span class="n">SectionNames</span><span class="p">,</span> `<span class="p">,,</span> `<span class="p">,,</span> <span class="n">UseErrorLevel</span>
-        <span class="n">_count</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span> ? <span class="nv">ErrorLevel</span> : <span class="mi">0</span>
-        <span class="n">_count</span> :<span class="o">=</span> <span class="n">_count</span> ? <span class="n">_count</span> : <span class="mi">0</span>
+        <span class="n">SectionNames</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">SectionNames</span><span class="p">,</span> <span class="s">&quot;S),+ +&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span> 
+<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">SectionNames</span><span class="p">,</span> <span class="n">SectionNames</span><span class="p">,</span> <span class="se">`,</span><span class="p">,</span> <span class="se">`,</span><span class="p">,</span> <span class="n">UseErrorLevel</span>
+        <span class="n">_count</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span> <span class="o">?</span> <span class="nv">ErrorLevel</span> <span class="o">:</span> <span class="mi">0</span>
+        <span class="n">_count</span> <span class="o">:=</span> <span class="n">_count</span> <span class="o">?</span> <span class="n">_count</span> <span class="o">:</span> <span class="mi">0</span>
 <span class="w">        </span><span class="nb">StringTrimRight</span><span class="p">,</span> <span class="n">SectionNames</span><span class="p">,</span> <span class="n">SectionNames</span><span class="p">,</span> <span class="mi">1</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">}</span>
@@ -620,13 +620,13 @@
 <span class="n">ini_replaceValue</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">,</span> <span class="n">_Replacement</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">_PreserveSpace</span> <span class="o">=</span> <span class="nv">False</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span><span class="p">])</span>?
+        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*</span><span class="p">])</span><span class="o">?</span>
 <span class="w">    </span><span class="nb">Else</span>
-         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>
+         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">Not</span> <span class="n">_PreserveSpace</span>
     <span class="p">{</span>
         <span class="n">_Replacement</span> <span class="o">=</span> <span class="nv">%_Replacement%</span><span class="c-Singleline"> ; Trim spaces.</span>
-        <span class="n">FirstChar</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">_Replacement</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">FirstChar</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">_Replacement</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">_Replacement</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span>
             <span class="n">OR</span> <span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;&#39;&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">_Replacement</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;&#39;&quot;</span><span class="p">)</span>
         <span class="p">{</span>
@@ -635,8 +635,8 @@
         <span class="p">}</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    ; Note: The regex of this function was written by Mystiq.</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aiU</span><span class="p">)((</span>?:\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?:\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*</span>?\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span>#<span class="p">]</span><span class="o">.*</span>?<span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=</span><span class="p">)</span><span class="o">.*</span><span class="p">((</span>?<span class="o">=</span>\<span class="n">R</span><span class="o">|</span>$<span class="p">))</span>
-    <span class="n">_Content</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Replacement</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isReplaced</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">iU</span><span class="p">)((</span><span class="o">?:</span>\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?:</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*?</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span><span class="n">#</span><span class="p">]</span><span class="o">.*?</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=</span><span class="p">)</span><span class="o">.*</span><span class="p">((</span><span class="o">?=</span>\<span class="n">R</span><span class="o">|</span><span class="n">$</span><span class="p">))</span>
+    <span class="n">_Content</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Replacement</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isReplaced</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">isReplaced</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">Else</span>
@@ -675,17 +675,17 @@
 <span class="n">ini_replaceKey</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">,</span> <span class="n">_Replacement</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span><span class="p">])</span>?
+        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*</span><span class="p">])</span><span class="o">?</span>
 <span class="w">    </span><span class="nb">Else</span>
-         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>
+         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">_Replacement</span> <span class="o">!=</span>
     <span class="p">{</span>
         <span class="n">_Replacement</span> <span class="o">=</span> <span class="nv">%_Replacement%</span>
-        <span class="n">_Replacement</span> <span class="o">=</span> `<span class="n">n</span><span class="nv">%_Replacement%</span>
+        <span class="n">_Replacement</span> <span class="o">=</span> <span class="se">`n</span><span class="nv">%_Replacement%</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    ; Note: The regex of this function was written by Mystiq.</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aiU</span><span class="p">)((</span>?:\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?:\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*</span>?\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span>#<span class="p">]</span><span class="o">.*</span>?<span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span><span class="p">)</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=.*</span><span class="p">((</span>?<span class="o">=</span>\<span class="n">R</span><span class="o">|</span>$<span class="p">))</span>
-    <span class="n">_Content</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Replacement</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isReplaced</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">iU</span><span class="p">)((</span><span class="o">?:</span>\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?:</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*?</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span><span class="n">#</span><span class="p">]</span><span class="o">.*?</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span><span class="p">)</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=.*</span><span class="p">((</span><span class="o">?=</span>\<span class="n">R</span><span class="o">|</span><span class="n">$</span><span class="p">))</span>
+    <span class="n">_Content</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Replacement</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isReplaced</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">isReplaced</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">Else</span>
@@ -724,11 +724,11 @@
 <span class="n">ini_replaceSection</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Replacement</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span><span class="p">])</span>?
+        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*</span><span class="p">])</span><span class="o">?</span>
 <span class="w">    </span><span class="nb">Else</span>
-         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aisU</span><span class="p">)</span><span class="o">^</span><span class="p">(</span>\<span class="n">s</span><span class="o">*</span>?<span class="o">.*</span><span class="p">)</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">R</span>?<span class="o">.*</span><span class="p">(</span>\<span class="n">R</span><span class="o">*</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?:\<span class="p">[</span><span class="o">.*|</span>\<span class="n">R</span><span class="p">))</span>?$ 
-    <span class="n">_Content</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Replacement</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isReplaced</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">isU</span><span class="p">)</span><span class="o">^</span><span class="p">(</span>\<span class="n">s</span><span class="o">*?.*</span><span class="p">)</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">R</span><span class="o">?.*</span><span class="p">(</span>\<span class="n">R</span><span class="o">*</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*|</span>\<span class="n">R</span><span class="p">))</span><span class="o">?</span><span class="n">$</span> 
+    <span class="n">_Content</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Replacement</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isReplaced</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">isReplaced</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">Else</span>
@@ -772,13 +772,13 @@
 <span class="n">ini_insertValue</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">,</span> <span class="n">_Value</span><span class="p">,</span> <span class="n">_PreserveSpace</span> <span class="o">=</span> <span class="nv">False</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span>?:\<span class="p">[</span><span class="o">.*</span><span class="p">])</span>?
+        <span class="n">_Section</span> <span class="o">=</span> <span class="p">(</span><span class="o">?:</span>\<span class="p">[</span><span class="o">.*</span><span class="p">])</span><span class="o">?</span>
 <span class="w">    </span><span class="nb">Else</span>
-         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>
+         <span class="n">_Section</span> <span class="o">=</span> \<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">Not</span> <span class="n">_PreserveSpace</span>
     <span class="p">{</span>
         <span class="n">_Value</span> <span class="o">=</span> <span class="nv">%_Value%</span><span class="c-Singleline"> ; Trim spaces.</span>
-        <span class="n">FirstChar</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">_Value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">FirstChar</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">_Value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">If</span> <span class="p">(</span><span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">_Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span>
             <span class="n">OR</span> <span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;&#39;&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">_Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;&#39;&quot;</span><span class="p">)</span>
         <span class="p">{</span>
@@ -787,8 +787,8 @@
         <span class="p">}</span>
     <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">    ; Note: The regex of this function was written by Mystiq.</span>
-    <span class="n">RegEx</span> <span class="o">=</span> <span class="n">S</span>`<span class="n">aiU</span><span class="p">)((</span>?:\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?:\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*</span>?\<span class="n">s</span><span class="o">*</span><span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span>#<span class="p">]</span><span class="o">.*</span>?<span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=.*</span>?<span class="p">)((</span>?<span class="o">=</span>\<span class="n">R</span><span class="o">|</span>$<span class="p">))</span>
-    <span class="n">_Content</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Value</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isInserted</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="n">S</span><span class="se">`a</span><span class="n">iU</span><span class="p">)((</span><span class="o">?:</span>\<span class="n">R</span><span class="o">|^</span><span class="p">)</span>\<span class="n">s</span><span class="o">*</span><span class="nv">%_Section%</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?:</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*.+</span>\<span class="n">s</span><span class="o">*=</span>\<span class="n">s</span><span class="o">*.*?</span>\<span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">)</span><span class="o">|</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span><span class="p">[;</span><span class="n">#</span><span class="p">]</span><span class="o">.*?</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">))</span><span class="o">*</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">Q</span><span class="nv">%_Key%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*=.*?</span><span class="p">)((</span><span class="o">?=</span>\<span class="n">R</span><span class="o">|</span><span class="n">$</span><span class="p">))</span>
+    <span class="n">_Content</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span> <span class="o">.</span> <span class="n">_Value</span> <span class="o">.</span> <span class="s">&quot;$2&quot;</span><span class="p">,</span> <span class="n">isInserted</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">isInserted</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">Else</span>
@@ -825,12 +825,12 @@
 <span class="n">ini_insertKey</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">_Key</span><span class="p">,</span> <span class="o">%</span> <span class="nf">InStr(</span><span class="n">_Key</span><span class="p">,</span> <span class="s">&quot;=&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="n">sectionCopy</span> :<span class="o">=</span> <span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">)</span>
-    <span class="n">keyList</span> :<span class="o">=</span> <span class="n">ini_getAllKeyNames</span><span class="p">(</span><span class="n">sectionCopy</span><span class="p">)</span>
+    <span class="n">sectionCopy</span> <span class="o">:=</span> <span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">)</span>
+    <span class="n">keyList</span> <span class="o">:=</span> <span class="n">ini_getAllKeyNames</span><span class="p">(</span><span class="n">sectionCopy</span><span class="p">)</span>
     <span class="n">isInserted</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">K</span> <span class="n">Not</span> <span class="n">In</span> <span class="nv">%keyList%</span>
     <span class="p">{</span>
-        <span class="n">sectionCopy</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="o">.</span> <span class="n">_Key</span>
+        <span class="n">sectionCopy</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">_Key</span>
         <span class="n">isInserted</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">isInserted</span>
@@ -871,10 +871,10 @@
 <span class="cm">*/</span>
 <span class="n">ini_insertSection</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Keys</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">RegEx</span> <span class="o">=</span> `<span class="n">aisU</span><span class="p">)</span><span class="o">^.*</span>\<span class="n">R</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*</span>?\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*</span>?<span class="p">]</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">R</span><span class="o">+.*</span>$
+    <span class="n">RegEx</span> <span class="o">=</span> <span class="se">`a</span><span class="n">isU</span><span class="p">)</span><span class="o">^.*</span>\<span class="n">R</span><span class="o">*</span>\<span class="p">[</span>\<span class="n">s</span><span class="o">*?</span>\<span class="n">Q</span><span class="nv">%_Section%</span>\<span class="n">E</span>\<span class="n">s</span><span class="o">*?</span><span class="p">]</span>\<span class="n">s</span><span class="o">*</span>\<span class="n">R</span><span class="o">+.*</span><span class="n">$</span>
 <span class="w">    </span><span class="nb">If </span><span class="n">Not</span> <span class="nf">RegExMatch(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">RegEx</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">_Content</span> <span class="o">=</span> <span class="nv">%_Content%</span>`<span class="n">n</span><span class="p">[</span><span class="nv">%_Section%</span><span class="p">]</span>`<span class="n">n</span><span class="nv">%_Keys%</span>
+        <span class="n">_Content</span> <span class="o">=</span> <span class="nv">%_Content%</span><span class="se">`n</span><span class="p">[</span><span class="nv">%_Section%</span><span class="p">]</span><span class="se">`n</span><span class="nv">%_Keys%</span>
         <span class="n">isInserted</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">}</span>
@@ -951,11 +951,11 @@
 <span class="n">ini_load</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Path</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">_convertNewLine</span> <span class="o">=</span> <span class="nv">false</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">ini_buildPath</span><span class="p">(</span><span class="n">_Path</span><span class="p">)</span>
-    <span class="n">error</span> :<span class="o">=</span> <span class="nv">true</span><span class="c-Singleline"> ; If file is found next, then its set to false.</span>
+    <span class="n">error</span> <span class="o">:=</span> <span class="nv">true</span><span class="c-Singleline"> ; If file is found next, then its set to false.</span>
 <span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%_Path%</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
     <span class="p">{</span>
-        <span class="n">_Path</span> :<span class="o">=</span> <span class="nv">A_LoopFileLongPath</span>
-        <span class="n">error</span> :<span class="o">=</span> <span class="nv">false</span>
+        <span class="n">_Path</span> <span class="o">:=</span> <span class="nv">A_LoopFileLongPath</span>
+        <span class="n">error</span> <span class="o">:=</span> <span class="nv">false</span>
 <span class="w">        </span><span class="nb">Break</span>
     <span class="p">}</span>    
     <span class="n">If</span> <span class="p">(</span><span class="n">error</span> <span class="o">=</span> <span class="nv">false</span><span class="p">)</span>
@@ -963,26 +963,26 @@
 <span class="w">        </span><span class="nb">FileRead</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> <span class="nv">%_Path%</span>
         <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span><span class="p">)</span>
         <span class="p">{</span>
-            <span class="n">error</span> :<span class="o">=</span> <span class="nv">true</span>
+            <span class="n">error</span> <span class="o">:=</span> <span class="nv">true</span>
         <span class="p">}</span>
 <span class="w">        </span><span class="nb">Else</span>
         <span class="p">{</span>
 <span class="w">            </span><span class="nb">FileGetSize</span><span class="p">,</span> <span class="n">fileSize</span><span class="p">,</span> <span class="nv">%_Path%</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">fileSize</span> <span class="o">!=</span> <span class="nf">StrLen(</span><span class="n">_Content</span><span class="p">))</span>
             <span class="p">{</span>
-                <span class="n">error</span> :<span class="o">=</span> <span class="nv">true</span>
+                <span class="n">error</span> <span class="o">:=</span> <span class="nv">true</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">_Content</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">_Content</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">_convertNewLine</span><span class="p">)</span>
     <span class="p">{</span>
-<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> `<span class="n">r</span>`<span class="n">n</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> <span class="n">All</span>
+<span class="w">        </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> <span class="se">`r`n</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="n">All</span>
     <span class="p">}</span>
-    <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">error</span>
+    <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">error</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">_Path</span>
 <span class="p">}</span>
 
@@ -1031,12 +1031,12 @@
 <span class="n">ini_save</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_Path</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">_convertNewLine</span> <span class="o">=</span> <span class="nv">true</span><span class="p">,</span> <span class="n">_overwrite</span> <span class="o">=</span> <span class="nv">true</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">ini_buildPath</span><span class="p">(</span><span class="n">_Path</span><span class="p">)</span>
-    <span class="n">error</span> :<span class="o">=</span> <span class="nv">false</span>
+    <span class="n">error</span> <span class="o">:=</span> <span class="nv">false</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_overwrite</span><span class="p">)</span>
     <span class="p">{</span>
 <span class="w">        </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%_Path%</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
         <span class="p">{</span>
-            <span class="n">_Path</span> :<span class="o">=</span> <span class="nv">A_LoopFileLongPath</span>
+            <span class="n">_Path</span> <span class="o">:=</span> <span class="nv">A_LoopFileLongPath</span>
 <span class="w">            </span><span class="nb">Break</span>
         <span class="p">}</span>    
 <span class="w">        </span><span class="nb">If </span><span class="nf">FileExist(</span><span class="n">_Path</span><span class="p">)</span>
@@ -1044,13 +1044,13 @@
 <span class="w">            </span><span class="nb">FileDelete</span><span class="p">,</span> <span class="nv">%_Path%</span>
             <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span><span class="p">)</span>
             <span class="p">{</span>
-                <span class="n">error</span> :<span class="o">=</span> <span class="nv">true</span>
+                <span class="n">error</span> <span class="o">:=</span> <span class="nv">true</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Else</span> <span class="n">If</span> <span class="nf">FileExist(</span><span class="n">_Path</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">error</span> :<span class="o">=</span> <span class="nv">true</span>
+        <span class="n">error</span> <span class="o">:=</span> <span class="nv">true</span>
     <span class="p">}</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">error</span> <span class="o">=</span> <span class="nv">false</span><span class="p">)</span>
     <span class="p">{</span>
@@ -1064,10 +1064,10 @@
         <span class="p">}</span>
         <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span><span class="p">)</span>
         <span class="p">{</span>
-            <span class="n">error</span> :<span class="o">=</span> <span class="nv">true</span>
+            <span class="n">error</span> <span class="o">:=</span> <span class="nv">true</span>
         <span class="p">}</span>
     <span class="p">}</span>
-    <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">error</span>
+    <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">error</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">_Path</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
@@ -1077,7 +1077,7 @@
 <span class="c-Singleline">    ; Set to default wildcard if filename or exension are not set.</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Path</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">_Path</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="nv">A_ScriptFullPath</span><span class="p">,</span> <span class="s">&quot;S)\..*?$&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;.ini&quot;</span>
+        <span class="n">_Path</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="nv">A_ScriptFullPath</span><span class="p">,</span> <span class="s">&quot;S)\..*?$&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;.ini&quot;</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">_Path</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="s">&quot;\&quot;</span><span class="p">)</span>
     <span class="p">{</span>
@@ -1096,17 +1096,17 @@
 <span class="w">            </span><span class="nb">SplitPath</span><span class="p">,</span> <span class="n">_Path</span><span class="p">,,</span> <span class="n">fileDir</span><span class="p">,</span> <span class="n">fileExtension</span><span class="p">,</span> <span class="n">fileNameNoExt</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">fileDir</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
             <span class="p">{</span>
-                <span class="n">fileDir</span> :<span class="o">=</span> <span class="nv">A_WorkingDir</span>
+                <span class="n">fileDir</span> <span class="o">:=</span> <span class="nv">A_WorkingDir</span>
             <span class="p">}</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">fileExtension</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
             <span class="p">{</span>
-                <span class="n">fileExtension</span> :<span class="o">=</span> <span class="s">&quot;ini&quot;</span>
+                <span class="n">fileExtension</span> <span class="o">:=</span> <span class="s">&quot;ini&quot;</span>
             <span class="p">}</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">fileNameNoExt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
             <span class="p">{</span>
-                <span class="n">fileNameNoExt</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="nv">A_ScriptName</span><span class="p">,</span> <span class="s">&quot;S)\..*?$&quot;</span><span class="p">)</span>
+                <span class="n">fileNameNoExt</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="nv">A_ScriptName</span><span class="p">,</span> <span class="s">&quot;S)\..*?$&quot;</span><span class="p">)</span>
             <span class="p">}</span>
-            <span class="n">_Path</span> :<span class="o">=</span> <span class="n">fileDir</span> <span class="o">.</span> <span class="s">&quot;\&quot;</span> <span class="o">.</span> <span class="n">fileNameNoExt</span> <span class="o">.</span> <span class="s">&quot;.&quot;</span> <span class="o">.</span> <span class="n">fileExtension</span>
+            <span class="n">_Path</span> <span class="o">:=</span> <span class="n">fileDir</span> <span class="o">.</span> <span class="s">&quot;\&quot;</span> <span class="o">.</span> <span class="n">fileNameNoExt</span> <span class="o">.</span> <span class="s">&quot;.&quot;</span> <span class="o">.</span> <span class="n">fileExtension</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span>
@@ -1179,22 +1179,22 @@
 <span class="cm">cat=     &#39;miao&#39;</span>
 <span class="cm">    (end)</span>
 <span class="cm">*/</span>
-<span class="n">ini_repair</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_PreserveSpace</span> <span class="o">=</span> <span class="nv">False</span><span class="p">,</span> <span class="n">_CommentSymbols</span> <span class="o">=</span> <span class="s">&quot;;#&quot;</span><span class="p">,</span> <span class="n">_LineDelim</span> <span class="o">=</span> <span class="s">&quot;`n&quot;</span><span class="p">)</span>
+<span class="n">ini_repair</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_PreserveSpace</span> <span class="o">=</span> <span class="nv">False</span><span class="p">,</span> <span class="n">_CommentSymbols</span> <span class="o">=</span> <span class="s">&quot;;#&quot;</span><span class="p">,</span> <span class="n">_LineDelim</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_CommentSymbols</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">regex</span> <span class="o">=</span> `<span class="n">aiUSm</span><span class="p">)(</span>?:\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span><span class="p">(</span><span class="n">s</span><span class="o">*|</span>\<span class="n">t</span><span class="o">*</span><span class="p">))[</span><span class="nv">%_CommentSymbols%</span><span class="p">]</span><span class="o">.*</span>?<span class="p">(</span>?<span class="o">=</span>\<span class="n">R</span><span class="p">)</span>
-        <span class="n">_Content</span> :<span class="o">=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">)</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="se">`a</span><span class="n">iUSm</span><span class="p">)(</span><span class="o">?:</span>\<span class="n">R</span>\<span class="n">s</span><span class="o">*|</span><span class="p">(</span><span class="n">s</span><span class="o">*|</span>\<span class="n">t</span><span class="o">*</span><span class="p">))[</span><span class="nv">%_CommentSymbols%</span><span class="p">]</span><span class="o">.*?</span><span class="p">(</span><span class="o">?=</span>\<span class="n">R</span><span class="p">)</span>
+        <span class="n">_Content</span> <span class="o">:=</span> <span class="nf">RegExReplace(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="s">&quot;$1&quot;</span><span class="p">)</span>
     <span class="p">}</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`r</span>
     <span class="p">{</span>
-        <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;`aiSm)\[\s*(.+?)\s*]&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">))</span>
+        <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`a</span><span class="s">iSm)\[\s*(.+?)\s*]&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">))</span>
         <span class="p">{</span>
             <span class="n">newIni</span> <span class="o">.=</span> <span class="n">_LineDelim</span> <span class="o">.</span> <span class="s">&quot;[&quot;</span> <span class="o">.</span> <span class="n">Match1</span> <span class="o">.</span> <span class="s">&quot;]&quot;</span>
-            <span class="n">section</span> :<span class="o">=</span> <span class="n">Match1</span>
-            <span class="n">KeyList</span> :<span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="n">section</span> <span class="o">:=</span> <span class="n">Match1</span>
+            <span class="n">KeyList</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
         <span class="p">}</span>
-<span class="w">        </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;`aiSm)\s*(\b(?:.+?|\s?)\b)\s*=(.*)&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">))</span>
+<span class="w">        </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`a</span><span class="s">iSm)\s*(\b(?:.+?|\s?)\b)\s*=(.*)&quot;</span><span class="p">,</span> <span class="n">Match</span><span class="p">))</span>
         <span class="p">{</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">_PreserveSpace</span> <span class="o">=</span> <span class="nv">false</span><span class="p">)</span>
             <span class="p">{</span>
@@ -1216,11 +1216,11 @@
 <span class="w">    </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">newIni</span><span class="p">,</span> <span class="n">newIni</span><span class="p">,</span> <span class="nv">%_LineDelim%</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">newIni</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="mi">0</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="mi">0</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Else</span>
     <span class="p">{</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="mi">1</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="mi">1</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">newIni</span>
 <span class="p">}</span>
@@ -1304,28 +1304,28 @@
 <span class="cm">*/</span>
 <span class="n">ini_mergeKeys</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">_source</span><span class="p">,</span> <span class="n">_updateMode</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">steps</span> :<span class="o">=</span> <span class="mi">0</span>
-    <span class="n">laststep</span> :<span class="o">=</span> <span class="mi">0</span>
-    <span class="n">destSectionNames</span> :<span class="o">=</span> <span class="n">ini_getAllSectionNames</span><span class="p">(</span><span class="n">_Content</span><span class="p">),</span> <span class="n">sourceSectionNames</span> :<span class="o">=</span> <span class="n">ini_getAllSectionNames</span><span class="p">(</span><span class="n">_source</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">sourceSectionNames</span><span class="p">,</span> `<span class="p">,</span>
+    <span class="n">steps</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="n">laststep</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="n">destSectionNames</span> <span class="o">:=</span> <span class="n">ini_getAllSectionNames</span><span class="p">(</span><span class="n">_Content</span><span class="p">),</span> <span class="n">sourceSectionNames</span> <span class="o">:=</span> <span class="n">ini_getAllSectionNames</span><span class="p">(</span><span class="n">_source</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">sourceSectionNames</span><span class="p">,</span> <span class="se">`,</span>
     <span class="p">{</span>
-        <span class="n">sectionName</span> :<span class="o">=</span> <span class="nv">A_LoopField</span>
-        <span class="n">sourceSection</span> :<span class="o">=</span> <span class="n">ini_getSection</span><span class="p">(</span><span class="n">_source</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">)</span>
+        <span class="n">sectionName</span> <span class="o">:=</span> <span class="nv">A_LoopField</span>
+        <span class="n">sourceSection</span> <span class="o">:=</span> <span class="n">ini_getSection</span><span class="p">(</span><span class="n">_source</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">If </span><span class="n">sectionName</span> <span class="n">Not</span> <span class="n">In</span> <span class="nv">%destSectionNames%</span>
         <span class="p">{</span>
-            <span class="n">_Content</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="o">.</span> <span class="n">sourceSection</span>
+            <span class="n">_Content</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">sourceSection</span>
             <span class="n">steps</span><span class="o">++</span>
 <span class="w">            </span><span class="nb">Continue</span>
         <span class="p">}</span>
 <span class="w">        </span><span class="nb">Else</span>
         <span class="p">{</span>
-            <span class="n">destSection</span> :<span class="o">=</span> <span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">),</span> <span class="n">destKeyNames</span> :<span class="o">=</span> <span class="n">ini_getAllKeyNames</span><span class="p">(</span><span class="n">destSection</span><span class="p">),</span> <span class="n">sourceKeyNames</span> :<span class="o">=</span> <span class="n">ini_getAllKeyNames</span><span class="p">(</span><span class="n">sourceSection</span><span class="p">)</span>
-<span class="w">            </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">sourceKeyNames</span><span class="p">,</span> `<span class="p">,</span>
+            <span class="n">destSection</span> <span class="o">:=</span> <span class="n">ini_getSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">),</span> <span class="n">destKeyNames</span> <span class="o">:=</span> <span class="n">ini_getAllKeyNames</span><span class="p">(</span><span class="n">destSection</span><span class="p">),</span> <span class="n">sourceKeyNames</span> <span class="o">:=</span> <span class="n">ini_getAllKeyNames</span><span class="p">(</span><span class="n">sourceSection</span><span class="p">)</span>
+<span class="w">            </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">sourceKeyNames</span><span class="p">,</span> <span class="se">`,</span>
             <span class="p">{</span>
-                <span class="n">keyName</span> :<span class="o">=</span> <span class="nv">A_LoopField</span>
+                <span class="n">keyName</span> <span class="o">:=</span> <span class="nv">A_LoopField</span>
 <span class="w">                </span><span class="nb">If </span><span class="n">keyName</span> <span class="n">Not</span> <span class="n">In</span> <span class="nv">%destKeyNames%</span>
                 <span class="p">{</span>
-                    <span class="n">destSection</span> <span class="o">.=</span> <span class="s">&quot;`n&quot;</span> <span class="o">.</span> <span class="n">ini_getKey</span><span class="p">(</span><span class="n">sourceSection</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">keyName</span><span class="p">)</span>
+                    <span class="n">destSection</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">ini_getKey</span><span class="p">(</span><span class="n">sourceSection</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">keyName</span><span class="p">)</span>
                     <span class="n">steps</span><span class="o">++</span>
 <span class="w">                    </span><span class="nb">Continue</span>
                 <span class="p">}</span>
@@ -1341,7 +1341,7 @@
                 <span class="p">}</span>
 <span class="w">                </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">_updateMode</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
                 <span class="p">{</span>
-                    <span class="n">If</span> <span class="p">((</span><span class="n">sourceValue</span> :<span class="o">=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">sourceSection</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">keyName</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">destSection</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">keyName</span><span class="p">))</span>
+                    <span class="n">If</span> <span class="p">((</span><span class="n">sourceValue</span> <span class="o">:=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">sourceSection</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">keyName</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">destSection</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">keyName</span><span class="p">))</span>
                     <span class="p">{</span>
                         <span class="n">ini_replaceValue</span><span class="p">(</span><span class="n">destSection</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">keyName</span><span class="p">,</span> <span class="n">sourceValue</span><span class="p">)</span>
                         <span class="n">steps</span><span class="o">++</span>
@@ -1355,18 +1355,18 @@
             <span class="p">}</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">laststep</span> <span class="o">!=</span> <span class="n">steps</span><span class="p">)</span>
             <span class="p">{</span>
-                <span class="n">laststep</span> :<span class="o">=</span> <span class="n">steps</span>
+                <span class="n">laststep</span> <span class="o">:=</span> <span class="n">steps</span>
                 <span class="n">ini_replaceSection</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">destSection</span><span class="p">)</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">steps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="mi">0</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="mi">0</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Else</span>
     <span class="p">{</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="mi">1</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="mi">1</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="n">steps</span>
 <span class="p">}</span><span class="c-Singleline"></span>
@@ -1463,23 +1463,23 @@
 <span class="cm">*/</span>
 <span class="n">ini_exportToGlobals</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Content</span><span class="p">,</span> <span class="n">_CreateIndexVars</span> <span class="o">=</span> <span class="nv">false</span><span class="p">,</span> <span class="n">_Prefix</span> <span class="o">=</span> <span class="s">&quot;ini&quot;</span><span class="p">,</span> <span class="n">_Seperator</span> <span class="o">=</span> <span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="n">_SectionSpaces</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">_PreserveSpace</span> <span class="o">=</span> <span class="nv">False</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">Global</span>
-    <span class="n">Local</span> <span class="n">secCount</span> :<span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keyCount</span> :<span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span> :<span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Section1</span><span class="p">,</span> <span class="n">currSection</span><span class="p">,</span> <span class="n">Pair</span><span class="p">,</span> <span class="n">Pair1</span><span class="p">,</span> <span class="n">Pair2</span><span class="p">,</span> <span class="n">FirstChar</span>
+<span class="w">    </span><span class="nb">Global</span>
+<span class="w">    </span><span class="nb">Local</span> <span class="n">secCount</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keyCount</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Section1</span><span class="p">,</span> <span class="n">currSection</span><span class="p">,</span> <span class="n">Pair</span><span class="p">,</span> <span class="n">Pair1</span><span class="p">,</span> <span class="n">Pair2</span><span class="p">,</span> <span class="n">FirstChar</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Prefix</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="n">_Prefix</span> <span class="o">.=</span> <span class="n">_Seperator</span>
     <span class="p">}</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> `<span class="n">n</span><span class="p">,</span> `<span class="n">r</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">_Content</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="se">`r</span>
     <span class="p">{</span>
-        <span class="n">If</span> <span class="p">(</span><span class="n">Not</span> <span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;`aiSm)\[\s*(.+?)\s*]&quot;</span><span class="p">,</span> <span class="n">Section</span><span class="p">))</span>
+        <span class="n">If</span> <span class="p">(</span><span class="n">Not</span> <span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`a</span><span class="s">iSm)\[\s*(.+?)\s*]&quot;</span><span class="p">,</span> <span class="n">Section</span><span class="p">))</span>
         <span class="p">{</span>
-            <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;`aiSm)\s*(\b(?:.+?|\s?)\b)\s*=(.*)&quot;</span><span class="p">,</span> <span class="n">Pair</span><span class="p">))</span>
+            <span class="n">If</span> <span class="p">(</span><span class="nf">RegExMatch(</span><span class="nv">A_LoopField</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">`a</span><span class="s">iSm)\s*(\b(?:.+?|\s?)\b)\s*=(.*)&quot;</span><span class="p">,</span> <span class="n">Pair</span><span class="p">))</span>
             <span class="p">{</span>
-                <span class="n">If</span> <span class="p">(</span>!<span class="n">_PreserveSpace</span><span class="p">)</span>
+                <span class="n">If</span> <span class="p">(</span><span class="o">!</span><span class="n">_PreserveSpace</span><span class="p">)</span>
                 <span class="p">{</span>
 <span class="w">                    </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">Pair1</span><span class="p">,</span> <span class="n">Pair1</span><span class="p">,</span> <span class="nv">%A_Space%</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
                     <span class="n">Pair2</span> <span class="o">=</span> <span class="nv">%Pair2%</span><span class="c-Singleline"> ; Trim spaces.</span>
-                    <span class="n">FirstChar</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="n">Pair2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">FirstChar</span> <span class="o">:=</span> <span class="nf">SubStr(</span><span class="n">Pair2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                     <span class="n">If</span> <span class="p">(</span><span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">Pair2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span>
                         <span class="n">OR</span> <span class="n">FirstChar</span> <span class="o">=</span> <span class="s">&quot;&#39;&quot;</span> <span class="n">AND</span> <span class="nf">SubStr(</span><span class="n">Pair2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">=</span> <span class="s">&quot;&#39;&quot;</span><span class="p">)</span>
                     <span class="p">{</span>
@@ -1488,30 +1488,30 @@
                     <span class="p">}</span>
                 <span class="p">}</span>
 <span class="w">                </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">currSection</span><span class="p">,</span> <span class="n">currSection</span><span class="p">,</span> <span class="nv">%A_Space%</span><span class="p">,</span> <span class="nv">%_SectionSpaces%</span><span class="p">,</span> <span class="n">All</span>
-                <span class="nv">%_Prefix%%currSection%%_Seperator%%Pair1%</span> :<span class="o">=</span> <span class="n">Pair2</span><span class="c-Singleline"> ; ini_section_key := value</span>
+                <span class="nv">%_Prefix%%currSection%%_Seperator%%Pair1%</span> <span class="o">:=</span> <span class="n">Pair2</span><span class="c-Singleline"> ; ini_section_key := value</span>
                 <span class="n">keyCount</span><span class="o">++</span>
                 <span class="n">If</span> <span class="p">(</span><span class="n">_CreateIndexVars</span><span class="p">)</span>
                 <span class="p">{</span>
                     <span class="nv">%_Prefix%%currSection%</span><span class="mi">0</span><span class="o">++</span>
-                    <span class="n">i</span> :<span class="o">=</span> <span class="nv">%_Prefix%%currSection%</span><span class="mi">0</span>
-                    <span class="nv">%_Prefix%%currSection%%i%</span> :<span class="o">=</span> <span class="n">Pair1</span>
+                    <span class="n">i</span> <span class="o">:=</span> <span class="nv">%_Prefix%%currSection%</span><span class="mi">0</span>
+                    <span class="nv">%_Prefix%%currSection%%i%</span> <span class="o">:=</span> <span class="n">Pair1</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 <span class="w">        </span><span class="nb">Else</span>
         <span class="p">{</span>
-            <span class="n">currSection</span> :<span class="o">=</span> <span class="n">Section1</span>
+            <span class="n">currSection</span> <span class="o">:=</span> <span class="n">Section1</span>
             <span class="n">If</span> <span class="p">(</span><span class="n">_CreateIndexVars</span><span class="p">)</span>
             <span class="p">{</span>
 <span class="w">                </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">currSection</span><span class="p">,</span> <span class="n">currSection</span><span class="p">,</span> <span class="nv">%A_Space%</span><span class="p">,</span> <span class="nv">%_SectionSpaces%</span><span class="p">,</span> <span class="n">All</span>
                 <span class="n">secCount</span><span class="o">++</span>
-                <span class="nv">%_Prefix%%secCount%</span> :<span class="o">=</span> <span class="n">currSection</span>
+                <span class="nv">%_Prefix%%secCount%</span> <span class="o">:=</span> <span class="n">currSection</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_CreateIndexVars</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="nv">%_Prefix%</span><span class="mi">0</span> :<span class="o">=</span> <span class="n">secCount</span>
+        <span class="nv">%_Prefix%</span><span class="mi">0</span> <span class="o">:=</span> <span class="n">secCount</span>
     <span class="p">}</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">secCount</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">AND</span> <span class="n">keyCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
     <span class="p">{</span>
@@ -1587,17 +1587,17 @@
 <span class="p">{</span>
     <span class="n">If</span> <span class="p">(</span><span class="n">_Section</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">BackupErrorLevel</span> :<span class="o">=</span> <span class="nv">ErrorLevel</span>
-        <span class="n">_OutputVar</span> :<span class="o">=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">)</span>
+        <span class="n">BackupErrorLevel</span> <span class="o">:=</span> <span class="nv">ErrorLevel</span>
+        <span class="n">_OutputVar</span> <span class="o">:=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">_Content</span><span class="p">,</span> <span class="n">_Section</span><span class="p">,</span> <span class="n">_Key</span><span class="p">)</span>
 <span class="w">        </span><span class="nb">If </span><span class="nv">ErrorLevel</span>
         <span class="p">{</span>
-            <span class="n">_OutputVar</span> :<span class="o">=</span> <span class="n">_Default</span>
+            <span class="n">_OutputVar</span> <span class="o">:=</span> <span class="n">_Default</span>
         <span class="p">}</span>
-        <span class="nv">ErrorLevel</span> :<span class="o">=</span> <span class="n">BackupErrorLevel</span>
+        <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="n">BackupErrorLevel</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Else</span>
     <span class="p">{</span>
-        <span class="n">_OutputVar</span> :<span class="o">=</span> <span class="n">_Default</span>
+        <span class="n">_OutputVar</span> <span class="o">:=</span> <span class="n">_Default</span>
     <span class="p">}</span>
 <span class="w">    </span><span class="nb">Return</span> 
 <span class="p">}</span>

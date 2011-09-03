@@ -28,7 +28,7 @@
     <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">  ;split GivenFileName with #</span>
-<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> #<span class="c-Singleline"></span>
+<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> <span class="n">#</span><span class="c-Singleline"></span>
 <span class="c-Singleline"> </span>
 <span class="c-Singleline">  ;if GivenFileName doesn&#39;t contain # ...</span>
 <span class="w">  </span><span class="nb">If </span><span class="n">NameArray0</span> <span class="o">&lt;</span> <span class="mi">2</span>
@@ -62,7 +62,7 @@
 <span class="c-Singleline">  ;Search from StartID ...</span>
 <span class="w">  </span><span class="nb">Loop</span>
     <span class="p">{</span>
-      <span class="n">Number</span> :<span class="o">=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span><span class="c-Singleline"></span>
+      <span class="n">Number</span> <span class="o">:=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span><span class="c-Singleline"></span>
 <span class="c-Singleline">             </span>
 <span class="c-Singleline">      ;untill number is too large ...</span>
       <span class="n">If</span> <span class="p">(</span> <span class="nf">StrLen(</span><span class="n">Number</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">)</span>
@@ -85,7 +85,7 @@
 <span class="c-Singleline">      ;mix and concatenate the names array with the numbers array</span>
       <span class="n">FileName</span> <span class="o">=</span>
 <span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%NameArray0%</span>
-          <span class="n">FileName</span> :<span class="o">=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span><span class="c-Singleline"></span>
+          <span class="n">FileName</span> <span class="o">:=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span><span class="c-Singleline"></span>
 <span class="c-Singleline">     </span>
 <span class="c-Singleline">      ;check if GivenFileName doesn&#39;t exist</span>
 <span class="w">      </span><span class="nb">If </span><span class="ow">not</span> <span class="nf">FileExist(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span><span class="p">)</span>
@@ -95,16 +95,16 @@
 
 <span class="n">GetAvailableFileName_fast</span><span class="p">(</span> <span class="n">GivenFileName</span><span class="p">,</span> <span class="n">GivenPath</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">StartID</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
 <span class="p">{</span>
-<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> #
+<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> <span class="n">#</span>
 <span class="w">  </span><span class="nb">Loop</span>
     <span class="p">{</span>
-      <span class="n">Number</span> :<span class="o">=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="n">Number</span> <span class="o">:=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span>
 <span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nf">StrLen(</span><span class="n">Number</span><span class="p">)</span><span class="c-Singleline"> ;%</span>
           <span class="n">Number</span> <span class="o">=</span> <span class="mi">0</span><span class="nv">%Number%</span>
 <span class="w">      </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NumberArray</span><span class="p">,</span> <span class="n">Number</span>
       <span class="n">FileName</span> <span class="o">=</span>
 <span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%NameArray0%</span>
-          <span class="n">FileName</span> :<span class="o">=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span>
+          <span class="n">FileName</span> <span class="o">:=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span>
 <span class="w">      </span><span class="nb">If </span><span class="ow">not</span> <span class="nf">FileExist(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span><span class="p">)</span>
 <span class="w">          </span><span class="nb">Return</span> <span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span>
      <span class="p">}</span>
