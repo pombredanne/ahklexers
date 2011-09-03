@@ -1,4 +1,23 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; StrTail: Return the last lines of string by Tuncay</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; StrTail: Return the last lines of string by Tuncay</span>
+<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=262371#262371</span>
+<span class="c1">; Creative Commons Attribution 3.0 Unported, http://creativecommons.org/licenses/by/3.0/</span>
+<span class="nf">strTail</span><span class="p">(</span>_Str<span class="p">,</span><span class="w"> </span>_LineNum<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">StringGetPos</span><span class="p">,</span><span class="w"> </span>Pos<span class="p">,</span><span class="w"> </span>_Str<span class="p">,</span><span class="w"> </span><span class="p">`</span>n<span class="p">,</span><span class="w"> </span>R<span class="nv">%_LineNum%</span>
+<span class="w">    </span><span class="k">StringTrimLeft</span><span class="p">,</span><span class="w"> </span>_Str<span class="p">,</span><span class="w"> </span>_Str<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="o">++</span>Pos
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>_Str
+<span class="p">}</span>
+
+<span class="c1">; Here is one getting last line only and optimized for speed.</span>
+<span class="nf">strTail_last</span><span class="p">(</span>ByRef<span class="w"> </span>_Str<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>_Str<span class="p">,</span>InStr<span class="p">(</span>_Str<span class="p">,</span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">,</span>False<span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; StrTail: Return the last lines of string by Tuncay</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=262371#262371</span>
 <span class="c-Singleline">; Creative Commons Attribution 3.0 Unported, http://creativecommons.org/licenses/by/3.0/</span>
 <span class="n">strTail</span><span class="p">(</span><span class="n">_Str</span><span class="p">,</span> <span class="n">_LineNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>

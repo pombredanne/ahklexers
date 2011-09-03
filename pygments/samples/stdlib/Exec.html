@@ -1,4 +1,1212 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; OneLineCommands (Execute AHK code dynamically!)</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; OneLineCommands (Execute AHK code dynamically!)</span>
+<span class="c1">; by HotKeyIt</span>
+<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=340131#340131</span>
+<span class="nf">Exec</span><span class="p">(</span>_<span class="p">#</span>_1<span class="p">,</span>_<span class="p">#</span>_2<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_3<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_4<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_5<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_6<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_7<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_8<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_9<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_10<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_11<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_12<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_13<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_14<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_15<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_16<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_17<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_18<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_19<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_20<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>
+<span class="w">   </span><span class="kt">global</span>
+<span class="w">   </span><span class="kt">local</span><span class="w"> </span>_<span class="p">#</span>_T<span class="p">,</span><span class="w"> </span>_<span class="p">#</span>_F<span class="p">,</span><span class="w"> </span>_<span class="p">#</span>_L<span class="p">,</span><span class="w"> </span>_<span class="p">#</span>_O<span class="p">,</span>_<span class="p">#</span>_C<span class="p">,</span>_<span class="p">#</span>_I<span class="p">,</span>_<span class="p">#</span>_P<span class="p">,</span>_<span class="k">#_V</span>
+<span class="w">   </span><span class="kr">If</span><span class="w"> </span><span class="nf">IsLabel</span><span class="p">(</span>_<span class="p">#</span>_1<span class="p">)</span>
+<span class="w">      </span><span class="k">GoTo</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>_<span class="p">#</span>_1
+<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span><span class="nf">IsLabel</span><span class="p">(</span>RegExReplace<span class="p">(</span>_<span class="p">#</span>_1<span class="p">,</span><span class="s">&quot;[\s</span><span class="se">`,</span><span class="s">].*&quot;</span><span class="p">)){</span>
+<span class="w">      </span>_<span class="p">#</span>_I<span class="o">=</span><span class="mi">0</span>
+<span class="w">      </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>_<span class="p">#</span>_1<span class="p">,`</span>n
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_P<span class="o">:=</span>RegExReplace<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="s">&quot;^(\w+)\s&quot;</span><span class="p">,</span><span class="s">&quot;$1,&quot;</span><span class="p">)</span>
+<span class="w">         </span><span class="nf">While</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_I<span class="o">:=</span>RegExMatch<span class="p">(</span>_<span class="p">#</span>_P<span class="p">,</span><span class="s">&quot;(%[\w#@]+%)&quot;</span><span class="p">)){</span>
+<span class="w">            </span>_<span class="p">#</span>_V<span class="o">:=</span>SubStr<span class="p">(</span>_<span class="p">#</span>_P<span class="p">,</span>_<span class="p">#</span>_I<span class="o">+</span><span class="mi">1</span><span class="p">,</span>InStr<span class="p">(</span>_<span class="p">#</span>_P<span class="p">,</span><span class="s">&quot;%&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>_<span class="p">#</span>_I<span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span>_<span class="p">#</span>_I<span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="k">StringReplace</span><span class="p">,</span>_<span class="p">#</span>_P<span class="p">,</span>_<span class="p">#</span>_P<span class="p">,`</span><span class="o">%</span><span class="nv">%_#_V%</span><span class="p">`</span><span class="o">%</span><span class="p">,</span><span class="o">%</span><span class="w"> </span><span class="nv">%_#_V%</span>
+<span class="w">            </span>_<span class="p">#</span>_I<span class="o">++</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">         </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>_<span class="p">#</span>_P<span class="p">,`,,</span><span class="nv">%A_Space%%A_Tab%</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="kr">If</span><span class="w"> </span><span class="nb">A_LoopField</span><span class="o">=</span>
+<span class="w">               </span><span class="k">Continue</span>
+<span class="w">            </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>_<span class="p">#</span>_T<span class="p">){</span>
+<span class="w">               </span>_<span class="p">#</span>_I<span class="o">++</span>
+<span class="w">               </span>_<span class="p">#</span>_<span class="nv">%_#_I%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_LoopField</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="k">StringTrimRight</span><span class="p">,</span>_<span class="p">#</span>_<span class="nv">%_#_I%</span><span class="p">,</span>_<span class="p">#</span>_<span class="nv">%_#_I%</span><span class="p">,</span><span class="mi">1</span>
+<span class="w">               </span>_<span class="p">#</span>_<span class="nv">%_#_I%</span><span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="nb">A_LoopField</span><span class="p">,</span>_<span class="p">#</span>_T<span class="o">:=</span><span class="s">&quot;&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>SubStr<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;</span><span class="se">``</span><span class="s">&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>_<span class="p">#</span>_T<span class="o">:=</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">               </span><span class="k">Continue</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">         </span>_<span class="p">#</span>_T<span class="o">:=</span><span class="s">&quot;&quot;</span><span class="p">,</span>_<span class="p">#</span>_I<span class="o">:=</span><span class="mi">0</span><span class="p">,</span>_<span class="p">#</span>_P<span class="o">:=</span><span class="s">&quot;&quot;</span>
+<span class="w">         </span><span class="k">Gosub</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>_<span class="p">#</span>_1
+<span class="w">         </span><span class="k">Loop</span><span class="w"> </span><span class="mi">20</span>
+<span class="w">            </span>_<span class="p">#</span>_<span class="nv">%A_Index%</span><span class="o">=</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span>
+<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`t</span><span class="s">Check Syntax:&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`t</span><span class="s">&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_1 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_2 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_3 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_4 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_5 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_6 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_7</span>
+<span class="w">            </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_8 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_9 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_10 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_11 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_12 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_13 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_14 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_15 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_16</span>
+<span class="w">            </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_17 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_18 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_19 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_20 </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span><span class="k">Return</span><span class="o">:</span><span class="w"> </span><span class="c1">;enter return value for debuging</span>
+<span class="w">   </span><span class="k">Return</span><span class="w"> </span><span class="nb">A_Tab</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;ErrorLevel: &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>Errorlevel<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`t</span><span class="s">&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_1 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_2 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_3 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_4 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_5 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_6 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_7 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_8 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_9 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_10 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_11 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_12 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_13 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_14 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_15 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_16 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_17 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_18 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_19 </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>_<span class="k">#_20 </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
+<span class="w">   </span>AT<span class="o">:</span>
+<span class="w">   </span><span class="k">AutoTrim</span><span class="o">:</span>
+<span class="w">     </span><span class="k">AutoTrim</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>BI<span class="o">:</span>
+<span class="w">   </span><span class="k">BlockInput</span><span class="o">:</span>
+<span class="w">      </span><span class="k">BlockInput</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>C<span class="o">:</span>
+<span class="w">   </span><span class="k">Click</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Click</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>CW<span class="o">:</span>
+<span class="w">   </span><span class="k">ClipWait</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ClipWait</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CTRL<span class="o">:</span>
+<span class="w">   </span><span class="k">Control</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Control</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CC<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlClick</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlClick</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CF<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlFocus</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlFocus</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CG<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlGet</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlGet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CGF<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlGetFocus</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlGetFocus</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CGP<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlGetPos</span><span class="o">:</span>
+<span class="w">      </span><span class="k">ControlGetPos</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_10%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>CMO<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlMove</span><span class="o">:</span>
+<span class="w">      </span><span class="k">ControlMove</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_10%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CGT<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlGetText</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlGetText</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CS<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlSend</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlSend</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CSR<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlSendRaw</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlSendRaw</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CST<span class="o">:</span>
+<span class="w">   </span><span class="k">ControlSetText</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ControlSetText</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>CM<span class="o">:</span>
+<span class="w">   </span><span class="k">CoordMode</span><span class="o">:</span>
+<span class="w">     </span><span class="k">CoordMode</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>CR<span class="o">:</span>
+<span class="w">   </span><span class="k">Critical</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Critical</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>DHT<span class="o">:</span>
+<span class="w">   </span><span class="k">DetectHiddenText</span><span class="o">:</span>
+<span class="w">     </span><span class="k">DetectHiddenText</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>DHW<span class="o">:</span>
+<span class="w">   </span><span class="k">DetectHiddenWindows</span><span class="o">:</span>
+<span class="w">     </span><span class="k">DetectHiddenWindows</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>D<span class="o">:</span>
+<span class="w">   </span><span class="k">Drive</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Drive</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>DG<span class="o">:</span>
+<span class="w">   </span><span class="k">DriveGet</span><span class="o">:</span>
+<span class="w">     </span><span class="k">DriveGet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="nv">%_#_4%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>DSF<span class="o">:</span>
+<span class="w">   </span><span class="k">DriveSpaceFree</span><span class="o">:</span>
+<span class="w">      </span><span class="k">DriveSpaceFree</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>ES<span class="o">:</span>
+<span class="w">   </span><span class="k">EnvSet</span><span class="o">:</span>
+<span class="w">     </span><span class="k">EnvSet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>EG<span class="o">:</span>
+<span class="w">   </span><span class="k">EnvGet</span><span class="o">:</span>
+<span class="w">     </span><span class="k">EnvGet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>EU<span class="o">:</span>
+<span class="w">   </span><span class="k">EnvUpdate</span><span class="o">:</span>
+<span class="w">     </span><span class="k">EnvUpdate</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>ESU<span class="o">:</span>
+<span class="w">   </span><span class="k">EnvSub</span><span class="o">:</span>
+<span class="w">     </span><span class="k">EnvSub</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>EA<span class="o">:</span>
+<span class="w">   </span><span class="k">EnvAdd</span><span class="o">:</span>
+<span class="w">     </span><span class="k">EnvAdd</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>ED<span class="o">:</span>
+<span class="w">   </span><span class="k">EnvDiv</span><span class="o">:</span>
+<span class="w">     </span><span class="k">EnvDiv</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>EM<span class="o">:</span>
+<span class="w">   </span><span class="k">EnvMult</span><span class="o">:</span>
+<span class="w">     </span><span class="k">EnvMult</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>E<span class="o">:</span>
+<span class="w">   </span><span class="k">Exit</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Exit</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>EAP<span class="o">:</span>
+<span class="w">   </span><span class="k">ExitApp</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ExitApp</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>FA<span class="o">:</span>
+<span class="w">   </span><span class="k">FileAppend</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileAppend</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FC<span class="o">:</span>
+<span class="w">   </span><span class="k">FileCopy</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileCopy</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FCD<span class="o">:</span>
+<span class="w">   </span><span class="k">FileCopyDir</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileCopyDir</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FCDIR<span class="o">:</span>
+<span class="w">   </span><span class="k">FileCreateDir</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileCreateDir</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FCS<span class="o">:</span>
+<span class="w">   </span><span class="k">FileCreateShortcut</span><span class="o">:</span>
+<span class="w">      </span><span class="k">FileCreateShortcut</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_10%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FD<span class="o">:</span>
+<span class="w">   </span><span class="k">FileDelete</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileDelete</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FGA<span class="o">:</span>
+<span class="w">   </span><span class="k">FileGetAttrib</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileGetAttrib</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FGS<span class="o">:</span>
+<span class="w">   </span><span class="k">FileGetSize</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileGetSize</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FGSH<span class="o">:</span>
+<span class="w">   </span><span class="k">FileGetShortcut</span><span class="o">:</span>
+<span class="w">      </span>_<span class="p">#</span>_3<span class="o">:=!</span>_<span class="p">#</span>_3<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_3<span class="p">,</span>_<span class="p">#</span>_4<span class="o">:=!</span>_<span class="p">#</span>_4<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_4<span class="p">,</span>_<span class="p">#</span>_5<span class="o">:=!</span>_<span class="p">#</span>_5<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_5<span class="p">,</span>_<span class="p">#</span>_6<span class="o">:=!</span>_<span class="p">#</span>_6<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_6<span class="p">,</span>_<span class="p">#</span>_7<span class="o">:=!</span>_<span class="p">#</span>_7<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_7<span class="p">,</span>_<span class="p">#</span>_8<span class="o">:=!</span>_<span class="p">#</span>_8<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_8<span class="p">,</span>_<span class="p">#</span>_9<span class="o">:=!</span>_<span class="p">#</span>_9<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_9
+<span class="w">      </span><span class="k">FileGetShortcut</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FGT<span class="o">:</span>
+<span class="w">   </span><span class="k">FileGetTime</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileGetTime</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FGV<span class="o">:</span>
+<span class="w">   </span><span class="k">FileGetVersion</span><span class="o">:</span>
+<span class="w">      </span><span class="k">FileGetVersion</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FM<span class="o">:</span>
+<span class="w">   </span><span class="k">FileMove</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileMove</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FMD<span class="o">:</span>
+<span class="w">   </span><span class="k">FileMoveDir</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileMoveDir</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FR<span class="o">:</span>
+<span class="w">   </span><span class="k">FileRead</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileRead</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FRL<span class="o">:</span>
+<span class="w">   </span><span class="k">FileReadLine</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileReadLine</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FRC<span class="o">:</span>
+<span class="w">   </span><span class="k">FileRecycle</span><span class="o">:</span>
+<span class="w">      </span><span class="k">FileRecycle</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FRE<span class="o">:</span>
+<span class="w">   </span><span class="k">FileRecycleEmpty</span><span class="o">:</span>
+<span class="w">      </span><span class="k">FileRecycleEmpty</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FRD<span class="o">:</span>
+<span class="w">   </span><span class="k">FileRemoveDir</span><span class="o">:</span>
+<span class="w">      </span><span class="k">FileRemoveDir</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FSF<span class="o">:</span>
+<span class="w">   </span><span class="k">FileSelectFile</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileSelectFile</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FSD<span class="o">:</span>
+<span class="w">   </span><span class="k">FileSelectFolder</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileSelectFolder</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FSA<span class="o">:</span>
+<span class="w">   </span><span class="k">FileSetAttrib</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileSetAttrib</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FST<span class="o">:</span>
+<span class="w">   </span><span class="k">FileSetTime</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FileSetTime</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>FT<span class="o">:</span>
+<span class="w">   </span><span class="k">FormatTime</span><span class="o">:</span>
+<span class="w">     </span><span class="k">FormatTime</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>GKS<span class="o">:</span>
+<span class="w">   </span>GetKeyState<span class="o">:</span>
+<span class="w">      </span>GetKeyState<span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>GA<span class="o">:</span>
+<span class="w">   </span><span class="k">GroupActivate</span><span class="o">:</span>
+<span class="w">     </span><span class="k">GroupActivate</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>GADD<span class="o">:</span>
+<span class="w">   </span><span class="k">GroupAdd</span><span class="o">:</span>
+<span class="w">     </span><span class="k">GroupAdd</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>GCL<span class="o">:</span>
+<span class="w">   </span><span class="k">GroupClose</span><span class="o">:</span>
+<span class="w">     </span><span class="k">GroupClose</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>H<span class="o">:</span>
+<span class="w">   </span><span class="k">Hotkey</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Hotkey</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>GS<span class="o">:</span>
+<span class="w">   </span><span class="k">GoSub</span><span class="o">:</span>
+<span class="w">      </span><span class="k">GoSub</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>GT<span class="o">:</span>
+<span class="w">   </span><span class="k">GoTo</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>IMB<span class="o">:</span>
+<span class="w">   </span><span class="k">IfMsgBox</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfMsgBox</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span>_<span class="k">#_C </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="k">Loop</span><span class="w"> </span><span class="mi">18</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_<span class="nv">%A_Index%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>_<span class="p">#</span>_<span class="nv">%_#_C%</span>
+<span class="w">         </span>_<span class="p">#</span>_C<span class="o">++</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span><span class="nf">IsLabel</span><span class="p">(</span>_<span class="p">#</span>_1<span class="p">)</span>
+<span class="w">         </span><span class="k">GoSub</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_1%</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>IEQ<span class="o">:</span>
+<span class="w">   </span>INEQ<span class="o">:</span>
+<span class="w">   </span>IG<span class="o">:</span>
+<span class="w">   </span>IGOE<span class="o">:</span>
+<span class="w">   </span>IL<span class="o">:</span>
+<span class="w">   </span>ILOE<span class="o">:</span>
+<span class="w">   </span>IIS<span class="o">:</span>
+<span class="w">   </span>INIS<span class="o">:</span>
+<span class="w">   </span>IWA<span class="o">:</span>
+<span class="w">   </span>IWNA<span class="o">:</span>
+<span class="w">   </span>IWE<span class="o">:</span>
+<span class="w">   </span>IWNE<span class="o">:</span>
+<span class="w">   </span>IE<span class="o">:</span>
+<span class="w">   </span>INE<span class="o">:</span>
+<span class="w">   </span>IfEqual<span class="o">:</span>
+<span class="w">   </span><span class="k">IfNotEqual</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfGreater</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfGreaterOrEqual</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfLess</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfLessOrEqual</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfInString</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfNotInString</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfWinActive</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfWinNotActive</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfWinExist</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfWinNotExist</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfExist</span><span class="o">:</span>
+<span class="w">   </span><span class="k">IfNotExist</span><span class="o">:</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">   </span>_<span class="p">#</span>_L<span class="o">=</span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfEqual&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IEQ&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span>IfEqual<span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfNotEqual&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;INEQ&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfNotEqual</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfLess&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IL&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfLess</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfLessOrEqual&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ILOE&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfLessOrEqual</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfGreater&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IG&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfGreater</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfGreaterOrEqual&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IGOE&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfGreaterOrEqual</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfInString&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IIS&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfInString</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfNotInString&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;INIS&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfNotInString</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">4</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">17</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfWinActive&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IWA&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfWinActive</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">6</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">15</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfWinNotActive&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IWNA&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfWinNotActive</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">6</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">15</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfWinExist&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IWE&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfWinExist</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">6</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">15</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfWinNotExist&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IWNE&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfWinNotExist</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">6</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">15</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfExist&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IE&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfExist</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">3</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">18</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;IfNotExist&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_1<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;INE&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="k">IfNotExist</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_F<span class="o">=</span><span class="mi">3</span>
+<span class="w">         </span>_<span class="p">#</span>_L<span class="o">=</span><span class="mi">18</span>
+<span class="w">         </span>_<span class="k">#_O </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">         </span>_<span class="k">#_P </span><span class="o">-=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span><span class="k">Loop</span><span class="w"> </span><span class="nv">%_#_L%</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span>_<span class="p">#</span>_<span class="nv">%A_Index%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>_<span class="p">#</span>_<span class="nv">%_#_F%</span>
+<span class="w">      </span>_<span class="p">#</span>_F<span class="o">++</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>_<span class="k">#_O </span><span class="o">=</span>
+<span class="w">   </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_L </span><span class="o">=</span>
+<span class="w">      </span><span class="k">Return</span>
+<span class="w">   </span><span class="nf">IsLabel</span><span class="p">(</span>_<span class="p">#</span>_1<span class="p">)</span>
+<span class="w">         </span><span class="k">GoSub</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_1%</span>
+<span class="w">   </span>_<span class="p">#</span>_L<span class="o">=</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="nl">KW:</span>
+<span class="w">   </span><span class="k">KeyWait</span><span class="o">:</span>
+<span class="w">     </span><span class="k">KeyWait</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>M<span class="o">:</span>
+<span class="w">   </span><span class="k">Menu</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Menu</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>MC<span class="o">:</span>
+<span class="w">   </span><span class="k">MouseClick</span><span class="o">:</span>
+<span class="w">     </span><span class="k">MouseClick</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>MCD<span class="o">:</span>
+<span class="w">   </span><span class="k">MouseClickDrag</span><span class="o">:</span>
+<span class="w">     </span><span class="k">MouseClickDrag</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>MGP<span class="o">:</span>
+<span class="w">   </span><span class="k">MouseGetPos</span><span class="o">:</span>
+<span class="w">      </span>_<span class="p">#</span>_2<span class="o">:=!</span>_<span class="p">#</span>_2<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_2<span class="p">,</span>_<span class="p">#</span>_3<span class="o">:=!</span>_<span class="p">#</span>_3<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_3<span class="p">,</span>_<span class="p">#</span>_4<span class="o">:=!</span>_<span class="p">#</span>_4<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_4<span class="p">,</span>_<span class="p">#</span>_5<span class="o">:=!</span>_<span class="p">#</span>_5<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_5
+<span class="w">      </span><span class="k">MouseGetPos</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>MM<span class="o">:</span>
+<span class="w">   </span><span class="k">MouseMove</span><span class="o">:</span>
+<span class="w">     </span><span class="k">MouseMove</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>MB<span class="o">:</span>
+<span class="w">   </span><span class="k">MsgBox</span><span class="o">:</span>
+<span class="w">      </span>checkifmsgboxfull<span class="w"> </span><span class="o">:=</span><span class="w"> </span>_<span class="p">#</span>_3<span class="w"> </span>_<span class="p">#</span>_4<span class="w"> </span>_<span class="p">#</span>_5
+<span class="w">      </span><span class="k">IfNotEqual</span><span class="p">,</span><span class="w"> </span>checkifmsgboxfull<span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="k">SetEnv</span><span class="p">,</span><span class="w"> </span>checkifmsgboxfull<span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_2 </span>is<span class="w"> </span>digit
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="kr">If</span><span class="w"> </span>checkifmsgboxfull<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">               </span><span class="c1">;MsgBox % _#_2</span>
+<span class="w">               </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">262144</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">262144</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">262145</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">262145</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">262146</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">262146</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">262147</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">262147</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">262148</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">262148</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">262149</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">262149</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">               </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span><span class="w"> </span><span class="mi">262150</span>
+<span class="w">               </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">262150</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">               </span><span class="p">}</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="w"> </span><span class="nv">%_#_10%</span><span class="w"> </span><span class="nv">%_#_11%</span><span class="w"> </span><span class="nv">%_#_12%</span><span class="w"> </span><span class="nv">%_#_13%</span><span class="w"> </span><span class="nv">%_#_14%</span><span class="w"> </span><span class="nv">%_#_15%</span><span class="w"> </span><span class="nv">%_#_16%</span><span class="w"> </span><span class="nv">%_#_17%</span><span class="w"> </span><span class="nv">%_#_18%</span><span class="w"> </span><span class="nv">%_#_19%</span><span class="w"> </span><span class="nv">%_#_20%</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">      </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="w"> </span><span class="nv">%_#_10%</span><span class="w"> </span><span class="nv">%_#_11%</span><span class="w"> </span><span class="nv">%_#_12%</span><span class="w"> </span><span class="nv">%_#_13%</span><span class="w"> </span><span class="nv">%_#_14%</span><span class="w"> </span><span class="nv">%_#_15%</span><span class="w"> </span><span class="nv">%_#_16%</span><span class="w"> </span><span class="nv">%_#_17%</span><span class="w"> </span><span class="nv">%_#_18%</span><span class="w"> </span><span class="nv">%_#_19%</span><span class="w"> </span><span class="nv">%_#_20%</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>OE<span class="o">:</span>
+<span class="w">   </span><span class="k">OnExit</span><span class="o">:</span>
+<span class="w">     </span><span class="k">OnExit</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>PGC<span class="o">:</span>
+<span class="w">   </span><span class="k">PixelGetColor</span><span class="o">:</span>
+<span class="w">     </span><span class="k">PixelGetColor</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>PS<span class="o">:</span>
+<span class="w">   </span><span class="k">PixelSearch</span><span class="o">:</span>
+<span class="w">     </span><span class="k">PixelSearch</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_10%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>PWC<span class="o">:</span>
+<span class="w">   </span>PixelWaitColor<span class="o">:</span><span class="w">  </span><span class="c1">;(ByRef _#_2, ByRef _#_3, p_x1, p_y1, p_x2, p_y2, p_color, p_shades=&quot;&quot;, p_opts=&quot;&quot;, p_waitms=0, p_checkinterval=&quot;&quot;)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>RegExMatch<span class="p">(</span>_<span class="p">#</span>_8<span class="p">,</span><span class="w"> </span><span class="s">&quot;i)^[0-9a-f]{6}$&quot;</span><span class="p">))</span>
+<span class="w">         </span>_<span class="p">#</span>_8<span class="o">:=</span><span class="s">&quot;0x&quot;</span><span class="w"> </span>_<span class="p">#</span>_8
+<span class="w">      </span>_<span class="p">#</span>_8_bkp<span class="o">:=</span>_<span class="p">#</span>_8
+<span class="w">      </span>_<span class="p">#</span>_8<span class="o">:=</span>RegExReplace<span class="p">(</span>_<span class="p">#</span>_8<span class="p">,</span><span class="w"> </span><span class="s">&quot;i)\bSlow\b&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_8<span class="o">=</span>_<span class="p">#</span>_8_bkp<span class="p">)</span>
+<span class="w">         </span>_<span class="p">#</span>_8<span class="o">:=</span>_<span class="p">#</span>_8<span class="w"> </span><span class="s">&quot; Fast&quot;</span>
+<span class="w">      </span>_<span class="p">#</span>_8_bkp<span class="o">:=</span>_<span class="p">#</span>_8
+<span class="w">      </span>_<span class="p">#</span>_8<span class="o">:=</span>RegExReplace<span class="p">(</span>_<span class="p">#</span>_8<span class="p">,</span><span class="w"> </span><span class="s">&quot;i)\bBGR\b&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_8<span class="o">=</span>_<span class="p">#</span>_8_bkp<span class="p">)</span>
+<span class="w">         </span>_<span class="p">#</span>_8<span class="o">:=</span>_<span class="p">#</span>_8<span class="w"> </span><span class="s">&quot; RGB&quot;</span>
+<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_12<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">         </span>_<span class="p">#</span>_12<span class="o">=</span><span class="mi">519</span>
+<span class="w">      </span>ts<span class="o">:=</span><span class="nb">A_TickCount</span>
+<span class="w">      </span><span class="k">Loop</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="k">PixelSearch</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_10%</span>
+<span class="w">         </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>errorlevel<span class="o">=</span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>_<span class="p">#</span>_11<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">A_TickCount</span><span class="o">-</span>ts<span class="o">&gt;=</span>_<span class="p">#</span>_11<span class="p">)</span>
+<span class="w">            </span><span class="k">break</span>
+<span class="w">         </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_11<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="nb">A_TickCount</span><span class="o">-</span>ts<span class="p">)</span><span class="o">+</span>_<span class="p">#</span>_12<span class="o">&gt;=</span>_<span class="p">#</span>_11<span class="p">)</span>
+<span class="w">            </span>_<span class="p">#</span>_12<span class="o">:=</span><span class="p">(</span>_<span class="p">#</span>_11<span class="o">-</span><span class="p">(</span><span class="nb">A_TickCount</span><span class="o">-</span>ts<span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+<span class="w">         </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_12<span class="o">&gt;</span><span class="mi">19</span><span class="p">)</span>
+<span class="w">            </span><span class="k">Sleep</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_12%</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span>PR<span class="o">:</span>
+<span class="w">   </span><span class="k">Process</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Process</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>R<span class="o">:</span>
+<span class="w">   </span><span class="k">Run</span><span class="o">:</span>
+<span class="w">     </span>_<span class="p">#</span>_5<span class="o">:=!</span>_<span class="p">#</span>_5<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_5
+<span class="w">     </span><span class="k">Run</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>RA<span class="o">:</span>
+<span class="w">   </span><span class="k">RunAs</span><span class="o">:</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_2 </span><span class="o">=</span>
+<span class="w">         </span><span class="k">RunAs</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="k">RunAs</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>RW<span class="o">:</span>
+<span class="w">   </span><span class="k">RunWait</span><span class="o">:</span>
+<span class="w">      </span>_<span class="p">#</span>_5<span class="o">:=!</span>_<span class="p">#</span>_5<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_5
+<span class="w">      </span><span class="k">RunWait</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SN<span class="o">:</span>
+<span class="w">   </span><span class="k">Send</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Send</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SP<span class="o">:</span>
+<span class="w">   </span><span class="k">SendPlay</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SendPlay</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SI<span class="o">:</span>
+<span class="w">   </span><span class="k">SendInput</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SendInput</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SRAW<span class="o">:</span>
+<span class="w">   </span><span class="k">SendRaw</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SendRaw</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SEV<span class="o">:</span>
+<span class="w">   </span><span class="k">SendEvent</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SendEvent</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>RND<span class="o">:</span>
+<span class="w">   </span><span class="k">Random</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Random</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SE<span class="o">:</span>
+<span class="w">   </span><span class="k">SetEnv</span><span class="o">:</span>
+<span class="w">     </span><span class="k">SetEnv</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SF<span class="o">:</span>
+<span class="w">   </span><span class="k">SetFormat</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetFormat</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SMOD<span class="o">:</span>
+<span class="w">   </span><span class="k">SendMode</span><span class="o">:</span>
+<span class="w">     </span><span class="k">SendMode</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SKD<span class="o">:</span>
+<span class="w">   </span><span class="k">SetKeyDelay</span><span class="o">:</span>
+<span class="w">     </span><span class="k">SetKeyDelay</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SMD<span class="o">:</span>
+<span class="w">   </span><span class="k">SetMouseDelay</span><span class="o">:</span>
+<span class="w">     </span><span class="k">SetMouseDelay</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>STMM<span class="o">:</span>
+<span class="w">   </span><span class="k">SetTitleMatchMode</span><span class="o">:</span>
+<span class="w">     </span><span class="k">SetTitleMatchMode</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SWD<span class="o">:</span>
+<span class="w">   </span><span class="k">SetWinDelay</span><span class="o">:</span>
+<span class="w">     </span><span class="k">SetWinDelay</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SD<span class="o">:</span>
+<span class="w">   </span><span class="k">Shutdown</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Shutdown</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>S<span class="o">:</span>
+<span class="w">   </span><span class="k">Sleep</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Sleep</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SO<span class="o">:</span>
+<span class="w">   </span><span class="k">Sort</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Sort</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">     </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_3 </span><span class="o">=</span><span class="w"> </span>U
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SPP<span class="o">:</span>
+<span class="w">   </span><span class="k">SplitPath</span><span class="o">:</span>
+<span class="w">     </span>_<span class="p">#</span>_3<span class="o">:=!</span>_<span class="p">#</span>_3<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_3<span class="p">,</span>_<span class="p">#</span>_4<span class="o">:=!</span>_<span class="p">#</span>_4<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_4<span class="p">,</span>_<span class="p">#</span>_5<span class="o">:=!</span>_<span class="p">#</span>_5<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_5<span class="p">,</span>_<span class="p">#</span>_6<span class="o">:=!</span>_<span class="p">#</span>_6<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_6<span class="p">,</span>_<span class="p">#</span>_7<span class="o">:=!</span>_<span class="p">#</span>_7<span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;_#_T&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>_<span class="p">#</span>_7
+<span class="w">     </span><span class="k">SplitPath</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SBGT<span class="o">:</span>
+<span class="w">   </span><span class="k">StatusBarGetText</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StatusBarGetText</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SBW<span class="o">:</span>
+<span class="w">   </span><span class="k">StatusBarWait</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StatusBarWait</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SCS<span class="o">:</span>
+<span class="w">   </span><span class="k">StringCaseSense</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringCaseSense</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SGP<span class="o">:</span>
+<span class="w">   </span><span class="k">StringGetPos</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringGetPos</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SL<span class="o">:</span>
+<span class="w">   </span><span class="k">StringLeft</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringLeft</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SLEN<span class="o">:</span>
+<span class="w">   </span><span class="k">StringLen</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringLen</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SLOW<span class="o">:</span>
+<span class="w">   </span><span class="k">StringLower</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringLower</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SM<span class="o">:</span>
+<span class="w">   </span><span class="k">StringMid</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringMid</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SRPL<span class="o">:</span>
+<span class="w">   </span><span class="k">StringReplace</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SR<span class="o">:</span>
+<span class="w">   </span><span class="k">StringRight</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringRight</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SS<span class="o">:</span>
+<span class="w">   </span><span class="k">StringSplit</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringSplit</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>STL<span class="o">:</span>
+<span class="w">   </span><span class="k">StringTrimLeft</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringTrimLeft</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>STR<span class="o">:</span>
+<span class="w">   </span><span class="k">StringTrimRight</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringTrimRight</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SUP<span class="o">:</span>
+<span class="w">   </span><span class="k">StringUpper</span><span class="o">:</span>
+<span class="w">     </span><span class="k">StringUpper</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SG<span class="o">:</span>
+<span class="w">   </span><span class="k">SysGet</span><span class="o">:</span>
+<span class="w">     </span><span class="k">SysGet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>TT<span class="o">:</span>
+<span class="w">   </span><span class="k">ToolTip</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ToolTip</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>TRT<span class="o">:</span>
+<span class="w">   </span><span class="k">TrayTip</span><span class="o">:</span>
+<span class="w">     </span><span class="k">TrayTip</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>TR<span class="o">:</span>
+<span class="w">   </span><span class="k">Transform</span><span class="o">:</span>
+<span class="w">     </span><span class="k">Transform</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>UDTF<span class="o">:</span>
+<span class="w">   </span><span class="k">UrlDownloadToFile</span><span class="o">:</span>
+<span class="w">     </span><span class="k">UrlDownloadToFile</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>VSC<span class="o">:</span>
+<span class="w">   </span><span class="k">VarSetCapacity</span><span class="o">:</span>
+<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span>_<span class="p">#</span>_3<span class="p">,</span><span class="w"> </span>_<span class="p">#</span>_4<span class="p">)</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WA<span class="o">:</span>
+<span class="w">   </span><span class="k">WinActivate</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinActivate</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WAB<span class="o">:</span>
+<span class="w">   </span><span class="k">WinActivateBottom</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinActivateBottom</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WC<span class="o">:</span>
+<span class="w">   </span><span class="k">WinClose</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinClose</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WGAT<span class="o">:</span>
+<span class="w">   </span><span class="k">WinGetActiveTitle</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinGetActiveTitle</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WGC<span class="o">:</span>
+<span class="w">   </span><span class="k">WinGetClass</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinGetClass</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WG<span class="o">:</span>
+<span class="w">   </span><span class="k">WinGet</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinGet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WGP<span class="o">:</span>
+<span class="w">   </span><span class="k">WinGetPos</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinGetPos</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WGT<span class="o">:</span>
+<span class="w">   </span><span class="k">WinGetText</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinGetText</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>WGTT<span class="o">:</span>
+<span class="w">   </span><span class="k">WinGetTitle</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinGetTitle</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WH<span class="o">:</span>
+<span class="w">   </span><span class="k">WinHide</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinHide</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WK<span class="o">:</span>
+<span class="w">   </span><span class="k">WinKill</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinKill</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WMSI<span class="o">:</span>
+<span class="w">   </span><span class="k">WinMenuSelectItem</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinMenuSelectItem</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_10%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_11%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_12%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>WM<span class="o">:</span>
+<span class="w">   </span><span class="k">WinMove</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinMove</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WSH<span class="o">:</span>
+<span class="w">   </span><span class="k">WinShow</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinShow</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WS<span class="o">:</span>
+<span class="w">   </span><span class="k">WinSet</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinSet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+<span class="w">     </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>_<span class="p">#</span>_2<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Style&quot;</span><span class="w"> </span><span class="kr">or</span><span class="w"> </span>_<span class="p">#</span>_2<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Exstyle&quot;</span><span class="w"> </span><span class="kr">or</span><span class="w"> </span>_<span class="p">#</span>_2<span class="w"> </span><span class="o">=</span><span class="w"> </span>Polygon<span class="p">)</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>WST<span class="o">:</span>
+<span class="w">   </span><span class="k">WinSetTitle</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinSetTitle</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WW<span class="o">:</span>
+<span class="w">   </span><span class="k">WinWait</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinWait</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>WWA<span class="o">:</span>
+<span class="w">   </span><span class="k">WinWaitActive</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinWaitActive</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>WWC<span class="o">:</span>
+<span class="w">   </span><span class="k">WinWaitClose</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinWaitClose</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>WWNA<span class="o">:</span>
+<span class="w">   </span>WinWaitNotActive<span class="o">:</span>
+<span class="w">     </span>WinWaitNotActive<span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>WMAX<span class="o">:</span>
+<span class="w">   </span><span class="k">WinMaximize</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinMaximize</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WMIN<span class="o">:</span>
+<span class="w">   </span><span class="k">WinMinimize</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinMinimize</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WR<span class="o">:</span>
+<span class="w">   </span><span class="k">WinRestore</span><span class="o">:</span>
+<span class="w">     </span><span class="k">WinRestore</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>IS<span class="o">:</span>
+<span class="w">   </span><span class="k">ImageSearch</span><span class="o">:</span>
+<span class="w">     </span><span class="k">ImageSearch</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>ID<span class="o">:</span>
+<span class="w">   </span><span class="k">IniDelete</span><span class="o">:</span>
+<span class="w">     </span><span class="k">IniDelete</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>IR<span class="o">:</span>
+<span class="w">   </span><span class="k">IniRead</span><span class="o">:</span>
+<span class="w">     </span><span class="k">IniRead</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>IW<span class="o">:</span>
+<span class="w">   </span><span class="k">IniWrite</span><span class="o">:</span>
+<span class="w">     </span><span class="k">IniWrite</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>I<span class="o">:</span>
+<span class="w">   </span><span class="k">Input</span><span class="o">:</span>
+<span class="w">     </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_2</span>
+<span class="w">      </span><span class="k">Input</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">     </span><span class="k">else</span>
+<span class="w">      </span><span class="k">Input</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>IB<span class="o">:</span>
+<span class="w">   </span><span class="k">InputBox</span><span class="o">:</span>
+<span class="w">     </span><span class="k">InputBox</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span><span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_11%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_12%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>G<span class="o">:</span>
+<span class="w">   </span><span class="k">Gui</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>GD<span class="o">:</span>
+<span class="w">   </span><span class="k">GroupDeactivate</span><span class="o">:</span>
+<span class="w">      </span><span class="k">GroupDeactivate</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>GC<span class="o">:</span>
+<span class="w">   </span><span class="k">GuiControl</span><span class="o">:</span>
+<span class="w">      </span><span class="k">GuiControl</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span><span class="k">GuiControlGet</span><span class="o">:</span>
+<span class="w">      </span><span class="k">GuiControlGet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span><span class="kr">If</span><span class="o">:</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_3 </span><span class="o">=</span><span class="w"> </span>is
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="nv">%_#_2%</span><span class="w"> </span>is<span class="w"> </span><span class="nv">%_#_4%</span><span class="p">)</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="k">GoTo</span><span class="p">,</span><span class="w"> </span>RunCommand
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span>_<span class="k">#_3 </span><span class="o">=</span><span class="w"> </span>is<span class="w"> </span>not
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="nv">%_#_2%</span><span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span><span class="nv">%_#_4%</span><span class="p">)</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="k">GoTo</span><span class="p">,</span><span class="w"> </span>RunCommand
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_3 </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="nv">%_#_2%</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">)</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="k">GoTo</span><span class="p">,</span><span class="w"> </span>RunCommand
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_3 </span><span class="o">=</span><span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="nv">%_#_2%</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">)</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="k">GoTo</span><span class="p">,</span><span class="w"> </span>RunCommand
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span>_<span class="k">#_3 </span><span class="o">=</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="kr">If</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="k">GoTo</span><span class="p">,</span><span class="w"> </span>RunCommand
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>RunCommand<span class="o">:</span>
+<span class="w">      </span>_<span class="k">#_C </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">      </span><span class="k">Loop</span><span class="w"> </span><span class="mi">16</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span>_<span class="p">#</span>_<span class="nv">%A_Index%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>_<span class="p">#</span>_<span class="nv">%_#_C%</span>
+<span class="w">         </span>_<span class="p">#</span>_C<span class="o">++</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span><span class="nf">IsLabel</span><span class="p">(</span>_<span class="p">#</span>_1<span class="p">)</span>
+<span class="w">         </span><span class="k">GoTo</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_1%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>KH<span class="o">:</span>
+<span class="w">   </span><span class="k">KeyHistory</span><span class="o">:</span>
+<span class="w">      </span><span class="k">KeyHistory</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>LH<span class="o">:</span>
+<span class="w">   </span><span class="k">ListHotkeys</span><span class="o">:</span>
+<span class="w">      </span><span class="k">ListHotkeys</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>LV<span class="o">:</span>
+<span class="w">   </span><span class="k">ListVars</span><span class="o">:</span>
+<span class="w">      </span><span class="k">ListVars</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>OD<span class="o">:</span>
+<span class="w">   </span><span class="k">OutputDebug</span><span class="o">:</span>
+<span class="w">      </span><span class="k">OutputDebug</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>P<span class="o">:</span>
+<span class="w">   </span>Pause<span class="o">:</span>
+<span class="w">      </span>Pause<span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>PM<span class="o">:</span>
+<span class="w">   </span><span class="k">PostMessage</span><span class="o">:</span>
+<span class="w">      </span><span class="k">PostMessage</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SMSG<span class="o">:</span>
+<span class="w">   </span><span class="k">SendMessage</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SendMessage</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_8%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_9%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>PRG<span class="o">:</span>
+<span class="w">   </span><span class="k">Progress</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Progress</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SIM<span class="o">:</span>
+<span class="w">   </span><span class="k">SplashImage</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SplashImage</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>RD<span class="o">:</span>
+<span class="w">   </span><span class="k">RegDelete</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Regdelete</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>REM<span class="o">:</span>
+<span class="w">   </span><span class="k">RegExMatch</span><span class="o">:</span>
+<span class="w">      </span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>RER<span class="o">:</span>
+<span class="w">   </span><span class="k">RegExReplace</span><span class="o">:</span>
+<span class="w">      </span><span class="nf">RegExReplace</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_7%</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>RC<span class="o">:</span>
+<span class="w">   </span><span class="k">RegisterCallback</span><span class="o">:</span>
+<span class="w">      </span><span class="nf">RegisterCallback</span><span class="p">(</span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">)</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>RR<span class="o">:</span>
+<span class="w">   </span><span class="k">RegRead</span><span class="o">:</span>
+<span class="w">      </span><span class="k">RegRead</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>RWR<span class="o">:</span>
+<span class="w">   </span><span class="k">RegWrite</span><span class="o">:</span>
+<span class="w">      </span><span class="k">RegWrite</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span><span class="o">^</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>RL<span class="o">:</span>
+<span class="w">   </span><span class="k">Reload</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Reload</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SBL<span class="o">:</span>
+<span class="w">   </span><span class="k">SetBatchLines</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetBatchLines</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SCD<span class="o">:</span>
+<span class="w">   </span><span class="k">SetControlDelay</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetControlDelay</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SDMS<span class="o">:</span>
+<span class="w">   </span><span class="k">SetDefaultMouseSpeed</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetDefaultMouseSpeed</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SNLS<span class="o">:</span>
+<span class="w">   </span><span class="k">SetNumLockState</span><span class="o">:</span>
+<span class="w">    </span><span class="k">SetNumLockState</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SCLS<span class="o">:</span>
+<span class="w">   </span><span class="k">SetCapsLockState</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetCapsLockState</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SSLS<span class="o">:</span>
+<span class="w">   </span><span class="k">SetScrollLockState</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetScrollLockState</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SSCM<span class="o">:</span>
+<span class="w">   </span><span class="k">SetStoreCapslockMode</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetStoreCapslockMode</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>ST<span class="o">:</span>
+<span class="w">   </span><span class="k">SetTimer</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetTimer</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SWDIR<span class="o">:</span>
+<span class="w">   </span><span class="k">SetWorkingDir</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SetWorkingDir</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SB<span class="o">:</span>
+<span class="w">   </span><span class="k">SoundBeep</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SoundBeep</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SOG<span class="o">:</span>
+<span class="w">   </span><span class="k">SoundGet</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SoundGet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SGWV<span class="o">:</span>
+<span class="w">   </span><span class="k">SoundGetWaveVolume</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SoundGetWaveVolume</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SPL<span class="o">:</span>
+<span class="w">   </span><span class="k">SoundPlay</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SoundPlay</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SOS<span class="o">:</span>
+<span class="w">   </span><span class="k">SoundSet</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SoundSet</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>SSWV<span class="o">:</span>
+<span class="w">   </span><span class="k">SoundSetWaveVolume</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SoundSetWaveVolume</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span><span class="k">Return</span>
+<span class="w">   </span>STOF<span class="o">:</span>
+<span class="w">   </span><span class="k">SplashTextOff</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SplashTextOff</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>STON<span class="o">:</span>
+<span class="w">   </span><span class="k">SplashTextOn</span><span class="o">:</span>
+<span class="w">      </span><span class="k">SplashTextOn</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>SU<span class="o">:</span>
+<span class="w">   </span><span class="k">Suspend</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Suspend</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>T<span class="o">:</span>
+<span class="w">   </span><span class="k">Thread</span><span class="o">:</span>
+<span class="w">      </span><span class="k">Thread</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WGAS<span class="o">:</span>
+<span class="w">   </span><span class="k">WinGetActiveStats</span><span class="o">:</span>
+<span class="w">      </span><span class="k">WinGetActiveStats</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_2%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_3%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_4%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_5%</span><span class="p">,</span><span class="w"> </span><span class="nv">%_#_6%</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WMA<span class="o">:</span>
+<span class="w">   </span><span class="k">WinMinimizeAll</span><span class="o">:</span>
+<span class="w">      </span><span class="k">WinMinimizeAll</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>WMAU<span class="o">:</span>
+<span class="w">   </span><span class="k">WinMinimizeAllUndo</span><span class="o">:</span>
+<span class="w">      </span><span class="k">WinMinimizeAllUndo</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; OneLineCommands (Execute AHK code dynamically!)</span>
 <span class="c-Singleline">; by HotKeyIt</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=340131#340131</span>
 <span class="n">Exec</span><span class="p">(</span><span class="n">_#_1</span><span class="p">,</span><span class="n">_#_2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_3</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_4</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_5</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_6</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_7</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_8</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_9</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_10</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_11</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_12</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_13</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_14</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_15</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_16</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_17</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_18</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_19</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">_#_20</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">){</span>

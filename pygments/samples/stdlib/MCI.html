@@ -1,4 +1,1629 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">Title: MCI Library v1.0</span>
+
+<span class="cm">Group: Overview</span>
+
+<span class="cm">    This library gives the AutoHotkey developer access to the the Media Control</span>
+<span class="cm">    Interface (MCI) which provides standard commands for playing/controlling</span>
+<span class="cm">    multimedia devices.</span>
+
+
+<span class="cm">Group: Notes</span>
+
+<span class="cm">Devices Referenced Within The Documentation:</span>
+
+<span class="cm">    (start code)</span>
+<span class="cm">    Driver      Type            Description</span>
+<span class="cm">    ------      ----            -----------</span>
+<span class="cm">    MCIAVI      avivideo</span>
+<span class="cm">    MCICDA      cdaudio         CD audio</span>
+<span class="cm">                dat             Digital-audio tape player</span>
+<span class="cm">                digitalvideo    Digital video in a window (not GDI-based)</span>
+<span class="cm">                MPEGVideo       General-purpose media player</span>
+<span class="cm">                other           Undefined MCI device</span>
+<span class="cm">                overlay         Overlay device (analog video in a window)</span>
+<span class="cm">                scanner         Image scanner</span>
+<span class="cm">    MCISEQ      sequencer       MIDI sequencer</span>
+<span class="cm">                vcr             Video-cassette recorder or player</span>
+<span class="cm">    MCIPIONR    videodisc       Videodisc (Pioneer LaserDisc)</span>
+<span class="cm">    MCIWAVE     waveaudio       Audio device that plays digitized waveform files</span>
+<span class="cm">    (end)</span>
+
+<span class="cm">MCI Installation:</span>
+
+<span class="cm">    To see a list of MCI devices that have been registered for the computer, go</span>
+<span class="cm">    to the following registry locations...</span>
+
+<span class="cm">    (start code)</span>
+<span class="cm">    Windows NT4/2000/XP/2003/Vista/etc.:</span>
+
+<span class="cm">      16-bit:</span>
+<span class="cm">        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MCI</span>
+
+<span class="cm">      32-bit:</span>
+<span class="cm">        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MCI32</span>
+
+
+<span class="cm">    Windows 95/98/ME:</span>
+
+<span class="cm">        HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\MediaResources\MCI</span>
+<span class="cm">    (end)</span>
+
+<span class="cm">    To see a list of registered file extensions and the MCI device that has been</span>
+<span class="cm">    assigned to each extension, go the following locations...</span>
+
+<span class="cm">        (start code)</span>
+<span class="cm">        For Windows NT4/2000/XP/2003/Vista/etc., this information is stored in</span>
+<span class="cm">        the following registry location:</span>
+
+<span class="cm">            HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MCI Extensions</span>
+
+<span class="cm">        For Windows 95/98/ME, this information is stored in the %windir%\win.ini</span>
+<span class="cm">        file in the &quot;MCI Extensions&quot; section.</span>
+<span class="cm">        (end)</span>
+
+
+<span class="cm">Debugging:</span>
+
+<span class="cm">    *OutputDebug* statements in the core of some of the functions that only</span>
+<span class="cm">    execute on condition are permanent and are provided to help the developer</span>
+<span class="cm">    find and eliminate errors.</span>
+
+
+<span class="cm">Group: Links</span>
+
+<span class="cm">    MCI Reference Guide</span>
+<span class="cm">    - &lt;http://msdn.microsoft.com/en-us/library/ms709461(VS.85).aspx&gt;</span>
+
+
+<span class="cm">Group: Credit</span>
+
+<span class="cm">    The MCI library is an offshoot of the Sound_* and Media_* libraries provided</span>
+<span class="cm">    by *Fincs*.</span>
+
+<span class="cm">     -  &lt;http://www.autohotkey.com/forum/viewtopic.php?t=20666&gt;</span>
+<span class="cm">     -  &lt;http://www.autohotkey.com/forum/viewtopic.php?t=22662&gt;</span>
+
+<span class="cm">    Credit and thanks to *Fincs* for creating and enhancing  these libraries</span>
+<span class="cm">    which are a conversion from the AutoIt &quot;Sound.au3&quot; standard library</span>
+<span class="cm">    and to *RazerM* for providing the original &quot;Sound.au3&quot; library.</span>
+
+<span class="cm">    Notify idea and code from *Sean*</span>
+<span class="cm">        - &lt;http://www.autohotkey.com/forum/viewtopic.php?p=132331#132331&gt;</span>
+
+<span class="cm">    mciGetErrorString call from *PhiLho*</span>
+<span class="cm">        - &lt;http://www.autohotkey.com/forum/viewtopic.php?p=116011#116011&gt;</span>
+
+<span class="cm">Group: Functions</span>
+<span class="cm">*/</span>
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">; Function: MCI_Close</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Description:</span>
+<span class="c1">;</span>
+<span class="c1">;   Closes the device and any associated resources.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;   p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;   The return code from the &lt;MCI_SendString&gt; function which is 0 if the command</span>
+<span class="c1">;   completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;   For most MCI devices, closing a device usually stops playback but not</span>
+<span class="c1">;   always.  If unsure of the device, consider stopping the device before</span>
+<span class="c1">;   closing it.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Close</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">Static</span><span class="w"> </span>MM_MCINOTIFY<span class="o">:=</span><span class="mh">0x03B9</span>
+
+<span class="w">    </span><span class="c1">;-- Close device</span>
+<span class="w">    </span>l_Return<span class="o">:=</span>MCI_SendString<span class="p">(</span><span class="s">&quot;close &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; wait&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">;-- Turn off monitoring of MM_MCINOTIFY message?</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">OnMessage</span><span class="p">(</span>MM_MCINOTIFY<span class="p">)</span><span class="o">=</span><span class="s">&quot;MCI_Notify&quot;</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">;-- Don&#39;t proceed unless all MCI devices are closed</span>
+<span class="w">        </span><span class="nf">MCI_SendString</span><span class="p">(</span><span class="s">&quot;sysinfo all quantity open&quot;</span><span class="p">,</span>l_OpenMCIDevices<span class="p">)</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>l_OpenMCIDevices<span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">;-- Disable monitoring</span>
+<span class="w">            </span><span class="nf">OnMessage</span><span class="p">(</span>MM_MCINOTIFY<span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_Return
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_CurrentTrack</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Identifies the current track.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The current track. Note: The MCISEQ sequencer returns 1.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_CurrentTrack</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;status &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; current track&quot;</span>
+<span class="w">    </span>l_RC<span class="o">:=</span>MCI_SendString<span class="p">(</span>l_CmdString<span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_lpszReturnString
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_DeviceType</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Identifies the device type name.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       A device type name, which can be one of the following...</span>
+<span class="c1">;</span>
+<span class="c1">;           (start code)</span>
+<span class="c1">;           cdaudio</span>
+<span class="c1">;           dat</span>
+<span class="c1">;           digitalvideo</span>
+<span class="c1">;           other</span>
+<span class="c1">;           overlay</span>
+<span class="c1">;           scanner</span>
+<span class="c1">;           sequencer</span>
+<span class="c1">;           vcr</span>
+<span class="c1">;           videodisc</span>
+<span class="c1">;           waveaudio</span>
+<span class="c1">;           (end)</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_DeviceType</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">=</span>capability<span class="w"> </span><span class="nv">%p_lpszDeviceID%</span><span class="w"> </span>device<span class="w"> </span>type
+<span class="w">    </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_lpszReturnString
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">; Function: MCI_Open</span>
+<span class="c1">;</span>
+<span class="c1">; Description:</span>
+<span class="c1">;</span>
+<span class="c1">;   Opens an MCI device and loads the specified file.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;   p_MediaFile - A multimedia file.</span>
+<span class="c1">;</span>
+<span class="c1">;   p_Alias - Alias. A name such as media1. [Optional] If blank (the default),</span>
+<span class="c1">;       an alias will automatically be generated.</span>
+<span class="c1">;</span>
+<span class="c1">;   p_Flags - Flags that determine how the device is opened. [Optional]</span>
+<span class="c1">;</span>
+<span class="c1">;   Flag Notes:</span>
+<span class="c1">;   Some commonly used flags include...</span>
+<span class="c1">;</span>
+<span class="c1">;       (start code)</span>
+<span class="c1">;       type {device_type}</span>
+<span class="c1">;       sharable</span>
+<span class="c1">;       (end)</span>
+<span class="c1">;</span>
+<span class="c1">;   If more than one flag is used, separate each flag/value with a space.</span>
+<span class="c1">;   For example:</span>
+<span class="c1">;</span>
+<span class="c1">;       (start code)</span>
+<span class="c1">;       type MPEGVideo sharable</span>
+<span class="c1">;       (end)</span>
+<span class="c1">;</span>
+<span class="c1">;   Additional notes...</span>
+<span class="c1">;</span>
+<span class="c1">;     - The &quot;wait&quot; flag is automatically added to the end of the command string.</span>
+<span class="c1">;       This flag directs the device to complete the &quot;open&quot; request before</span>
+<span class="c1">;       returning.</span>
+<span class="c1">;</span>
+<span class="c1">;     - Use the &quot;shareable&quot; flag with care.  Per msdn, the &quot;shareable&quot; flag</span>
+<span class="c1">;       &quot;initializes the device or file as shareable. Subsequent attempts to</span>
+<span class="c1">;       open the device or file fail unless you specify &quot;shareable&quot; in both the</span>
+<span class="c1">;       original and subsequent open commands.  MCI returns an invalid device</span>
+<span class="c1">;       error if the device is already open and not shareable.  The MCISEQ</span>
+<span class="c1">;       sequencer and MCIWAVE devices do not support shared files.&quot;</span>
+<span class="c1">;</span>
+<span class="c1">;     - By default, the MCI device that is opened is determined by the file&#39;s</span>
+<span class="c1">;       extension.  The &quot;type&quot; flag can be used to  1) override the default</span>
+<span class="c1">;       device that is registered for the file extension or to  2) open a media</span>
+<span class="c1">;       file with a file extension that is not registered as a MCI file</span>
+<span class="c1">;       extension.  See the &lt;Notes&gt; section for more information.</span>
+<span class="c1">;</span>
+<span class="c1">;     - For a complete list of flags and descriptions for the &quot;open&quot; command</span>
+<span class="c1">;       string, see the &quot;MCI Reference Guide&quot; in the &lt;Links&gt; section.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The multimedia handle (alias) or 0 (FALSE) to indicate failure.  Failure</span>
+<span class="c1">;       will occur with any of the following conditions:</span>
+<span class="c1">;</span>
+<span class="c1">;        -  The media file does not exist.</span>
+<span class="c1">;</span>
+<span class="c1">;        -  The media file&#39;s extension is not a regisitered MCI extension.</span>
+<span class="c1">;           Note: This test is only performed if the &quot;type&quot; flag is not</span>
+<span class="c1">;           specified.</span>
+<span class="c1">;</span>
+<span class="c1">;        -  Non-zero return code from the &lt;MCI_SendString&gt; function.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;     - Use the &lt;MCI_OpenCDAudio&gt; function to open a CDAudio device.</span>
+<span class="c1">;</span>
+<span class="c1">;     - After the device has been successfully opened, the time format is set to</span>
+<span class="c1">;       milliseconds which it will remain in effect until it is manually set to</span>
+<span class="c1">;       another value or until the device is closed.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Open</span><span class="p">(</span>p_MediaFile<span class="p">,</span>p_Alias<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>p_Flags<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">Static</span><span class="w"> </span>s_Seq<span class="o">=</span><span class="mi">0</span>
+
+<span class="w">    </span><span class="c1">;[==============]</span>
+<span class="w">    </span><span class="c1">;[  Parameters  ]</span>
+<span class="w">    </span><span class="c1">;[==============]</span>
+<span class="w">    </span><span class="c1">;-- p_MediaFile</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_MediaFile<span class="o">&lt;&gt;</span>new
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">;-- Media file exist?</span>
+<span class="w">        </span><span class="k">IfNotExist</span><span class="w"> </span><span class="nv">%p_MediaFile%</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="k">outputdebug</span><span class="p">,</span>
+<span class="w">               </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">                </span>End<span class="w"> </span>Func<span class="o">:</span><span class="w"> </span><span class="nv">%A_ThisFunc%</span><span class="o">:</span><span class="w"> </span>The<span class="w"> </span>media<span class="w"> </span>file<span class="w"> </span>can<span class="err">&#39;</span>t<span class="w"> </span>be
+<span class="w">                </span>found<span class="p">.</span><span class="w">  </span><span class="k">Return</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">               </span><span class="p">)</span>
+
+<span class="w">            </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">            </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">;-- &quot;Type&quot; flag not defined?</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span><span class="nb">A_Space</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_Flags<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nb">A_Space</span><span class="p">,</span><span class="s">&quot; type &quot;</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">;-- Registered file extension?</span>
+<span class="w">            </span><span class="k">SplitPath</span><span class="w"> </span>p_MediaFile<span class="p">,,,</span>l_Extension
+
+<span class="w">            </span><span class="c1">;-- Which OS type?</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="nb">A_OSType</span><span class="o">=</span>WIN32_NT<span class="w">  </span><span class="c1">;-- Windows NT4/2000/XP/2003/Vista/etc.</span>
+<span class="w">                </span><span class="k">RegRead</span>
+<span class="w">                    </span><span class="p">,</span>l_Dummy
+<span class="w">                    </span><span class="p">,</span>HKEY_LOCAL_MACHINE
+<span class="w">                    </span><span class="p">,</span>SOFTWARE<span class="p">\</span>Microsoft<span class="p">\</span>Windows<span class="w"> </span>NT<span class="p">\</span>CurrentVersion<span class="p">\</span>MCI<span class="w"> </span>Extensions
+<span class="w">                    </span><span class="p">,</span><span class="nv">%l_Extension%</span>
+<span class="w">             </span><span class="k">else</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">;-- Windows 95/98/ME</span>
+<span class="w">                </span><span class="k">iniRead</span>
+<span class="w">                    </span><span class="p">,</span>l_Value
+<span class="w">                    </span><span class="p">,</span><span class="nv">%A_WinDir%</span><span class="p">\</span>win<span class="p">.</span>ini
+<span class="w">                    </span><span class="p">,</span>MCI<span class="w"> </span>Extensions
+<span class="w">                    </span><span class="p">,</span><span class="nv">%l_Extension%</span>
+
+<span class="w">                </span><span class="kr">if</span><span class="w"> </span>l_Value<span class="o">=</span>ERROR
+<span class="w">                    </span>ErrorLevel<span class="o">=</span><span class="mi">1</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">            </span><span class="c1">;-- Not found?</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span>ErrorLevel
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                </span><span class="k">outputdebug</span><span class="p">,</span>
+<span class="w">                   </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">                    </span>End<span class="w"> </span>Func<span class="o">:</span><span class="w"> </span><span class="nv">%A_ThisFunc%</span><span class="o">:</span><span class="w"> </span>The<span class="w"> </span>file<span class="w"> </span>extension<span class="w"> </span>for<span class="w"> </span>this<span class="w"> </span>media
+<span class="w">                    </span>file<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>registered<span class="w"> </span>as<span class="w"> </span>a<span class="w"> </span>valid<span class="w"> </span>MCI<span class="w"> </span>extension<span class="p">.</span><span class="w">  </span><span class="k">Return</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                   </span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">;-- Enclose in DQ</span>
+<span class="w">        </span>p_MediaFile<span class="o">=</span><span class="s">&quot;%p_MediaFile%&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">;-- Alias</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Alias<span class="w"> </span>is<span class="w"> </span>Space
+<span class="w">       </span><span class="p">{</span>
+<span class="w">       </span>s_Seq<span class="o">++</span>
+<span class="w">       </span>p_Alias<span class="o">=</span>MCIFile<span class="nv">%s_Seq%</span>
+<span class="w">       </span><span class="p">}</span>
+
+
+<span class="w">    </span><span class="c1">;[===============]</span>
+<span class="w">    </span><span class="c1">;[  Open device  ]</span>
+<span class="w">    </span><span class="c1">;[===============]</span>
+<span class="w">    </span>l_CmdString<span class="o">=</span>open<span class="w"> </span><span class="nv">%p_MediaFile%</span><span class="w"> </span>alias<span class="w"> </span><span class="nv">%p_Alias%</span><span class="w"> </span><span class="nv">%p_Flags%</span><span class="w"> </span>wait
+<span class="w">    </span>l_Return<span class="o">:=</span>MCI_SendString<span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_Return
+<span class="w">        </span>l_Return<span class="o">:=</span><span class="mi">0</span>
+<span class="w">     </span><span class="k">else</span>
+<span class="w">        </span>l_Return<span class="o">:=</span>p_Alias
+
+<span class="w">    </span><span class="c1">;-- Set time format to milliseconds</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_Return
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span>l_CmdString<span class="o">=</span>set<span class="w"> </span><span class="nv">%p_Alias%</span><span class="w"> </span>time<span class="w"> </span>format<span class="w"> </span>milliseconds<span class="w"> </span>wait
+<span class="w">        </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">;-- Return to sender</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_Return
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_OpenCDAudio</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Opens a CDAudio device.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Drive - CDROM drive letter. [Optional] If blank (the default), the</span>
+<span class="c1">;           first CDROM drive found is used.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Alias - Alias.  A name such as media1. [Optional] If blank (the</span>
+<span class="c1">;           default), an alias will automatically be generated.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_CheckForMedia - Check for media. [Optional] The default is TRUE.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The multimedia handle (alias) or 0 to indicate failure.  Failure will</span>
+<span class="c1">;       occur with any of the following conditions:</span>
+<span class="c1">;        -  The computer does not have a CDROM drive.</span>
+<span class="c1">;        -  The specified drive is not CDROM drive.</span>
+<span class="c1">;        -  Non-zero return code from the &lt;MCI_SendString&gt; function.</span>
+<span class="c1">;</span>
+<span class="c1">;       If p_CheckForMedia is TRUE (the default), failure will also occur with</span>
+<span class="c1">;       any of the following conditions:</span>
+<span class="c1">;        -  No media was found in the device.</span>
+<span class="c1">;        -  Media does not contain audio tracks.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       After the device has been successfully opened, the time format is set to</span>
+<span class="c1">;       milliseconds which will remain in effect until it is manually set to</span>
+<span class="c1">;       another value or until the device is closed.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_OpenCDAudio</span><span class="p">(</span>p_Drive<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>p_Alias<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>p_CheckForMedia<span class="o">=</span>True<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">Static</span><span class="w"> </span>s_Seq<span class="o">=</span><span class="mi">0</span>
+
+<span class="w">    </span><span class="c1">;-- Parameters</span>
+<span class="w">    </span>p_Drive<span class="o">=</span><span class="nv">%p_Drive%</span><span class="w">  </span><span class="c1">;-- Autotrim</span>
+<span class="w">    </span>p_Drive<span class="o">:=</span>SubStr<span class="p">(</span>p_Drive<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Drive<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>Alpha
+<span class="w">        </span>p_Drive<span class="o">:=</span><span class="s">&quot;&quot;</span>
+
+<span class="w">    </span><span class="c1">;-- Drive not specified</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Drive<span class="w"> </span>is<span class="w"> </span>Space
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">;-- Collect list of CDROM drives</span>
+<span class="w">        </span><span class="k">DriveGet</span><span class="w"> </span>l_ListOfCDROMDrives<span class="p">,</span>List<span class="p">,</span>CDROM
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>l_ListOfCDROMDrives<span class="w"> </span>is<span class="w"> </span>Space
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="k">outputdebug</span><span class="p">,</span>
+<span class="w">               </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">                </span>End<span class="w"> </span>Func<span class="o">:</span><span class="w"> </span><span class="nv">%A_ThisFunc%</span><span class="o">:</span><span class="w"> </span>This<span class="w"> </span>PC<span class="w"> </span>does<span class="w"> </span>not<span class="w"> </span>have<span class="w"> </span>functioning<span class="w"> </span>CDROM
+<span class="w">                </span><span class="k">drive</span><span class="p">.</span><span class="w">  </span><span class="k">Return</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">               </span><span class="p">)</span>
+
+<span class="w">            </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">            </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">;-- Assign the first CDROM drive</span>
+<span class="w">        </span>p_Drive<span class="o">:=</span>SubStr<span class="p">(</span>l_ListOfCDROMDrives<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">;-- Is this a CDROM drive?</span>
+<span class="w">    </span><span class="k">DriveGet</span><span class="w"> </span>l_DriveType<span class="p">,</span>Type<span class="p">,</span><span class="nv">%p_Drive%</span><span class="o">:</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_DriveType<span class="o">&lt;&gt;</span>CDROM
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="k">outputdebug</span><span class="p">,</span>
+<span class="w">           </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">            </span>End<span class="w"> </span>Func<span class="o">:</span><span class="w"> </span><span class="nv">%A_ThisFunc%</span><span class="o">:</span><span class="w"> </span>The<span class="w"> </span>specified<span class="w"> </span>drive<span class="w"> </span><span class="p">(</span><span class="nv">%p_Drive%</span><span class="o">:</span><span class="p">)</span><span class="w"> </span>is<span class="w"> </span>not
+<span class="w">            </span>a<span class="w"> </span>CDROM<span class="w"> </span><span class="k">drive</span><span class="p">.</span><span class="w">  </span><span class="k">Return</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">           </span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">;-- Alias</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Alias<span class="w"> </span>is<span class="w"> </span>Space
+<span class="w">       </span><span class="p">{</span>
+<span class="w">       </span>s_Seq<span class="o">++</span>
+<span class="w">       </span>p_Alias<span class="o">=</span>MCICDAudio<span class="nv">%s_Seq%</span>
+<span class="w">       </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">;-- Open device</span>
+<span class="w">    </span>l_CmdString<span class="o">=</span>open<span class="w"> </span><span class="nv">%p_Drive%</span><span class="o">:</span><span class="w"> </span>alias<span class="w"> </span><span class="nv">%p_Alias%</span><span class="w"> </span>type<span class="w"> </span>cdaudio<span class="w"> </span>shareable<span class="w"> </span>wait
+<span class="w">    </span>l_Return<span class="o">:=</span>MCI_SendString<span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_Return
+<span class="w">        </span>l_Return<span class="o">:=</span><span class="mi">0</span>
+<span class="w">     </span><span class="k">else</span>
+<span class="w">        </span>l_Return<span class="o">:=</span>p_Alias
+
+<span class="w">    </span><span class="c1">;-- Device is open</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_Return
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">;-- Set time format to milliseconds</span>
+<span class="w">        </span>l_CmdString<span class="o">=</span>set<span class="w"> </span><span class="nv">%p_Alias%</span><span class="w"> </span>time<span class="w"> </span>format<span class="w"> </span>milliseconds<span class="w"> </span>wait
+<span class="w">        </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">)</span>
+
+<span class="w">        </span><span class="c1">;-- Check for media?</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>p_CheckForMedia
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span>not<span class="w"> </span><span class="nf">MCI_MediaIsPresent</span><span class="p">(</span>p_Alias<span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                </span><span class="nf">MCI_Close</span><span class="p">(</span>p_Alias<span class="p">)</span>
+<span class="w">                </span><span class="k">outputdebug</span><span class="p">,</span>
+<span class="w">                   </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">                    </span>End<span class="w"> </span>Func<span class="o">:</span><span class="w"> </span><span class="nv">%A_ThisFunc%</span><span class="o">:</span><span class="w"> </span>Media<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>present<span class="w"> </span>in<span class="w"> </span>the
+<span class="w">                    </span>specified<span class="w"> </span><span class="nf">drive</span><span class="w"> </span><span class="p">(</span><span class="nv">%p_Drive%</span><span class="o">:</span><span class="p">).</span><span class="w">  </span>Return<span class="o">=</span><span class="mi">0</span>
+<span class="w">                   </span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">            </span><span class="c1">;-- 1st track an audio track?</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span>not<span class="w"> </span><span class="nf">MCI_TrackIsAudio</span><span class="p">(</span>p_Alias<span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                </span><span class="nf">MCI_Close</span><span class="p">(</span>p_Alias<span class="p">)</span>
+<span class="w">                </span><span class="k">outputdebug</span><span class="p">,</span>
+<span class="w">                   </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">                    </span>End<span class="w"> </span>Func<span class="o">:</span><span class="w"> </span><span class="nv">%A_ThisFunc%</span><span class="o">:</span><span class="w"> </span>Media<span class="w"> </span>in<span class="w"> </span>drive<span class="w"> </span><span class="nv">%p_Drive%</span><span class="o">:</span><span class="w"> </span>does<span class="w"> </span>not
+<span class="w">                    </span>contain<span class="w"> </span>CD<span class="w"> </span>Audio<span class="w"> </span>tracks<span class="p">.</span><span class="w">  </span><span class="k">Return</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                   </span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_Return
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Length</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Gets the total length of the media in the current time format.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Track - Track number. [Optional] The default is 0 (no track number).</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       If a track number is not specified (the default), the length of the</span>
+<span class="c1">;       entire media is returned.  If a track number is specified, only the</span>
+<span class="c1">;       the length of the specified track is returned.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Length</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Track<span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">;-- Build command string</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;status &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; length&quot;</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Track
+<span class="w">        </span>l_CmdString<span class="o">:=</span>l_CmdString<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; track &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_Track
+
+<span class="w">    </span><span class="c1">;-- Send it!</span>
+<span class="w">    </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_lpszReturnString
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_MediaIsPresent</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Checks to see if media is present in the device.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       TRUE if the media is inserted in the device, otherwise FALSE.</span>
+<span class="c1">;       msdn: Sequencer, video-overlay, digital-video, and waveform-audio</span>
+<span class="c1">;       devices (always) return TRUE.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_MediaIsPresent</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">=</span>status<span class="w"> </span><span class="nv">%p_lpszDeviceID%</span><span class="w"> </span>media<span class="w"> </span>present
+<span class="w">    </span>l_RC<span class="o">:=</span>MCI_SendString<span class="p">(</span>l_CmdString<span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_RC<span class="w">  </span><span class="c1">;-- Probably invalid command for the device</span>
+<span class="w">        </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">     </span><span class="k">else</span>
+<span class="w">        </span><span class="nf">Return</span><span class="w"> </span><span class="p">(</span>l_lpszReturnString<span class="o">=</span><span class="s">&quot;true&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span>True<span class="o">:</span>False
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Notify</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       (Internal function.  Do not call directly)</span>
+<span class="c1">;</span>
+<span class="c1">;       This function has 2 responsibilties...</span>
+<span class="c1">;</span>
+<span class="c1">;        1) If called by the &lt;MCI_Play&gt; function, wParam contains the name of</span>
+<span class="c1">;           the developer-defined function.  This value is assigned to the</span>
+<span class="c1">;           s_Callback static variable for future use.</span>
+<span class="c1">;</span>
+<span class="c1">;        2) When called as a result of MM_MCINOTIFY message, this function will</span>
+<span class="c1">;           call the developer-defined function (name stored in the s_Callback</span>
+<span class="c1">;           static variable) sending the MM_MCINOTIFY status flag as the first</span>
+<span class="c1">;           parameter.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       wParam - Function name or a MM_MCINOTIFY flag.</span>
+<span class="c1">;</span>
+<span class="c1">;       MM_MCINOTIFY flag values are as follows...</span>
+<span class="c1">;</span>
+<span class="c1">;           (start code)</span>
+<span class="c1">;           MCI_NOTIFY_SUCCESSFUL:=0x1</span>
+<span class="c1">;               The conditions initiating the callback function have been met.</span>
+<span class="c1">;</span>
+<span class="c1">;           MCI_NOTIFY_SUPERSEDED:=0x2</span>
+<span class="c1">;               The device received another command with the &quot;notify&quot; flag set</span>
+<span class="c1">;               and the current conditions for initiating the callback function</span>
+<span class="c1">;               have been superseded.</span>
+<span class="c1">;</span>
+<span class="c1">;           MCI_NOTIFY_ABORTED:=0x4</span>
+<span class="c1">;               The device received a command that prevented the current</span>
+<span class="c1">;               conditions for initiating the callback function from being met.</span>
+<span class="c1">;               If a new command interrupts the current command and  it also</span>
+<span class="c1">;               requests notification, the device sends this message only and</span>
+<span class="c1">;               not MCI_NOTIFY_SUPERSEDED.</span>
+<span class="c1">;</span>
+<span class="c1">;           MCI_NOTIFY_FAILURE:=0x8</span>
+<span class="c1">;               A device error occurred while the device was executing the</span>
+<span class="c1">;               command.</span>
+<span class="c1">;           (end)</span>
+<span class="c1">;</span>
+<span class="c1">;       lParam - lDevID.  This is the identifier of the device initiating the</span>
+<span class="c1">;           callback function.  This information is only useful if operating</span>
+<span class="c1">;           more than one MCI device at a time.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       Per msdn, returns 0 to indicate a successful call.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       This function does not complete until the call to the developer-defined</span>
+<span class="c1">;       function has completed.  If a MM_MCINOTIFY message is issued while this</span>
+<span class="c1">;       function is running, the message will be treated as unmonitored.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Notify</span><span class="p">(</span>wParam<span class="p">,</span>lParam<span class="p">,</span>msg<span class="p">,</span>hWnd<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="c1">;;;;;    Critical</span>
+<span class="w">        </span><span class="c1">;-- This will cause MM_MCINOTIFY messages to be buffered rather than</span>
+<span class="w">        </span><span class="c1">;   discared if this function is still running when another MM_MCINOTIFY</span>
+<span class="w">        </span><span class="c1">;   message is sent.</span>
+
+<span class="w">    </span><span class="kt">Static</span><span class="w"> </span>s_Callback
+
+<span class="w">    </span><span class="c1">;-- Internal call?</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>lParam<span class="w"> </span>is<span class="w"> </span>Space
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span>s_Callback<span class="o">:=</span>wParam
+<span class="w">        </span><span class="k">return</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">;-- Call developer function</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">IsFunc</span><span class="p">(</span>s_Callback<span class="p">)</span>
+<span class="w">        </span><span class="nv">%s_Callback%</span><span class="p">(</span>wParam<span class="p">)</span>
+
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_NumberOfTracks</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Identifies the number of tracks on the media.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The number of tracks on the media.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       msdn: The MCISEQ and MCIWAVE devices return 1, as do most VCR devices.</span>
+<span class="c1">;       The MCIPIONR device does not support this flag.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_NumberOfTracks</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;status &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; number of tracks&quot;</span>
+<span class="w">    </span>l_RC<span class="o">:=</span>MCI_SendString<span class="p">(</span>l_CmdString<span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_lpszReturnString
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;----------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Pause</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Pauses playback or recording.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       msdn: With the MCICDA, MCISEQ, and MCIPIONR drivers, the pause command</span>
+<span class="c1">;       works the same as the stop command.</span>
+<span class="c1">;</span>
+<span class="c1">;       Observation: For MCISEQ devices, pause works OK for me.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Pause</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span><span class="s">&quot;pause &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; wait&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Play</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Starts playing a device.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Flags - Flags that determine how the device is played. [Optional]</span>
+<span class="c1">;           If blank, no flags are used.</span>
+<span class="c1">;</span>
+<span class="c1">;       Flag Notes:</span>
+<span class="c1">;</span>
+<span class="c1">;           Some commonly used flags include...</span>
+<span class="c1">;</span>
+<span class="c1">;               (start code)</span>
+<span class="c1">;               from {position}</span>
+<span class="c1">;               to {position}</span>
+<span class="c1">;               (end)</span>
+<span class="c1">;</span>
+<span class="c1">;           If more than one flag is used, separate each flag/value with a</span>
+<span class="c1">;           space.  For example:</span>
+<span class="c1">;</span>
+<span class="c1">;               (start code)</span>
+<span class="c1">;               from 10144 to 95455</span>
+<span class="c1">;               (end)</span>
+<span class="c1">;</span>
+<span class="c1">;           Additional notes...</span>
+<span class="c1">;</span>
+<span class="c1">;            -  With the exception of very short sound files (&lt;300 ms), the</span>
+<span class="c1">;               &quot;wait&quot; flag is not recommended.  The entire application will be</span>
+<span class="c1">;               non-responsive while the media is being played.</span>
+<span class="c1">;</span>
+<span class="c1">;            -  Do not add the &quot;notify&quot; flag unless you plan to have your</span>
+<span class="c1">;               script trap the MM_MCINOTIFY message outside of this function.</span>
+<span class="c1">;               The &quot;notify&quot; flag is automatically added if the p_Callback</span>
+<span class="c1">;               parameter contains a value.</span>
+<span class="c1">;</span>
+<span class="c1">;            -  For a complete list of flags and descriptions for the &quot;play&quot;</span>
+<span class="c1">;               command string, see the &quot;MCI Reference Guide&quot; in the &lt;Links&gt;</span>
+<span class="c1">;               section.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Callback - Function name that is called when the MM_MCINOTIFY message</span>
+<span class="c1">;           is sent. [Optional] If defined, the &quot;notify&quot; flag is automatically</span>
+<span class="c1">;           added.</span>
+<span class="c1">;</span>
+<span class="c1">;           Important:  The syntax of this parameter and the associated function</span>
+<span class="c1">;           is critical.  If not defined correctly, the script may crash.</span>
+<span class="c1">;</span>
+<span class="c1">;           The function must have at least one parameter.  For example...</span>
+<span class="c1">;</span>
+<span class="c1">;               (start code)</span>
+<span class="c1">;               MyNotifyFunction(NotifyFlag)</span>
+<span class="c1">;               (end)</span>
+<span class="c1">;</span>
+<span class="c1">;           Additional parameters are allowed but they must be optional (contain</span>
+<span class="c1">;           a default value).  For example:</span>
+<span class="c1">;</span>
+<span class="c1">;               (start code)</span>
+<span class="c1">;               MyNotifyFunction(NotifyFlag,FirstCall=False,Parm3=&quot;ABC&quot;)</span>
+<span class="c1">;               (end)</span>
+<span class="c1">;</span>
+<span class="c1">;           When a notify message is sent, the approriate MM_MCINOTIFY flag is</span>
+<span class="c1">;           sent to the developer-defined function as the first parameter.  See</span>
+<span class="c1">;           the &lt;MCI_Notify&gt; function for a description and a list of</span>
+<span class="c1">;           MM_MCINOTIFY flag values.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;       p_hWndCallback - Handle to a callback window if the p_Callback</span>
+<span class="c1">;           parameter contains a value and/or if the &quot;notify&quot; flag is defined.</span>
+<span class="c1">;           [Optional]  If undefined but needed, the handle to default</span>
+<span class="c1">;           Autohotkey window is used.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Play</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Flags<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>p_Callback<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>p_hwndCallback<span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">Static</span><span class="w"> </span>MM_MCINOTIFY<span class="o">:=</span><span class="mh">0x03B9</span>
+
+<span class="w">    </span><span class="c1">;-- Build command string</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;play &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Flags
+<span class="w">        </span>l_CmdString<span class="o">:=</span>l_CmdString<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nb">A_Space</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_Flags
+
+
+<span class="w">    </span><span class="c1">;-- Notify</span>
+<span class="w">    </span>p_Callback<span class="o">=</span><span class="nv">%p_Callback%</span><span class="w">  </span><span class="c1">;-- AutoTrim</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span>p_Callback<span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span>l_CmdString<span class="o">:=</span>l_CmdString<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; notify&quot;</span>
+
+<span class="w">        </span><span class="c1">;-- Attach p_Callback to MCI_Notify function</span>
+<span class="w">        </span><span class="nf">MCI_Notify</span><span class="p">(</span>p_Callback<span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c1">;-- Monitor for MM_MCINOTIFY message</span>
+<span class="w">        </span><span class="nf">OnMessage</span><span class="p">(</span>MM_MCINOTIFY<span class="p">,</span><span class="s">&quot;MCI_Notify&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="c1">;-- Note:  If the MM_MCINOTIFY message was monitored elsewhere,</span>
+<span class="w">            </span><span class="c1">;   this statement will override it.</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">;-- Callback handle</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>not<span class="w"> </span>p_hwndCallback
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span><span class="nb">A_Space</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>l_CmdString<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nb">A_Space</span><span class="p">,</span><span class="s">&quot; notify &quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">or</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span>p_Callback<span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span>l_DetectHiddenWindows<span class="o">:=</span><span class="nb">A_DetectHiddenWindows</span>
+<span class="w">            </span><span class="k">DetectHiddenWindows</span><span class="w"> </span>On
+<span class="w">            </span><span class="k">Process</span><span class="w"> </span>Exist
+<span class="w">            </span>p_hwndCallback<span class="o">:=</span>WinExist<span class="p">(</span><span class="s">&quot;ahk_pid &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>ErrorLevel<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; ahk_class AutoHotkey&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">DetectHiddenWindows</span><span class="w"> </span><span class="nv">%l_DetectHiddenWindows%</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+
+<span class="w">    </span><span class="c1">;-- Send it!</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">,</span>Dummy<span class="p">,</span>p_hwndCallback<span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Position</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Identifies the current playback or recording position.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Track - Track number. [Optional] The default is 0 (no track number).</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The current playback or recording position in the current time format.</span>
+<span class="c1">;       If the p_Track parameter contains a non-zero value, the start position</span>
+<span class="c1">;       of the track relative to entire media is returned.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Position</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Track<span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;status &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; position&quot;</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Track
+<span class="w">        </span>l_CmdString<span class="o">:=</span>l_CmdString<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; track &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_Track
+
+<span class="w">    </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_lpszReturnString
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Record</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Starts recording.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Flags - Flags that determine how the device operates for</span>
+<span class="c1">;           recording. [Optional] If blank, no flags are used.</span>
+<span class="c1">;</span>
+<span class="c1">;       Flag Notes:</span>
+<span class="c1">;</span>
+<span class="c1">;           Some commonly used flags include...</span>
+<span class="c1">;</span>
+<span class="c1">;               (start code)</span>
+<span class="c1">;               from {position}</span>
+<span class="c1">;               to {position}</span>
+<span class="c1">;               insert</span>
+<span class="c1">;               overwrite</span>
+<span class="c1">;               (end)</span>
+<span class="c1">;</span>
+<span class="c1">;           If more than one flag is used, separate each flag/value with a</span>
+<span class="c1">;           space.  For example:</span>
+<span class="c1">;</span>
+<span class="c1">;               (start code)</span>
+<span class="c1">;               overwrite from 18122 to 26427</span>
+<span class="c1">;               (end)</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;           Additional notes...</span>
+<span class="c1">;</span>
+<span class="c1">;            -  The &quot;wait&quot; flag is not recommended.  The entire application will</span>
+<span class="c1">;               be non-responsive until recording is stopped with a Stop or</span>
+<span class="c1">;               Pause command.</span>
+<span class="c1">;</span>
+<span class="c1">;            -  For a complete list of flags and descriptions for the &quot;record&quot;</span>
+<span class="c1">;               command string, see the &quot;MCI Reference Guide&quot; in the &lt;Links&gt;</span>
+<span class="c1">;               section.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       msdn: Recording stops when a Stop or Pause command is issued.  For the</span>
+<span class="c1">;       MCIWAVE driver, all data recorded after a file is opened is discarded if</span>
+<span class="c1">;       the file is closed without saving it.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Credit:</span>
+<span class="c1">;</span>
+<span class="c1">;       Original function and examples by heresy.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Record</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Flags<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">=</span>record<span class="w"> </span><span class="nv">%p_lpszDeviceID%</span><span class="w"> </span><span class="nv">%p_Flags%</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Resume</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Resumes playback or recording after the device has been paused.  See the</span>
+<span class="c1">;       &lt;MCI_Pause&gt; function for more information.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       msdn: Digital-video, VCR, and waveform-audio devices recognize this</span>
+<span class="c1">;       command. Although CD audio, MIDI sequencer, and videodisc devices</span>
+<span class="c1">;       also recognize this command, the MCICDA, MCISEQ, and MCIPIONR device</span>
+<span class="c1">;       drivers do not support it.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Programming Notes:</span>
+<span class="c1">;</span>
+<span class="c1">;       The &lt;MCI_Play&gt; function can sometimes be an alternative to this</span>
+<span class="c1">;       function.  Many devices will begin to play where they were last paused.</span>
+<span class="c1">;       If the device does not begin playback correctly, try specifying an</span>
+<span class="c1">;       appropriate &quot;From&quot; and &quot;To&quot; value (if needed) in the p_Flags parameter.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Resume</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span><span class="s">&quot;resume &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; wait&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Save</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Saves an MCI file.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_FileName - File name to store a MCI file.  If the file does not exist,</span>
+<span class="c1">;           a new file will be created.  If the file exists, it will be</span>
+<span class="c1">;           overwritten.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       This command can overwrite existing files.  Use with care.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Credit:</span>
+<span class="c1">;</span>
+<span class="c1">;       Original function and examples by heresy.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Save</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_FileName<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">=</span>save<span class="w"> </span><span class="nv">%p_lpszDeviceID%</span><span class="w"> </span><span class="s">&quot;%p_FileName%&quot;</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Seek</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Move to a specified position.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Position - Position to stop the seek.  Value must be &quot;start&quot;, &quot;end&quot;,</span>
+<span class="c1">;           or an integer.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+
+<span class="cm">/*</span>
+<span class="cm">Usage and Programming notes:</span>
+
+<span class="cm">MCI Bug?: For some reason, seek for cdaudio doesn&#39;t work correctly on the</span>
+<span class="cm">first attempt.  Second and susequent attempts work fine.</span>
+
+<span class="cm">*/</span>
+
+
+<span class="nf">MCI_Seek</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Position<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">;-- Get current status</span>
+<span class="w">    </span>l_Status<span class="o">:=</span>MCI_Status<span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+
+
+<span class="w">    </span><span class="c1">;-- Adjust p_Position if necessary</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Position<span class="w"> </span>not<span class="w"> </span>in<span class="w"> </span>start<span class="p">,</span>end
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>p_Position<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>Number
+<span class="w">            </span>p_Position<span class="o">=</span><span class="mi">0</span>
+
+<span class="w">        </span><span class="nl">p_Position:</span><span class="o">=</span>Round<span class="p">(</span>p_Position<span class="p">)</span><span class="w">  </span><span class="c1">;-- Integer values only</span>
+
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>p_Position<span class="o">&gt;</span>MCI_Length<span class="p">(</span>p_lpszDeviceID<span class="p">))</span>
+<span class="w">            </span>p_Position<span class="o">:=</span><span class="s">&quot;end&quot;</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span>p_Position<span class="o">&lt;</span><span class="mi">1</span>
+<span class="w">                </span>p_Position<span class="o">:=</span><span class="s">&quot;start&quot;</span>
+<span class="w">                    </span><span class="c1">;-- This is necessary because some devices don&#39;t like a &quot;0&quot;</span>
+<span class="w">                    </span><span class="c1">;   position.</span>
+<span class="w">        </span><span class="p">}</span>
+
+
+<span class="w">    </span><span class="c1">;-- Seek</span>
+<span class="w">    </span>l_CmdString<span class="o">=</span>seek<span class="w"> </span><span class="nv">%p_lpszDeviceID%</span><span class="w"> </span>to<span class="w"> </span><span class="nv">%p_Position%</span><span class="w"> </span>wait
+<span class="w">    </span>l_Return<span class="o">:=</span>MCI_SendString<span class="p">(</span>l_CmdString<span class="p">)</span>
+
+<span class="w">    </span><span class="c1">;-- Return to mode before seek</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_Status<span class="w"> </span>in<span class="w"> </span>paused<span class="p">,</span>playing
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="nf">MCI_Play</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+
+<span class="w">        </span><span class="c1">;-- Re-pause</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>l_Status<span class="o">=</span>paused
+<span class="w">            </span><span class="nf">MCI_Pause</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="c1">;;;;;    l_CurrentPos:=MCI_Position(p_lpszDeviceID)</span>
+<span class="c1">;;;;;    outputdebug After: l_CurrentPos=%l_CurrentPos%</span>
+
+
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_Return
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_SetBass</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Sets the audio low frequency level.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Factor - Bass factor.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Observations:</span>
+<span class="c1">;</span>
+<span class="c1">;     - Factor range appears to be from 0 to ?????.</span>
+<span class="c1">;     - Most MCI devices do not support this command.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_SetBass</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Factor<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;setaudio &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; bass to &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_Factor
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;----------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_SetTreble</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Sets the audio high-frequency level.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Factor - Treble factor.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Observations:</span>
+<span class="c1">;</span>
+<span class="c1">;     - Factor range appears to be from 0 to ?????.</span>
+<span class="c1">;     - Most MCI devices do not support this command.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_SetTreble</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Factor<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;setaudio &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; treble to &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_Factor
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_SetVolume</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Sets the average audio volume for both audio channels. If the left and</span>
+<span class="c1">;       right volumes have been set to different values, then the ratio of</span>
+<span class="c1">;       left-to-right volume is approximately unchanged.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Factor - Volume factor.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The return code from the &lt;MCI_SendString&gt; function which is 0 if the</span>
+<span class="c1">;       command completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Observations:</span>
+<span class="c1">;</span>
+<span class="c1">;     - Factor range appears to be from 0 to 1000.</span>
+<span class="c1">;     - Most MCI devices do not support this command.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_SetVolume</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Factor<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>l_CmdString<span class="o">:=</span><span class="s">&quot;setaudio &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; volume to &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_Factor
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span>l_CmdString<span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_Status</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Identifies the current mode of the device.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The current mode of the device.</span>
+<span class="c1">;</span>
+<span class="c1">;       msdn: All devices can return the &quot;not ready&quot;, &quot;paused&quot;, &quot;playing&quot;, and</span>
+<span class="c1">;       &quot;stopped&quot; values. Some devices can return the additional &quot;open&quot;,</span>
+<span class="c1">;       &quot;parked&quot;, &quot;recording&quot;, and &quot;seeking&quot; values.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Status</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">MCI_SendString</span><span class="p">(</span><span class="s">&quot;status &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; mode&quot;</span><span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_lpszReturnString
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">; Function: MCI_Stop</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Description:</span>
+<span class="c1">;</span>
+<span class="c1">;   Stops playback or recording.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;   p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;   The return code from the &lt;MCI_SendString&gt; function which is 0 if the command</span>
+<span class="c1">;   completed successfully.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">; - After close, a &quot;seek to start&quot; is not done because  1) it slows down the</span>
+<span class="c1">;   stop request and  2) it may be unwanted.  If you need to set the media</span>
+<span class="c1">;   position back to the beginning after a stop, call the &lt;MCI_Seek&gt; function</span>
+<span class="c1">;   and set the p_Position parameter to 0.</span>
+<span class="c1">;</span>
+<span class="c1">; - For (some) CD audio devices, the stop command stops playback and resets the</span>
+<span class="c1">;   current track position to zero.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_Stop</span><span class="p">(</span>p_lpszDeviceID<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">MCI_SendString</span><span class="p">(</span><span class="s">&quot;stop &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>p_lpszDeviceID<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; wait&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_TrackIsAudio</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Determines if the specified track is an audio track.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszDeviceID - Device name or alias.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_Track - Track number. [Optional] The default is 1.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       TRUE if the specified track is an audio track, otherwise FALSE.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Remarks:</span>
+<span class="c1">;</span>
+<span class="c1">;       This command will only work on a device that supports multiple tracks.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_TrackIsAudio</span><span class="p">(</span>p_lpszDeviceID<span class="p">,</span>p_Track<span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_Track<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>Integer
+<span class="w">        </span>p_Track<span class="o">=</span><span class="mi">1</span>
+
+<span class="w">    </span><span class="n">l_CmdString</span><span class="o">=</span>status<span class="w"> </span><span class="nv">%p_lpszDeviceID%</span><span class="w"> </span>type<span class="w"> </span>track<span class="w"> </span><span class="nv">%p_Track%</span>
+<span class="w">    </span>l_RC<span class="o">:=</span>MCI_SendString<span class="p">(</span>l_CmdString<span class="p">,</span>l_lpszReturnString<span class="p">)</span>
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_RC<span class="w">  </span><span class="c1">;-- Probably invalid command for the device</span>
+<span class="w">        </span><span class="k">Return</span><span class="w"> </span><span class="k">False</span>
+<span class="w">     </span><span class="k">else</span>
+<span class="w">        </span><span class="nf">Return</span><span class="w"> </span><span class="p">(</span>l_lpszReturnString<span class="o">=</span><span class="s">&quot;audio&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span>True<span class="o">:</span>False
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_ToHHMMSS</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       Converts the specified number of milliseconds to hh:mm:ss format.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_ms - Number of milliseconds.</span>
+<span class="c1">;</span>
+<span class="c1">;       p_MinimumSize - Minimum size.  [Optional] The default is 4.  This is</span>
+<span class="c1">;           the minimum size in characters (not significant digits) that is</span>
+<span class="c1">;           returned.  Unless you want a &quot;:&quot; character to show as the</span>
+<span class="c1">;           leading character, don&#39;t set this value to 3 or 6.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       The amount of time in hh:mm:ss format with leading zero and &quot;:&quot;</span>
+<span class="c1">;       characters suppressed unless the length is less than p_MinimumSize.</span>
+<span class="c1">;       Note:  If the number of hours is greater than 99, the size of hour</span>
+<span class="c1">;       (&quot;hh&quot;) will increase as needed.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Usage Notes:</span>
+<span class="c1">;</span>
+<span class="c1">;       To use this function to create separate variables for the number of</span>
+<span class="c1">;       hours, minutes, and seconds, set the p_MinimumSize parameter to 8 and</span>
+<span class="c1">;       use simple *SubStr* commands to create these variables.  For example:</span>
+<span class="c1">;</span>
+<span class="c1">;           (start code)</span>
+<span class="c1">;           x:=MCI_ToHHMMSS(NumberOfMilliseconds,8)</span>
+<span class="c1">;           HH:=SubStr(x,1,2)</span>
+<span class="c1">;           MM:=SubStr(x,4,2)</span>
+<span class="c1">;           SS:=SubStr(x,6,2)</span>
+<span class="c1">;           (end)</span>
+<span class="c1">;</span>
+<span class="c1">;       To remove leading zeros from these variables, simply add 0 to the</span>
+<span class="c1">;       extracted value.  For example:</span>
+<span class="c1">;</span>
+<span class="c1">;           (start code)</span>
+<span class="c1">;           MM:=SubStr(x,4,2)+0</span>
+<span class="c1">;           (end)</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Credit:</span>
+<span class="c1">;</span>
+<span class="c1">;       This function is a customized version of an example that was extracted</span>
+<span class="c1">;       from the AutoHotkey documenation.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_ToHHMMSS</span><span class="p">(</span>p_ms<span class="p">,</span>p_MinimumSize<span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">;-- Convert p_ms to whole seconds</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>p_ms<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>Number
+<span class="w">        </span>l_Seconds<span class="o">=</span><span class="mi">0</span>
+<span class="w">     </span><span class="k">else</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>p_ms<span class="o">&lt;</span><span class="mi">0</span>
+<span class="w">            </span>l_Seconds<span class="o">=</span><span class="mi">0</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="w">            </span>l_Seconds<span class="o">:=</span>floor<span class="p">(</span>p_ms<span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">;-- Initialize and format</span>
+<span class="w">    </span>l_Time<span class="o">=</span><span class="mi">20121212</span><span class="w">  </span><span class="c1">;-- Midnight of an arbitrary date</span>
+<span class="w">    </span><span class="k">EnvAdd</span><span class="w"> </span>l_Time<span class="p">,</span>l_Seconds<span class="p">,</span>Seconds
+<span class="w">    </span><span class="k">FormatTime</span><span class="w"> </span>l_mmss<span class="p">,</span><span class="nv">%l_Time%</span><span class="p">,</span>mm<span class="o">:</span>ss
+<span class="w">    </span>l_FormattedTime<span class="o">:=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>l_Seconds<span class="o">//</span><span class="mi">3600</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>l_mmss
+<span class="w">        </span><span class="c1">;-- Allows support for more than 24 hours.</span>
+
+<span class="w">    </span><span class="c1">;-- Trim insignificant leading characters</span>
+<span class="w">    </span><span class="k">loop</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span>l_FormattedTime<span class="p">)</span><span class="o">&lt;=</span>p_MinimumSize
+<span class="w">            </span><span class="k">break</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>l_FormattedTime<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;0&quot;</span>
+<span class="w">                </span><span class="k">StringTrimLeft</span><span class="w"> </span>l_FormattedTime<span class="p">,</span>l_FormattedTime<span class="p">,</span><span class="mi">1</span>
+<span class="w">             </span><span class="k">else</span>
+<span class="w">                </span><span class="kr">if</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>l_FormattedTime<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;:&quot;</span>
+<span class="w">                    </span><span class="k">StringTrimLeft</span><span class="w"> </span>l_FormattedTime<span class="p">,</span>l_FormattedTime<span class="p">,</span><span class="mi">1</span>
+<span class="w">                 </span><span class="k">else</span>
+<span class="w">                    </span><span class="k">break</span>
+
+<span class="w">    </span><span class="c1">;-- Return to sender</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_FormattedTime
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">; Function: MCI_ToMilliseconds</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Description:</span>
+<span class="c1">;</span>
+<span class="c1">;   Converts the specified hour, minute and second into a valid milliseconds</span>
+<span class="c1">;   timestamp.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;   Hour, Min, Sec - Position to convert to milliseconds</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">; Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;   The specified position converted to milliseconds.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_ToMilliseconds</span><span class="p">(</span>Hour<span class="p">,</span>Min<span class="p">,</span>Sec<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span>milli<span class="o">:=</span>Sec<span class="o">*</span><span class="mi">1000</span>
+<span class="w">    </span>milli<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">(</span>Min<span class="o">*</span><span class="mi">60</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span>
+<span class="w">    </span>milli<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">(</span>Hour<span class="o">*</span><span class="mi">3600</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>milli
+<span class="w">    </span><span class="p">}</span>
+
+
+
+<span class="c1">;-----------------------------</span>
+<span class="c1">;</span>
+<span class="c1">;   Function: MCI_SendString</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Description:</span>
+<span class="c1">;</span>
+<span class="c1">;       This is the primary function that controls MCI operations.  With the</span>
+<span class="c1">;       exception of formatting functions, all of the functions in this library</span>
+<span class="c1">;       call this function.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Parameters:</span>
+<span class="c1">;</span>
+<span class="c1">;       p_lpszCommand - MCI command string.</span>
+<span class="c1">;</span>
+<span class="c1">;       r_lpszReturnString - Variable name that receives return information.</span>
+<span class="c1">;           [Optional]</span>
+<span class="c1">;</span>
+<span class="c1">;       p_hwndCallback - Handle to a callback window if the &quot;notify&quot; flag was</span>
+<span class="c1">;           specified in the command string.  [Optional] The default is 0</span>
+<span class="c1">;           (No callback window).</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Returns:</span>
+<span class="c1">;</span>
+<span class="c1">;       Two values are returned.</span>
+<span class="c1">;</span>
+<span class="c1">;        1) The function returns 0 if successful or an error number</span>
+<span class="c1">;           otherwise.</span>
+<span class="c1">;</span>
+<span class="c1">;        2) If the MCI command string was a request for information, the</span>
+<span class="c1">;           variable named in the r_lpszReturnString parameter will contain the</span>
+<span class="c1">;           requested information.</span>
+<span class="c1">;</span>
+<span class="c1">;</span>
+<span class="c1">;   Debugging:</span>
+<span class="c1">;</span>
+<span class="c1">;       If a non-zero value is returned from the call to the mciSendString API</span>
+<span class="c1">;       function, a call to the mciGetErrorString API function is made to</span>
+<span class="c1">;       convert the error number into a developer-friendly error message.  All</span>
+<span class="c1">;       of this information is sent to the debugger in an easy-to-read format.</span>
+<span class="c1">;</span>
+<span class="c1">;------------------------------------------------------------------------------</span>
+<span class="nf">MCI_SendString</span><span class="p">(</span>p_lpszCommand<span class="p">,</span>ByRef<span class="w"> </span>r_lpszReturnString<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>p_hwndCallback<span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">VarSetCapacity</span><span class="p">(</span>r_lpszReturnString<span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span>l_Return<span class="o">:=</span>DllCall<span class="p">(</span><span class="s">&quot;winmm.dll\mciSendStringA&quot;</span>
+<span class="w">                     </span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>p_lpszCommand<span class="w">                   </span><span class="c1">;-- lpszCommand</span>
+<span class="w">                     </span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>r_lpszReturnString<span class="w">              </span><span class="c1">;-- lpszReturnString</span>
+<span class="w">                     </span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="mi">100</span><span class="w">                            </span><span class="c1">;-- cchReturn</span>
+<span class="w">                     </span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span>p_hwndCallback<span class="w">                 </span><span class="c1">;-- hwndCallback</span>
+<span class="w">                     </span><span class="p">,</span><span class="s">&quot;Cdecl Int&quot;</span><span class="p">)</span><span class="w">                          </span><span class="c1">;-- Return type</span>
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>ErrorLevel
+<span class="w">        </span><span class="k">MsgBox</span>
+<span class="w">            </span><span class="p">,</span><span class="mi">262160</span><span class="w">  </span><span class="c1">;-- 262160=0 (OK button) + 16 (Error icon) + 262144 (AOT)</span>
+<span class="w">            </span><span class="p">,</span><span class="nv">%A_ThisFunc%</span><span class="w"> </span>Function<span class="w"> </span>Error<span class="p">,</span>
+<span class="w">               </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">                </span>Unexpected<span class="w"> </span>ErrorLevel<span class="w"> </span>from<span class="w"> </span><span class="k">DllCall</span><span class="w"> </span>to<span class="w"> </span>the
+<span class="w">                </span><span class="s">&quot;winmm.dll\mciSendStringA&quot;</span>
+<span class="w">                </span>function<span class="p">.</span><span class="w">  </span>ErrorLevel<span class="o">=</span><span class="nv">%ErrorLevel%</span><span class="w">  </span><span class="nv">%A_Space%</span>
+<span class="w">                </span><span class="p">`</span>nSee<span class="w"> </span>the<span class="w"> </span>AutoHotkey<span class="w"> </span><span class="nf">documentation</span><span class="w"> </span><span class="p">(</span>Keyword<span class="o">:</span><span class="w"> </span>DLLCall<span class="p">)</span><span class="w"> </span>for<span class="w"> </span>more
+<span class="w">                </span>information<span class="p">.</span><span class="w">  </span><span class="nv">%A_Space%</span>
+<span class="w">               </span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">;-- Return code?</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>l_Return
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="nf">VarSetCapacity</span><span class="p">(</span>l_MCIErrorString<span class="p">,</span><span class="mi">1024</span><span class="p">)</span>
+<span class="w">        </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;winmm\mciGetErrorStringA&quot;</span>
+<span class="w">               </span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span>l_Return<span class="w">                             </span><span class="c1">;-- MCI error number</span>
+<span class="w">               </span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>l_MCIErrorString<span class="w">                      </span><span class="c1">;-- MCI error text</span>
+<span class="w">               </span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="mi">1024</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c1">;-- This is provided to help debug MCI calls</span>
+<span class="w">        </span><span class="k">outputdebug</span><span class="p">,</span>
+<span class="w">           </span><span class="p">(</span>ltrim<span class="w"> </span>join<span class="p">`</span>s
+<span class="w">            </span>End<span class="w"> </span>Func<span class="o">:</span><span class="w"> </span><span class="nv">%A_ThisFunc%</span><span class="o">:</span><span class="w"> </span>Unexpected<span class="w"> </span>return<span class="w"> </span>code<span class="w"> </span>from<span class="w"> </span>command<span class="w"> </span>string<span class="o">:</span>
+<span class="w">            </span><span class="s">&quot;%p_lpszCommand%&quot;</span>
+<span class="w">            </span><span class="p">`</span>n<span class="o">---------</span><span class="w"> </span>Return<span class="w"> </span>code<span class="o">=</span><span class="nv">%l_Return%</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nv">%l_MCIErrorString%</span>
+<span class="w">           </span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_Return
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="cm">/*</span>
 <span class="cm">Title: MCI Library v1.0</span>
 
 <span class="cm">Group: Overview</span>

@@ -1,4 +1,160 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">;Function WatchDirectory()</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">;Function WatchDirectory()</span>
+<span class="c1">;</span>
+<span class="c1">;Parameters</span>
+<span class="c1">;      WatchFolder         - Specify a valid path to watch for changes in.</span>
+<span class="c1">;                     - can be directory or drive (e.g. c:\ or c:\Temp)</span>
+<span class="c1">;                     - can be network path e.g. \\192.168.2.101\Shared)</span>
+<span class="c1">;                     - can include last backslash. e.g. C:\Temp\ (will be reported same form)</span>
+<span class="c1">;</span>
+<span class="c1">;      WatchSubDirs      - Specify whether to search in subfolders</span>
+<span class="c1">;</span>
+<span class="c1">;StopWatching   -   THIS SHOULD BE DONE BEFORE EXITING SCRIPT AT LEAST (OnExit)</span>
+<span class="c1">;      Call WatchDirectory() without parameters to stop watching all directories</span>
+<span class="c1">;</span>
+<span class="c1">;ReportChanges</span>
+<span class="c1">;      Call WatchDirectory(&quot;ReportingFunctionName&quot;) to process registered changes.</span>
+<span class="c1">;      Syntax of ReportingFunctionName(Action,Folder,File)</span>
+<span class="c1">;</span>
+<span class="c1">;      Example</span>
+<span class="cm">/*</span>
+<span class="cm">      #Persistent</span>
+<span class="cm">      OnExit,Exit</span>
+<span class="cm">      WatchDirectory(&quot;C:\Windows&quot;,1)</span>
+<span class="cm">      SetTimer,WatchFolder,100</span>
+<span class="cm">      Return</span>
+<span class="cm">      WatchFolder:</span>
+<span class="cm">         WatchDirectory(&quot;RegisterChanges&quot;)</span>
+<span class="cm">      Return</span>
+<span class="cm">      RegisterChanges(action,folder,file){</span>
+<span class="cm">         static</span>
+<span class="cm">         #1:=&quot;New File&quot;, #2:=&quot;Deleted&quot;, #3:=&quot;Modified&quot;, #4:=&quot;Renamed From&quot;, #5:=&quot;Renamed To&quot;</span>
+<span class="cm">         ToolTip % #%Action% &quot;`n&quot; folder . (SubStr(folder,0)=&quot;\&quot; ? &quot;&quot; : &quot;\&quot;) . file</span>
+<span class="cm">      }   </span>
+<span class="cm">      Exit:</span>
+<span class="cm">         WatchDirectory()</span>
+<span class="cm">      ExitApp</span>
+<span class="cm">*/</span>
+
+<span class="nf">WatchDirectory</span><span class="p">(</span>WatchFolder<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>WatchSubDirs<span class="o">=</span>true<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="kt">static</span>
+<span class="w">   </span><span class="kt">local</span><span class="w"> </span>hDir<span class="p">,</span><span class="w"> </span>hEvent<span class="p">,</span><span class="w"> </span>r<span class="p">,</span><span class="w"> </span>Action<span class="p">,</span><span class="w"> </span>FileNameLen<span class="p">,</span><span class="w"> </span>pFileName<span class="p">,</span><span class="w"> </span>Restart<span class="p">,</span><span class="w"> </span>CurrentFolder<span class="p">,</span><span class="w"> </span>PointerFNI<span class="p">,</span><span class="w"> </span>_SizeOf_FNI_<span class="o">=</span><span class="mi">65536</span>
+<span class="w">   </span>nReadLen<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">   </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>WatchFolder<span class="p">){</span>
+<span class="w">      </span><span class="k">Gosub</span><span class="p">,</span><span class="w"> </span>StopWatchingDirectories
+<span class="w">   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span><span class="nf">IsFunc</span><span class="p">(</span>WatchFolder<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;MsgWaitForMultipleObjectsEx&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span>DirIdx<span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>DirEvents<span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span><span class="mh">0x4FF</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span><span class="mh">0x6</span><span class="p">)</span><span class="w"> </span><span class="c1">;Timeout=-1</span>
+<span class="w">      </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>r<span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>r<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span>DirIdx<span class="p">)</span>
+<span class="w">         </span><span class="k">Return</span>
+<span class="w">      </span>r<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span>CurrentFolder<span class="w"> </span><span class="o">:=</span><span class="w"> </span>Dir<span class="nv">%r%</span>Path
+<span class="w">      </span>PointerFNI<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span>Dir<span class="nv">%r%</span>FNI
+<span class="w">      </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;GetOverlappedResult&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span>hDir<span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>Dir<span class="nv">%r%</span>Overlapped<span class="p">,</span><span class="w"> </span>UIntP<span class="p">,</span><span class="w"> </span>nReadLen<span class="p">,</span><span class="w"> </span>Int<span class="p">,</span><span class="w"> </span>true<span class="w"> </span><span class="p">)</span>
+<span class="w">      </span><span class="k">Loop</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span>pNext<span class="w">      </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span><span class="w"> </span>PointerFNI<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">0</span><span class="w">  </span><span class="p">)</span>
+<span class="w">         </span>Action<span class="w">      </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span><span class="w"> </span>PointerFNI<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="w">  </span><span class="p">)</span>
+<span class="w">         </span>FileNameLen<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span><span class="w"> </span>PointerFNI<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="w">  </span><span class="p">)</span>
+<span class="w">         </span>pFileName<span class="w"> </span><span class="o">:=</span><span class="w">       </span><span class="p">(</span><span class="w"> </span>PointerFNI<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="p">)</span>
+<span class="w">         </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Action<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">0x6</span><span class="p">){</span>
+<span class="w">            </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="w"> </span>FileNameANSI<span class="p">,</span><span class="w"> </span>FileNameLen<span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;WideCharToMultiByte&quot;</span><span class="p">,</span>UInt<span class="p">,</span><span class="mi">0</span><span class="p">,</span>UInt<span class="p">,</span><span class="mi">0</span><span class="p">,</span>UInt<span class="p">,</span>pFileName<span class="p">,</span>UInt<span class="p">,</span>FileNameLen<span class="p">,</span>Str<span class="p">,</span>FileNameANSI<span class="p">,</span>UInt<span class="p">,</span>FileNameLen<span class="p">,</span>UInt<span class="p">,</span><span class="mi">0</span><span class="p">,</span>UInt<span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">            </span><span class="nv">%WatchFolder%</span><span class="p">(</span>Action<span class="p">,</span>CurrentFolder<span class="p">,</span><span class="nf">SubStr</span><span class="p">(</span><span class="w"> </span>FileNameANSI<span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>FileNameLen<span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="p">))</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">         </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="o">!</span>pNext<span class="w"> </span><span class="kr">or</span><span class="w"> </span>pNext<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4129024</span><span class="p">)</span>
+<span class="w">            </span><span class="k">Break</span>
+<span class="w">         </span><span class="k">Else</span>
+<span class="w">            </span>PointerFNI<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>PointerFNI<span class="w"> </span><span class="o">+</span><span class="w"> </span>pNext<span class="p">)</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;ResetEvent&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span>NumGet<span class="p">(</span><span class="w"> </span>Dir<span class="nv">%r%</span>Overlapped<span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">      </span><span class="k">Gosub</span><span class="p">,</span><span class="w"> </span>ReadDirectoryChanges
+<span class="w">      </span><span class="k">return</span><span class="w"> </span>r
+<span class="w">   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">Loop</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span>DirIdx<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="kr">If</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span>WatchFolder<span class="p">,</span><span class="w"> </span>Dir<span class="nv">%A_Index%</span>Path<span class="p">){</span>
+<span class="w">            </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Dir<span class="nv">%A_Index%</span>Subdirs<span class="p">)</span>
+<span class="w">               </span><span class="k">Return</span>
+<span class="w">         </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span>Dir<span class="nv">%A_Index%</span>Path<span class="p">,</span><span class="w"> </span>WatchFolder<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>WatchSubDirs<span class="p">){</span>
+<span class="w">               </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span>Dir<span class="nv">%A_Index%</span><span class="w"> </span><span class="p">)</span>
+<span class="w">               </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span>NumGet<span class="p">(</span>Dir<span class="nv">%A_Index%</span>Overlapped<span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">               </span>Restart<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DirIdx<span class="p">,</span><span class="w"> </span>DirIdx<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_Index</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span>Restart
+<span class="w">         </span>DirIdx<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span>r<span class="o">:=</span>DirIdx
+<span class="w">      </span>hDir<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="w"> </span><span class="s">&quot;CreateFile&quot;</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>Str<span class="w">  </span><span class="p">,</span><span class="w"> </span>WatchFolder
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_LIST_DIRECTORY<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x1</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_SHARE_READ<span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x1</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                     </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_SHARE_WRITE<span class="w">    </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x2</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                     </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_SHARE_DELETE<span class="w">   </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x4</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>OPEN_EXISTING<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x3</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_FLAG_BACKUP_SEMANTICS<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x2000000</span><span class="w">  </span><span class="p">)</span>
+<span class="w">                     </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_FLAG_OVERLAPPED<span class="w">       </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x40000000</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
+<span class="w">      </span>Dir<span class="nv">%r%</span><span class="w">         </span><span class="o">:=</span><span class="w"> </span>hDir
+<span class="w">      </span>Dir<span class="nv">%r%</span>Path<span class="w">     </span><span class="o">:=</span><span class="w"> </span>WatchFolder
+<span class="w">      </span>Dir<span class="nv">%r%</span>Subdirs<span class="w">  </span><span class="o">:=</span><span class="w"> </span>WatchSubDirs
+<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="w"> </span>Dir<span class="nv">%r%</span>FNI<span class="p">,</span><span class="w"> </span>_SizeOf_FNI_<span class="w"> </span><span class="p">)</span>
+<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="w"> </span>Dir<span class="nv">%r%</span>Overlapped<span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
+<span class="w">      </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span>hEvent<span class="w"> </span><span class="p">)</span>
+<span class="w">      </span>hEvent<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="w"> </span><span class="s">&quot;CreateEvent&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>Int<span class="p">,</span>true<span class="p">,</span><span class="w"> </span>Int<span class="p">,</span>false<span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
+<span class="w">      </span><span class="nf">NumPut</span><span class="p">(</span><span class="w"> </span>hEvent<span class="p">,</span><span class="w"> </span>Dir<span class="nv">%r%</span>Overlapped<span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="p">)</span>
+<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>VarSetCapacity<span class="p">(</span>DirEvents<span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span>DirIdx<span class="o">*</span><span class="mi">4</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span>VarSetCapacity<span class="p">(</span>DirEvents<span class="p">,</span><span class="w"> </span>DirIdx<span class="o">*</span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">60</span><span class="p">))</span>
+<span class="w">         </span><span class="k">Loop</span><span class="w"> </span><span class="nv">%DirIdx%</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">            </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>SubStr<span class="p">(</span>Dir<span class="nv">%A_Index%</span>Path<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">!=</span><span class="s">&quot;-&quot;</span><span class="p">){</span>
+<span class="w">               </span>action<span class="o">++</span>
+<span class="w">               </span><span class="nf">NumPut</span><span class="p">(</span><span class="w"> </span>NumGet<span class="p">(</span><span class="w"> </span>Dir<span class="nv">%action%</span>Overlapped<span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="p">),</span><span class="w"> </span>DirEvents<span class="p">,</span><span class="w"> </span>action<span class="o">*</span><span class="mi">4</span><span class="o">-</span><span class="mi">4</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="nf">NumPut</span><span class="p">(</span><span class="w"> </span>hEvent<span class="p">,</span><span class="w"> </span>DirEvents<span class="p">,</span><span class="w"> </span>DirIdx<span class="o">*</span><span class="mi">4</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">      </span><span class="k">Gosub</span><span class="p">,</span><span class="w"> </span>ReadDirectoryChanges
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span>Restart
+<span class="w">         </span>DirIdx<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%Restart%</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>StopWatchingDirectories<span class="o">:</span>
+<span class="w">      </span><span class="k">Loop</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span>DirIdx<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span>Dir<span class="nv">%A_Index%</span><span class="w"> </span><span class="p">)</span>
+<span class="w">         </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span>NumGet<span class="p">(</span>Dir<span class="nv">%A_Index%</span>Overlapped<span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">         </span>Dir<span class="nv">%A_Index%</span><span class="o">=</span>
+<span class="w">         </span>Dir<span class="nv">%A_Index%</span>Path<span class="o">=</span>
+<span class="w">         </span>Dir<span class="nv">%A_Index%</span>Subdirs<span class="o">=</span>
+<span class="w">         </span>Dir<span class="nv">%A_Index%</span>FNI<span class="o">=</span>
+<span class="w">         </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span><span class="w"> </span>UInt<span class="p">,</span><span class="w"> </span>NumGet<span class="p">(</span>Dir<span class="nv">%A_Index%</span>Overlapped<span class="p">,</span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">         </span><span class="nf">VarSetCapacity</span><span class="p">(</span>Dir<span class="nv">%A_Index%</span>Overlapped<span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span>DirIdx<span class="o">=</span>
+<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span>DirEvents<span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="w">   </span>ReadDirectoryChanges<span class="o">:</span>
+<span class="w">      </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;ReadDirectoryChangesW&quot;</span>
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span>Dir<span class="nv">%r%</span>
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>Dir<span class="nv">%r%</span>FNI
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span>_SizeOf_FNI_
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span>Dir<span class="nv">%r%</span>SubDirs
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_NOTIFY_CHANGE_FILE_NAME<span class="w">   </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x1</span><span class="w">   </span><span class="p">)</span>
+<span class="w">               </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_NOTIFY_CHANGE_DIR_NAME<span class="w">    </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x2</span><span class="w">   </span><span class="p">)</span>
+<span class="w">               </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_NOTIFY_CHANGE_ATTRIBUTES<span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x4</span><span class="w">   </span><span class="p">)</span>
+<span class="w">               </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_NOTIFY_CHANGE_SIZE<span class="w">        </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x8</span><span class="w">   </span><span class="p">)</span>
+<span class="w">               </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_NOTIFY_CHANGE_LAST_WRITE<span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x10</span><span class="w">  </span><span class="p">)</span>
+<span class="w">               </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_NOTIFY_CHANGE_CREATION<span class="w">    </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x40</span><span class="w">  </span><span class="p">)</span>
+<span class="w">               </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>FILE_NOTIFY_CHANGE_SECURITY<span class="w">    </span><span class="o">:=</span><span class="w"> </span><span class="mh">0x100</span><span class="w"> </span><span class="p">)</span>
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>Dir<span class="nv">%r%</span>Overlapped
+<span class="w">         </span><span class="p">,</span><span class="w"> </span>UInt<span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w">  </span><span class="p">)</span>
+<span class="w">   </span><span class="k">Return</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">;Function WatchDirectory()</span>
 <span class="c-Singleline">;</span>
 <span class="c-Singleline">;Parameters</span>
 <span class="c-Singleline">;      WatchFolder         - Specify a valid path to watch for changes in.</span>

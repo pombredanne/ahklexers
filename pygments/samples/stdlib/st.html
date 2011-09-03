@@ -1,4 +1,150 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; ST - Stack Library by Banane</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; ST - Stack Library by Banane</span>
+<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?t=54153</span>
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Dim</span>
+<span class="c1">;Parameters:  Stack = Specify a new variable</span>
+<span class="c1">;Description: Declares the specified variable as a stack</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Dim</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_IsValid<span class="p">(</span>Stack<span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_Debug<span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w"> </span>ST<span class="w"> </span>Error<span class="p">,</span><span class="w"> </span>Specified<span class="w"> </span>Stack<span class="w"> </span>is<span class="w"> </span>already<span class="w"> </span>declared<span class="p">.</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span>Stack<span class="w"> </span><span class="o">:=</span><span class="s">&quot;[]&quot;</span>
+<span class="p">}</span>
+
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Undim</span>
+<span class="c1">;Parameters:  Stack = Declared Stack</span>
+<span class="c1">;Description: Deletes all contents from the stack variable</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Undim</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_IsValid<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span>Stack<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Del</span>
+<span class="c1">;Parameters:  Stack = Declared Stack</span>
+<span class="c1">;Description: Deletes all entrys from the stack</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Del</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_IsValid<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span>Stack<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;[]&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Push</span>
+<span class="c1">;Parameters:  Stack = Declared Stack</span>
+<span class="w">              </span>Value<span class="w"> </span><span class="o">=</span><span class="w"> </span>Entry<span class="err">&#39;</span>s<span class="w"> </span>value
+<span class="c1">;Description: Adds an entry to the stack</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Push</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">,</span>Value<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">;Check if it&#39;s a valid stack</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_IsValid<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="c1">;Add the value</span>
+<span class="w">  </span>Stack<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;[&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>ST_Convert<span class="p">(</span>Value<span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>SubStr<span class="p">(</span>Stack<span class="p">,</span><span class="mi">2</span><span class="p">,</span>StrLen<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;]&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Pop</span>
+<span class="c1">;Parameters:  Stack = Declared Stack</span>
+<span class="c1">;Description: Removes and returns the newest entrys contents</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Pop</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">;Check if it&#39;s a valid stack</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_IsValid<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="k">Else</span><span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_Len<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="c1">;Get first entry</span>
+<span class="w">  </span>Value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span>Stack<span class="p">,</span><span class="mi">2</span><span class="p">,</span>InStr<span class="p">(</span>Stack<span class="p">,</span><span class="s">&quot;|&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="c1">;Remove from stack</span>
+<span class="w">  </span>Stack<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;[&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>SubStr<span class="p">(</span>Stack<span class="p">,</span>InStr<span class="p">(</span>Stack<span class="p">,</span><span class="s">&quot;|&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>StrLen<span class="p">(</span>Stack<span class="p">))</span>
+<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="nf">ST_Convert</span><span class="p">(</span>Value<span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Peek</span>
+<span class="c1">;Parameters:  Stack = Declared Stack</span>
+<span class="c1">;Description: Returns the newest entrys contents without removing</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Peek</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">;Check if it&#39;s a valid stack</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_IsValid<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="k">Else</span><span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_Len<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="c1">;Return first entry</span>
+<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="nf">ST_Convert</span><span class="p">(</span>SubStr<span class="p">(</span>Stack<span class="p">,</span><span class="mi">2</span><span class="p">,</span>InStr<span class="p">(</span>Stack<span class="p">,</span><span class="s">&quot;|&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Len</span>
+<span class="c1">;Parameters:  Stack = Declared Stack</span>
+<span class="c1">;Description: Returns the count of entrys</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Len</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">;Check if it&#39;s a valid stack</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_IsValid<span class="p">(</span>Stack<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="c1">;Check how many entrys are in it</span>
+<span class="w">  </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>Stack
+<span class="w">    </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="nb">A_LoopField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="p">)</span>
+<span class="w">      </span>Length<span class="w"> </span><span class="o">++</span>
+<span class="w">  </span><span class="c1">;If Stack doesn&#39;t have any entrys</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_Debug<span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span>Length<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w"> </span>ST<span class="w"> </span>Error<span class="p">,</span><span class="w"> </span>Specified<span class="w"> </span>Stack<span class="w"> </span>doesn<span class="err">&#39;</span>t<span class="w"> </span>have<span class="w"> </span>any<span class="w"> </span>entrys<span class="p">.</span>
+<span class="w">  </span><span class="c1">;Return the length</span>
+<span class="w">  </span><span class="k">Return</span><span class="w"> </span>Length
+<span class="p">}</span>
+
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">;Function:    ST_Debug</span>
+<span class="c1">;Parameters:  OnOff = Boolean - 1 to activate, 0 to deactivate</span>
+<span class="c1">;Description: Actiavtes error messages</span>
+<span class="c1">;-----------------------------------------------------------------------------------------------------------------------------</span>
+<span class="nf">ST_Debug</span><span class="p">(</span>OnOff<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>Debug
+
+<span class="w">  </span><span class="c1">;Change Debug State</span>
+<span class="w">  </span>Debug<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>OnOff<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span>Debug<span class="w"> </span><span class="o">:</span><span class="w"> </span>OnOff
+<span class="w">  </span><span class="c1">;Return Debug State</span>
+<span class="w">  </span><span class="k">Return</span><span class="w"> </span>Debug
+<span class="p">}</span>
+
+<span class="c1">;=============================================================================================================================</span>
+<span class="c1">;Internal Functions</span>
+<span class="c1">;=============================================================================================================================</span>
+<span class="nf">ST_Convert</span><span class="p">(</span>Value<span class="p">,</span>Mode<span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">;Mode 0 = Convert to Stack Format</span>
+<span class="w">  </span><span class="c1">;Mode 1 = Convert from Stack Format</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Mode<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>Value<span class="p">,</span><span class="w"> </span>Value<span class="p">,</span><span class="w"> </span><span class="o">|</span><span class="p">,</span><span class="w"> </span><span class="o">&lt;</span><span class="err">&#39;</span>D<span class="err">&#39;</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;Replace Delimiter</span>
+<span class="w">  </span><span class="k">Else</span>
+<span class="w">    </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>Value<span class="p">,</span><span class="w"> </span>Value<span class="p">,</span><span class="w"> </span><span class="o">&lt;</span><span class="err">&#39;</span>D<span class="err">&#39;</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="o">|</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;Change to Delimiter</span>
+<span class="w">  </span><span class="k">Return</span><span class="w"> </span>Value
+<span class="p">}</span>
+
+<span class="nf">ST_IsValid</span><span class="p">(</span>ByRef<span class="w"> </span>Stack<span class="p">,</span>Dim<span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>SubStr<span class="p">(</span>Stack<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[&quot;</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span>SubStr<span class="p">(</span>Stack<span class="p">,</span>StrLen<span class="p">(</span>Stack<span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;]&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ST_Debug<span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span>Dim<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">MsgBox</span><span class="p">,</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w"> </span>ST<span class="w"> </span>Error<span class="p">,</span><span class="w"> </span>Specified<span class="w"> </span>Stack<span class="w"> </span>isn<span class="err">&#39;</span>t<span class="w"> </span>valid<span class="p">.</span>
+<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; ST - Stack Library by Banane</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?t=54153</span>
 
 <span class="c-Singleline">;-----------------------------------------------------------------------------------------------------------------------------</span>

@@ -1,4 +1,42 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; GetCommonPath - Get path to standard system folder by majkinetor</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; GetCommonPath - Get path to standard system folder by majkinetor</span>
+<span class="c1">; http://www.autohotkey.com/forum/topic10325.html</span>
+<span class="nf">GetCommonPath</span><span class="p">(</span><span class="w"> </span>csidl<span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">        </span><span class="kt">static</span><span class="w"> </span>init
+
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>init
+<span class="w">        </span><span class="p">{</span>
+<span class="w">                </span>CSIDL_APPDATA<span class="w">                 </span><span class="o">=</span><span class="mh">0x001A</span><span class="w">     </span><span class="c1">; Application Data, new for NT4</span>
+<span class="w">                </span>CSIDL_COMMON_APPDATA<span class="w">          </span><span class="o">=</span><span class="mh">0x0023</span><span class="w">     </span><span class="c1">; All Users\Application Data</span>
+<span class="w">                </span>CSIDL_COMMON_DOCUMENTS<span class="w">        </span><span class="o">=</span><span class="mh">0x002e</span><span class="w">     </span><span class="c1">; All Users\Documents</span>
+<span class="w">                </span>CSIDL_DESKTOP<span class="w">                 </span><span class="o">=</span><span class="mh">0x0010</span><span class="w">     </span><span class="c1">; C:\Documents and Settings\username\Desktop</span>
+<span class="w">                </span>CSIDL_FONTS<span class="w">                   </span><span class="o">=</span><span class="mh">0x0014</span><span class="w">     </span><span class="c1">; C:\Windows\Fonts</span>
+<span class="w">                </span>CSIDL_LOCAL_APPDATA<span class="w">           </span><span class="o">=</span><span class="mh">0x001C</span><span class="w">     </span><span class="c1">; non roaming, user\Local Settings\Application Data</span>
+<span class="w">                </span>CSIDL_MYMUSIC<span class="w">                 </span><span class="o">=</span><span class="mh">0x000d</span><span class="w">     </span><span class="c1">; &quot;My Music&quot; folder</span>
+<span class="w">                </span>CSIDL_MYPICTURES<span class="w">              </span><span class="o">=</span><span class="mh">0x0027</span><span class="w">     </span><span class="c1">; My Pictures, new for Win2K</span>
+<span class="w">                </span>CSIDL_PERSONAL<span class="w">                </span><span class="o">=</span><span class="mh">0x0005</span><span class="w">     </span><span class="c1">; My Documents</span>
+<span class="w">                </span>CSIDL_PROGRAM_FILES_COMMON<span class="w">    </span><span class="o">=</span><span class="mh">0x002b</span><span class="w">     </span><span class="c1">; C:\Program Files\Common</span>
+<span class="w">                </span>CSIDL_PROGRAM_FILES<span class="w">           </span><span class="o">=</span><span class="mh">0x0026</span><span class="w">     </span><span class="c1">; C:\Program Files</span>
+<span class="w">                </span>CSIDL_PROGRAMS<span class="w">                </span><span class="o">=</span><span class="mh">0x0002</span><span class="w">     </span><span class="c1">; C:\Documents and Settings\username\Start Menu\Programs</span>
+<span class="w">                </span>CSIDL_RESOURCES<span class="w">               </span><span class="o">=</span><span class="mh">0x0038</span><span class="w">     </span><span class="c1">; %windir%\Resources\, For theme and other windows resources.</span>
+<span class="w">                </span>CSIDL_STARTMENU<span class="w">               </span><span class="o">=</span><span class="mh">0x000b</span><span class="w">     </span><span class="c1">; C:\Documents and Settings\username\Start Menu</span>
+<span class="w">                </span>CSIDL_STARTUP<span class="w">                 </span><span class="o">=</span><span class="mh">0x0007</span><span class="w">     </span><span class="c1">; C:\Documents and Settings\username\Start Menu\Programs\Startup.</span>
+<span class="w">                </span>CSIDL_SYSTEM<span class="w">                  </span><span class="o">=</span><span class="mh">0x0025</span><span class="w">     </span><span class="c1">; GetSystemDirectory()</span>
+<span class="w">                </span>CSIDL_WINDOWS<span class="w">                 </span><span class="o">=</span><span class="mh">0x0024</span><span class="w">     </span><span class="c1">; GetWindowsDirectory()</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">       </span>
+<span class="w">        </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>CSIDL_<span class="nv">%csidl%</span>
+<span class="w">        </span><span class="nf">VarSetCapacity</span><span class="p">(</span>fpath<span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">)</span>
+<span class="w">        </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;shell32\SHGetFolderPathA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span>val<span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>fpath<span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nv">%fpath%</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; GetCommonPath - Get path to standard system folder by majkinetor</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/topic10325.html</span>
 <span class="n">GetCommonPath</span><span class="p">(</span> <span class="n">csidl</span> <span class="p">)</span>
 <span class="p">{</span>

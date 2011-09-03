@@ -1,4 +1,104 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/*</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">	Function: hotstrings</span>
+<span class="cm">		Dynamically adds regular expression hotstrings.</span>
+
+<span class="cm">	Parameters:</span>
+<span class="cm">		c - regular expression hotstring</span>
+<span class="cm">		a - (optional) text to replace hotstring with or a label to goto, </span>
+<span class="cm">			leave blank to remove hotstring definition from triggering an action</span>
+
+<span class="cm">	Examples:</span>
+<span class="cm">&gt; hotstrings(&quot;(B|b)tw\s&quot;, &quot;%$1%y the way&quot;) ; type &#39;btw&#39; followed by space, tab or return</span>
+<span class="cm">&gt; hotstrings(&quot;i)omg&quot;, &quot;oh my god{!}&quot;) ; type &#39;OMG&#39; in any case, upper, lower or mixed</span>
+<span class="cm">&gt; hotstrings(&quot;\bcolou?r&quot;, &quot;rgb(128, 255, 0);&quot;) ; &#39;\b&#39; prevents matching with anything before the word, e.g. &#39;multicololoured&#39;</span>
+
+<span class="cm">	License:</span>
+<span class="cm">		- Version 2.56 &lt;http://www.autohotkey.net/~Titan/#hotstrings&gt;</span>
+<span class="cm">		- Simplified BSD License &lt;http://www.autohotkey.net/~Titan/license.txt&gt;</span>
+<span class="cm">*/</span>
+<span class="nf">hotstrings</span><span class="p">(</span>k<span class="p">,</span><span class="w"> </span>a<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">	</span><span class="kt">static</span><span class="w"> </span>z<span class="p">,</span><span class="w"> </span>m<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*~$&quot;</span><span class="p">,</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span>t<span class="p">,</span><span class="w"> </span>w<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span>
+<span class="w">	</span><span class="kt">global</span><span class="w"> </span><span class="err">$</span>
+<span class="w">	</span><span class="kr">If</span><span class="w"> </span>z<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="c1">; init</span>
+<span class="w">	</span><span class="p">{</span>
+<span class="w">		</span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="mi">94</span>
+<span class="w">		</span><span class="p">{</span>
+<span class="w">			</span>c<span class="w"> </span><span class="o">:=</span><span class="w"> </span>Chr<span class="p">(</span><span class="nb">A_Index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">32</span><span class="p">)</span>
+<span class="w">			</span><span class="kr">If</span><span class="w"> </span><span class="nb">A_Index</span><span class="w"> </span>not<span class="w"> </span>between<span class="w"> </span><span class="mi">33</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span><span class="mi">58</span>
+<span class="w">				</span><span class="k">Hotkey</span><span class="p">,</span><span class="w"> </span><span class="nv">%m%%c%</span><span class="p">,</span><span class="w"> </span>__hs
+<span class="w">		</span><span class="p">}</span>
+<span class="w">		</span>e<span class="w"> </span><span class="o">=</span><span class="w"> </span>BS<span class="o">|</span>Space<span class="o">|</span>Enter<span class="o">|</span>Return<span class="o">|</span>Tab
+<span class="w">		</span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>e<span class="p">,</span><span class="w"> </span><span class="o">|</span>
+<span class="w">			</span><span class="k">Hotkey</span><span class="p">,</span><span class="w"> </span><span class="nv">%m%%A_LoopField%</span><span class="p">,</span><span class="w"> </span>__hs
+<span class="w">		</span>z<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">	</span><span class="p">}</span>
+<span class="w">	</span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>a<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span>k<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">; poll</span>
+<span class="w">	</span><span class="p">{</span>
+<span class="w">		</span><span class="k">StringTrimLeft</span><span class="p">,</span><span class="w"> </span>q<span class="p">,</span><span class="w"> </span><span class="nb">A_ThisHotkey</span><span class="p">,</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span>m<span class="p">)</span>
+<span class="w">		</span><span class="kr">If</span><span class="w"> </span>q<span class="w"> </span><span class="o">=</span><span class="w"> </span>BS
+<span class="w">		</span><span class="p">{</span>
+<span class="w">			</span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>SubStr<span class="p">(</span>s<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;}&quot;</span><span class="p">)</span>
+<span class="w">				</span><span class="k">StringTrimRight</span><span class="p">,</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">		</span><span class="p">}</span>
+<span class="w">		</span><span class="k">Else</span>
+<span class="w">		</span><span class="p">{</span>
+<span class="w">			</span><span class="kr">If</span><span class="w"> </span>q<span class="w"> </span><span class="o">=</span><span class="w"> </span>Space
+<span class="w">				</span>q<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot; &quot;</span>
+<span class="w">			</span><span class="k">Else</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span>q<span class="w"> </span><span class="o">=</span><span class="w"> </span>Tab
+<span class="w">				</span>q<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`t</span><span class="s">&quot;</span>
+<span class="w">			</span><span class="k">Else</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span>q<span class="w"> </span>in<span class="w"> </span>Enter<span class="p">,</span><span class="k">Return</span>
+<span class="w">				</span>q<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
+<span class="w">			</span><span class="k">Else</span><span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>StrLen<span class="p">(</span>q<span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">				</span>q<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nv">%q%</span><span class="p">}</span>
+<span class="w">			</span><span class="k">Else</span><span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>GetKeyState<span class="p">(</span><span class="s">&quot;Shift&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span>GetKeyState<span class="p">(</span><span class="s">&quot;CapsLock&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;T&quot;</span><span class="p">))</span>
+<span class="w">				</span><span class="k">StringUpper</span><span class="p">,</span><span class="w"> </span>q<span class="p">,</span><span class="w"> </span>q
+<span class="w">			</span>s<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span>q
+<span class="w">		</span><span class="p">}</span>
+<span class="w">		</span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>t<span class="p">,</span><span class="w"> </span><span class="p">`</span>n<span class="w"> </span><span class="c1">; check</span>
+<span class="w">		</span><span class="p">{</span>
+<span class="w">			</span><span class="k">StringSplit</span><span class="p">,</span><span class="w"> </span>x<span class="p">,</span><span class="w"> </span><span class="nb">A_LoopField</span><span class="p">,</span><span class="w"> </span><span class="p">`</span>r
+<span class="w">			</span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>RegExMatch<span class="p">(</span>s<span class="p">,</span><span class="w"> </span>x1<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;$&quot;</span><span class="p">,</span><span class="w"> </span><span class="err">$</span><span class="p">))</span><span class="w"> </span><span class="c1">; match</span>
+<span class="w">			</span><span class="p">{</span>
+<span class="w">				</span><span class="k">StringLen</span><span class="p">,</span><span class="w"> </span>l<span class="p">,</span><span class="w"> </span><span class="err">$</span>
+<span class="w">				</span><span class="k">StringTrimRight</span><span class="p">,</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span>l
+<span class="w">				</span><span class="k">SendInput</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>BS<span class="w"> </span><span class="nv">%l%</span><span class="p">}</span>
+<span class="w">				</span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>IsLabel<span class="p">(</span>x2<span class="p">))</span>
+<span class="w">					</span><span class="k">Gosub</span><span class="p">,</span><span class="w"> </span><span class="nv">%x2%</span>
+<span class="w">				</span><span class="k">Else</span>
+<span class="w">				</span><span class="p">{</span>
+<span class="w">					</span><span class="k">Transform</span><span class="p">,</span><span class="w"> </span>x0<span class="p">,</span><span class="w"> </span>Deref<span class="p">,</span><span class="w"> </span><span class="nv">%x2%</span>
+<span class="w">					</span><span class="k">SendInput</span><span class="p">,</span><span class="w"> </span><span class="nv">%x0%</span>
+<span class="w">				</span><span class="p">}</span>
+<span class="w">			</span><span class="p">}</span>
+<span class="w">		</span><span class="p">}</span>
+<span class="w">		</span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>StrLen<span class="p">(</span>s<span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span>w<span class="p">)</span>
+<span class="w">			</span><span class="k">StringTrimLeft</span><span class="p">,</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span>w<span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">	</span><span class="p">}</span>
+<span class="w">	</span><span class="k">Else</span><span class="w"> </span><span class="c1">; assert</span>
+<span class="w">	</span><span class="p">{</span>
+<span class="w">		</span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>k<span class="p">,</span><span class="w"> </span>k<span class="p">,</span><span class="w"> </span><span class="p">`</span>n<span class="p">,</span><span class="w"> </span><span class="p">\</span>n<span class="p">,</span><span class="w"> </span>All<span class="w"> </span><span class="c1">; normalize</span>
+<span class="w">		</span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>k<span class="p">,</span><span class="w"> </span>k<span class="p">,</span><span class="w"> </span><span class="p">`</span>r<span class="p">,</span><span class="w"> </span><span class="p">\</span>r<span class="p">,</span><span class="w"> </span>All
+<span class="w">		</span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>t<span class="p">,</span><span class="w"> </span><span class="p">`</span>n
+<span class="w">		</span><span class="p">{</span>
+<span class="w">			</span>l<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%A_LoopField%</span>
+<span class="w">			</span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>SubStr<span class="p">(</span>l<span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>InStr<span class="p">(</span>l<span class="p">,</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`r</span><span class="s">&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span>k<span class="p">)</span>
+<span class="w">				</span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>t<span class="p">,</span><span class="w"> </span>t<span class="p">,</span><span class="w"> </span><span class="p">`</span>n<span class="nv">%l%</span>
+<span class="w">		</span><span class="p">}</span>
+<span class="w">		</span><span class="kr">If</span><span class="w"> </span>a<span class="w"> </span><span class="o">!=</span>
+<span class="w">			</span>t<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%t%</span><span class="p">`</span>n<span class="nv">%k%</span><span class="p">`</span>r<span class="nv">%a%</span>
+<span class="w">	</span><span class="p">}</span>
+<span class="w">	</span><span class="k">Return</span>
+<span class="w">	</span>__hs<span class="o">:</span><span class="w"> </span><span class="c1">; event</span>
+<span class="w">	</span><span class="nf">hotstrings</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">	</span><span class="k">Return</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="cm">/*</span>
 <span class="cm">	Function: hotstrings</span>
 <span class="cm">		Dynamically adds regular expression hotstrings.</span>
 

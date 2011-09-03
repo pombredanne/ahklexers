@@ -1,4 +1,14 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; How to find Internet Connection Status? by SKAN</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; How to find Internet Connection Status? by SKAN</span>
+<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=60892#60892</span>
+<span class="nf">ConnectedToInternet</span><span class="p">(</span>flag<span class="o">=</span><span class="mh">0x40</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="k">Return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;Wininet.dll\InternetGetConnectedState&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="w"> </span>flag<span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; How to find Internet Connection Status? by SKAN</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=60892#60892</span>
 <span class="n">ConnectedToInternet</span><span class="p">(</span><span class="n">flag</span><span class="o">=</span><span class="mh">0x40</span><span class="p">)</span> <span class="p">{</span>
 <span class="w">   </span><span class="nb">Return</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;Wininet.dll\InternetGetConnectedState&quot;</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>

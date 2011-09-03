@@ -1,4 +1,568 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">;</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">;</span>
+<span class="c1">;  Menu Icons v2.21</span>
+<span class="c1">;   by Lexikos</span>
+<span class="c1">;</span>
+
+
+<span class="c1">; Associates an icon with a menu item.</span>
+<span class="c1">; NOTE: On versions of Windows other than Vista, the menu MUST be shown with</span>
+<span class="c1">;       MI_ShowMenu() for the icons to appear.</span>
+<span class="c1">;</span>
+<span class="c1">;   MenuNameOrHandle</span>
+<span class="c1">;       The name or handle of a menu. When setting icons for multiple items,</span>
+<span class="c1">;       it is more efficient to use a handle returned by MI_GetMenuHandle(&quot;menuname&quot;).</span>
+<span class="c1">;   ItemPos</span>
+<span class="c1">;       The position of the menu item, where 1 is the first item.</span>
+<span class="c1">;   FilenameOrHICON</span>
+<span class="c1">;       The filename or handle of an icon.</span>
+<span class="c1">;       SUPPORTS EXECUTABLE FILES ONLY (EXE/DLL/ICL/CPL/etc.)</span>
+<span class="c1">;   IconNumber</span>
+<span class="c1">;       The icon group to use (if omitted, it defaults to 1.)</span>
+<span class="c1">;       This is not used if FilenameOrHICON specifies an icon handle.</span>
+<span class="c1">;   IconSize</span>
+<span class="c1">;       The desired width and height of the icon. If omitted, the system&#39;s small icon size is used.</span>
+<span class="c1">;   h_bitmap</span>
+<span class="c1">;   h_icon</span>
+<span class="c1">;       v2.2: These parameters are no longer used as MI now automatically deletes the</span>
+<span class="c1">;       icon/bitmap if a new icon/bitmap is being set.</span>
+<span class="c1">;     OBSOLETE:</span>
+<span class="c1">;       These are set to the bitmap or icon resources which are used.</span>
+<span class="c1">;       Bitmaps and icons can be deleted as follows:</span>
+<span class="c1">;           DllCall(&quot;DeleteObject&quot;, &quot;uint&quot;, h_bitmap)</span>
+<span class="c1">;           DllCall(&quot;DestroyIcon&quot;, &quot;uint&quot;, h_icon)</span>
+<span class="c1">;       This is only necessary if the menu item displaying these resources</span>
+<span class="c1">;       is manually removed.</span>
+<span class="c1">;       Usually only one of h_icon or h_bitmap will be used, and the other will be 0 (NULL).</span>
+<span class="c1">;</span>
+<span class="c1">; OPERATING SYSTEM NOTES:</span>
+<span class="c1">;</span>
+<span class="c1">; Windows 2000 and above:</span>
+<span class="c1">;   PrivateExtractIcons() is used to extract the icon.</span>
+<span class="c1">;</span>
+<span class="c1">; Older versions of Windows:</span>
+<span class="c1">;   PrivateExtractIcons() is not available, so ExtractIconEx() is used.</span>
+<span class="c1">;   As a result, a 16x16 or 32x32 icon will be loaded. If a size is specified,</span>
+<span class="c1">;   the icon may be stretched to fit. If no size is specified, 16x16 is used.</span>
+<span class="c1">;</span>
+<span class="nf">MI_SetMenuItemIcon</span><span class="p">(</span>MenuNameOrHandle<span class="p">,</span><span class="w"> </span>ItemPos<span class="p">,</span><span class="w"> </span>FilenameOrHICON<span class="p">,</span><span class="w"> </span>IconNumber<span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>IconSize<span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>ByRef<span class="w"> </span>unused1<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>ByRef<span class="w"> </span>unused2<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">; Set for compatibility with older scripts:</span>
+<span class="w">    </span>unused1<span class="o">=</span><span class="mi">0</span>
+<span class="w">    </span>unused2<span class="o">=</span><span class="mi">0</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>MenuNameOrHandle<span class="w"> </span>is<span class="w"> </span>integer
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MenuNameOrHandle
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_GetMenuHandle<span class="p">(</span>MenuNameOrHandle<span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_menu
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>FilenameOrHICON<span class="w"> </span>is<span class="w"> </span>integer
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">; May be 0 to remove icon.</span>
+<span class="w">        </span>h_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span>FilenameOrHICON
+<span class="w">        </span><span class="c1">; Copy and potentially resize the icon. Since the caller is probably &quot;caching&quot;</span>
+<span class="w">        </span><span class="c1">; icon handles or assigning them to multiple items, we don&#39;t want to delete</span>
+<span class="w">        </span><span class="c1">; it if/when a future call to this function re-sets this item&#39;s icon.</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>h_icon
+<span class="w">            </span>h_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;CopyImage&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">1</span>
+<span class="w">                                </span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconSize<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconSize<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="c1">; else caller wants to remove and delete existing icon.</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">; Load icon from file. Remember to clean up this icon if we end up using a bitmap.</span>
+<span class="w">        </span><span class="c1">; Resizing is not necessary in this case since MI_ExtractIcon already does that.</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>loaded_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span>h_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_ExtractIcon<span class="p">(</span>FilenameOrHICON<span class="p">,</span><span class="w"> </span>IconNumber<span class="p">,</span><span class="w"> </span>IconSize<span class="p">))</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">; Windows Vista supports 32-bit alpha-blended bitmaps in menus. Note that</span>
+<span class="w">    </span><span class="c1">; A_OSVersion does not report WIN_VISTA when running in compatibility mode.</span>
+<span class="w">    </span><span class="c1">; To get nice icons on other versions of Windows, we need to owner-draw.</span>
+<span class="w">    </span><span class="c1">; DON&#39;T TOUCH UNLESS YOU KNOW WHAT YOU&#39;RE DOING:</span>
+<span class="w">    </span><span class="c1">;   use_bitmap MUST have the same value for each use on a given menu item.</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nb">A_OSVersion</span><span class="w"> </span>in<span class="w"> </span>WIN_VISTA<span class="p">,</span>WIN_7
+<span class="w">        </span>use_bitmap<span class="w"> </span><span class="o">:=</span><span class="w"> </span>true
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">; Get the previous bitmap or icon handle.</span>
+<span class="w">    </span><span class="nf">VarSetCapacity</span><span class="p">(</span>mii<span class="p">,</span><span class="mi">48</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span>mii<span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mh">0xA0</span><span class="p">,</span>mii<span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetMenuItemInfo&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_menu<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>ItemPos<span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>mii<span class="p">)</span>
+<span class="w">        </span>h_previous<span class="w"> </span><span class="o">:=</span><span class="w"> </span>use_bitmap<span class="w"> </span><span class="o">?</span><span class="w"> </span>NumGet<span class="p">(</span>mii<span class="p">,</span><span class="mi">44</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>NumGet<span class="p">(</span>mii<span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>use_bitmap
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>h_icon
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span>h_bitmap<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_GetBitmapFromIcon32Bit<span class="p">(</span>h_icon<span class="p">,</span><span class="w"> </span>IconSize<span class="p">,</span><span class="w"> </span>IconSize<span class="p">)</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span>loaded_icon
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">; The icon we loaded is no longer needed.</span>
+<span class="w">                </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DestroyIcon&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>loaded_icon<span class="p">)</span>
+<span class="w">                </span><span class="c1">; Don&#39;t try to destroy the now invalid handle again:</span>
+<span class="w">                </span>loaded_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_bitmap
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="c1">; Caller wants to remove and delete existing icon.</span>
+<span class="w">            </span>h_bitmap<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="nf">NumPut</span><span class="p">(</span><span class="mh">0x80</span><span class="p">,</span>mii<span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="c1">; fMask: Set hbmpItem only, not dwItemData.</span>
+<span class="w">        </span><span class="p">,</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span>h_bitmap<span class="p">,</span>mii<span class="p">,</span><span class="mi">44</span><span class="p">)</span><span class="w"> </span><span class="c1">; hbmpItem = h_bitmap</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">; Associate the icon with the menu item. Relies on the probable case that no other</span>
+<span class="w">        </span><span class="c1">; script or dll will use dwItemData. If other scripts need to associate data with</span>
+<span class="w">        </span><span class="c1">; an item, MI should be expanded to allow it.</span>
+<span class="w">        </span><span class="nf">NumPut</span><span class="p">(</span>h_icon<span class="p">,</span>mii<span class="p">,</span><span class="mi">32</span><span class="p">)</span><span class="w"> </span><span class="c1">; dwItemData = h_icon</span>
+<span class="w">        </span><span class="p">,</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>mii<span class="p">,</span><span class="mi">44</span><span class="p">)</span><span class="w"> </span><span class="c1">; hbmpItem = HBMMENU_CALLBACK</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SetMenuItemInfo&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_menu<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>ItemPos<span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>mii<span class="p">)</span>
+<span class="w">    </span><span class="p">{</span><span class="w">   </span>
+<span class="w">        </span><span class="c1">; Only now that we know it&#39;s a success, delete the previous icon or bitmap.</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span>use_bitmap
+<span class="w">        </span><span class="p">{</span><span class="w">   </span><span class="c1">; Exclude NULL and predefined HBMMENU_ values (-1, 1..11).</span>
+<span class="w">            </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>h_previous<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>h_previous<span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">11</span><span class="p">)</span>
+<span class="w">                </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DeleteObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_previous<span class="p">)</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span>
+<span class="w">            </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DestroyIcon&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_previous<span class="p">)</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span>true
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">; ELSE FAIL</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>loaded_icon
+<span class="w">        </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DestroyIcon&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>loaded_icon<span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="p">}</span>
+
+<span class="c1">; v2.2: This should be used to remove and delete all icons in a menu before deleting the menu.</span>
+<span class="nf">MI_RemoveIcons</span><span class="p">(</span>MenuNameOrHandle<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>MenuNameOrHandle<span class="w"> </span>is<span class="w"> </span>integer
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MenuNameOrHandle
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_GetMenuHandle<span class="p">(</span>MenuNameOrHandle<span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_menu
+<span class="w">        </span><span class="k">return</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">Loop</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;GetMenuItemCount&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_menu<span class="p">)</span>
+<span class="w">        </span><span class="nf">MI_SetMenuItemIcon</span><span class="p">(</span>h_menu<span class="p">,</span><span class="w"> </span><span class="nb">A_Index</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">; Set a menu item&#39;s associated bitmap.</span>
+<span class="c1">; hBitmap can be a handle to a bitmap, or a HBMMENU value (see below.)</span>
+<span class="nf">MI_SetMenuItemBitmap</span><span class="p">(</span>MenuNameOrHandle<span class="p">,</span><span class="w"> </span>ItemPos<span class="p">,</span><span class="w"> </span>hBitmap<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>MenuNameOrHandle<span class="w"> </span>is<span class="w"> </span>integer
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MenuNameOrHandle
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_GetMenuHandle<span class="p">(</span>MenuNameOrHandle<span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_menu
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="nf">VarSetCapacity</span><span class="p">(</span>mii<span class="p">,</span><span class="mi">48</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span>mii<span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mh">0x80</span><span class="p">,</span>mii<span class="p">,</span><span class="mi">4</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span>hBitmap<span class="p">,</span>mii<span class="p">,</span><span class="mi">44</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SetMenuItemInfo&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_menu<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>ItemPos<span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>mii<span class="p">)</span>
+<span class="p">}</span>
+<span class="cm">/*</span>
+<span class="cm">HBMMENU_SYSTEM              =  1</span>
+<span class="cm">HBMMENU_MBAR_RESTORE        =  2</span>
+<span class="cm">HBMMENU_MBAR_MINIMIZE       =  3</span>
+<span class="cm">HBMMENU_MBAR_CLOSE          =  5</span>
+<span class="cm">HBMMENU_MBAR_CLOSE_D        =  6</span>
+<span class="cm">HBMMENU_MBAR_MINIMIZE_D     =  7</span>
+<span class="cm">HBMMENU_POPUP_CLOSE         =  8</span>
+<span class="cm">HBMMENU_POPUP_RESTORE       =  9</span>
+<span class="cm">HBMMENU_POPUP_MAXIMIZE      = 10</span>
+<span class="cm">HBMMENU_POPUP_MINIMIZE      = 11</span>
+<span class="cm">*/</span>
+
+<span class="c1">;</span>
+<span class="c1">; General Functions</span>
+<span class="c1">;</span>
+
+<span class="c1">; Gets a menu handle from a menu name.</span>
+<span class="c1">; Adapted from Shimanov&#39;s Menu_AssignBitmap()</span>
+<span class="c1">;   http://www.autohotkey.com/forum/topic7526.html</span>
+<span class="nf">MI_GetMenuHandle</span><span class="p">(</span>menu_name<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">static</span><span class="w">   </span>h_menuDummy
+<span class="w">    </span><span class="c1">; v2.2: Check for !h_menuDummy instead of h_menuDummy=&quot;&quot; in case init failed last time.</span>
+<span class="w">    </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span>h_menuDummy
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">Menu</span><span class="p">,</span><span class="w"> </span>menuDummy<span class="p">,</span><span class="w"> </span>Add
+<span class="w">        </span><span class="k">Menu</span><span class="p">,</span><span class="w"> </span>menuDummy<span class="p">,</span><span class="w"> </span>DeleteAll
+
+<span class="w">        </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="o">:</span>Menu<span class="p">,</span><span class="w"> </span>menuDummy
+<span class="w">        </span><span class="c1">; v2.2: Use LastFound method instead of window title. [Thanks animeaime.]</span>
+<span class="w">        </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="o">:+</span>LastFound
+
+<span class="w">        </span>h_menuDummy<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;GetMenu&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>WinExist<span class="p">())</span>
+
+<span class="w">        </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="o">:</span>Menu
+<span class="w">        </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="o">:</span>Destroy
+<span class="w">        </span>
+<span class="w">        </span><span class="c1">; v2.2: Return only after cleaning up. [Thanks animeaime.]</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_menuDummy
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">Menu</span><span class="p">,</span><span class="w"> </span>menuDummy<span class="p">,</span><span class="w"> </span>Add<span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="nv">%menu_name%</span>
+<span class="w">    </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="w"> </span><span class="s">&quot;GetSubMenu&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>h_menuDummy<span class="p">,</span><span class="w"> </span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;RemoveMenu&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>h_menuDummy<span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">0x400</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="k">Menu</span><span class="p">,</span><span class="w"> </span>menuDummy<span class="p">,</span><span class="w"> </span>Delete<span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="nv">%menu_name%</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span>h_menu
+<span class="p">}</span>
+
+<span class="c1">; Valid (and safe to use) styles:</span>
+<span class="c1">;   MNS_AUTODISMISS  0x10000000</span>
+<span class="c1">;   MNS_CHECKORBMP   0x04000000  The same space is reserved for the check mark and the bitmap.</span>
+<span class="c1">;   MNS_NOCHECK      0x80000000  No space is reserved to the left of an item for a check mark.</span>
+<span class="nf">MI_SetMenuStyle</span><span class="p">(</span>MenuNameOrHandle<span class="p">,</span><span class="w"> </span>style<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>MenuNameOrHandle<span class="w"> </span>is<span class="w"> </span>integer
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MenuNameOrHandle
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_GetMenuHandle<span class="p">(</span>MenuNameOrHandle<span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_menu
+<span class="w">        </span><span class="k">return</span>
+<span class="w">        </span>
+<span class="w">    </span><span class="nf">VarSetCapacity</span><span class="p">(</span>mi<span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span>mi<span class="p">)</span>
+<span class="w">    </span><span class="nf">NumPut</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span>mi<span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="c1">; fMask=MIM_STYLE</span>
+<span class="w">    </span><span class="nf">NumPut</span><span class="p">(</span>style<span class="p">,</span>mi<span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+<span class="w">    </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SetMenuInfo&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_menu<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>mi<span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">; Extract an icon from an executable, DLL or icon file.</span>
+<span class="nf">MI_ExtractIcon</span><span class="p">(</span>Filename<span class="p">,</span><span class="w"> </span>IconNumber<span class="p">,</span><span class="w"> </span>IconSize<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">static</span><span class="w"> </span>ExtractIconEx
+<span class="w">    </span><span class="c1">; LoadImage is not used..</span>
+<span class="w">    </span><span class="c1">; ..with exe/dll files because:</span>
+<span class="w">    </span><span class="c1">;   it only works with modules loaded by the current process,</span>
+<span class="w">    </span><span class="c1">;   it needs the resource ordinal (which is not the same as an icon index), and</span>
+<span class="w">    </span><span class="c1">; ..with ico files because:</span>
+<span class="w">    </span><span class="c1">;   it can only load the first icon (of size %IconSize%) from an .ico file.</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">; If possible, use PrivateExtractIcons, which supports any size of icon.</span>
+<span class="w">    </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>IconSize<span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>IconSize<span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">32</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="nb">A_OSVersion</span><span class="w"> </span>in<span class="w"> </span>WIN_7<span class="p">,</span>WIN_XP<span class="p">,</span>WIN_VISTA<span class="p">,</span>WIN_2003<span class="p">,</span>WIN_2000
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;PrivateExtractIcons&quot;</span>
+<span class="w">                </span><span class="p">,</span><span class="s">&quot;str&quot;</span><span class="p">,</span>Filename<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconNumber<span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconSize<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconSize
+<span class="w">                </span><span class="p">,</span><span class="s">&quot;uint*&quot;</span><span class="p">,</span>h_icon<span class="p">,</span><span class="s">&quot;uint*&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span>h_icon
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>ExtractIconEx
+<span class="w">        </span>ExtractIconEx<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_DllProcAorW<span class="p">(</span><span class="s">&quot;shell32&quot;</span><span class="p">,</span><span class="s">&quot;ExtractIconEx&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">; Use ExtractIconEx, which only returns 16x16 or 32x32 icons.</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span>ExtractIconEx<span class="p">,</span><span class="s">&quot;str&quot;</span><span class="p">,</span>Filename<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconNumber<span class="o">-</span><span class="mi">1</span>
+<span class="w">                </span><span class="p">,</span><span class="s">&quot;uint*&quot;</span><span class="p">,</span>h_icon<span class="p">,</span><span class="s">&quot;uint*&quot;</span><span class="p">,</span>h_icon_small<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">SysGet</span><span class="p">,</span><span class="w"> </span>SmallIconSize<span class="p">,</span><span class="w"> </span><span class="mi">49</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="c1">; Use the best-fit size; delete the other. Defaults to small icon.</span>
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>IconSize<span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span>SmallIconSize<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DestroyIcon&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon<span class="p">)</span>
+<span class="w">            </span>h_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span>h_icon_small
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span>
+<span class="w">            </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DestroyIcon&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon_small<span class="p">)</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="c1">; I think PrivateExtractIcons resizes icons automatically,</span>
+<span class="w">        </span><span class="c1">; so resize icons returned by ExtractIconEx for consistency.</span>
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>h_icon<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>IconSize<span class="p">)</span>
+<span class="w">            </span>h_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;CopyImage&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconSize
+<span class="w">                                </span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>IconSize<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">4</span><span class="o">|</span><span class="mi">8</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span>h_icon<span class="w"> </span><span class="o">?</span><span class="w"> </span>h_icon<span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="c1">;</span>
+<span class="c1">; Owner-Drawn Menu Functions</span>
+<span class="c1">;</span>
+
+<span class="c1">; Sub-classes a window from THIS process to owner-draw menu icons.</span>
+<span class="c1">; This allows the menu to be shown by means other than MI_ShowMenu().</span>
+<span class="nf">MI_EnableOwnerDrawnMenus</span><span class="p">(</span>hwnd<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>hwnd<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">; Use the script&#39;s main window if hwnd was omitted.</span>
+<span class="w">        </span>dhw<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_DetectHiddenWindows</span>
+<span class="w">        </span><span class="k">DetectHiddenWindows</span><span class="p">,</span><span class="w"> </span>On
+<span class="w">        </span><span class="k">Process</span><span class="p">,</span><span class="w"> </span>Exist
+<span class="w">        </span>hwnd<span class="w"> </span><span class="o">:=</span><span class="w"> </span>WinExist<span class="p">(</span><span class="s">&quot;ahk_class AutoHotkey ahk_pid &quot;</span><span class="w"> </span>ErrorLevel<span class="p">)</span>
+<span class="w">        </span><span class="k">DetectHiddenWindows</span><span class="p">,</span><span class="w"> </span><span class="nv">%dhw%</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>hwnd
+<span class="w">        </span><span class="k">return</span>
+<span class="w">    </span>wndProc<span class="w"> </span><span class="o">:=</span><span class="w"> </span>RegisterCallback<span class="p">(</span><span class="s">&quot;MI_OwnerDrawnMenuItemWndProc&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="mi">4</span>
+<span class="w">        </span><span class="p">,</span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetWindowLong&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hwnd<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">))</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SetWindowLong&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hwnd<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>wndProc<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">; Shows a menu, allowing owner-drawn icons to be drawn.</span>
+<span class="nf">MI_ShowMenu</span><span class="p">(</span>MenuNameOrHandle<span class="p">,</span><span class="w"> </span>x<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>y<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">static</span><span class="w"> </span>hInstance<span class="p">,</span><span class="w"> </span>hwnd<span class="p">,</span><span class="w"> </span>ClassName<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;OwnerDrawnMenuMsgWin&quot;</span>
+<span class="w">        </span><span class="p">,</span><span class="w"> </span>CreateWindowEx
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>MenuNameOrHandle<span class="w"> </span>is<span class="w"> </span>integer
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MenuNameOrHandle
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span>h_menu<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MI_GetMenuHandle<span class="p">(</span>MenuNameOrHandle<span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_menu
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>hwnd
+<span class="w">    </span><span class="p">{</span><span class="w">   </span><span class="c1">; Create a message window to receive owner-draw messages from the menu.</span>
+<span class="w">        </span><span class="c1">; Only one window is created per instance of the script.</span>
+<span class="w">    </span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>hInstance
+<span class="w">            </span>hInstance<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;GetModuleHandle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c1">; Register a window class to associate OwnerDrawnMenuItemWndProc()</span>
+<span class="w">        </span><span class="c1">; with the window we will create.</span>
+<span class="w">        </span>wndProc<span class="w"> </span><span class="o">:=</span><span class="w"> </span>RegisterCallback<span class="p">(</span><span class="s">&quot;MI_OwnerDrawnMenuItemWndProc&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>wndProc<span class="w"> </span><span class="p">{</span>
+<span class="w">            </span>ErrorLevel<span class="w"> </span><span class="o">=</span><span class="w"> </span>RegisterCallback
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span>
+<span class="w">        </span><span class="c1">; Create a new window class.</span>
+<span class="w">        </span><span class="nf">VarSetCapacity</span><span class="p">(</span>wc<span class="p">,</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w">   </span><span class="c1">; WNDCLASS wc</span>
+<span class="w">        </span><span class="nf">NumPut</span><span class="p">(</span>wndProc<span class="p">,</span><span class="w">   </span>wc<span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w">   </span><span class="c1">; lpfnWndProc</span>
+<span class="w">        </span><span class="nf">NumPut</span><span class="p">(</span>hInstance<span class="p">,</span><span class="w"> </span>wc<span class="p">,</span><span class="mi">16</span><span class="p">)</span><span class="w">   </span><span class="c1">; hInstance</span>
+<span class="w">        </span><span class="nf">NumPut</span><span class="p">(</span><span class="o">&amp;</span>ClassName<span class="p">,</span>wc<span class="p">,</span><span class="mi">36</span><span class="p">)</span><span class="w">   </span><span class="c1">; lpszClassname</span>
+
+<span class="w">        </span><span class="c1">; Register the class.        </span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>DllCall<span class="p">(</span><span class="s">&quot;RegisterClass&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>wc<span class="p">)</span>
+<span class="w">        </span><span class="p">{</span><span class="w">   </span><span class="c1">; failed, free the callback.</span>
+<span class="w">            </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GlobalFree&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>wndProc<span class="p">)</span>
+<span class="w">            </span>ErrorLevel<span class="w"> </span><span class="o">=</span><span class="w"> </span>RegisterClass
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="c1">;</span>
+<span class="w">        </span><span class="c1">; Create the message window.</span>
+<span class="w">        </span><span class="c1">;</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="nb">A_OSVersion</span><span class="w"> </span>in<span class="w"> </span>WIN_XP<span class="p">,</span>WIN_7<span class="p">,</span>WIN_VISTA<span class="p">,</span>WIN_2003
+<span class="w">            </span>hwndParent<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">3</span><span class="w"> </span><span class="c1">; HWND_MESSAGE (message-only window)</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span>hwndParent<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w">  </span><span class="c1">; un-owned</span>
+<span class="w">        </span>
+<span class="w">        </span>hwnd<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;CreateWindowEx&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;str&quot;</span><span class="p">,</span>ClassName<span class="p">,</span><span class="s">&quot;str&quot;</span><span class="p">,</span>ClassName
+<span class="w">                        </span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hwndParent
+<span class="w">                        </span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hInstance<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>hwnd<span class="w"> </span><span class="p">{</span>
+<span class="w">            </span>ErrorLevel<span class="w"> </span><span class="o">=</span><span class="w"> </span>CreateWindowEx
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span>prev_hwnd<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;GetForegroundWindow&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">; Required for the menu to initially have focus.</span>
+<span class="w">    </span><span class="c1">;DllCall(&quot;SetForegroundWindow&quot;,&quot;uint&quot;,hwnd)</span>
+<span class="w">    </span>dhw<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_DetectHiddenWindows</span>
+<span class="w">    </span><span class="k">DetectHiddenWindows</span><span class="p">,</span><span class="w"> </span>On
+<span class="w">    </span><span class="k">WinActivate</span><span class="p">,</span><span class="w"> </span>ahk_id<span class="w"> </span><span class="nv">%hwnd%</span>
+<span class="w">    </span><span class="k">DetectHiddenWindows</span><span class="p">,</span><span class="w"> </span><span class="nv">%dhw%</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>x<span class="o">=</span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kr">or</span><span class="w"> </span>y<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">CoordMode</span><span class="p">,</span><span class="w"> </span>Mouse<span class="p">,</span><span class="w"> </span>Screen
+<span class="w">        </span><span class="k">MouseGetPos</span><span class="p">,</span><span class="w"> </span>x<span class="p">,</span><span class="w"> </span>y
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">; returns non-zero on success.</span>
+<span class="w">    </span>ret<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;TrackPopupMenu&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_menu<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>x<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>y
+<span class="w">                    </span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hwnd<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">WinExist</span><span class="p">(</span><span class="s">&quot;ahk_id &quot;</span><span class="w"> </span>prev_hwnd<span class="p">)</span>
+<span class="w">        </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SetForegroundWindow&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>prev_hwnd<span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">; Required to let AutoHotkey process WM_COMMAND messages we may have</span>
+<span class="w">    </span><span class="c1">; sent as a result of clicking a menu item. (Without this, the item-click</span>
+<span class="w">    </span><span class="c1">; won&#39;t register if there is an &#39;ExitApp&#39; after ShowOwnerDrawnMenu returns.)</span>
+<span class="w">    </span><span class="k">Sleep</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span>ret
+<span class="p">}</span>
+<span class="nf">MI_OwnerDrawnMenuItemWndProc</span><span class="p">(</span>hwnd<span class="p">,</span><span class="w"> </span>Msg<span class="p">,</span><span class="w"> </span>wParam<span class="p">,</span><span class="w"> </span>lParam<span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">static</span><span class="w"> </span>WM_DRAWITEM<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x002B</span><span class="p">,</span><span class="w"> </span>WM_MEASUREITEM<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x002C</span><span class="p">,</span><span class="w"> </span>WM_COMMAND<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x111</span>
+<span class="w">    </span><span class="kt">static</span><span class="w"> </span>ScriptHwnd
+<span class="w">    </span><span class="k">Critical</span><span class="w"> </span><span class="mi">500</span>
+
+<span class="w">    </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>Msg<span class="w"> </span><span class="o">=</span><span class="w"> </span>WM_MEASUREITEM<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>wParam<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span><span class="w">   </span><span class="c1">; MSDN: wParam - If the value is zero, the message was sent by a menu.</span>
+<span class="w">        </span>h_icon<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>lParam<span class="o">+</span><span class="mi">20</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>h_icon
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="c1">; Measure icon and put results into lParam.</span>
+<span class="w">        </span><span class="nf">VarSetCapacity</span><span class="p">(</span>buf<span class="p">,</span><span class="mi">24</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetIconInfo&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>buf<span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span>hbmColor<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">16</span><span class="p">)</span>
+<span class="w">            </span>hbmMask<span class="w">  </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">12</span><span class="p">)</span>
+<span class="w">            </span>x<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;GetObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmColor<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>buf<span class="p">)</span>
+<span class="w">            </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DeleteObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmColor<span class="p">)</span>
+<span class="w">            </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DeleteObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmMask<span class="p">)</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>x
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">            </span><span class="nf">NumPut</span><span class="p">(</span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span>lParam<span class="o">+</span><span class="mi">12</span><span class="p">)</span><span class="w"> </span><span class="c1">; width</span>
+<span class="w">            </span><span class="nf">NumPut</span><span class="p">(</span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span><span class="w">  </span><span class="p">,</span><span class="w"> </span>lParam<span class="o">+</span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="c1">; height</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span>true
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>Msg<span class="w"> </span><span class="o">=</span><span class="w"> </span>WM_DRAWITEM<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>wParam<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span>hdcDest<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>lParam<span class="o">+</span><span class="mi">24</span><span class="p">)</span>
+<span class="w">        </span>x<span class="w">       </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>lParam<span class="o">+</span><span class="mi">28</span><span class="p">)</span>
+<span class="w">        </span>y<span class="w">       </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>lParam<span class="o">+</span><span class="mi">32</span><span class="p">)</span>
+<span class="w">        </span>h_icon<span class="w">  </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>lParam<span class="o">+</span><span class="mi">44</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>h_icon<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>hdcDest<span class="p">)</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DrawIconEx&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hdcDest<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>x<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>y<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon
+<span class="w">                        </span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>Msg<span class="w"> </span><span class="o">=</span><span class="w"> </span>WM_COMMAND<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>wParam<span class="o">&gt;&gt;</span><span class="mi">16</span><span class="p">))</span><span class="w"> </span><span class="c1">; (clicked a menu item)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">DetectHiddenWindows</span><span class="p">,</span><span class="w"> </span>On
+<span class="w">        </span><span class="k">WinGetClass</span><span class="p">,</span><span class="w"> </span>class<span class="p">,</span><span class="w"> </span>ahk_id<span class="w"> </span><span class="nv">%hwnd%</span>
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>class<span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;AutoHotkeyGUI&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>class<span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;AutoHotkey&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>ScriptHwnd<span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">Process</span><span class="p">,</span><span class="w"> </span>Exist
+<span class="w">                </span>ScriptHwnd<span class="w"> </span><span class="o">:=</span><span class="w"> </span>WinExist<span class="p">(</span><span class="s">&quot;ahk_class AutoHotkey ahk_pid &quot;</span><span class="w"> </span>ErrorLevel<span class="p">)</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="c1">; Forward this message to the AutoHotkey main window.</span>
+<span class="w">            </span><span class="k">PostMessage</span><span class="p">,</span><span class="w"> </span>Msg<span class="p">,</span><span class="w"> </span>wParam<span class="p">,</span><span class="w"> </span>lParam<span class="p">,,</span><span class="w"> </span>ahk_id<span class="w"> </span><span class="nv">%ScriptHwnd%</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span>ErrorLevel
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nb">A_EventInfo</span><span class="w">  </span><span class="c1">; Let the &quot;super-class&quot; window procedure handle all other messages.</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;CallWindowProc&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="nb">A_EventInfo</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hwnd<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>Msg<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>wParam<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>lParam<span class="p">)</span>
+<span class="w">    </span><span class="k">else</span><span class="w">            </span><span class="c1">; Let the default window procedure handle all other messages.</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DefWindowProc&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hwnd<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>Msg<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>wParam<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>lParam<span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">;</span>
+<span class="c1">; Windows Vista Menu Icons</span>
+<span class="c1">;</span>
+
+<span class="c1">; Note: 32-bit alpha-blended menu item bitmaps are supported only on Windows Vista.</span>
+<span class="c1">; Article on menu icons in Vista:</span>
+<span class="c1">; http://shellrevealed.com/blogs/shellblog/archive/2007/02/06/Vista-Style-Menus_2C00_-Part-1-_2D00_-Adding-icons-to-standard-menus.aspx</span>
+<span class="nf">MI_GetBitmapFromIcon32Bit</span><span class="p">(</span>h_icon<span class="p">,</span><span class="w"> </span>width<span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>height<span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nf">VarSetCapacity</span><span class="p">(</span>buf<span class="p">,</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="c1">; used as ICONINFO (20), BITMAP (24), BITMAPINFO (40)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetIconInfo&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>buf<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span>hbmColor<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">16</span><span class="p">)</span><span class="w">  </span><span class="c1">; used to measure the icon</span>
+<span class="w">        </span>hbmMask<span class="w">  </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">12</span><span class="p">)</span><span class="w">  </span><span class="c1">; used to generate alpha data (if necessary)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>width<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>height<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>hbmColor<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>DllCall<span class="p">(</span><span class="s">&quot;GetObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmColor<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>buf<span class="p">)</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span>width<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">),</span><span class="w">  </span>height<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>buf<span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">; Create a device context compatible with the screen.        </span>
+<span class="w">    </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>hdcDest<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;CreateCompatibleDC&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">; Create a 32-bit bitmap to draw the icon onto.</span>
+<span class="w">        </span><span class="nf">VarSetCapacity</span><span class="p">(</span>buf<span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span>buf<span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>buf<span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;ushort&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nf">NumPut</span><span class="p">(</span>width<span class="p">,</span>buf<span class="p">,</span><span class="mi">4</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span>height<span class="p">,</span>buf<span class="p">,</span><span class="mi">8</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span>buf<span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="s">&quot;ushort&quot;</span><span class="p">)</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>bm<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;CreateDIBSection&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hdcDest<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>buf<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span>
+<span class="w">                            </span><span class="p">,</span><span class="s">&quot;uint*&quot;</span><span class="p">,</span>pBits<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">; SelectObject -- use hdcDest to draw onto bm</span>
+<span class="w">            </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>bmOld<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;SelectObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hdcDest<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>bm<span class="p">))</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">; Draw the icon onto the 32-bit bitmap.</span>
+<span class="w">                </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DrawIconEx&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hdcDest<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>h_icon
+<span class="w">                        </span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>width<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>height<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="w">                </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SelectObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hdcDest<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>bmOld<span class="p">)</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span>
+<span class="w">            </span><span class="c1">; Check for alpha data.</span>
+<span class="w">            </span>has_alpha_data<span class="w"> </span><span class="o">:=</span><span class="w"> </span>false
+<span class="w">            </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>height<span class="o">*</span>width
+<span class="w">                </span><span class="kr">if</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>pBits<span class="o">+</span><span class="mi">0</span><span class="p">,(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xFF000000</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span>has_alpha_data<span class="w"> </span><span class="o">:=</span><span class="w"> </span>true
+<span class="w">                    </span><span class="k">break</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span>has_alpha_data
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">; Ensure the mask is the right size.</span>
+<span class="w">                </span>hbmMask<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;CopyImage&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmMask<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span>
+<span class="w">                                    </span><span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>width<span class="p">,</span><span class="s">&quot;int&quot;</span><span class="p">,</span>height<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">4</span><span class="o">|</span><span class="mi">8</span><span class="p">)</span>
+<span class="w">                </span>
+<span class="w">                </span><span class="nf">VarSetCapacity</span><span class="p">(</span>mask_bits<span class="p">,</span><span class="w"> </span>width<span class="o">*</span>height<span class="o">*</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">                </span><span class="kr">if</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetDIBits&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hdcDest<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmMask<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span>
+<span class="w">                            </span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>height<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>mask_bits<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>buf<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span><span class="w">   </span><span class="c1">; Use icon mask to generate alpha data.</span>
+<span class="w">                    </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>height<span class="o">*</span>width
+<span class="w">                        </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span>mask_bits<span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">))</span>
+<span class="w">                            </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>pBits<span class="o">+</span><span class="p">(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="w">                            </span><span class="nf">NumPut</span><span class="p">(</span>NumGet<span class="p">(</span>pBits<span class="o">+</span><span class="p">(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">0xFF000000</span><span class="p">,</span><span class="w"> </span>pBits<span class="o">+</span><span class="p">(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">; Make the bitmap entirely opaque.</span>
+<span class="w">                    </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>height<span class="o">*</span>width
+<span class="w">                        </span><span class="nf">NumPut</span><span class="p">(</span>NumGet<span class="p">(</span>pBits<span class="o">+</span><span class="p">(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">0xFF000000</span><span class="p">,</span><span class="w"> </span>pBits<span class="o">+</span><span class="p">(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span>
+<span class="w">        </span><span class="c1">; Done using the device context.</span>
+<span class="w">        </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DeleteDC&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hdcDest<span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>hbmColor
+<span class="w">        </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DeleteObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmColor<span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span>hbmMask
+<span class="w">        </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;DeleteObject&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hbmMask<span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span>bm
+<span class="p">}</span>
+
+<span class="c1">;</span>
+<span class="c1">; Utils</span>
+<span class="c1">;</span>
+
+<span class="nf">MI_DllProcAorW</span><span class="p">(</span>dll<span class="p">,</span><span class="w"> </span>func<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">; In AutoHotkey_L/AutoHotkeyU we can just use &quot;dll\func&quot; and &quot;A&quot; or &quot;W&quot;</span>
+<span class="w">    </span><span class="c1">; will be appended as appropriate if func is not found, but since that</span>
+<span class="w">    </span><span class="c1">; won&#39;t work in regular AutoHotkey (for some dlls), resolve it manually:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetProcAddress&quot;</span>
+<span class="w">                </span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetModuleHandle&quot;</span><span class="p">,</span><span class="s">&quot;str&quot;</span><span class="p">,</span>dll<span class="p">)</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span><span class="nb">A_IsUnicode</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;astr&quot;</span><span class="o">:</span><span class="s">&quot;str&quot;</span><span class="w">  </span><span class="c1">; Always an ANSI string.</span>
+<span class="w">                </span><span class="p">,</span><span class="w"> </span>func<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">(</span><span class="nb">A_IsUnicode</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;W&quot;</span><span class="o">:</span><span class="s">&quot;A&quot;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">;</span>
 <span class="c-Singleline">;  Menu Icons v2.21</span>
 <span class="c-Singleline">;   by Lexikos</span>
 <span class="c-Singleline">;</span>

@@ -1,4 +1,20 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; Simple XML Get by infogulch</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; Simple XML Get by infogulch</span>
+<span class="c1">; http://www.autohotkey.com/forum/topic42682.html</span>
+<span class="nf">sXMLget</span><span class="p">(</span><span class="w"> </span>xml<span class="p">,</span><span class="w"> </span>node<span class="p">,</span><span class="w"> </span>attr<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="c1">;by infogulch - simple solution get information out of xml and html</span>
+<span class="c1">;  supports getting the values from a nested nodes; does NOT support decendant/ancestor or sibling</span>
+<span class="c1">;  for something more than a little complex, try Titan&#39;s xpath: http://www.autohotkey.com/forum/topic17549.html</span>
+<span class="w">   </span><span class="nf">RegExMatch</span><span class="p">(</span><span class="w"> </span>xml
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">(</span>attr<span class="w"> </span><span class="nf">?</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span><span class="w"> </span>node<span class="w"> </span><span class="s">&quot;\b[^&gt;]*\b&quot;</span><span class="w"> </span>attr<span class="w"> </span><span class="s">&quot;=&quot;&quot;(?&lt;match&gt;[^&quot;&quot;]*)&quot;&quot;[^&gt;]*&gt;&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span><span class="w"> </span>node<span class="w"> </span><span class="s">&quot;\b[^&gt;/]*&gt;(?&lt;match&gt;(?&lt;tag&gt;(?:[^&lt;]*(?:&lt;(\w+)\b[^&gt;]*&gt;(?&amp;tag)&lt;/\3&gt;)*)*))&lt;/&quot;</span><span class="w"> </span>node<span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">))</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span>retval<span class="w"> </span><span class="p">)</span>
+<span class="w">   </span><span class="k">return</span><span class="w"> </span>retvalMatch
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; Simple XML Get by infogulch</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/topic42682.html</span>
 <span class="n">sXMLget</span><span class="p">(</span> <span class="n">xml</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">;by infogulch - simple solution get information out of xml and html</span>

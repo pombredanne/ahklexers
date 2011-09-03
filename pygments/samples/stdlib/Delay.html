@@ -1,4 +1,20 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="n">Delay</span><span class="p">(</span> <span class="n">D</span><span class="o">=</span><span class="mf">0.001</span> <span class="p">)</span> <span class="p">{</span><span class="c-Singleline">  ; High Resolution Delay ( High CPU Usage )  by SKAN  | CD: 13/Jun/2009</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="nf">Delay</span><span class="p">(</span><span class="w"> </span>D<span class="o">=</span><span class="mf">0.001</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">; High Resolution Delay ( High CPU Usage )  by SKAN  | CD: 13/Jun/2009</span>
+<span class="w"> </span><span class="kt">Static</span><span class="w"> </span>F<span class="w">           </span><span class="c1">; www.autohotkey.com/forum/viewtopic.php?t=52083     | LM: 13/Jun/2009</span>
+<span class="w"> </span><span class="k">Critical</span>
+<span class="w"> </span>F<span class="w"> </span><span class="o">?</span><span class="w"> </span>F<span class="w"> </span><span class="o">:</span><span class="w"> </span>DllCall<span class="p">(</span><span class="w"> </span><span class="s">&quot;QueryPerformanceFrequency&quot;</span><span class="p">,</span><span class="w"> </span>Int64P<span class="p">,</span>F<span class="w"> </span><span class="p">)</span>
+<span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;QueryPerformanceCounter&quot;</span><span class="p">,</span><span class="w"> </span>Int64P<span class="p">,</span>pTick<span class="w"> </span><span class="p">),</span><span class="w"> </span>cTick<span class="w"> </span><span class="o">:=</span><span class="w"> </span>pTick
+<span class="w"> </span><span class="nf">While</span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">(</span>Tick<span class="o">:=</span><span class="p">(</span>pTick<span class="o">-</span>cTick<span class="p">)</span><span class="o">/</span>F<span class="p">))</span><span class="w"> </span><span class="o">&lt;</span>D<span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;QueryPerformanceCounter&quot;</span><span class="p">,</span><span class="w"> </span>Int64P<span class="p">,</span>pTick<span class="w"> </span><span class="p">)</span>
+<span class="w">   </span><span class="k">Sleep</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w"> </span><span class="p">}</span>
+<span class="k">Return</span><span class="w"> </span><span class="nf">Round</span><span class="p">(</span><span class="w"> </span>Tick<span class="p">,</span><span class="mi">3</span><span class="w"> </span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="n">Delay</span><span class="p">(</span> <span class="n">D</span><span class="o">=</span><span class="mf">0.001</span> <span class="p">)</span> <span class="p">{</span><span class="c-Singleline">  ; High Resolution Delay ( High CPU Usage )  by SKAN  | CD: 13/Jun/2009</span>
 <span class="w"> </span><span class="nb">Static</span> <span class="n">F</span><span class="c-Singleline">           ; www.autohotkey.com/forum/viewtopic.php?t=52083     | LM: 13/Jun/2009</span>
 <span class="w"> </span><span class="nb">Critical</span>
  <span class="n">F</span> <span class="o">?</span> <span class="n">F</span> <span class="o">:</span> <span class="nf">DllCall</span><span class="p">(</span> <span class="s">&quot;QueryPerformanceFrequency&quot;</span><span class="p">,</span> <span class="n">Int64P</span><span class="p">,</span><span class="n">F</span> <span class="p">)</span>
