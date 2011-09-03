@@ -30,15 +30,17 @@ class AhkLexer(ExtendedRegexLexer):
             (r'^;.*?$', Comment.Singleline),
             (r'[]{}(),;[]', Punctuation),
             (r'(in|is|and|or|not)\b', Operator.Word),
-            ('\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable), 
+            (r'\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable), 
             (r'!=|==|:=|\.=|<<|>>|[-~+/*%=<>&^|?:!.]', Operator),            
             include('commands'),
             include('labels'),
             include('builtInFunctions'),
             include('builtInVariables'),
-            ('"', String, combined('stringescape', 'dqs')),
+            (r'"', String, combined('stringescape', 'dqs')),
             include('numbers'),
-            ('[a-zA-Z_#@$][a-zA-Z0-9_#@$]*', Name),            
+            (r'[a-zA-Z_#@$][a-zA-Z0-9_#@$]*', Name),  
+            (r'\\', Text),
+            (r'\`([\,\%\`abfnrtv])', String.Escape),
             include('garbage'),
         ],		       
         'incomment': [	       
@@ -77,7 +79,7 @@ class AhkLexer(ExtendedRegexLexer):
             (r'\d+', Number.Integer)
         ],
         'stringescape': [
-            (r'\"\"', String.Escape),
+            (r'\"\"|\`([\,\%\`abfnrtv])', String.Escape),
         ],
         'strings': [
             (r'[^"\n]+', String),

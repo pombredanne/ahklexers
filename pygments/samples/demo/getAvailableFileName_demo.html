@@ -26,9 +26,9 @@
 <span class="p">{</span>
   <span class="n">static</span> <span class="n">MsgTxt</span>
 <span class="w">  </span><span class="nb">If </span><span class="n">FileName</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">MsgTxt</span> <span class="o">=</span> <span class="nv">%MsgTxt%</span><span class="n">Error</span><span class="o">:</span> <span class="nv">%ErrorLevel%</span><span class="err">`</span><span class="n">n</span><span class="err">`</span><span class="n">n</span>
+    <span class="n">MsgTxt</span> <span class="o">=</span> <span class="nv">%MsgTxt%</span><span class="n">Error</span><span class="o">:</span> <span class="nv">%ErrorLevel%</span><span class="se">`n`n</span>
 <span class="w">  </span><span class="nb">Else</span>
-    <span class="n">MsgTxt</span> <span class="o">=</span> <span class="nv">%MsgTxt%%FileName%</span><span class="err">`</span><span class="n">n</span><span class="err">`</span><span class="n">n</span>
+    <span class="n">MsgTxt</span> <span class="o">=</span> <span class="nv">%MsgTxt%%FileName%</span><span class="se">`n`n</span>
 <span class="w">  </span><span class="nb">Return</span>  <span class="n">MsgTxt</span>
 <span class="p">}</span>
 </pre></div>

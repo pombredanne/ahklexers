@@ -26,7 +26,7 @@
 <span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="o">=</span> <span class="o">+</span>
 	<span class="p">{</span>
 <span class="w">		</span><span class="nb">FileDelete</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span> 
-<span class="w">		</span><span class="nb">FileAppend</span> <span class="nv">%txt%</span><span class="err">`</span><span class="n">n</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
+<span class="w">		</span><span class="nb">FileAppend</span> <span class="nv">%txt%</span><span class="se">`n</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
 		<span class="n">line</span> <span class="o">:=</span> <span class="s">&quot;|-&quot;</span>
 	<span class="p">}</span>
 
@@ -36,7 +36,7 @@
 <span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="ow">in</span> <span class="n">I</span><span class="p">,</span><span class="n">M</span>
 	<span class="p">{</span>
 <span class="w">		</span><span class="nb">FileAppend</span> <span class="nv">%line%%txt%</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
-<span class="w">		</span><span class="nb">FileAppend</span> <span class="o">%</span> <span class="s">&quot;    &quot;</span> <span class="n">aTooltip</span><span class="nv">%item%</span> <span class="s">&quot;`n&quot;</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
+<span class="w">		</span><span class="nb">FileAppend</span> <span class="o">%</span> <span class="s">&quot;    &quot;</span> <span class="n">aTooltip</span><span class="nv">%item%</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">_out</span><span class="o">.</span><span class="n">txt</span>
 	<span class="p">}</span>
 
 <span class="w">	</span><span class="nb">if </span><span class="n">Event</span> <span class="o">=</span> <span class="n">M</span>

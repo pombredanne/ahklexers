@@ -37,9 +37,9 @@
 <span class="n">Display</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="p">{</span><span class="c-Singleline"> ;demonstration script specific - Infogulch</span>
    <span class="n">local</span> <span class="n">Info</span>
-   <span class="n">Info</span> <span class="o">:=</span> <span class="n">x</span> <span class="s">&quot;`n&quot;</span>
+   <span class="n">Info</span> <span class="o">:=</span> <span class="n">x</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 <span class="w">   </span><span class="nb">Loop</span> <span class="o">%</span> <span class="n">Array0</span>
-      <span class="n">Info</span> <span class="o">.=</span> <span class="nv">A_Index</span> <span class="s">&quot;:`t&quot;</span> <span class="n">Array</span><span class="nv">%A_Index%</span> <span class="s">&quot;`n&quot;</span>
+      <span class="n">Info</span> <span class="o">.=</span> <span class="nv">A_Index</span> <span class="s">&quot;:`t&quot;</span> <span class="n">Array</span><span class="nv">%A_Index%</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 <span class="w">   </span><span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">Info</span>
 <span class="w">   </span><span class="nb">GoSub</span> <span class="n">SetVars</span><span class="c-Singleline"> ;reset the vars for the next function</span>
 <span class="p">}</span>
