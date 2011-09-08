@@ -5,7 +5,7 @@
 <span class="nb">#Persistent</span>
 
 <span class="nb">OnExit</span><span class="p">,</span><span class="n">Exit</span>
-<span class="nl">WatchDirectory(&quot;C:</span>\<span class="n">Windows</span><span class="s">&quot;,1)</span>
+<span class="n">WatchDirectory</span><span class="p">(</span><span class="s">&quot;C:\Windows&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="nb">SetTimer</span><span class="p">,</span><span class="n">WatchFolder</span><span class="p">,</span><span class="mi">100</span>
 <span class="nb">Return</span>
 
@@ -14,12 +14,12 @@
 <span class="nb">Return</span>
 
 <span class="n">RegisterChanges</span><span class="p">(</span><span class="n">action</span><span class="p">,</span><span class="n">folder</span><span class="p">,</span><span class="n">file</span><span class="p">){</span>
-    <span class="n">static</span>
-<span class="w">    </span><span class="nl">#1:</span><span class="o">=</span><span class="s">&quot;New File&quot;</span><span class="p">,</span> #<span class="mi">2</span>:<span class="o">=</span><span class="s">&quot;Deleted&quot;</span><span class="p">,</span> #<span class="mi">3</span>:<span class="o">=</span><span class="s">&quot;Modified&quot;</span><span class="p">,</span> #<span class="mi">4</span>:<span class="o">=</span><span class="s">&quot;Renamed From&quot;</span><span class="p">,</span> #<span class="mi">5</span>:<span class="o">=</span><span class="s">&quot;Renamed To&quot;</span>
-<span class="w">    </span><span class="nb">ToolTip</span> <span class="o">%</span> #<span class="nv">%Action%</span> <span class="s">&quot;`n&quot;</span> <span class="n">folder</span> <span class="o">.</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">folder</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;\&quot;</span> ? <span class="s">&quot;&quot;</span> : <span class="s">&quot;\&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="n">file</span>
+<span class="w">    </span><span class="nb">static</span>
+<span class="w">    </span><span class="nl">#1:</span><span class="o">=</span><span class="s">&quot;New File&quot;</span><span class="p">,</span> <span class="n">#2</span><span class="o">:=</span><span class="s">&quot;Deleted&quot;</span><span class="p">,</span> <span class="n">#3</span><span class="o">:=</span><span class="s">&quot;Modified&quot;</span><span class="p">,</span> <span class="n">#4</span><span class="o">:=</span><span class="s">&quot;Renamed From&quot;</span><span class="p">,</span> <span class="n">#5</span><span class="o">:=</span><span class="s">&quot;Renamed To&quot;</span>
+<span class="w">    </span><span class="nb">ToolTip</span> <span class="o">%</span> <span class="n">#</span><span class="nv">%Action%</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span> <span class="n">folder</span> <span class="o">.</span> <span class="p">(</span><span class="nf">SubStr(</span><span class="n">folder</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=</span><span class="s">&quot;\&quot;</span> <span class="o">?</span> <span class="s">&quot;&quot;</span> <span class="o">:</span> <span class="s">&quot;\&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="n">file</span>
 <span class="p">}</span>   
 
-<span class="nb">Exit</span>:
+<span class="nb">Exit</span><span class="o">:</span>
     <span class="n">WatchDirectory</span><span class="p">()</span>
 <span class="nb">ExitApp</span>
 </pre></div>

@@ -4,7 +4,7 @@
 <span class="nb">#SingleInstance</span><span class="p">,</span> <span class="n">Force</span>
 <span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span> 
 
-<span class="n">bgcolor</span> :<span class="o">=</span> <span class="n">GetSysColor</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span><span class="c-Singleline">  ; Window Background color for the current desktop theme</span>
+<span class="n">bgcolor</span> <span class="o">:=</span> <span class="n">GetSysColor</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span><span class="c-Singleline">  ; Window Background color for the current desktop theme</span>
 
 <span class="nb">FileDelete</span><span class="p">,</span> <span class="n">demo</span><span class="o">.</span><span class="n">htm</span>
 <span class="nb">FileAppend</span><span class="p">,</span>
@@ -24,16 +24,16 @@
 
 
 <span class="nl">URL=file:</span><span class="o">///</span><span class="nv">%A_ScriptDir%</span>\<span class="n">demo</span><span class="o">.</span><span class="n">htm</span>
-<span class="n">Options</span> :<span class="o">=</span> <span class="s">&quot;Buttons=Yes/No/50-50, HtmW=360, HtmH=260, BEsc=3&quot;</span>
+<span class="n">Options</span> <span class="o">:=</span> <span class="s">&quot;Buttons=Yes/No/50-50, HtmW=360, HtmH=260, BEsc=3&quot;</span>
 
-<span class="n">Sel</span> :<span class="o">=</span> <span class="n">HtmDlg</span><span class="p">(</span> <span class="n">URL</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Options</span> <span class="p">)</span>
+<span class="n">Sel</span> <span class="o">:=</span> <span class="n">HtmDlg</span><span class="p">(</span> <span class="n">URL</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Options</span> <span class="p">)</span>
 
 <span class="nb">Return</span><span class="c-Singleline">                                                 ; // end of auto-execute section //</span>
 
 
 <span class="n">GetSysColor</span><span class="p">(</span> <span class="n">DisplayElement</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
- <span class="nf">VarSetCapacity(</span> <span class="n">HexClr</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span> <span class="p">),</span> <span class="n">SClr</span> :<span class="o">=</span> <span class="nf">DllCall(</span> <span class="s">&quot;GetSysColor&quot;</span><span class="p">,</span> <span class="n">UInt</span><span class="p">,</span><span class="n">DisplayElement</span> <span class="p">)</span>
- <span class="n">RGB</span> :<span class="o">=</span> <span class="p">(</span> <span class="p">(</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF00</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF0000</span> <span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span> <span class="p">)</span> <span class="p">)</span>
+ <span class="nf">VarSetCapacity(</span> <span class="n">HexClr</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span> <span class="p">),</span> <span class="n">SClr</span> <span class="o">:=</span> <span class="nf">DllCall(</span> <span class="s">&quot;GetSysColor&quot;</span><span class="p">,</span> <span class="n">UInt</span><span class="p">,</span><span class="n">DisplayElement</span> <span class="p">)</span>
+ <span class="n">RGB</span> <span class="o">:=</span> <span class="p">(</span> <span class="p">(</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF00</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="p">(</span> <span class="n">SClr</span> <span class="o">&amp;</span> <span class="mh">0xFF0000</span> <span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span> <span class="p">)</span> <span class="p">)</span>
  <span class="nf">DllCall(</span> <span class="s">&quot;msvcrt\sprintf&quot;</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span><span class="n">HexClr</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span><span class="s">&quot;%06X&quot;</span><span class="p">,</span> <span class="n">UInt</span><span class="p">,</span><span class="n">RGB</span> <span class="p">)</span>
 <span class="nb">Return</span> <span class="n">HexClr</span>
 <span class="p">}</span>

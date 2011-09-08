@@ -4,12 +4,12 @@
 <span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Select source folder</span>
-<span class="nb">FileSelectFolder</span><span class="p">,</span> <span class="n">SourcePath</span><span class="p">,</span> ::<span class="p">{</span><span class="mi">20</span><span class="n">d04fe0</span><span class="o">-</span><span class="mi">3</span><span class="n">aea</span><span class="o">-</span><span class="mi">1069</span><span class="o">-</span><span class="n">a2d8</span><span class="o">-</span><span class="mo">08002</span><span class="n">b30309d</span><span class="p">},</span> <span class="mi">3</span><span class="p">,</span> <span class="n">Select</span> <span class="n">folder</span> <span class="n">to</span> <span class="n">mount</span>
+<span class="nb">FileSelectFolder</span><span class="p">,</span> <span class="n">SourcePath</span><span class="p">,</span> <span class="o">::</span><span class="p">{</span><span class="mi">20</span><span class="n">d04fe0</span><span class="o">-</span><span class="mi">3</span><span class="n">aea</span><span class="o">-</span><span class="mi">1069</span><span class="o">-</span><span class="n">a2d8</span><span class="o">-</span><span class="mo">08002</span><span class="n">b30309d</span><span class="p">},</span> <span class="mi">3</span><span class="p">,</span> <span class="n">Select</span> <span class="n">folder</span> <span class="n">to</span> <span class="n">mount</span>
 
 <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">	; Mount to first free drive</span>
-	<span class="n">path</span> :<span class="o">=</span> <span class="n">Mount</span><span class="p">(</span><span class="n">SourcePath</span><span class="p">)</span><span class="c-Singleline"></span>
+	<span class="n">path</span> <span class="o">:=</span> <span class="n">Mount</span><span class="p">(</span><span class="n">SourcePath</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">	; Open that drive and wait until MsgBox is closed for unmount</span>
 <span class="w">	</span><span class="nb">MsgBox</span> <span class="nv">%SourcePath%</span> <span class="n">mounted</span> <span class="n">to</span> <span class="nv">%path%</span>
@@ -18,10 +18,10 @@
 <span class="n">Mount_GetMountPathes</span><span class="p">(</span><span class="n">pathes</span><span class="p">)</span>
 <span class="n">If</span> <span class="p">(</span><span class="n">pathes</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-<span class="w">	</span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">4</span><span class="p">,,</span> <span class="n">Unmount</span> <span class="n">all</span> <span class="n">these</span> <span class="n">mounts</span>?`<span class="n">n</span>`<span class="n">n</span><span class="nv">%pathes%</span>
+<span class="w">	</span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">4</span><span class="p">,,</span> <span class="n">Unmount</span> <span class="n">all</span> <span class="n">these</span> <span class="n">mounts</span><span class="o">?</span><span class="se">`n`n</span><span class="nv">%pathes%</span>
 <span class="w">	</span><span class="nb">IfMsgBox</span><span class="p">,</span> <span class="n">Yes</span>
 	<span class="p">{</span>
-<span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">pathes</span><span class="p">,</span> `<span class="n">n</span>
+<span class="w">		</span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">pathes</span><span class="p">,</span> <span class="se">`n</span>
 		<span class="p">{</span>
 <span class="w">			</span><span class="nb">StringLeft</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="mi">1</span>
 			<span class="n">If</span> <span class="p">(</span><span class="n">path</span><span class="p">)</span>

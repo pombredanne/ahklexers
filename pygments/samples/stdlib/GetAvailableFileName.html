@@ -1,4 +1,120 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; Get next/free Available File Name by toralf</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; Get next/free Available File Name by toralf</span>
+<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?t=6297</span>
+
+<span class="nf">GetAvailableFileName</span><span class="p">(</span><span class="w"> </span>GivenFileName<span class="p">,</span><span class="w"> </span>GivenPath<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>StartID<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="c1">;check if GivenPath exist and add &quot;\&quot; if necessary</span>
+<span class="w">  </span><span class="kr">If</span><span class="w"> </span>GivenPath<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>space
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="k">StringRight</span><span class="p">,</span><span class="w"> </span>LastChar<span class="p">,</span><span class="w"> </span>GivenPath<span class="p">,</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>LastChar<span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="s">&quot;\&quot;</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span>GivenPath<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%GivenPath%</span><span class="p">\</span>
+<span class="w">      </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>InStr<span class="p">(</span>FileExist<span class="p">(</span>GivenPath<span class="p">),</span><span class="w"> </span><span class="s">&quot;D&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span>ErrorLevel<span class="w"> </span><span class="o">=</span><span class="w"> </span>The<span class="w"> </span>given<span class="w"> </span>path<span class="w"> </span><span class="o">&gt;</span><span class="nv">%GivenPath%</span><span class="o">&lt;</span><span class="w"> </span>doesn<span class="err">&#39;</span>t<span class="w"> </span>exist<span class="p">.</span>
+<span class="w">          </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">;check if StartID is reasonable</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>StartID<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="kr">Or</span><span class="w"> </span>Mod<span class="p">(</span>StartID<span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span>ErrorLevel<span class="w"> </span><span class="o">=</span>
+<span class="w">        </span><span class="p">(</span>LTrim
+<span class="w">           </span>The<span class="w"> </span>StartID<span class="w"> </span><span class="o">&gt;</span><span class="nv">%StartID%</span><span class="o">&lt;</span><span class="w"> </span>is<span class="w"> </span>smaller<span class="w"> </span>then<span class="w"> </span>zero<span class="w"> </span><span class="kr">or</span><span class="w"> </span>not<span class="w"> </span>an<span class="w"> </span>integer<span class="p">.</span>
+<span class="w">           </span>It<span class="w"> </span>has<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>a<span class="w"> </span>positive<span class="w"> </span>integer<span class="p">.</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">;split GivenFileName with #</span>
+<span class="w">  </span><span class="k">StringSplit</span><span class="p">,</span><span class="w"> </span>NameArray<span class="p">,</span><span class="w"> </span>GivenFileName<span class="p">,</span><span class="w"> </span><span class="p">#</span>
+<span class="w"> </span>
+<span class="w">  </span><span class="c1">;if GivenFileName doesn&#39;t contain # ...</span>
+<span class="w">  </span><span class="kr">If</span><span class="w"> </span>NameArray0<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">;check if GivenFileName exists</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span><span class="nf">FileExist</span><span class="p">(</span>GivenPath<span class="w"> </span><span class="p">.</span><span class="w"> </span>GivenFileName<span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span>ErrorLevel<span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="p">(</span>LTrim
+<span class="w">              </span>The<span class="w"> </span>given<span class="w"> </span>file<span class="w"> </span><span class="o">&gt;</span><span class="nv">%GivenFileName%</span><span class="o">&lt;</span><span class="w"> </span>does<span class="w"> </span>exist
+<span class="w">              </span>in<span class="w"> </span>path<span class="w"> </span><span class="o">&gt;</span><span class="nv">%GivenPath%</span><span class="o">&lt;</span><span class="p">.</span>
+<span class="w">              </span><span class="p">(</span><span class="kr">if</span><span class="w"> </span>path<span class="w"> </span>is<span class="w"> </span>empty<span class="p">,</span><span class="w"> </span>it<span class="err">&#39;</span>s<span class="w"> </span>the<span class="w"> </span>path<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>script<span class="o">/</span>exe<span class="p">)</span>
+<span class="w">            </span><span class="p">)</span>
+<span class="w">          </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="k">Else</span>
+<span class="w">          </span><span class="k">Return</span><span class="w"> </span>GivenPath<span class="w"> </span><span class="p">.</span><span class="w"> </span>GivenFileName
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">;check if StartID isn&#39;t too large</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>StrLen<span class="p">(</span>StartID<span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span>NameArray0<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span>ErrorLevel<span class="w"> </span><span class="o">=</span>
+<span class="w">        </span><span class="p">(</span>LTrim
+<span class="w">           </span>The<span class="w"> </span>StartID<span class="w"> </span><span class="o">&gt;</span><span class="nv">%StartID%</span><span class="o">&lt;</span><span class="w"> </span>is<span class="w"> </span>too<span class="w"> </span>large
+<span class="w">           </span>for<span class="w"> </span>the<span class="w"> </span>filename<span class="w"> </span><span class="o">&gt;</span><span class="nv">%GivenFileName%</span><span class="o">&lt;</span><span class="p">.</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w"> </span>
+<span class="w">  </span><span class="c1">;Search from StartID ...</span>
+<span class="w">  </span><span class="k">Loop</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span>Number<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_Index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>StartID<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">             </span>
+<span class="w">      </span><span class="c1">;untill number is too large ...</span>
+<span class="w">      </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>StrLen<span class="p">(</span>Number<span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span>NameArray0<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span>ErrorLevel<span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="p">(</span>LTrim
+<span class="w">              </span>All<span class="w"> </span>files<span class="w"> </span>exist<span class="w"> </span>for<span class="w"> </span><span class="o">&gt;</span><span class="nv">%GivenFileName%</span><span class="o">&lt;</span>
+<span class="w">              </span>with<span class="w"> </span>all<span class="w"> </span><span class="p">#</span><span class="w"> </span>between<span class="w"> </span><span class="nv">%StartID%</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span><span class="nv">%Number%</span><span class="p">.</span>
+<span class="w">            </span><span class="p">)</span>
+<span class="w">          </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">      </span><span class="c1">;otherwise fill number with leading zeros</span>
+<span class="w">      </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>NameArray0<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span>StrLen<span class="p">(</span>Number<span class="p">)</span><span class="w"> </span><span class="c1">;%</span>
+<span class="w">          </span>Number<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="nv">%Number%</span>
+<span class="w">     </span>
+<span class="w">      </span><span class="c1">;split number in an array</span>
+<span class="w">      </span><span class="k">StringSplit</span><span class="p">,</span><span class="w"> </span>NumberArray<span class="p">,</span><span class="w"> </span>Number
+<span class="w">     </span>
+<span class="w">      </span><span class="c1">;mix and concatenate the names array with the numbers array</span>
+<span class="w">      </span>FileName<span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="nv">%NameArray0%</span>
+<span class="w">          </span>FileName<span class="w"> </span><span class="o">:=</span><span class="w"> </span>FileName<span class="w"> </span><span class="p">.</span><span class="w"> </span>NameArray<span class="nv">%A_Index%</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>NumberArray<span class="nv">%A_Index%</span>
+<span class="w">     </span>
+<span class="w">      </span><span class="c1">;check if GivenFileName doesn&#39;t exist</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span>not<span class="w"> </span><span class="nf">FileExist</span><span class="p">(</span>GivenPath<span class="w"> </span><span class="p">.</span><span class="w"> </span>FileName<span class="p">)</span>
+<span class="w">          </span><span class="k">Return</span><span class="w"> </span>GivenPath<span class="w"> </span><span class="p">.</span><span class="w"> </span>FileName
+<span class="w">     </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nf">GetAvailableFileName_fast</span><span class="p">(</span><span class="w"> </span>GivenFileName<span class="p">,</span><span class="w"> </span>GivenPath<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>StartID<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">StringSplit</span><span class="p">,</span><span class="w"> </span>NameArray<span class="p">,</span><span class="w"> </span>GivenFileName<span class="p">,</span><span class="w"> </span><span class="p">#</span>
+<span class="w">  </span><span class="k">Loop</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span>Number<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_Index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>StartID<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>NameArray0<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span>StrLen<span class="p">(</span>Number<span class="p">)</span><span class="w"> </span><span class="c1">;%</span>
+<span class="w">          </span>Number<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="nv">%Number%</span>
+<span class="w">      </span><span class="k">StringSplit</span><span class="p">,</span><span class="w"> </span>NumberArray<span class="p">,</span><span class="w"> </span>Number
+<span class="w">      </span>FileName<span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="nv">%NameArray0%</span>
+<span class="w">          </span>FileName<span class="w"> </span><span class="o">:=</span><span class="w"> </span>FileName<span class="w"> </span><span class="p">.</span><span class="w"> </span>NameArray<span class="nv">%A_Index%</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>NumberArray<span class="nv">%A_Index%</span>
+<span class="w">      </span><span class="kr">If</span><span class="w"> </span>not<span class="w"> </span><span class="nf">FileExist</span><span class="p">(</span>GivenPath<span class="w"> </span><span class="p">.</span><span class="w"> </span>FileName<span class="p">)</span>
+<span class="w">          </span><span class="k">Return</span><span class="w"> </span>GivenPath<span class="w"> </span><span class="p">.</span><span class="w"> </span>FileName
+<span class="w">     </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; Get next/free Available File Name by toralf</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?t=6297</span>
 
 <span class="n">GetAvailableFileName</span><span class="p">(</span> <span class="n">GivenFileName</span><span class="p">,</span> <span class="n">GivenPath</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">StartID</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
@@ -9,7 +125,7 @@
 <span class="w">      </span><span class="nb">StringRight</span><span class="p">,</span> <span class="n">LastChar</span><span class="p">,</span> <span class="n">GivenPath</span><span class="p">,</span> <span class="mi">1</span>
       <span class="n">If</span> <span class="p">(</span> <span class="n">LastChar</span> <span class="o">&lt;&gt;</span> <span class="s">&quot;\&quot;</span> <span class="p">)</span>
         <span class="n">GivenPath</span> <span class="o">=</span> <span class="nv">%GivenPath%</span>\
-      <span class="n">If</span> <span class="p">(</span> <span class="nf">InStr(FileExist(</span><span class="n">GivenPath</span><span class="p">),</span> <span class="s">&quot;D&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">)</span>
+      <span class="n">If</span> <span class="p">(</span> <span class="nf">InStr</span><span class="p">(</span><span class="nf">FileExist</span><span class="p">(</span><span class="n">GivenPath</span><span class="p">),</span> <span class="s">&quot;D&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">)</span>
         <span class="p">{</span>
           <span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="n">The</span> <span class="n">given</span> <span class="n">path</span> <span class="o">&gt;</span><span class="nv">%GivenPath%</span><span class="o">&lt;</span> <span class="n">doesn</span>&#39;<span class="n">t</span> <span class="n">exist</span><span class="o">.</span>
 <span class="w">          </span><span class="nb">Return</span> <span class="mi">0</span>
@@ -17,7 +133,7 @@
     <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">  ;check if StartID is reasonable</span>
-  <span class="n">If</span> <span class="p">(</span> <span class="n">StartID</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="n">Or</span> <span class="nf">Mod(</span><span class="n">StartID</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+  <span class="n">If</span> <span class="p">(</span> <span class="n">StartID</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="n">Or</span> <span class="nf">Mod</span><span class="p">(</span><span class="n">StartID</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="mi">0</span> <span class="p">)</span>
     <span class="p">{</span>
       <span class="nv">ErrorLevel</span> <span class="o">=</span>
 <span class="w">        </span><span class="g">(LTrim</span>
@@ -28,13 +144,13 @@
     <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">  ;split GivenFileName with #</span>
-<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> #<span class="c-Singleline"></span>
+<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> <span class="n">#</span><span class="c-Singleline"></span>
 <span class="c-Singleline"> </span>
 <span class="c-Singleline">  ;if GivenFileName doesn&#39;t contain # ...</span>
 <span class="w">  </span><span class="nb">If </span><span class="n">NameArray0</span> <span class="o">&lt;</span> <span class="mi">2</span>
     <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">      ;check if GivenFileName exists</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">FileExist(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">GivenFileName</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">If </span><span class="nf">FileExist</span><span class="p">(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">GivenFileName</span><span class="p">)</span>
         <span class="p">{</span>
           <span class="nv">ErrorLevel</span> <span class="o">=</span>
 <span class="w">            </span><span class="g">(LTrim</span>
@@ -49,7 +165,7 @@
     <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">  ;check if StartID isn&#39;t too large</span>
-  <span class="n">If</span> <span class="p">(</span> <span class="nf">StrLen(</span><span class="n">StartID</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">)</span>
+  <span class="n">If</span> <span class="p">(</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">StartID</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">)</span>
     <span class="p">{</span>
       <span class="nv">ErrorLevel</span> <span class="o">=</span>
 <span class="w">        </span><span class="g">(LTrim</span>
@@ -62,10 +178,10 @@
 <span class="c-Singleline">  ;Search from StartID ...</span>
 <span class="w">  </span><span class="nb">Loop</span>
     <span class="p">{</span>
-      <span class="n">Number</span> :<span class="o">=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span><span class="c-Singleline"></span>
+      <span class="n">Number</span> <span class="o">:=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span><span class="c-Singleline"></span>
 <span class="c-Singleline">             </span>
 <span class="c-Singleline">      ;untill number is too large ...</span>
-      <span class="n">If</span> <span class="p">(</span> <span class="nf">StrLen(</span><span class="n">Number</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">)</span>
+      <span class="n">If</span> <span class="p">(</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">Number</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">)</span>
         <span class="p">{</span>
           <span class="nv">ErrorLevel</span> <span class="o">=</span>
 <span class="w">            </span><span class="g">(LTrim</span>
@@ -76,7 +192,7 @@
         <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">      ;otherwise fill number with leading zeros</span>
-<span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nf">StrLen(</span><span class="n">Number</span><span class="p">)</span><span class="c-Singleline"> ;%</span>
+<span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">Number</span><span class="p">)</span><span class="c-Singleline"> ;%</span>
           <span class="n">Number</span> <span class="o">=</span> <span class="mi">0</span><span class="nv">%Number%</span><span class="c-Singleline"></span>
 <span class="c-Singleline">     </span>
 <span class="c-Singleline">      ;split number in an array</span>
@@ -85,27 +201,27 @@
 <span class="c-Singleline">      ;mix and concatenate the names array with the numbers array</span>
       <span class="n">FileName</span> <span class="o">=</span>
 <span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%NameArray0%</span>
-          <span class="n">FileName</span> :<span class="o">=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span><span class="c-Singleline"></span>
+          <span class="n">FileName</span> <span class="o">:=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span><span class="c-Singleline"></span>
 <span class="c-Singleline">     </span>
 <span class="c-Singleline">      ;check if GivenFileName doesn&#39;t exist</span>
-<span class="w">      </span><span class="nb">If </span><span class="ow">not</span> <span class="nf">FileExist(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">If </span><span class="ow">not</span> <span class="nf">FileExist</span><span class="p">(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span><span class="p">)</span>
 <span class="w">          </span><span class="nb">Return</span> <span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span>
      <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">GetAvailableFileName_fast</span><span class="p">(</span> <span class="n">GivenFileName</span><span class="p">,</span> <span class="n">GivenPath</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">StartID</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
 <span class="p">{</span>
-<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> #
+<span class="w">  </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NameArray</span><span class="p">,</span> <span class="n">GivenFileName</span><span class="p">,</span> <span class="n">#</span>
 <span class="w">  </span><span class="nb">Loop</span>
     <span class="p">{</span>
-      <span class="n">Number</span> :<span class="o">=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span>
-<span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nf">StrLen(</span><span class="n">Number</span><span class="p">)</span><span class="c-Singleline"> ;%</span>
+      <span class="n">Number</span> <span class="o">:=</span> <span class="nv">A_Index</span> <span class="o">+</span> <span class="n">StartID</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">NameArray0</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">Number</span><span class="p">)</span><span class="c-Singleline"> ;%</span>
           <span class="n">Number</span> <span class="o">=</span> <span class="mi">0</span><span class="nv">%Number%</span>
 <span class="w">      </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">NumberArray</span><span class="p">,</span> <span class="n">Number</span>
       <span class="n">FileName</span> <span class="o">=</span>
 <span class="w">      </span><span class="nb">Loop</span><span class="p">,</span> <span class="nv">%NameArray0%</span>
-          <span class="n">FileName</span> :<span class="o">=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span>
-<span class="w">      </span><span class="nb">If </span><span class="ow">not</span> <span class="nf">FileExist(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span><span class="p">)</span>
+          <span class="n">FileName</span> <span class="o">:=</span> <span class="n">FileName</span> <span class="o">.</span> <span class="n">NameArray</span><span class="nv">%A_Index%</span> <span class="o">.</span> <span class="n">NumberArray</span><span class="nv">%A_Index%</span>
+<span class="w">      </span><span class="nb">If </span><span class="ow">not</span> <span class="nf">FileExist</span><span class="p">(</span><span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span><span class="p">)</span>
 <span class="w">          </span><span class="nb">Return</span> <span class="n">GivenPath</span> <span class="o">.</span> <span class="n">FileName</span>
      <span class="p">}</span>
 <span class="p">}</span>

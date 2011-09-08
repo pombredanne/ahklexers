@@ -1,8 +1,20 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; Machine code functions: Bit Wizardry by Laszlo</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">; Machine code functions: Bit Wizardry by Laszlo</span>
+<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?t=21172</span>
+<span class="nf">MCode</span><span class="p">(</span>ByRef<span class="w"> </span>code<span class="p">,</span><span class="w"> </span>hex<span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">; allocate memory and write Machine Code there</span>
+<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>code<span class="p">,</span>StrLen<span class="p">(</span>hex<span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">   </span><span class="k">Loop</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>StrLen<span class="p">(</span>hex<span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+<span class="w">      </span><span class="nf">NumPut</span><span class="p">(</span><span class="s">&quot;0x&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span>SubStr<span class="p">(</span>hex<span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span>code<span class="p">,</span><span class="w"> </span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Char&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">; Machine code functions: Bit Wizardry by Laszlo</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?t=21172</span>
 <span class="n">MCode</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">code</span><span class="p">,</span> <span class="n">hex</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"> ; allocate memory and write Machine Code there</span>
-   <span class="nf">VarSetCapacity(</span><span class="n">code</span><span class="p">,</span><span class="nf">StrLen(</span><span class="n">hex</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">StrLen(</span><span class="n">hex</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
-      <span class="nf">NumPut(</span><span class="s">&quot;0x&quot;</span> <span class="o">.</span> <span class="nf">SubStr(</span><span class="n">hex</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">code</span><span class="p">,</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">)</span>
+   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">hex</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">Loop</span> <span class="o">%</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">hex</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+      <span class="nf">NumPut</span><span class="p">(</span><span class="s">&quot;0x&quot;</span> <span class="o">.</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">hex</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">code</span><span class="p">,</span> <span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Char&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>

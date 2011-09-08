@@ -12,24 +12,24 @@
 <span class="nb">GuiControl</span><span class="p">,</span> <span class="n">Focus</span><span class="p">,</span> <span class="n">MyButton</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="p">,</span> <span class="n">Anchor</span> <span class="n">Example</span>
 
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span>:<span class="n">Default</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="n">Default</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">Resize</span> <span class="o">+</span><span class="n">MinSize</span> <span class="o">+</span><span class="n">ToolWindow</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="p">,</span> <span class="n">More</span> <span class="n">sizing</span><span class="o">...</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">ListBox</span><span class="p">,</span> <span class="n">vLB</span> <span class="n">Section</span> <span class="n">xm</span> <span class="n">r8</span><span class="p">,</span> <span class="n">Item</span> <span class="mi">1</span><span class="o">|</span><span class="n">Item</span> <span class="mi">2</span><span class="o">||</span><span class="n">Item</span> <span class="mi">3</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">vEdit</span> <span class="n">ys</span> <span class="n">r8</span>
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">vCloseButton</span> <span class="n">w50</span> <span class="n">gGuiClose</span><span class="p">,</span> <span class="n">Close</span>
 
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span>:<span class="n">Default</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="n">Default</span>
 <span class="nb">Return</span>
 
 <span class="nl">F10::</span><span class="c-Singleline"> ; reset control position</span>
 <span class="nb">GuiControl</span><span class="p">,</span> <span class="n">Move</span><span class="p">,</span> <span class="n">MyEdit</span><span class="p">,</span> <span class="n">w100</span> <span class="n">h100</span><span class="c-Singleline"> ; move control to a size relative to current Gui dimensions</span>
 <span class="c-Singleline">; since this script uses multiple GUIs it&#39;s necessary to indicate which one Anchor should use by prefixing the name as done here:</span>
-<span class="nl">Anchor(&quot;1:</span><span class="n">MyEdit</span><span class="s">&quot;) ; reset by passing only the first parameter</span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;1:MyEdit&quot;</span><span class="p">)</span><span class="c-Singleline"> ; reset by passing only the first parameter</span>
 <span class="nb">Return</span>
 
 <span class="nl">Win2:</span>
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span>:<span class="n">Show</span><span class="p">,</span> <span class="p">,</span> <span class="n">Window</span>
+<span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="p">,</span> <span class="n">Window</span>
 <span class="nb">Return</span>
 
 <span class="nl">GuiSize:</span>

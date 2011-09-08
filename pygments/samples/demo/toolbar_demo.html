@@ -4,10 +4,10 @@
 <span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
 
 <span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
-   <span class="n">hGui</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+   <span class="n">hGui</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span> <span class="p">,</span> <span class="n">w500</span> <span class="n">h100</span> <span class="n">Hide</span><span class="c-Singleline">                              ;set gui width &amp; height prior to adding toolbar (mandatory)</span>
 
-   <span class="n">hCtrl</span> :<span class="o">=</span> <span class="n">Toolbar_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="s">&quot;OnToolbar&quot;</span><span class="p">,</span> <span class="s">&quot;FLAT TOOLTIPS&quot;</span><span class="p">,</span> <span class="s">&quot;1L&quot;</span><span class="p">)</span><span class="c-Singleline">    ;add the toolbar</span>
+   <span class="n">hCtrl</span> <span class="o">:=</span> <span class="n">Toolbar_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="s">&quot;OnToolbar&quot;</span><span class="p">,</span> <span class="s">&quot;FLAT TOOLTIPS&quot;</span><span class="p">,</span> <span class="s">&quot;1L&quot;</span><span class="p">)</span><span class="c-Singleline">    ;add the toolbar</span>
 
    <span class="n">btns</span> <span class="o">=</span>
 <span class="w">    </span><span class="g">(LTrim</span>

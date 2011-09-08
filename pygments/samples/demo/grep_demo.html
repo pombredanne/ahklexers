@@ -4,8 +4,8 @@
 <span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
 
 <span class="nb">FileRead</span><span class="p">,</span> <span class="n">haystack</span><span class="p">,</span> <span class="nv">%A_ScriptName%</span>
-<span class="n">regex</span> :<span class="o">=</span> <span class="s">&quot;%.*?%&quot;</span>
-<span class="n">pos</span> :<span class="o">=</span> <span class="n">grep</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">outputVar</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;, &quot;</span><span class="p">)</span>
+<span class="n">regex</span> <span class="o">:=</span> <span class="s">&quot;%.*?%&quot;</span>
+<span class="n">pos</span> <span class="o">:=</span> <span class="n">grep</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">outputVar</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;, &quot;</span><span class="p">)</span>
 
 <span class="nb">MsgBox</span> <span class="nv">%pos%</span>
 <span class="nb">MsgBox</span> <span class="nv">%outputVar%</span>

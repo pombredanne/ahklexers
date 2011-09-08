@@ -12,10 +12,10 @@
 <span class="g">   Toralf,Titan</span>
 <span class="g">   google,goggle</span>
 <span class="g">)</span>
-<span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">tests</span><span class="p">,</span> `<span class="n">n</span>
+<span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">tests</span><span class="p">,</span> <span class="se">`n</span>
 <span class="p">{</span>
-<span class="w">   </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> `<span class="p">,</span>
-   <span class="n">l</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">w1</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">   =&gt;   </span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">w2</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">   &quot;</span> <span class="o">.</span> <span class="n">DamerauLevenshteinDistance</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;`n&quot;</span>
+<span class="w">   </span><span class="nb">StringSplit</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">,</span> <span class="se">`,</span>
+   <span class="n">l</span> <span class="o">.=</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">w1</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">   =&gt;   </span><span class="se">&quot;&quot;</span><span class="s">&quot;</span> <span class="o">.</span> <span class="n">w2</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">&quot;&quot;</span><span class="s">   &quot;</span> <span class="o">.</span> <span class="n">DamerauLevenshteinDistance</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
 <span class="p">}</span>
 <span class="nb">MsgBox</span><span class="p">,</span> <span class="nv">%l%</span>
 </pre></div>

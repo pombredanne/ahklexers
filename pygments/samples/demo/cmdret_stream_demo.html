@@ -7,7 +7,7 @@
 <span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">x398</span> <span class="n">y110</span> <span class="n">h377</span> <span class="n">w477</span><span class="p">,</span> <span class="n">CMDret</span> <span class="o">-</span> <span class="n">AHK</span> <span class="n">version</span> <span class="o">-</span> <span class="n">Streaming</span> <span class="n">Test</span> <span class="n">App</span>
 
 <span class="nb">Gui</span> <span class="o">+</span><span class="n">LastFound</span>
-<span class="n">StrOut</span> :<span class="o">=</span> <span class="n">CMDret_Stream</span><span class="p">(</span><span class="s">&quot;cmd /c dir c:\&quot;</span><span class="p">)</span>
+<span class="n">StrOut</span> <span class="o">:=</span> <span class="n">CMDret_Stream</span><span class="p">(</span><span class="s">&quot;cmd /c dir c:\&quot;</span><span class="p">)</span>
 <span class="nb">MsgBox</span> <span class="nv">%StrOut%</span>
 
 <span class="nb">Return</span>
@@ -17,7 +17,7 @@
 
 <span class="n">CMDret_Output</span><span class="p">(</span><span class="n">CMDout</span><span class="p">,</span> <span class="n">CMDname</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
-	<span class="n">Global</span> <span class="n">OutputWindow</span>
+<span class="w">	</span><span class="nb">Global</span> <span class="n">OutputWindow</span>
 <span class="w">	</span><span class="nb">ControlSetText</span><span class="p">,</span> <span class="n">Edit1</span><span class="p">,</span> <span class="nv">%CMDout%</span>
 <span class="w">	</span><span class="nb">Sleep</span><span class="p">,</span> <span class="mi">200</span>
 <span class="p">}</span>

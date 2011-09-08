@@ -1,4 +1,64 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="cm">/* If you want to check performance difference.</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="cm">/* If you want to check performance difference.</span>
+<span class="cm">uncomment below benchmark routine. written by derRaphael</span>
+<span class="cm">;-------------------------------------------------------</span>
+<span class="cm">SetBatchLines, -1</span>
+<span class="cm">res := &quot;&quot;</span>
+<span class="cm">t1 := 0, t2 := 0</span>
+<span class="cm">_t1 := 0, _t2 := 0</span>
+<span class="cm">iterations := 25</span>
+<span class="cm">outerLoops := 20</span>
+
+<span class="cm">loop, %outerLoops%</span>
+<span class="cm">{</span>
+<span class="cm">   tooltip, currently @ test: %A_index%</span>
+<span class="cm">   t1 := 0, t2 := 0</span>
+<span class="cm">   Loop, %iterations%</span>
+<span class="cm">   {</span>
+<span class="cm">      VarSetCapacity(Test, 25*1024*1024, 97)</span>
+
+<span class="cm">         DllCall(&quot;QueryPerformanceFrequency&quot;, &quot;Int64 *&quot;, Freq)</span>
+<span class="cm">         DllCall(&quot;QueryPerformanceCounter&quot;, &quot;Int64 *&quot;, Start)</span>
+<span class="cm">         Loop, 10000</span>
+<span class="cm">            a := chr(NumGet(Test,A_Index,&quot;UChar&quot;))</span>
+<span class="cm">         DllCall(&quot;QueryPerformanceCounter&quot;, &quot;Int64 *&quot;, End)</span>
+<span class="cm">      wo%A_Index% := (End - Start)/Freq</span>
+<span class="cm">         </span>
+<span class="cm">         EmptyMem()</span>
+
+<span class="cm">         DllCall(&quot;QueryPerformanceFrequency&quot;, &quot;Int64 *&quot;, Freq)</span>
+<span class="cm">         DllCall(&quot;QueryPerformanceCounter&quot;, &quot;Int64 *&quot;, Start)</span>
+<span class="cm">         Loop, 10000</span>
+<span class="cm">            a := chr(NumGet(Test,A_Index,&quot;UChar&quot;))</span>
+<span class="cm">         DllCall(&quot;QueryPerformanceCounter&quot;, &quot;Int64 *&quot;, End)</span>
+<span class="cm">      w%A_Index% := (End - Start)/Freq</span>
+<span class="cm">      </span>
+<span class="cm">      t1 += wo%A_Index%</span>
+<span class="cm">      t2 += w%A_Index%</span>
+<span class="cm">   }</span>
+<span class="cm">   _t1 += t1/iterations</span>
+<span class="cm">   _t2 += t2/iterations</span>
+<span class="cm">   res .= &quot;Run&quot; a_index &quot;:`tnormal - &quot; t1/iterations &quot;sec`temty() - &quot; t2/iterations &quot;sec`n&quot;</span>
+<span class="cm">   tooltip, currently @ test: A_index</span>
+<span class="cm">}</span>
+<span class="cm">   res .= &quot;`nAverage normal &quot; _t1/outerLoops &quot; seconds&quot;</span>
+<span class="cm">       . &quot;`nAverage emtpy() &quot; _t2/outerLoops &quot; seconds&quot;</span>
+<span class="cm">MsgBox,0,Results,%res%</span>
+<span class="cm">return</span>
+<span class="cm">;-------------------------------------------------------</span>
+<span class="cm">*/</span>
+
+<span class="nf">EmptyMem</span><span class="p">(</span>PID<span class="o">=</span><span class="s">&quot;AHK Rocks&quot;</span><span class="p">){</span>
+<span class="w">    </span>pid<span class="o">:=</span><span class="p">(</span>pid<span class="o">=</span><span class="s">&quot;AHK Rocks&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;GetCurrentProcessId&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>pid
+<span class="w">    </span>h<span class="o">:=</span>DllCall<span class="p">(</span><span class="s">&quot;OpenProcess&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">0x001F0FFF</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="w"> </span>pid<span class="p">)</span>
+<span class="w">    </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SetProcessWorkingSetSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>h<span class="p">,</span><span class="w"> </span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="w"> </span>h<span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="cm">/* If you want to check performance difference.</span>
 <span class="cm">uncomment below benchmark routine. written by derRaphael</span>
 <span class="cm">;-------------------------------------------------------</span>
 <span class="cm">SetBatchLines, -1</span>
@@ -48,9 +108,9 @@
 <span class="cm">*/</span>
 
 <span class="n">EmptyMem</span><span class="p">(</span><span class="n">PID</span><span class="o">=</span><span class="s">&quot;AHK Rocks&quot;</span><span class="p">){</span>
-<span class="w">    </span><span class="nl">pid:</span><span class="o">=</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="s">&quot;AHK Rocks&quot;</span><span class="p">)</span> ? <span class="nf">DllCall(</span><span class="s">&quot;GetCurrentProcessId&quot;</span><span class="p">)</span> : <span class="n">pid</span>
-<span class="w">    </span><span class="nl">h:</span><span class="o">=</span><span class="nf">DllCall(</span><span class="s">&quot;OpenProcess&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mh">0x001F0FFF</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="p">)</span>
-    <span class="nf">DllCall(</span><span class="s">&quot;SetProcessWorkingSetSize&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="nf">DllCall(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">pid:</span><span class="o">=</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="s">&quot;AHK Rocks&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GetCurrentProcessId&quot;</span><span class="p">)</span> <span class="o">:</span> <span class="n">pid</span>
+<span class="w">    </span><span class="nl">h:</span><span class="o">=</span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;OpenProcess&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mh">0x001F0FFF</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="p">)</span>
+    <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;SetProcessWorkingSetSize&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;CloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>

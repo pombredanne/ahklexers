@@ -1,13 +1,36 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline"> ; single line comment</span>
-<span class="c-Singleline">; single line comment</span>
-<span class="nb">#NoTrayIcon</span><span class="c-Singleline">  ; single line comment</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="w"> </span><span class="c1">; single line comment</span>
+<span class="c1">; single line comment</span>
+<span class="k">#NoTrayIcon </span><span class="w"> </span><span class="c1">; single line comment</span>
 <span class="nl">k::</span>
 <span class="nl">::sdf::</span>
 <span class="nl">label:</span>
-<span class="w">  </span><span class="nb">Msgbox</span> <span class="o">%</span> <span class="s">&quot;hello&quot;</span> <span class="o">.</span> <span class="nv">A_UserName</span>
-<span class="nb">Msgbox</span> <span class="o">%</span> <span class="s">&quot;hello escaped </span><span class="se">&quot;&quot;</span><span class="s"> quotes.&quot;</span>
+<span class="w">  </span><span class="k">Msgbox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;A_ScriptDir\lib\&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nb">A_UserName</span>
+<span class="k">Msgbox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;hello escaped &quot;&quot; quotes and other escapes </span><span class="se">`n`r</span><span class="s">.&quot;</span>
+<span class="k">tooltip</span><span class="w"> </span><span class="nv">%mytip%</span>
+foo<span class="w"> </span><span class="o">:=</span><span class="w"> </span>regexmatch<span class="p">(</span>bar<span class="p">,</span><span class="w"> </span><span class="s">&quot;reg&quot;</span><span class="p">)</span>
+<span class="k">Return</span>
+<span class="cm">/*  multiline</span>
+<span class="cm">comment</span>
+<span class="cm">*/</span>
+<span class="s">(</span>
+<span class="s">continuation</span>
+<span class="s">section</span><span class="p"></span>
+<span class="p">)</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline"> ; single line comment</span>
+<span class="c-Singleline">; single line comment</span>
+<span class="nb">#NoTrayIcon</span><span class="c-Singleline">  ; single line comment</span>
+<span class="nl">k::</span>
+<span class="o">::</span><span class="n">sdf</span><span class="o">::</span>
+<span class="nl">label:</span>
+<span class="w">  </span><span class="nb">Msgbox</span> <span class="o">%</span> <span class="s">&quot;A_ScriptDir\lib\&quot;</span> <span class="o">.</span> <span class="nv">A_UserName</span>
+<span class="nb">Msgbox</span> <span class="o">%</span> <span class="s">&quot;hello escaped </span><span class="se">&quot;&quot;</span><span class="s"> quotes and other escapes `n`r.&quot;</span>
 <span class="nb">tooltip</span> <span class="nv">%mytip%</span>
-<span class="n">foo</span> :<span class="o">=</span> <span class="nf">regexmatch(</span><span class="n">bar</span><span class="p">,</span> <span class="s">&quot;reg&quot;</span><span class="p">)</span>
+<span class="n">foo</span> <span class="o">:=</span> <span class="nf">regexmatch</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="s">&quot;reg&quot;</span><span class="p">)</span>
 <span class="nb">Return</span>
 <span class="cm">/*  multiline</span>
 <span class="cm">comment</span>

@@ -1,4 +1,322 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">;;;;;;;</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
+<div class="highlight"><pre><span class="c1">;;;;;;;</span>
+<span class="c1">;;;;;  Notify() 0.45                made by gwarble - sept 09</span>
+<span class="c1">;;;      multiple tray area notifications</span>
+<span class="c1">;          thanks to Rhys/engunneer/HugoV/Forum Posters</span>
+<span class="c1">;</span>
+<span class="c1">;   Notify([Title,Message,Duration,Options,Image])</span>
+<span class="c1">;</span>
+<span class="c1">;     Title      [!!!]          &quot;&quot; to omit title line</span>
+<span class="c1">;     Message      []           &quot;&quot; to omit message line</span>
+<span class="c1">;     Duration    [15]          seconds to show notification</span>
+<span class="c1">;                                 0  to flash until clicked</span>
+<span class="c1">;                                &lt;0  to ExitApp on click/timeout</span>
+<span class="c1">;                               &quot;-0&quot; for permanent and exitOnClick</span>
+<span class="c1">;     Options                   string of options... see function</span>
+<span class="c1">;          [SI=999 GC=Blue...]  most options are remembered (static)</span>
+<span class="c1">;                               &quot;Reset&quot; to restore default options</span>
+<span class="c1">;                                 if you want to show as well, use NO=Reset</span>
+<span class="c1">;                               &quot;Wait&quot; to wait for a notification  ***</span>
+<span class="c1">;     Image []                  Image file name/library or</span>
+<span class="c1">;                               number of icon in shell32.dll</span>
+<span class="c1">;                               Gui Number to &quot;Wait&quot; for          ***</span>
+<span class="c1">;</span>
+<span class="c1">;     Return                    Gui Number used                   ***</span>
+<span class="c1">;                               0 if failed (too many open)</span>
+<span class="c1">;</span>
+<span class="nf">Notify</span><span class="p">(</span>Title<span class="o">=</span><span class="s">&quot;!!!&quot;</span><span class="p">,</span>Message<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>Duration<span class="o">=</span><span class="mi">30</span><span class="p">,</span>Options<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>Image<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w"> </span><span class="kt">Static</span><span class="w">                </span><span class="c1">;Options string: &quot;TS=12 GC=Blue...&quot;</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>GF<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w">       </span><span class="c1">;    Gui First Number  ;= override Gui: # used</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>GL<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">74</span><span class="w">       </span><span class="c1">;    Gui Last Number   ;= between GF and GL</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>GC<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;FFFFAA&quot;</span><span class="w"> </span><span class="c1">;    Gui Color         ;   ie: don&#39;t use GF&lt;=Gui#&lt;=GL</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>GR<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">9</span><span class="w">        </span><span class="c1">;    Gui Radius        ;       elsewhere in your script</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>GT<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;Off&quot;</span><span class="w">    </span><span class="c1">;    Gui Transparency</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>TS<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">8</span><span class="w">        </span><span class="c1">;  Title Font Size</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>TW<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">625</span><span class="w">      </span><span class="c1">;  Title Font Weight</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>TC<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;Black&quot;</span><span class="w">  </span><span class="c1">;  Title Font Color</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>TF<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;Arial&quot;</span><span class="w">  </span><span class="c1">;  Title Font Face</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>MS<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">8</span><span class="w">        </span><span class="c1">;Message Font Size</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>MW<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">550</span><span class="w">      </span><span class="c1">;Message Font Weight</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>MC<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;Black&quot;</span><span class="w">  </span><span class="c1">;Message Font Color</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>MF<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;Arial&quot;</span><span class="w">  </span><span class="c1">;Message Font Face</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>BC<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;000000&quot;</span><span class="w">  </span><span class="c1">; Border Colors</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>BW<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">2</span><span class="w">        </span><span class="c1">; Border Width/Thickness</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>BR<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">13</span><span class="w">       </span><span class="c1">; Border Radius</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>BT<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">105</span><span class="w">      </span><span class="c1">; Border Transpacency</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>BF<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">150</span><span class="w">      </span><span class="c1">; Border Flash Speed</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>SI<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">350</span><span class="w">      </span><span class="c1">;  Speed In (AnimateWindow)</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>SC<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">100</span><span class="w">      </span><span class="c1">;  Speed Clicked (AnimateWindow)</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>ST<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">450</span><span class="w">      </span><span class="c1">;  Speed TimeOut (AnimateWindow)</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>IW<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">32</span><span class="w">       </span><span class="c1">;  Image Width</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>IH<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">32</span><span class="w">       </span><span class="c1">;  Image Height</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>IN<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="w">        </span><span class="c1">;  Image Icon Number (from Image)</span>
+<span class="w"> </span><span class="kt">static</span><span class="w"> </span>AX<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="w">        </span><span class="c1">; Action X Close Button (maybe add yes/no ok/cancel, etc...)</span>
+<span class="w"> </span><span class="kt">local</span><span class="w"> </span>AC<span class="p">,</span><span class="w"> </span>AT<span class="w">          </span><span class="c1">;Actions Clicked/Timeout</span>
+<span class="w"> </span><span class="kt">local</span><span class="w"> </span>_Notify_Action<span class="p">,</span><span class="w"> </span>ImageOptions<span class="p">,</span><span class="w"> </span>GY<span class="p">,</span><span class="w"> </span>OtherY
+
+<span class="nl">_Notify_:</span>
+<span class="w"> </span><span class="kt">local</span><span class="w"> </span>NO<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="w">         </span><span class="c1">;NO is Notify Option [NO=Reset]</span>
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Options<span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">IfInString</span><span class="p">,</span><span class="w"> </span>Options<span class="p">,</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">   </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>Options<span class="p">,</span><span class="nv">%A_Space%</span>
+<span class="w">    </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Option<span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">     </span><span class="nv">%Option%</span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">   </span><span class="kr">If</span><span class="w"> </span>NO<span class="w"> </span><span class="o">=</span><span class="w"> </span>Reset
+<span class="w">   </span><span class="p">{</span>
+<span class="w">    </span>Options<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;GF=50 GL=74 GC=FFFFAA GR=9 GT=Off &quot;</span>
+<span class="w">     </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;TS=8 TW=625 TC=Black TF=Arial MS=8 MW=550 MC=Black MF=Arial &quot;</span>
+<span class="w">     </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;BC=Black BW=2 BR=9 BT=105 BF=150 SC=300 SI=250 ST=100 &quot;</span>
+<span class="w">     </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;IW=32 IH=32 IN=0&quot;</span>
+<span class="w">    </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span>_Notify_
+<span class="w">   </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">Else</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span>Options<span class="w"> </span><span class="o">=</span><span class="w"> </span>Wait
+<span class="w">   </span><span class="k">Goto</span><span class="p">,</span><span class="w"> </span>_Notify_Wait_
+<span class="w"> </span><span class="p">}</span>
+
+
+<span class="w"> </span>GN<span class="w"> </span><span class="o">:=</span><span class="w"> </span>GF
+<span class="w"> </span><span class="k">Loop</span>
+<span class="w">  </span><span class="k">IfNotInString</span><span class="p">,</span><span class="w"> </span>NotifyList<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="w"> </span>GN
+<span class="w">   </span><span class="k">Break</span>
+<span class="w">  </span><span class="k">Else</span>
+<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="o">++</span>GN<span class="w"> </span><span class="o">&gt;</span><span class="w"> </span>GL<span class="p">)</span>
+<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span><span class="w">              </span><span class="c1">;=== too many notifications open!</span>
+<span class="w"> </span>NotifyList<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="w"> </span>GN
+<span class="w"> </span>GN2<span class="w"> </span><span class="o">:=</span><span class="w"> </span>GN<span class="w"> </span><span class="o">+</span><span class="w"> </span>GL<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>AC<span class="w"> </span><span class="o">&lt;&gt;</span>
+<span class="w">  </span>ActionList<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="w"> </span>GN<span class="w"> </span><span class="s">&quot;=&quot;</span><span class="w"> </span>AC
+
+<span class="w"> </span>Prev_DetectHiddenWindows<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_DetectHiddenWindows</span>
+<span class="w"> </span>Prev_TitleMatchMode<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_TitleMatchMode</span>
+<span class="w"> </span><span class="k">DetectHiddenWindows</span><span class="w"> </span>On
+<span class="w"> </span><span class="k">SetTitleMatchMode</span><span class="w"> </span><span class="mi">1</span>
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>WinExist<span class="p">(</span><span class="s">&quot;NotifyGui&quot;</span><span class="p">))</span><span class="w">  </span><span class="c1">;=== find all Notifications from ALL scripts, for placement</span>
+<span class="w">  </span><span class="k">WinGetPos</span><span class="p">,</span><span class="w"> </span>OtherX<span class="p">,</span><span class="w"> </span>OtherY<span class="w">  </span><span class="c1">;=== change this to a loop for all open notifications?</span>
+<span class="w"> </span><span class="k">DetectHiddenWindows</span><span class="w"> </span><span class="nv">%Prev_DetectHiddenWindows%</span>
+<span class="w"> </span><span class="k">SetTitleMatchMode</span><span class="w"> </span><span class="nv">%Prev_TitleMatchMode%</span>
+
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:-</span>Caption<span class="w"> </span><span class="o">+</span>ToolWindow<span class="w"> </span><span class="o">+</span>AlwaysOnTop<span class="w"> </span><span class="o">-</span>Border
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Color<span class="p">,</span><span class="w"> </span><span class="nv">%GC%</span>
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Font<span class="p">,</span><span class="w"> </span>w<span class="nv">%TW%</span><span class="w"> </span>s<span class="nv">%TS%</span><span class="w"> </span>c<span class="nv">%TC%</span><span class="p">,</span><span class="w"> </span><span class="nv">%TF%</span>
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Image<span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kr">If</span><span class="w"> </span><span class="nf">FileExist</span><span class="p">(</span>Image<span class="p">)</span>
+<span class="w">   </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Add<span class="p">,</span><span class="w"> </span>Picture<span class="p">,</span><span class="w"> </span>w<span class="nv">%IW%</span><span class="w"> </span>h<span class="nv">%IH%</span><span class="w"> </span>Icon<span class="nv">%IN%</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>Image
+<span class="w">  </span><span class="k">Else</span>
+<span class="w">   </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Add<span class="p">,</span><span class="w"> </span>Picture<span class="p">,</span><span class="w"> </span>w<span class="nv">%IW%</span><span class="w"> </span>h<span class="nv">%IH%</span><span class="w"> </span>Icon<span class="nv">%Image%</span><span class="p">,</span><span class="w"> </span>c<span class="o">:</span><span class="p">\</span>windows<span class="p">\</span>system32<span class="p">\</span>shell32<span class="p">.</span>dll
+<span class="w">  </span>ImageOptions<span class="w"> </span><span class="o">=</span><span class="w"> </span>x<span class="o">+</span><span class="mi">10</span>
+<span class="w"> </span><span class="p">}</span>
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>Title<span class="w"> </span><span class="o">&lt;&gt;</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Add<span class="p">,</span><span class="w"> </span>Text<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>ImageOptions<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>Title
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Font<span class="p">,</span><span class="w"> </span>w<span class="nv">%MW%</span><span class="w"> </span>s<span class="nv">%MS%</span><span class="w"> </span>c<span class="nv">%MC%</span><span class="p">,</span><span class="w"> </span><span class="nv">%MF%</span>
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">((</span>Title<span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span>Message<span class="p">))</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Margin<span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">5</span>
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>Message<span class="w"> </span><span class="o">&lt;&gt;</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Add<span class="p">,</span><span class="w"> </span>Text<span class="p">,,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>Message
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">((</span>Title<span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span>Message<span class="p">))</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Margin<span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="mi">8</span>
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Show<span class="p">,</span><span class="w"> </span>Hide<span class="p">,</span><span class="w"> </span>NotifyGui
+<span class="w"> </span><span class="k">Gui</span><span class="w">  </span><span class="nv">%GN%</span><span class="o">:+</span>LastFound
+<span class="w"> </span><span class="k">WinGetPos</span><span class="p">,</span><span class="w"> </span>GX<span class="p">,</span><span class="w"> </span>GY<span class="p">,</span><span class="w"> </span>GW<span class="p">,</span><span class="w"> </span>GH
+
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>AX<span class="w"> </span><span class="o">=</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">  </span>GW<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Font<span class="p">,</span><span class="w"> </span>w800<span class="w"> </span>s6<span class="w"> </span>c<span class="nv">%MC%</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Add<span class="p">,</span><span class="w"> </span>Text<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;x&quot;</span><span class="w"> </span>GW<span class="o">-</span><span class="mi">11</span><span class="w"> </span><span class="s">&quot; y-1 Border Center w12 h12 g_Notify_Kill_&quot;</span><span class="w"> </span>GN<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>X
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Add<span class="p">,</span><span class="w"> </span>Text<span class="p">,</span><span class="w"> </span>x0<span class="w"> </span>y0<span class="w"> </span>w<span class="nv">%GW%</span><span class="w"> </span>h<span class="nv">%GH%</span><span class="w"> </span>g_Notify_Action<span class="w"> </span>BackgroundTrans
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>GR<span class="p">)</span>
+<span class="w">  </span><span class="k">WinSet</span><span class="p">,</span><span class="w"> </span>Region<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;0-0 w&quot;</span><span class="w"> </span>GW<span class="w"> </span><span class="s">&quot; h&quot;</span><span class="w"> </span>GH<span class="w"> </span><span class="s">&quot; R&quot;</span><span class="w"> </span>GR<span class="w"> </span><span class="s">&quot;-&quot;</span><span class="w"> </span>GR
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>GT<span class="p">)</span>
+<span class="w">  </span><span class="k">WinSet</span><span class="p">,</span><span class="w"> </span>Transparent<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>GT
+
+<span class="w"> </span><span class="k">SysGet</span><span class="p">,</span><span class="w"> </span>Workspace<span class="p">,</span><span class="w"> </span>MonitorWorkArea
+<span class="w"> </span>NewX<span class="w"> </span><span class="o">:=</span><span class="w"> </span>WorkSpaceRight<span class="o">-</span>GW<span class="o">-</span><span class="mi">5</span>
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>OtherY<span class="p">)</span>
+<span class="w">  </span>NewY<span class="w"> </span><span class="o">:=</span><span class="w"> </span>OtherY<span class="o">-</span>GH<span class="o">-</span><span class="mi">5</span>
+<span class="w"> </span><span class="k">Else</span>
+<span class="w">  </span>NewY<span class="w"> </span><span class="o">:=</span><span class="w"> </span>WorkspaceBottom<span class="o">-</span>GH<span class="o">-</span><span class="mi">5</span>
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>NewY<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>WorkspaceTop
+<span class="w">  </span>NewY<span class="w"> </span><span class="o">:=</span><span class="w"> </span>WorkspaceBottom<span class="o">-</span>GH<span class="o">-</span><span class="mi">5</span>
+
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN2%</span><span class="o">:-</span>Caption<span class="w"> </span><span class="o">+</span>ToolWindow<span class="w"> </span><span class="o">+</span>AlwaysOnTop<span class="w"> </span><span class="o">-</span>Border<span class="w"> </span><span class="o">+</span>E0x20
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN2%</span><span class="o">:</span>Color<span class="p">,</span><span class="w"> </span><span class="nv">%BC%</span>
+<span class="w"> </span><span class="k">Gui</span><span class="w">  </span><span class="nv">%GN2%</span><span class="o">:+</span>LastFound
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>BR<span class="p">)</span>
+<span class="w">  </span><span class="k">WinSet</span><span class="p">,</span><span class="w"> </span>Region<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;0-0 w&quot;</span><span class="w"> </span>GW<span class="o">+</span><span class="p">(</span>BW<span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="s">&quot; h&quot;</span><span class="w"> </span>GH<span class="o">+</span><span class="p">(</span>BW<span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="s">&quot; R&quot;</span><span class="w"> </span>BR<span class="w"> </span><span class="s">&quot;-&quot;</span><span class="w"> </span>BR
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>BT<span class="p">)</span>
+<span class="w">  </span><span class="k">WinSet</span><span class="p">,</span><span class="w"> </span>Transparent<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>BT
+
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN2%</span><span class="o">:</span>Show<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;Hide x&quot;</span><span class="w"> </span>NewX<span class="o">-</span>BW<span class="w"> </span><span class="s">&quot; y&quot;</span><span class="w"> </span>NewY<span class="o">-</span>BW<span class="w"> </span><span class="s">&quot; w&quot;</span><span class="w"> </span>GW<span class="o">+</span><span class="p">(</span>BW<span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="s">&quot; h&quot;</span><span class="w"> </span>GH<span class="o">+</span><span class="p">(</span>BW<span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Show<span class="p">,</span><span class="w">  </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;Hide x&quot;</span><span class="w"> </span>NewX<span class="w"> </span><span class="s">&quot; y&quot;</span><span class="w"> </span>NewY<span class="w"> </span><span class="s">&quot; w&quot;</span><span class="w"> </span>GW<span class="p">,</span><span class="w"> </span>NotifyGui
+<span class="w"> </span><span class="k">Gui</span><span class="w">  </span><span class="nv">%GN%</span><span class="o">:+</span>LastFound
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>SI
+<span class="w">  </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span>WinExist<span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span>SI<span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00040008&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="k">Else</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN%</span><span class="o">:</span>Show<span class="p">,</span><span class="w"> </span>NA<span class="p">,</span><span class="w"> </span>NotifyGui
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GN2%</span><span class="o">:</span>Show<span class="p">,</span><span class="w"> </span>NA
+<span class="w"> </span><span class="k">WinSet</span><span class="p">,</span><span class="w"> </span>AlwaysOnTop<span class="p">,</span><span class="w"> </span>On
+
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">((</span>Duration<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="kr">OR</span><span class="w"> </span><span class="p">(</span>Duration<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;-0&quot;</span><span class="p">))</span>
+<span class="w">  </span><span class="k">Exit</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>GN
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Duration<span class="p">)</span>
+<span class="w">   </span><span class="k">SetTimer</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;_Notify_Kill_&quot;</span><span class="w"> </span>GN<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="o">-</span><span class="w"> </span>Abs<span class="p">(</span>Duration<span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span>
+<span class="w"> </span><span class="k">Else</span>
+<span class="w">  </span><span class="k">SetTimer</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;_Notify_Flash_&quot;</span><span class="w"> </span>GN<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>BF
+
+<span class="k">Return</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>GN
+
+<span class="c1">;==========================================================================</span>
+<span class="c1">;========================================== when a notification is clicked:</span>
+<span class="nl">_Notify_Action:</span>
+<span class="w"> </span><span class="c1">;Critical</span>
+<span class="w"> </span><span class="k">SetTimer</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;_Notify_Kill_&quot;</span><span class="w"> </span><span class="nb">A_Gui</span><span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>Off
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="nb">A_Gui</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>GL<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="s">&quot;:Destroy&quot;</span>
+<span class="w"> </span><span class="k">Gui</span><span class="w">  </span><span class="nv">%A_Gui%</span><span class="o">:+</span>LastFound
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>SC
+<span class="w">  </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span>WinExist<span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span>SC<span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%A_Gui%</span><span class="o">:</span>Destroy
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ActionList<span class="p">)</span>
+<span class="w">  </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>ActionList<span class="p">,</span><span class="o">|</span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">((</span>Action<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">A_Gui</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">    </span>Temp_Notify_Action<span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">    </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>ActionList<span class="p">,</span><span class="w"> </span>ActionList<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="w"> </span><span class="nb">A_Gui</span><span class="w"> </span><span class="s">&quot;=&quot;</span><span class="w"> </span>Temp_Notify_Action<span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span>All
+<span class="w">    </span><span class="kr">If</span><span class="w"> </span><span class="nf">IsLabel</span><span class="p">(</span>_Notify_Action<span class="w"> </span><span class="o">:=</span><span class="w"> </span>Temp_Notify_Action<span class="p">)</span>
+<span class="w">     </span><span class="k">Gosub</span><span class="p">,</span><span class="w"> </span><span class="nv">%_Notify_Action%</span>
+<span class="w">    </span>_Notify_Action<span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="k">Break</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w"> </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>NotifyList<span class="p">,</span><span class="w"> </span>NotifyList<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="w"> </span>GN<span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span>All
+<span class="w"> </span><span class="k">SetTimer</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;_Notify_Flash_&quot;</span><span class="w"> </span><span class="nb">A_Gui</span><span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>Off
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Exit<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">A_Gui</span><span class="p">)</span>
+<span class="w">  </span><span class="k">ExitApp</span>
+<span class="k">Return</span>
+
+<span class="c1">;==========================================================================</span>
+<span class="c1">;=========================================== when a notification times out:</span>
+<span class="nl">_Notify_Kill_1:</span>
+<span class="nl">_Notify_Kill_2:</span>
+<span class="nl">_Notify_Kill_3:</span>
+<span class="nl">_Notify_Kill_4:</span>
+<span class="nl">_Notify_Kill_5:</span>
+<span class="nl">_Notify_Kill_6:</span>
+<span class="nl">_Notify_Kill_7:</span>
+<span class="nl">_Notify_Kill_8:</span>
+<span class="nl">_Notify_Kill_9:</span>
+<span class="nl">_Notify_Kill_10:</span>
+<span class="nl">_Notify_Kill_11:</span>
+<span class="nl">_Notify_Kill_12:</span>
+<span class="nl">_Notify_Kill_13:</span>
+<span class="nl">_Notify_Kill_14:</span>
+<span class="nl">_Notify_Kill_15:</span>
+<span class="nl">_Notify_Kill_16:</span>
+<span class="nl">_Notify_Kill_17:</span>
+<span class="nl">_Notify_Kill_18:</span>
+<span class="nl">_Notify_Kill_19:</span>
+<span class="nl">_Notify_Kill_20:</span>
+<span class="nl">_Notify_Kill_21:</span>
+<span class="nl">_Notify_Kill_22:</span>
+<span class="nl">_Notify_Kill_23:</span>
+<span class="nl">_Notify_Kill_24:</span>
+<span class="nl">_Notify_Kill_25:</span>
+<span class="w"> </span><span class="c1">;Critical</span>
+<span class="w"> </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>GK<span class="p">,</span><span class="w"> </span><span class="nb">A_ThisLabel</span><span class="p">,</span><span class="w"> </span>_Notify_Kill_
+<span class="w"> </span><span class="k">SetTimer</span><span class="p">,</span><span class="w"> </span>_Notify_Flash_<span class="nv">%GK%</span><span class="p">,</span><span class="w"> </span>Off
+<span class="w"> </span>GK<span class="w"> </span><span class="o">+=</span><span class="w"> </span>GF<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>GK<span class="w"> </span><span class="o">+</span><span class="w"> </span>GL<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="s">&quot;:Destroy&quot;</span>
+<span class="w"> </span><span class="k">Gui</span><span class="w">  </span><span class="nv">%GK%</span><span class="o">:+</span>LastFound
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>ST
+<span class="w">  </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span>WinExist<span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span>ST<span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%GK%</span><span class="o">:</span>Destroy
+<span class="w"> </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>NotifyList<span class="p">,</span><span class="w"> </span>NotifyList<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;|&quot;</span><span class="w"> </span>GK
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Exit<span class="w"> </span><span class="o">=</span><span class="w"> </span>GK<span class="p">)</span>
+<span class="w">  </span><span class="k">ExitApp</span>
+<span class="k">Return</span>
+
+<span class="c1">;==========================================================================</span>
+<span class="c1">;======================================== flashes a permanent notification:</span>
+<span class="nl">_Notify_Flash_1:</span>
+<span class="nl">_Notify_Flash_2:</span>
+<span class="nl">_Notify_Flash_3:</span>
+<span class="nl">_Notify_Flash_4:</span>
+<span class="nl">_Notify_Flash_5:</span>
+<span class="nl">_Notify_Flash_6:</span>
+<span class="nl">_Notify_Flash_7:</span>
+<span class="nl">_Notify_Flash_8:</span>
+<span class="nl">_Notify_Flash_9:</span>
+<span class="nl">_Notify_Flash_10:</span>
+<span class="nl">_Notify_Flash_11:</span>
+<span class="nl">_Notify_Flash_12:</span>
+<span class="nl">_Notify_Flash_13:</span>
+<span class="nl">_Notify_Flash_14:</span>
+<span class="nl">_Notify_Flash_15:</span>
+<span class="nl">_Notify_Flash_16:</span>
+<span class="nl">_Notify_Flash_17:</span>
+<span class="nl">_Notify_Flash_18:</span>
+<span class="nl">_Notify_Flash_19:</span>
+<span class="nl">_Notify_Flash_20:</span>
+<span class="nl">_Notify_Flash_21:</span>
+<span class="nl">_Notify_Flash_22:</span>
+<span class="nl">_Notify_Flash_23:</span>
+<span class="nl">_Notify_Flash_24:</span>
+<span class="nl">_Notify_Flash_25:</span>
+<span class="w"> </span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>FlashGN<span class="p">,</span><span class="w"> </span><span class="nb">A_ThisLabel</span><span class="p">,</span><span class="w"> </span>_Notify_Flash_
+<span class="w"> </span>FlashGN<span class="w"> </span><span class="o">+=</span><span class="w"> </span>GF<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<span class="w"> </span>FlashGN2<span class="w"> </span><span class="o">:=</span><span class="w"> </span>FlashGN<span class="w"> </span><span class="o">+</span><span class="w"> </span>GL<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w"> </span><span class="kr">If</span><span class="w"> </span>Flashed<span class="nv">%FlashGN2%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">!</span>Flashed<span class="nv">%FlashGN2%</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%FlashGN2%</span><span class="o">:</span>Color<span class="p">,</span><span class="w"> </span>Silver
+<span class="w"> </span><span class="k">Else</span>
+<span class="w">  </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%FlashGN2%</span><span class="o">:</span>Color<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>BC
+<span class="k">Return</span>
+
+<span class="c1">;==========================================================================</span>
+<span class="c1">;============================= wait for (or force) a notification to close:</span>
+<span class="nl">_Notify_Wait_:</span>
+<span class="w"> </span><span class="c1">;Critical</span>
+<span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Image<span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">Gui</span><span class="w"> </span><span class="nv">%Image%</span><span class="o">:+</span>LastFound
+<span class="w">  </span><span class="kr">If</span><span class="w"> </span>NotifyGuiID<span class="w"> </span><span class="o">:=</span><span class="w"> </span>WinExist<span class="p">()</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">   </span><span class="k">WinWaitClose</span><span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>Abs<span class="p">(</span>Duration<span class="p">)</span>
+<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>Duration<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">    </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>Image<span class="w"> </span><span class="o">+</span><span class="w"> </span>GL<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="s">&quot;:Destroy&quot;</span>
+<span class="w">    </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span>NotifyGuiID<span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span>ST<span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%Image%</span><span class="o">:</span>Destroy
+<span class="w">   </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w"> </span><span class="p">}</span>
+<span class="w"> </span><span class="k">Else</span>
+<span class="w"> </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>GL<span class="o">-</span>GF
+<span class="w"> </span><span class="p">{</span>
+<span class="w">  </span>Image<span class="w"> </span><span class="o">:=</span><span class="w"> </span>GL<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="nb">A_Index</span><span class="p">)</span><span class="w"> </span><span class="c1">;+ GF - 1)</span>
+<span class="w">  </span><span class="k">Gui</span><span class="w"> </span><span class="nv">%Image%</span><span class="o">:+</span>LastFound
+<span class="w">  </span><span class="kr">If</span><span class="w"> </span>NotifyGuiID<span class="w"> </span><span class="o">:=</span><span class="w"> </span>WinExist<span class="p">()</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">   </span><span class="c1">;WinWaitClose, , , % Abs(Duration)</span>
+<span class="w">   </span><span class="c1">;If (ErrorLevel &amp;&amp; Duration &lt; 1)</span>
+<span class="w">   </span><span class="c1">;{</span>
+<span class="w">    </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>Image<span class="w"> </span><span class="o">+</span><span class="w"> </span>GL<span class="w"> </span><span class="o">-</span><span class="w"> </span>GF<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="s">&quot;:Destroy&quot;</span>
+<span class="w">    </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span>NotifyGuiID<span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span>ST<span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">Gui</span><span class="p">,</span><span class="w"> </span><span class="nv">%Image%</span><span class="o">:</span>Destroy
+<span class="w">   </span><span class="c1">;}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w"> </span><span class="p">}</span>
+<span class="k">Return</span>
+<span class="p">}</span>
+</pre></div>
+
+
+New Lexer: 
+<div class="highlight"><pre><span class="c-Singleline">;;;;;;;</span>
 <span class="c-Singleline">;;;;;  Notify() 0.45                made by gwarble - sept 09</span>
 <span class="c-Singleline">;;;      multiple tray area notifications</span>
 <span class="c-Singleline">;          thanks to Rhys/engunneer/HugoV/Forum Posters</span>
@@ -25,47 +343,47 @@
 <span class="c-Singleline">;</span>
 <span class="n">Notify</span><span class="p">(</span><span class="n">Title</span><span class="o">=</span><span class="s">&quot;!!!&quot;</span><span class="p">,</span><span class="n">Message</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">Duration</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">Options</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">Image</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
 <span class="p">{</span>
- <span class="n">Static</span><span class="c-Singleline">                ;Options string: &quot;TS=12 GC=Blue...&quot;</span>
- <span class="n">static</span> <span class="n">GF</span> :<span class="o">=</span> <span class="mi">50</span><span class="c-Singleline">       ;    Gui First Number  ;= override Gui: # used</span>
- <span class="n">static</span> <span class="n">GL</span> :<span class="o">=</span> <span class="mi">74</span><span class="c-Singleline">       ;    Gui Last Number   ;= between GF and GL</span>
- <span class="n">static</span> <span class="n">GC</span> :<span class="o">=</span> <span class="s">&quot;FFFFAA&quot;</span><span class="c-Singleline"> ;    Gui Color         ;   ie: don&#39;t use GF&lt;=Gui#&lt;=GL</span>
- <span class="n">static</span> <span class="n">GR</span> :<span class="o">=</span> <span class="mi">9</span><span class="c-Singleline">        ;    Gui Radius        ;       elsewhere in your script</span>
- <span class="n">static</span> <span class="n">GT</span> :<span class="o">=</span> <span class="s">&quot;Off&quot;</span><span class="c-Singleline">    ;    Gui Transparency</span>
- <span class="n">static</span> <span class="n">TS</span> :<span class="o">=</span> <span class="mi">8</span><span class="c-Singleline">        ;  Title Font Size</span>
- <span class="n">static</span> <span class="n">TW</span> :<span class="o">=</span> <span class="mi">625</span><span class="c-Singleline">      ;  Title Font Weight</span>
- <span class="n">static</span> <span class="n">TC</span> :<span class="o">=</span> <span class="s">&quot;Black&quot;</span><span class="c-Singleline">  ;  Title Font Color</span>
- <span class="n">static</span> <span class="n">TF</span> :<span class="o">=</span> <span class="s">&quot;Arial&quot;</span><span class="c-Singleline">  ;  Title Font Face</span>
- <span class="n">static</span> <span class="n">MS</span> :<span class="o">=</span> <span class="mi">8</span><span class="c-Singleline">        ;Message Font Size</span>
- <span class="n">static</span> <span class="n">MW</span> :<span class="o">=</span> <span class="mi">550</span><span class="c-Singleline">      ;Message Font Weight</span>
- <span class="n">static</span> <span class="n">MC</span> :<span class="o">=</span> <span class="s">&quot;Black&quot;</span><span class="c-Singleline">  ;Message Font Color</span>
- <span class="n">static</span> <span class="n">MF</span> :<span class="o">=</span> <span class="s">&quot;Arial&quot;</span><span class="c-Singleline">  ;Message Font Face</span>
- <span class="n">static</span> <span class="n">BC</span> :<span class="o">=</span> <span class="s">&quot;000000&quot;</span><span class="c-Singleline">  ; Border Colors</span>
- <span class="n">static</span> <span class="n">BW</span> :<span class="o">=</span> <span class="mi">2</span><span class="c-Singleline">        ; Border Width/Thickness</span>
- <span class="n">static</span> <span class="n">BR</span> :<span class="o">=</span> <span class="mi">13</span><span class="c-Singleline">       ; Border Radius</span>
- <span class="n">static</span> <span class="n">BT</span> :<span class="o">=</span> <span class="mi">105</span><span class="c-Singleline">      ; Border Transpacency</span>
- <span class="n">static</span> <span class="n">BF</span> :<span class="o">=</span> <span class="mi">150</span><span class="c-Singleline">      ; Border Flash Speed</span>
- <span class="n">static</span> <span class="n">SI</span> :<span class="o">=</span> <span class="mi">350</span><span class="c-Singleline">      ;  Speed In (AnimateWindow)</span>
- <span class="n">static</span> <span class="n">SC</span> :<span class="o">=</span> <span class="mi">100</span><span class="c-Singleline">      ;  Speed Clicked (AnimateWindow)</span>
- <span class="n">static</span> <span class="n">ST</span> :<span class="o">=</span> <span class="mi">450</span><span class="c-Singleline">      ;  Speed TimeOut (AnimateWindow)</span>
- <span class="n">static</span> <span class="n">IW</span> :<span class="o">=</span> <span class="mi">32</span><span class="c-Singleline">       ;  Image Width</span>
- <span class="n">static</span> <span class="n">IH</span> :<span class="o">=</span> <span class="mi">32</span><span class="c-Singleline">       ;  Image Height</span>
- <span class="n">static</span> <span class="n">IN</span> :<span class="o">=</span> <span class="mi">0</span><span class="c-Singleline">        ;  Image Icon Number (from Image)</span>
- <span class="n">static</span> <span class="n">AX</span> :<span class="o">=</span> <span class="mi">0</span><span class="c-Singleline">        ; Action X Close Button (maybe add yes/no ok/cancel, etc...)</span>
- <span class="n">local</span> <span class="n">AC</span><span class="p">,</span> <span class="n">AT</span><span class="c-Singleline">          ;Actions Clicked/Timeout</span>
- <span class="n">local</span> <span class="n">_Notify_Action</span><span class="p">,</span> <span class="n">ImageOptions</span><span class="p">,</span> <span class="n">GY</span><span class="p">,</span> <span class="n">OtherY</span>
+<span class="w"> </span><span class="nb">Static</span><span class="c-Singleline">                ;Options string: &quot;TS=12 GC=Blue...&quot;</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">GF</span> <span class="o">:=</span> <span class="mi">50</span><span class="c-Singleline">       ;    Gui First Number  ;= override Gui: # used</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">GL</span> <span class="o">:=</span> <span class="mi">74</span><span class="c-Singleline">       ;    Gui Last Number   ;= between GF and GL</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">GC</span> <span class="o">:=</span> <span class="s">&quot;FFFFAA&quot;</span><span class="c-Singleline"> ;    Gui Color         ;   ie: don&#39;t use GF&lt;=Gui#&lt;=GL</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">GR</span> <span class="o">:=</span> <span class="mi">9</span><span class="c-Singleline">        ;    Gui Radius        ;       elsewhere in your script</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">GT</span> <span class="o">:=</span> <span class="s">&quot;Off&quot;</span><span class="c-Singleline">    ;    Gui Transparency</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">TS</span> <span class="o">:=</span> <span class="mi">8</span><span class="c-Singleline">        ;  Title Font Size</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">TW</span> <span class="o">:=</span> <span class="mi">625</span><span class="c-Singleline">      ;  Title Font Weight</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">TC</span> <span class="o">:=</span> <span class="s">&quot;Black&quot;</span><span class="c-Singleline">  ;  Title Font Color</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">TF</span> <span class="o">:=</span> <span class="s">&quot;Arial&quot;</span><span class="c-Singleline">  ;  Title Font Face</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">MS</span> <span class="o">:=</span> <span class="mi">8</span><span class="c-Singleline">        ;Message Font Size</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">MW</span> <span class="o">:=</span> <span class="mi">550</span><span class="c-Singleline">      ;Message Font Weight</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">MC</span> <span class="o">:=</span> <span class="s">&quot;Black&quot;</span><span class="c-Singleline">  ;Message Font Color</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">MF</span> <span class="o">:=</span> <span class="s">&quot;Arial&quot;</span><span class="c-Singleline">  ;Message Font Face</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">BC</span> <span class="o">:=</span> <span class="s">&quot;000000&quot;</span><span class="c-Singleline">  ; Border Colors</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">BW</span> <span class="o">:=</span> <span class="mi">2</span><span class="c-Singleline">        ; Border Width/Thickness</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">BR</span> <span class="o">:=</span> <span class="mi">13</span><span class="c-Singleline">       ; Border Radius</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">BT</span> <span class="o">:=</span> <span class="mi">105</span><span class="c-Singleline">      ; Border Transpacency</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">BF</span> <span class="o">:=</span> <span class="mi">150</span><span class="c-Singleline">      ; Border Flash Speed</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">SI</span> <span class="o">:=</span> <span class="mi">350</span><span class="c-Singleline">      ;  Speed In (AnimateWindow)</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">SC</span> <span class="o">:=</span> <span class="mi">100</span><span class="c-Singleline">      ;  Speed Clicked (AnimateWindow)</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">ST</span> <span class="o">:=</span> <span class="mi">450</span><span class="c-Singleline">      ;  Speed TimeOut (AnimateWindow)</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">IW</span> <span class="o">:=</span> <span class="mi">32</span><span class="c-Singleline">       ;  Image Width</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">IH</span> <span class="o">:=</span> <span class="mi">32</span><span class="c-Singleline">       ;  Image Height</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">IN</span> <span class="o">:=</span> <span class="mi">0</span><span class="c-Singleline">        ;  Image Icon Number (from Image)</span>
+<span class="w"> </span><span class="nb">static</span> <span class="n">AX</span> <span class="o">:=</span> <span class="mi">0</span><span class="c-Singleline">        ; Action X Close Button (maybe add yes/no ok/cancel, etc...)</span>
+<span class="w"> </span><span class="nb">local</span> <span class="n">AC</span><span class="p">,</span> <span class="n">AT</span><span class="c-Singleline">          ;Actions Clicked/Timeout</span>
+<span class="w"> </span><span class="nb">local</span> <span class="n">_Notify_Action</span><span class="p">,</span> <span class="n">ImageOptions</span><span class="p">,</span> <span class="n">GY</span><span class="p">,</span> <span class="n">OtherY</span>
 
 <span class="nl">_Notify_:</span>
- <span class="n">local</span> <span class="n">NO</span> :<span class="o">=</span> <span class="mi">0</span><span class="c-Singleline">         ;NO is Notify Option [NO=Reset]</span>
+<span class="w"> </span><span class="nb">local</span> <span class="n">NO</span> <span class="o">:=</span> <span class="mi">0</span><span class="c-Singleline">         ;NO is Notify Option [NO=Reset]</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Options</span><span class="p">)</span>
  <span class="p">{</span>
 <span class="w">  </span><span class="nb">IfInString</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="o">=</span>
   <span class="p">{</span>
 <span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">Options</span><span class="p">,</span><span class="nv">%A_Space%</span>
-    <span class="n">If</span> <span class="p">(</span><span class="n">Option</span>:<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
-<span class="w">     </span><span class="nl">%Option%:</span><span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">If</span> <span class="p">(</span><span class="n">Option</span><span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">     </span><span class="nl">%Option%:</span><span class="o">=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 <span class="w">   </span><span class="nb">If </span><span class="n">NO</span> <span class="o">=</span> <span class="n">Reset</span>
    <span class="p">{</span>
-    <span class="n">Options</span> :<span class="o">=</span> <span class="s">&quot;GF=50 GL=74 GC=FFFFAA GR=9 GT=Off &quot;</span>
+    <span class="n">Options</span> <span class="o">:=</span> <span class="s">&quot;GF=50 GL=74 GC=FFFFAA GR=9 GT=Off &quot;</span>
      <span class="o">.</span> <span class="s">&quot;TS=8 TW=625 TC=Black TF=Arial MS=8 MW=550 MC=Black MF=Arial &quot;</span>
      <span class="o">.</span> <span class="s">&quot;BC=Black BW=2 BR=9 BT=105 BF=150 SC=300 SI=250 ST=100 &quot;</span>
      <span class="o">.</span> <span class="s">&quot;IW=32 IH=32 IN=0&quot;</span>
@@ -77,7 +395,7 @@
  <span class="p">}</span>
 
 
- <span class="n">GN</span> :<span class="o">=</span> <span class="n">GF</span>
+ <span class="n">GN</span> <span class="o">:=</span> <span class="n">GF</span>
 <span class="w"> </span><span class="nb">Loop</span>
 <span class="w">  </span><span class="nb">IfNotInString</span><span class="p">,</span> <span class="n">NotifyList</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;|&quot;</span> <span class="n">GN</span>
 <span class="w">   </span><span class="nb">Break</span>
@@ -85,87 +403,87 @@
   <span class="n">If</span> <span class="p">(</span><span class="o">++</span><span class="n">GN</span> <span class="o">&gt;</span> <span class="n">GL</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span><span class="c-Singleline">              ;=== too many notifications open!</span>
  <span class="n">NotifyList</span> <span class="o">.=</span> <span class="s">&quot;|&quot;</span> <span class="n">GN</span>
- <span class="n">GN2</span> :<span class="o">=</span> <span class="n">GN</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span>
+ <span class="n">GN2</span> <span class="o">:=</span> <span class="n">GN</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">AC</span> <span class="o">&lt;&gt;</span>
   <span class="n">ActionList</span> <span class="o">.=</span> <span class="s">&quot;|&quot;</span> <span class="n">GN</span> <span class="s">&quot;=&quot;</span> <span class="n">AC</span>
 
- <span class="n">Prev_DetectHiddenWindows</span> :<span class="o">=</span> <span class="nv">A_DetectHiddenWindows</span>
- <span class="n">Prev_TitleMatchMode</span> :<span class="o">=</span> <span class="nv">A_TitleMatchMode</span>
+ <span class="n">Prev_DetectHiddenWindows</span> <span class="o">:=</span> <span class="nv">A_DetectHiddenWindows</span>
+ <span class="n">Prev_TitleMatchMode</span> <span class="o">:=</span> <span class="nv">A_TitleMatchMode</span>
 <span class="w"> </span><span class="nb">DetectHiddenWindows</span> <span class="n">On</span>
 <span class="w"> </span><span class="nb">SetTitleMatchMode</span> <span class="mi">1</span>
- <span class="n">If</span> <span class="p">(</span><span class="nf">WinExist(</span><span class="s">&quot;NotifyGui&quot;</span><span class="p">))</span><span class="c-Singleline">  ;=== find all Notifications from ALL scripts, for placement</span>
+ <span class="n">If</span> <span class="p">(</span><span class="nf">WinExist</span><span class="p">(</span><span class="s">&quot;NotifyGui&quot;</span><span class="p">))</span><span class="c-Singleline">  ;=== find all Notifications from ALL scripts, for placement</span>
 <span class="w">  </span><span class="nb">WinGetPos</span><span class="p">,</span> <span class="n">OtherX</span><span class="p">,</span> <span class="n">OtherY</span><span class="c-Singleline">  ;=== change this to a loop for all open notifications?</span>
 <span class="w"> </span><span class="nb">DetectHiddenWindows</span> <span class="nv">%Prev_DetectHiddenWindows%</span>
 <span class="w"> </span><span class="nb">SetTitleMatchMode</span> <span class="nv">%Prev_TitleMatchMode%</span>
 
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="o">-</span><span class="n">Caption</span> <span class="o">+</span><span class="n">ToolWindow</span> <span class="o">+</span><span class="n">AlwaysOnTop</span> <span class="o">-</span><span class="n">Border</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Color</span><span class="p">,</span> <span class="nv">%GC%</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Font</span><span class="p">,</span> <span class="n">w</span><span class="nv">%TW%</span> <span class="n">s</span><span class="nv">%TS%</span> <span class="n">c</span><span class="nv">%TC%</span><span class="p">,</span> <span class="nv">%TF%</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:-</span><span class="n">Caption</span> <span class="o">+</span><span class="n">ToolWindow</span> <span class="o">+</span><span class="n">AlwaysOnTop</span> <span class="o">-</span><span class="n">Border</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Color</span><span class="p">,</span> <span class="nv">%GC%</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Font</span><span class="p">,</span> <span class="n">w</span><span class="nv">%TW%</span> <span class="n">s</span><span class="nv">%TS%</span> <span class="n">c</span><span class="nv">%TC%</span><span class="p">,</span> <span class="nv">%TF%</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Image</span><span class="p">)</span>
  <span class="p">{</span>
-<span class="w">  </span><span class="nb">If </span><span class="nf">FileExist(</span><span class="n">Image</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Picture</span><span class="p">,</span> <span class="n">w</span><span class="nv">%IW%</span> <span class="n">h</span><span class="nv">%IH%</span> <span class="n">Icon</span><span class="nv">%IN%</span><span class="p">,</span> <span class="o">%</span> <span class="n">Image</span>
+<span class="w">  </span><span class="nb">If </span><span class="nf">FileExist</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Picture</span><span class="p">,</span> <span class="n">w</span><span class="nv">%IW%</span> <span class="n">h</span><span class="nv">%IH%</span> <span class="n">Icon</span><span class="nv">%IN%</span><span class="p">,</span> <span class="o">%</span> <span class="n">Image</span>
 <span class="w">  </span><span class="nb">Else</span>
-<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Picture</span><span class="p">,</span> <span class="n">w</span><span class="nv">%IW%</span> <span class="n">h</span><span class="nv">%IH%</span> <span class="n">Icon</span><span class="nv">%Image%</span><span class="p">,</span> <span class="n">c</span>:\<span class="n">windows</span>\<span class="n">system32</span>\<span class="n">shell32</span><span class="o">.</span><span class="n">dll</span>
+<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Picture</span><span class="p">,</span> <span class="n">w</span><span class="nv">%IW%</span> <span class="n">h</span><span class="nv">%IH%</span> <span class="n">Icon</span><span class="nv">%Image%</span><span class="p">,</span> <span class="n">c</span><span class="o">:</span>\<span class="n">windows</span>\<span class="n">system32</span>\<span class="n">shell32</span><span class="o">.</span><span class="n">dll</span>
   <span class="n">ImageOptions</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="mi">10</span>
  <span class="p">}</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">Title</span> <span class="o">&lt;&gt;</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="o">%</span> <span class="n">ImageOptions</span><span class="p">,</span> <span class="o">%</span> <span class="n">Title</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Font</span><span class="p">,</span> <span class="n">w</span><span class="nv">%MW%</span> <span class="n">s</span><span class="nv">%MS%</span> <span class="n">c</span><span class="nv">%MC%</span><span class="p">,</span> <span class="nv">%MF%</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="o">%</span> <span class="n">ImageOptions</span><span class="p">,</span> <span class="o">%</span> <span class="n">Title</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Font</span><span class="p">,</span> <span class="n">w</span><span class="nv">%MW%</span> <span class="n">s</span><span class="nv">%MS%</span> <span class="n">c</span><span class="nv">%MC%</span><span class="p">,</span> <span class="nv">%MF%</span>
  <span class="n">If</span> <span class="p">((</span><span class="n">Title</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">Message</span><span class="p">))</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Margin</span><span class="p">,</span> <span class="p">,</span> <span class="o">-</span><span class="mi">5</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Margin</span><span class="p">,</span> <span class="p">,</span> <span class="o">-</span><span class="mi">5</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">Message</span> <span class="o">&lt;&gt;</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,,</span> <span class="o">%</span> <span class="n">Message</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,,</span> <span class="o">%</span> <span class="n">Message</span>
  <span class="n">If</span> <span class="p">((</span><span class="n">Title</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">Message</span><span class="p">))</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Margin</span><span class="p">,</span> <span class="p">,</span> <span class="mi">8</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Show</span><span class="p">,</span> <span class="n">Hide</span><span class="p">,</span> <span class="n">NotifyGui</span>
-<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GN%</span>:<span class="o">+</span><span class="n">LastFound</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Margin</span><span class="p">,</span> <span class="p">,</span> <span class="mi">8</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="n">Hide</span><span class="p">,</span> <span class="n">NotifyGui</span>
+<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GN%</span><span class="o">:+</span><span class="n">LastFound</span>
 <span class="w"> </span><span class="nb">WinGetPos</span><span class="p">,</span> <span class="n">GX</span><span class="p">,</span> <span class="n">GY</span><span class="p">,</span> <span class="n">GW</span><span class="p">,</span> <span class="n">GH</span>
 
 <span class="w"> </span><span class="nb">If </span><span class="n">AX</span> <span class="o">=</span>
  <span class="p">{</span>
   <span class="n">GW</span> <span class="o">+=</span> <span class="mi">10</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Font</span><span class="p">,</span> <span class="n">w800</span> <span class="n">s6</span> <span class="n">c</span><span class="nv">%MC%</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;x&quot;</span> <span class="n">GW</span><span class="o">-</span><span class="mi">11</span> <span class="s">&quot; y-1 Border Center w12 h12 g_Notify_Kill_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Font</span><span class="p">,</span> <span class="n">w800</span> <span class="n">s6</span> <span class="n">c</span><span class="nv">%MC%</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;x&quot;</span> <span class="n">GW</span><span class="o">-</span><span class="mi">11</span> <span class="s">&quot; y-1 Border Center w12 h12 g_Notify_Kill_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X</span>
  <span class="p">}</span>
 
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">x0</span> <span class="n">y0</span> <span class="n">w</span><span class="nv">%GW%</span> <span class="n">h</span><span class="nv">%GH%</span> <span class="n">g_Notify_Action</span> <span class="n">BackgroundTrans</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">x0</span> <span class="n">y0</span> <span class="n">w</span><span class="nv">%GW%</span> <span class="n">h</span><span class="nv">%GH%</span> <span class="n">g_Notify_Action</span> <span class="n">BackgroundTrans</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">GR</span><span class="p">)</span>
 <span class="w">  </span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Region</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;0-0 w&quot;</span> <span class="n">GW</span> <span class="s">&quot; h&quot;</span> <span class="n">GH</span> <span class="s">&quot; R&quot;</span> <span class="n">GR</span> <span class="s">&quot;-&quot;</span> <span class="n">GR</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">GT</span><span class="p">)</span>
 <span class="w">  </span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Transparent</span><span class="p">,</span> <span class="o">%</span> <span class="n">GT</span>
 
 <span class="w"> </span><span class="nb">SysGet</span><span class="p">,</span> <span class="n">Workspace</span><span class="p">,</span> <span class="n">MonitorWorkArea</span>
- <span class="n">NewX</span> :<span class="o">=</span> <span class="n">WorkSpaceRight</span><span class="o">-</span><span class="n">GW</span><span class="o">-</span><span class="mi">5</span>
+ <span class="n">NewX</span> <span class="o">:=</span> <span class="n">WorkSpaceRight</span><span class="o">-</span><span class="n">GW</span><span class="o">-</span><span class="mi">5</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">OtherY</span><span class="p">)</span>
-  <span class="n">NewY</span> :<span class="o">=</span> <span class="n">OtherY</span><span class="o">-</span><span class="n">GH</span><span class="o">-</span><span class="mi">5</span>
+  <span class="n">NewY</span> <span class="o">:=</span> <span class="n">OtherY</span><span class="o">-</span><span class="n">GH</span><span class="o">-</span><span class="mi">5</span>
 <span class="w"> </span><span class="nb">Else</span>
-  <span class="n">NewY</span> :<span class="o">=</span> <span class="n">WorkspaceBottom</span><span class="o">-</span><span class="n">GH</span><span class="o">-</span><span class="mi">5</span>
+  <span class="n">NewY</span> <span class="o">:=</span> <span class="n">WorkspaceBottom</span><span class="o">-</span><span class="n">GH</span><span class="o">-</span><span class="mi">5</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">NewY</span> <span class="o">&lt;</span> <span class="o">%</span> <span class="n">WorkspaceTop</span>
-  <span class="n">NewY</span> :<span class="o">=</span> <span class="n">WorkspaceBottom</span><span class="o">-</span><span class="n">GH</span><span class="o">-</span><span class="mi">5</span>
+  <span class="n">NewY</span> <span class="o">:=</span> <span class="n">WorkspaceBottom</span><span class="o">-</span><span class="n">GH</span><span class="o">-</span><span class="mi">5</span>
 
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span>:<span class="o">-</span><span class="n">Caption</span> <span class="o">+</span><span class="n">ToolWindow</span> <span class="o">+</span><span class="n">AlwaysOnTop</span> <span class="o">-</span><span class="n">Border</span> <span class="o">+</span><span class="n">E0x20</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span>:<span class="n">Color</span><span class="p">,</span> <span class="nv">%BC%</span>
-<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GN2%</span>:<span class="o">+</span><span class="n">LastFound</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span><span class="o">:-</span><span class="n">Caption</span> <span class="o">+</span><span class="n">ToolWindow</span> <span class="o">+</span><span class="n">AlwaysOnTop</span> <span class="o">-</span><span class="n">Border</span> <span class="o">+</span><span class="n">E0x20</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span><span class="o">:</span><span class="n">Color</span><span class="p">,</span> <span class="nv">%BC%</span>
+<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GN2%</span><span class="o">:+</span><span class="n">LastFound</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">BR</span><span class="p">)</span>
 <span class="w">  </span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Region</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;0-0 w&quot;</span> <span class="n">GW</span><span class="o">+</span><span class="p">(</span><span class="n">BW</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot; h&quot;</span> <span class="n">GH</span><span class="o">+</span><span class="p">(</span><span class="n">BW</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot; R&quot;</span> <span class="n">BR</span> <span class="s">&quot;-&quot;</span> <span class="n">BR</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">BT</span><span class="p">)</span>
 <span class="w">  </span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">Transparent</span><span class="p">,</span> <span class="o">%</span> <span class="n">BT</span>
 
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span>:<span class="n">Show</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;Hide x&quot;</span> <span class="n">NewX</span><span class="o">-</span><span class="n">BW</span> <span class="s">&quot; y&quot;</span> <span class="n">NewY</span><span class="o">-</span><span class="n">BW</span> <span class="s">&quot; w&quot;</span> <span class="n">GW</span><span class="o">+</span><span class="p">(</span><span class="n">BW</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot; h&quot;</span> <span class="n">GH</span><span class="o">+</span><span class="p">(</span><span class="n">BW</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Show</span><span class="p">,</span>  <span class="o">%</span> <span class="s">&quot;Hide x&quot;</span> <span class="n">NewX</span> <span class="s">&quot; y&quot;</span> <span class="n">NewY</span> <span class="s">&quot; w&quot;</span> <span class="n">GW</span><span class="p">,</span> <span class="n">NotifyGui</span>
-<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GN%</span>:<span class="o">+</span><span class="n">LastFound</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;Hide x&quot;</span> <span class="n">NewX</span><span class="o">-</span><span class="n">BW</span> <span class="s">&quot; y&quot;</span> <span class="n">NewY</span><span class="o">-</span><span class="n">BW</span> <span class="s">&quot; w&quot;</span> <span class="n">GW</span><span class="o">+</span><span class="p">(</span><span class="n">BW</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="s">&quot; h&quot;</span> <span class="n">GH</span><span class="o">+</span><span class="p">(</span><span class="n">BW</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span>  <span class="o">%</span> <span class="s">&quot;Hide x&quot;</span> <span class="n">NewX</span> <span class="s">&quot; y&quot;</span> <span class="n">NewY</span> <span class="s">&quot; w&quot;</span> <span class="n">GW</span><span class="p">,</span> <span class="n">NotifyGui</span>
+<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GN%</span><span class="o">:+</span><span class="n">LastFound</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">SI</span>
-  <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist(</span><span class="p">),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SI</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00040008&quot;</span><span class="p">)</span>
+  <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist</span><span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SI</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00040008&quot;</span><span class="p">)</span>
 <span class="w"> </span><span class="nb">Else</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span>:<span class="n">Show</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NotifyGui</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span>:<span class="n">Show</span><span class="p">,</span> <span class="n">NA</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NotifyGui</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GN2%</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="n">NA</span>
 <span class="w"> </span><span class="nb">WinSet</span><span class="p">,</span> <span class="n">AlwaysOnTop</span><span class="p">,</span> <span class="n">On</span>
 
  <span class="n">If</span> <span class="p">((</span><span class="n">Duration</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="n">OR</span> <span class="p">(</span><span class="n">Duration</span> <span class="o">=</span> <span class="s">&quot;-0&quot;</span><span class="p">))</span>
-<span class="w">  </span><span class="nb">Exit</span> :<span class="o">=</span> <span class="n">GN</span>
+<span class="w">  </span><span class="nb">Exit</span> <span class="o">:=</span> <span class="n">GN</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Duration</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;_Notify_Kill_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">%</span> <span class="o">-</span> <span class="nf">Abs(</span><span class="n">Duration</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+<span class="w">   </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;_Notify_Kill_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">%</span> <span class="o">-</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">Duration</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
 <span class="w"> </span><span class="nb">Else</span>
 <span class="w">  </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;_Notify_Flash_&quot;</span> <span class="n">GN</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">%</span> <span class="n">BF</span>
 
@@ -177,17 +495,17 @@
 <span class="c-Singleline"> ;Critical</span>
 <span class="w"> </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;_Notify_Kill_&quot;</span> <span class="nv">A_Gui</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Off</span>
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="nv">A_Gui</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
-<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%A_Gui%</span>:<span class="o">+</span><span class="n">LastFound</span>
+<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%A_Gui%</span><span class="o">:+</span><span class="n">LastFound</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">SC</span>
-  <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist(</span><span class="p">),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SC</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%A_Gui%</span>:<span class="n">Destroy</span>
+  <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist</span><span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">SC</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%A_Gui%</span><span class="o">:</span><span class="n">Destroy</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">ActionList</span><span class="p">)</span>
 <span class="w">  </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">ActionList</span><span class="p">,</span><span class="o">|</span>
-   <span class="n">If</span> <span class="p">((</span><span class="n">Action</span> :<span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">=</span> <span class="nv">A_Gui</span><span class="p">)</span>
+   <span class="n">If</span> <span class="p">((</span><span class="n">Action</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">=</span> <span class="nv">A_Gui</span><span class="p">)</span>
    <span class="p">{</span>
-<span class="w">    </span><span class="nl">Temp_Notify_Action:</span><span class="o">=</span> <span class="nf">SubStr(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">    </span><span class="nl">Temp_Notify_Action:</span><span class="o">=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 <span class="w">    </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">ActionList</span><span class="p">,</span> <span class="n">ActionList</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;|&quot;</span> <span class="nv">A_Gui</span> <span class="s">&quot;=&quot;</span> <span class="n">Temp_Notify_Action</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
-<span class="w">    </span><span class="nb">If </span><span class="nf">IsLabel(</span><span class="n">_Notify_Action</span> :<span class="o">=</span> <span class="n">Temp_Notify_Action</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">If </span><span class="nf">IsLabel</span><span class="p">(</span><span class="n">_Notify_Action</span> <span class="o">:=</span> <span class="n">Temp_Notify_Action</span><span class="p">)</span>
 <span class="w">     </span><span class="nb">Gosub</span><span class="p">,</span> <span class="nv">%_Notify_Action%</span>
     <span class="n">_Notify_Action</span> <span class="o">=</span>
 <span class="w">    </span><span class="nb">Break</span>
@@ -230,10 +548,10 @@
 <span class="w"> </span><span class="nb">SetTimer</span><span class="p">,</span> <span class="n">_Notify_Flash_</span><span class="nv">%GK%</span><span class="p">,</span> <span class="n">Off</span>
  <span class="n">GK</span> <span class="o">+=</span> <span class="n">GF</span> <span class="o">-</span> <span class="mi">1</span>
 <span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="n">GK</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
-<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GK%</span>:<span class="o">+</span><span class="n">LastFound</span>
+<span class="w"> </span><span class="nb">Gui</span>  <span class="nv">%GK%</span><span class="o">:+</span><span class="n">LastFound</span>
 <span class="w"> </span><span class="nb">If </span><span class="n">ST</span>
-  <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist(</span><span class="p">),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
-<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GK%</span>:<span class="n">Destroy</span>
+  <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="nf">WinExist</span><span class="p">(),</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GK%</span><span class="o">:</span><span class="n">Destroy</span>
 <span class="w"> </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">NotifyList</span><span class="p">,</span> <span class="n">NotifyList</span><span class="p">,</span> <span class="o">%</span> <span class="s">&quot;|&quot;</span> <span class="n">GK</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Exit</span> <span class="o">=</span> <span class="n">GK</span><span class="p">)</span>
 <span class="w">  </span><span class="nb">ExitApp</span>
@@ -268,11 +586,11 @@
 <span class="nl">_Notify_Flash_25:</span>
 <span class="w"> </span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">FlashGN</span><span class="p">,</span> <span class="nv">A_ThisLabel</span><span class="p">,</span> <span class="n">_Notify_Flash_</span>
  <span class="n">FlashGN</span> <span class="o">+=</span> <span class="n">GF</span> <span class="o">-</span> <span class="mi">1</span>
- <span class="n">FlashGN2</span> :<span class="o">=</span> <span class="n">FlashGN</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="w"> </span><span class="nb">If </span><span class="n">Flashed</span><span class="nv">%FlashGN2%</span> :<span class="o">=</span> !<span class="n">Flashed</span><span class="nv">%FlashGN2%</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%FlashGN2%</span>:<span class="n">Color</span><span class="p">,</span> <span class="n">Silver</span>
+ <span class="n">FlashGN2</span> <span class="o">:=</span> <span class="n">FlashGN</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w"> </span><span class="nb">If </span><span class="n">Flashed</span><span class="nv">%FlashGN2%</span> <span class="o">:=</span> <span class="o">!</span><span class="n">Flashed</span><span class="nv">%FlashGN2%</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%FlashGN2%</span><span class="o">:</span><span class="n">Color</span><span class="p">,</span> <span class="n">Silver</span>
 <span class="w"> </span><span class="nb">Else</span>
-<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%FlashGN2%</span>:<span class="n">Color</span><span class="p">,</span> <span class="o">%</span> <span class="n">BC</span>
+<span class="w">  </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%FlashGN2%</span><span class="o">:</span><span class="n">Color</span><span class="p">,</span> <span class="o">%</span> <span class="n">BC</span>
 <span class="nb">Return</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;==========================================================================</span>
@@ -281,31 +599,31 @@
 <span class="c-Singleline"> ;Critical</span>
  <span class="n">If</span> <span class="p">(</span><span class="n">Image</span><span class="p">)</span>
  <span class="p">{</span>
-<span class="w">  </span><span class="nb">Gui</span> <span class="nv">%Image%</span>:<span class="o">+</span><span class="n">LastFound</span>
-<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">Gui</span> <span class="nv">%Image%</span><span class="o">:+</span><span class="n">LastFound</span>
+<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> <span class="o">:=</span> <span class="nf">WinExist</span><span class="p">()</span>
   <span class="p">{</span>
-<span class="w">   </span><span class="nb">WinWaitClose</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="o">%</span> <span class="nf">Abs(</span><span class="n">Duration</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">WinWaitClose</span><span class="p">,</span> <span class="p">,</span> <span class="p">,</span> <span class="o">%</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">Duration</span><span class="p">)</span>
    <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">&amp;&amp;</span> <span class="n">Duration</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
    <span class="p">{</span>
 <span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="n">Image</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
-    <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%Image%</span>:<span class="n">Destroy</span>
+    <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%Image%</span><span class="o">:</span><span class="n">Destroy</span>
    <span class="p">}</span>
   <span class="p">}</span>
  <span class="p">}</span>
 <span class="w"> </span><span class="nb">Else</span>
 <span class="w"> </span><span class="nb">Loop</span><span class="p">,</span> <span class="o">%</span> <span class="n">GL</span><span class="o">-</span><span class="n">GF</span>
  <span class="p">{</span>
-  <span class="n">Image</span> :<span class="o">=</span> <span class="n">GL</span> <span class="o">-</span> <span class="p">(</span><span class="nv">A_Index</span><span class="p">)</span><span class="c-Singleline"> ;+ GF - 1)</span>
-<span class="w">  </span><span class="nb">Gui</span> <span class="nv">%Image%</span>:<span class="o">+</span><span class="n">LastFound</span>
-<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> :<span class="o">=</span> <span class="nf">WinExist(</span><span class="p">)</span>
+  <span class="n">Image</span> <span class="o">:=</span> <span class="n">GL</span> <span class="o">-</span> <span class="p">(</span><span class="nv">A_Index</span><span class="p">)</span><span class="c-Singleline"> ;+ GF - 1)</span>
+<span class="w">  </span><span class="nb">Gui</span> <span class="nv">%Image%</span><span class="o">:+</span><span class="n">LastFound</span>
+<span class="w">  </span><span class="nb">If </span><span class="n">NotifyGuiID</span> <span class="o">:=</span> <span class="nf">WinExist</span><span class="p">()</span>
   <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;WinWaitClose, , , % Abs(Duration)</span>
 <span class="c-Singleline">   ;If (ErrorLevel &amp;&amp; Duration &lt; 1)</span>
 <span class="c-Singleline">   ;{</span>
 <span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">%</span> <span class="n">Image</span> <span class="o">+</span> <span class="n">GL</span> <span class="o">-</span> <span class="n">GF</span> <span class="o">+</span> <span class="mi">1</span> <span class="s">&quot;:Destroy&quot;</span>
-    <span class="nf">DllCall(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%Image%</span>:<span class="n">Destroy</span><span class="c-Singleline"></span>
+    <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;AnimateWindow&quot;</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="n">NotifyGuiID</span><span class="p">,</span><span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">ST</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="s">&quot;0x00050001&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%Image%</span><span class="o">:</span><span class="n">Destroy</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;}</span>
   <span class="p">}</span>
  <span class="p">}</span>
