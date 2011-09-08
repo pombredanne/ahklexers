@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
-from pygments.lexer import ExtendedRegexLexer, RegexLexer, \
-     bygroups, using, include, combined
-from pygments.token import *   
 import re
-from pygments.styles import get_style_by_name
+from pygments.lexer import Lexer, RegexLexer, include, bygroups, using, \
+     this, do_insertions
 
-class AhkLexer(ExtendedRegexLexer):    	    
-    name = 'AHK'	       	    
-    aliases = ['ahk']	       	
-    filenames = ['*.ahk', '*.ahk2']
-#    flags = re.IGNORECASE  use (?i) in commands only 
+from pygments.token import *       
+class AutohotkeyLexer(RegexLexer):
+    """  
+    For `autohotkey <http://www.autohotkey.com/>`_ source code.
+       
+    *New in Pygments 1.4.*
+    """
+    name = 'autohotkey'
+    aliases = ['ahk']
+    filenames = ['*.ahk', '*.ahkl']
+    mimetypes = ['text/x-autohotkey']
+    from pygments.lexer import ExtendedRegexLexer, RegexLexer, \
+    bygroups, using, include, combined
     tokens = { 		       	
         'root': [	       
             (r'^(\s*)(/\*)', bygroups(Whitespace, Comment.Multiline),
                              'incomment'),
-	    (r'^(\s*)(\()', bygroups(Whitespace, Generic), 'incontinuation'),
+            (r'^(\s*)(\()', bygroups(Whitespace, Generic), 'incontinuation'),
             (r'\s+;.*?$', Comment.Singleline),
             (r'^;.*?$', Comment.Singleline),
             (r'[]{}(),;[]', Punctuation),
@@ -37,9 +43,9 @@ class AhkLexer(ExtendedRegexLexer):
             (r'[^*/]', Comment.Multiline),
             (r'[*/]', Comment.Multiline)
         ],		       
-	'incontinuation': [      
-	    (r'^\s*\)', Generic, '#pop'), 
-	    (r'[^)]', Generic),
+        'incontinuation': [      
+            (r'^\s*\)', Generic, '#pop'), 
+            (r'[^)]', Generic),
 	    (r'[)]', Generic),
 	    ],
         'commands': [
@@ -238,5 +244,3 @@ class AhkLexer(ExtendedRegexLexer):
 #            (r'.', Text),      # no cheating
             ],
     }
-
-

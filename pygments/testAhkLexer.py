@@ -1,5 +1,5 @@
 import os, sys, subprocess, re
-from ahkLexer import AhkLexer 
+from ahkLexer import AutohotkeyLexer 
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.style import Style
@@ -10,8 +10,9 @@ ahkfileh = 'sample1.html'
 f = open(ahkfile)
 code = f.read()
 f.close()			   				 
-formatter = HtmlFormatter() 
-codeh = highlight(code, AhkLexer(), formatter)
+formatter = HtmlFormatter()
+ahklexer = AutohotkeyLexer()
+codeh = highlight(code, ahklexer, formatter)
 print codeh				
 fh = open(ahkfileh, 'w')
 linktag = '''<LINK href="styles.css" rel="stylesheet" type="text/css">'''
