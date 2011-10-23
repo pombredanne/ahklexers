@@ -1,15 +1,18 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include FileGetVersionInfo.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="nb">SetBatchLines</span> <span class="o">-</span><span class="mi">1</span>
-<span class="nb">Loop</span><span class="p">,</span> <span class="nv">%A_WinDir%</span>\<span class="n">System32</span>\<span class="o">*.??</span><span class="n">l</span>
-  <span class="n">Files</span> <span class="o">.=</span> <span class="s">&quot;|&quot;</span> <span class="nv">A_LoopFileLongPath</span>
-<span class="n">Files</span> <span class="o">:=</span> <span class="nv">A_AhkPath</span> <span class="o">.</span> <span class="n">Files</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
 
-<span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">Files</span><span class="p">,</span> <span class="o">|</span>
-<span class="w">  </span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">%</span> <span class="p">(</span><span class="n">PeFile</span><span class="o">:=</span><span class="nv">A_LoopField</span><span class="p">)</span>
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+
+<span class="nb">SetBatchLines</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="nb">Loop</span><span class="p">,</span><span class="s"> %A_WinDir%\System32\*.??l</span><span class="w"></span>
+<span class="w">  </span> <span class="n">Files</span> <span class="o">.=</span> <span class="s">&quot;|&quot;</span> <span class="nv">A_LoopFileLongPath</span>
+<span class="n">Files</span><span class="p"> </span><span class="o">:=</span> <span class="nv">A_AhkPath</span> <span class="o">.</span> <span class="n">Files</span><span class="w"></span>
+
+<span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> Files</span><span class="p">,</span><span class="s"> |</span><span class="w"></span>
+<span class="w">  </span> <span class="n">MsgBox</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">%</span> <span class="p">(</span><span class="n">PeFile</span><span class="o">:=</span><span class="nv">A_LoopField</span><span class="p">)</span>
   <span class="p">,</span> <span class="o">%</span> <span class="s">&quot;FileDescription      `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;FileDescription&quot;</span>  <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
     <span class="o">.</span> <span class="s">&quot;FileVersion          `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;FileVersion&quot;</span>      <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
     <span class="o">.</span> <span class="s">&quot;InternalName         `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;InternalName&quot;</span>     <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
@@ -20,5 +23,5 @@
     <span class="o">.</span> <span class="s">&quot;CompanyName          `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;CompanyName&quot;</span>      <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
     <span class="o">.</span> <span class="s">&quot;PrivateBuild         `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;PrivateBuild&quot;</span>     <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
     <span class="o">.</span> <span class="s">&quot;SpecialBuild         `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;SpecialBuild&quot;</span>     <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-    <span class="o">.</span> <span class="s">&quot;LegalTrademarks      `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;LegalTrademarks&quot;</span>  <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
+    <span class="o">.</span> <span class="s">&quot;LegalTrademarks      `t:`t&quot;</span> <span class="n">FileGetVersionInfo</span><span class="p">(</span> <span class="n">PeFile</span><span class="p">,</span> <span class="s">&quot;LegalTrademarks&quot;</span>  <span class="p">)</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="w"></span>
 </pre></div>

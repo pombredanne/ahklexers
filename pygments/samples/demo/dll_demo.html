@@ -1,16 +1,22 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include dll.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+<span class="nb">#NoEnv</span><span class="w"></span>
+
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
 
 <span class="c-Singleline">; First specify a folder, from which to include all files into the DLL.</span>
-<span class="n">folderToPack</span> <span class="o">:=</span> <span class="nv">A_ScriptDir</span> <span class="o">.</span> <span class="s">&quot;\newFiles&quot;</span><span class="c-Singleline"></span>
+<span class="n">folderToPack</span><span class="p"> </span><span class="o">:=</span> <span class="nv">A_ScriptDir</span> <span class="o">.</span> <span class="s">&quot;\newFiles&quot;</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Fill the folder with files.</span>
-<span class="nb">FileCreateDir</span><span class="p">,</span> <span class="nv">%folderToPack%</span>
-<span class="nb">Loop</span><span class="p">,</span> <span class="o">..</span>\<span class="o">*.</span><span class="n">txt</span>
+<span class="nb">FileCreateDir</span><span class="p">,</span><span class="s"> %folderToPack%</span><span class="w"></span>
+
+<span class="nb">Loop</span><span class="p">,</span><span class="s"> ..\*.txt</span><span class="w"></span>
+
 <span class="p">{</span>
-<span class="w">	</span><span class="nb">FileCopy</span><span class="p">,</span> <span class="nv">%A_LoopFileFullPath%</span><span class="p">,</span> <span class="nv">%folderToPack%</span><span class="p">,</span> <span class="mi">1</span>
+<span class="w">	</span><span class="nb">FileCopy</span><span class="p">,</span><span class="s"> %A_LoopFileFullPath%</span><span class="p">,</span><span class="s"> %folderToPack%</span><span class="p">,</span><span class="s"> 1</span><span class="w"></span>
+
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Create the DLL from that folder.</span>
@@ -18,5 +24,5 @@
 
 <span class="c-Singleline">; Get content of file into variable.</span>
 <span class="n">Dll_Read</span><span class="p">(</span> <span class="n">Var</span><span class="p">,</span> <span class="s">&quot;newFiles.dll&quot;</span><span class="p">,</span> <span class="s">&quot;Text Files&quot;</span><span class="p">,</span> <span class="s">&quot;COPYING.txt&quot;</span> <span class="p">)</span>
-<span class="nb">MsgBox</span> <span class="nv">%Var%</span>
+<span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%Var%</span><span class="w"></span>
 </pre></div>

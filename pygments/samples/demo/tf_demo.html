@@ -1,7 +1,10 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include tf.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
+
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
 
 <span class="n">TestFile</span><span class="o">=</span><span class="c-Singleline"> ; create variable</span>
 <span class="g">(join`r`n</span>
@@ -13,42 +16,44 @@
 <span class="g">6 new version</span>
 <span class="g">7 of TF.AHK</span>
 <span class="g">)</span>
-<span class="nb">FileDelete</span><span class="p">,</span> <span class="n">TestFile</span><span class="o">.</span><span class="n">txt</span>
-<span class="nb">FileAppend</span><span class="p">,</span> <span class="nv">%TestFile%</span><span class="p">,</span> <span class="n">TestFile</span><span class="o">.</span><span class="n">txt</span><span class="c-Singleline"> ; create file</span>
+<span class="nb">FileDelete</span><span class="p">,</span><span class="s"> TestFile.txt</span><span class="w"></span>
+
+<span class="nb">FileAppend</span><span class="p">,</span><span class="s"> %TestFile%</span><span class="p">,</span><span class="s"> TestFile.txt </span><span class="c-Singleline">; create file</span><span class="w"></span>
+
 <span class="n">F</span><span class="o">=</span><span class="n">TestFile</span><span class="o">.</span><span class="n">txt</span><span class="c-Singleline"> ; just a shorthand code for TextFile.txt, so below when</span>
 <span class="c-Singleline">; using F we are still passing on a TextFile, not a variable</span>
 
 <span class="c-Singleline">;pass on file, read lines 5 to end of file:</span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;From File 1:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="s">&quot;TestFile.txt&quot;</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; same as before</span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;From File 2:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline">              ; same as before</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;From File 1:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="s">&quot;TestFile.txt&quot;</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; same as before</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;From File 2:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline">              ; same as before</span>
 
 <span class="c-Singleline">;pass on variable, read lines 1 to 5</span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;From Variable 1:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">TestFile</span><span class="p">,</span><span class="s">&quot;1-5&quot;</span><span class="p">)</span>     
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;From Variable 2:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="s">&quot;Hi`nthis`nis`na`ntest`nvariable`nfor`ntesting&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="c-Singleline"> ; pass on string</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;From Variable 1:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">TestFile</span><span class="p">,</span><span class="s">&quot;1-5&quot;</span><span class="p">)</span><span class="w">     </span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;From Variable 2:`n&quot;</span> <span class="n">TF_ReadLines</span><span class="p">(</span><span class="s">&quot;Hi`nthis`nis`na`ntest`nvariable`nfor`ntesting&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="c-Singleline"> ; pass on string</span>
 
-<span class="c-Singleline">;Examples using TF(): (it will save you a FileRead if you want to work with Variables</span>
+<span class="c-Singleline">;Examples using TF(): (it will save you a FileRead if you want to work with Variables</span><span class="w"></span>
 
 <span class="n">TF</span><span class="p">(</span><span class="s">&quot;TestFile.txt&quot;</span><span class="p">)</span><span class="c-Singleline"> ; read file, create globar var t</span>
 <span class="nl">t:</span><span class="o">=</span><span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; pass on global var t created by TF(), read lines 5 to end of file, asign result to t </span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;TF(), example 1:`n&quot;</span> <span class="n">t</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;TF(), example 1:`n&quot;</span> <span class="n">t</span><span class="w"></span>
 
 <span class="n">TF</span><span class="p">(</span><span class="s">&quot;TestFile.txt&quot;</span><span class="p">,</span> <span class="s">&quot;MyVar&quot;</span><span class="p">)</span><span class="c-Singleline"> ; read file, create globar var MyVar</span>
 <span class="nl">MyVar:</span><span class="o">=</span><span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">MyVar</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; pass on global var MyVar created by TF(), read lines 5 to end of file, asign result to MyVar</span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;TF(), example 2:`n&quot;</span> <span class="n">MyVar</span><span class="c-Singleline"></span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;TF(), example 2:`n&quot;</span> <span class="n">MyVar</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Note how we can use TF() here</span>
 <span class="nl">t:</span><span class="o">=</span><span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">TF</span><span class="p">(</span><span class="s">&quot;TestFile.txt&quot;</span><span class="p">),</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; pass on global var t created by TF(), read lines 5 to end of file, asign result to t </span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;TF(), example 3:`n&quot;</span> <span class="n">t</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;TF(), example 3:`n&quot;</span> <span class="n">t</span><span class="w"></span>
 
 <span class="nl">MyVar:</span><span class="o">=</span><span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">TF</span><span class="p">(</span><span class="s">&quot;TestFile.txt&quot;</span><span class="p">,</span><span class="s">&quot;MyVar&quot;</span><span class="p">),</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; pass on global var t created by TF(), read lines 5 to end of file, asign result to t </span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;TF(), example 4:`n&quot;</span> <span class="n">MyVar</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;TF(), example 4:`n&quot;</span> <span class="n">MyVar</span><span class="w"></span>
 
 <span class="nl">t:</span><span class="o">=</span><span class="n">TF_ReadLines</span><span class="p">(</span><span class="n">TF</span><span class="p">(</span><span class="n">F</span><span class="p">),</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; pass on global var t created by TF(), read lines 5 to end of file, asign result to t</span>
 <span class="nl">t:</span><span class="o">=</span><span class="n">TF_ReverseLines</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline"> ; pass on global var t created by TF(), read lines 5 to end of file, asign result to t</span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;TF(), example 5:`n&quot;</span> <span class="n">t</span><span class="c-Singleline"></span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;TF(), example 5:`n&quot;</span> <span class="n">t</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Work directly with the clipboard or another other variable</span>
 <span class="nv">Clipboard</span><span class="o">=</span><span class="n">Line</span> <span class="mi">1</span><span class="se">`n</span><span class="n">Line</span> <span class="mi">2</span><span class="se">`n</span><span class="n">Line</span> <span class="mi">3</span><span class="se">`n</span><span class="n">Line</span> <span class="mi">4</span><span class="se">`n</span><span class="n">Line</span> <span class="mi">5</span><span class="se">`n</span><span class="n">Line</span> <span class="mi">6</span><span class="se">`n</span><span class="n">Line</span> <span class="mi">7</span><span class="se">`n</span><span class="n">Line</span> <span class="mi">8</span>
 <span class="nl">Clipboard:</span><span class="o">=</span><span class="n">TF_RemoveLines</span><span class="p">(</span><span class="nv">Clipboard</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="c-Singleline"> ; remove lines 3 to 6</span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;Clipboard, example 6:`n&quot;</span> <span class="nv">Clipboard</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;Clipboard, example 6:`n&quot;</span> <span class="nv">Clipboard</span><span class="w"></span>
 </pre></div>

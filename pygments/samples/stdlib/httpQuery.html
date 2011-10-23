@@ -1,242 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="c1">; httpQuery-0-3-5.ahk</span>
-<span class="c1">; httpQuery GET and POST requests by DerRaphael</span>
-<span class="c1">; http://www.autohotkey.com/forum/topic33506.html</span>
-<span class="nf">httpQuery</span><span class="p">(</span>byref<span class="w"> </span>Result<span class="p">,</span><span class="w"> </span>lpszUrl<span class="p">,</span><span class="w"> </span>POSTDATA<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>HEADERS<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="p">{</span><span class="w">   </span><span class="c1">; v0.3.5 (w) Sep, 8 2008 by Heresy &amp; derRaphael / zLib-Style release</span>
-<span class="w">   </span><span class="c1">; updates Aug, 28 2008   </span>
-<span class="w">   </span><span class="c1">; currently the verbs showHeader, storeHeader, and updateSize are supported in httpQueryOps</span>
-<span class="w">   </span><span class="c1">; in case u need a different UserAgent, Proxy, ProxyByPass, Referrer, and AcceptType just</span>
-<span class="w">   </span><span class="c1">; specify them as global variables - mind the varname for referrer is httpQueryReferer [sic].</span>
-<span class="w">   </span><span class="c1">; Also if any special dwFlags are needed such as INTERNET_FLAG_NO_AUTO_REDIRECT or cache</span>
-<span class="w">   </span><span class="c1">; handling this might be set using the httpQueryDwFlags variable as global</span>
-<span class="w">   </span><span class="kt">global</span><span class="w"> </span>httpQueryOps<span class="p">,</span><span class="w"> </span>httpAgent<span class="p">,</span><span class="w"> </span>httpProxy<span class="p">,</span><span class="w"> </span>httpProxyByPass<span class="p">,</span><span class="w"> </span>httpQueryReferer<span class="p">,</span><span class="w"> </span>httpQueryAcceptType
-<span class="w">       </span><span class="p">,</span><span class="w"> </span>httpQueryDwFlags
-<span class="w">   </span><span class="c1">; Get any missing default Values</span>
-<span class="w">   </span>defaultOps<span class="w"> </span><span class="o">=</span>
-<span class="w">   </span><span class="p">(</span>LTrim<span class="w"> </span>Join<span class="o">|</span>
-<span class="w">      </span>httpAgent<span class="o">=</span>AutoHotkeyScript<span class="o">|</span>httpProxy<span class="o">=</span><span class="mi">0</span><span class="o">|</span>httpProxyByPass<span class="o">=</span><span class="mi">0</span><span class="o">|</span>INTERNET_FLAG_SECURE<span class="o">=</span><span class="mh">0x00800000</span>
-<span class="w">      </span>SECURITY_FLAG_IGNORE_UNKNOWN_CA<span class="o">=</span><span class="mh">0x00000100</span><span class="o">|</span>SECURITY_FLAG_IGNORE_CERT_CN_INVALID<span class="o">=</span><span class="mh">0x00001000</span>
-<span class="w">      </span>SECURITY_FLAG_IGNORE_CERT_DATE_INVALID<span class="o">=</span><span class="mh">0x00002000</span><span class="o">|</span>SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE<span class="o">=</span><span class="mh">0x00000200</span>
-<span class="w">      </span>INTERNET_OPEN_TYPE_PROXY<span class="o">=</span><span class="mi">3</span><span class="o">|</span>INTERNET_OPEN_TYPE_DIRECT<span class="o">=</span><span class="mi">1</span><span class="o">|</span>INTERNET_SERVICE_HTTP<span class="o">=</span><span class="mi">3</span>
-<span class="w">   </span><span class="p">)</span>
-<span class="w">   </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>defaultOps<span class="p">,</span><span class="o">|</span>
-<span class="w">   </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="s">&quot;(?P&lt;Option&gt;[^=]+)=(?P&lt;Default&gt;.*)&quot;</span><span class="p">,</span>http<span class="p">)</span>
-<span class="w">      </span><span class="kr">if</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span><span class="nv">%httpOption%</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
-<span class="w">         </span><span class="nv">%httpOption%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>httpDefault
-<span class="w">   </span><span class="p">}</span>
-
-<span class="w">   </span><span class="c1">; Load Library</span>
-<span class="w">   </span>hModule<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;WinINet.Dll&quot;</span><span class="p">)</span>
-
-<span class="w">   </span><span class="c1">; SetUpStructures for URL_COMPONENTS / needed for InternetCrackURL</span>
-<span class="w">   </span><span class="c1">; http://msdn.microsoft.com/en-us/library/aa385420(VS.85).aspx</span>
-<span class="w">   </span>offset_name_length<span class="o">:=</span><span class="w"> </span><span class="s">&quot;4-lpszScheme-255|16-lpszHostName-1024|28-lpszUserName-1024|&quot;</span>
-<span class="w">                  </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;36-lpszPassword-1024|44-lpszUrlPath-1024|52-lpszExtrainfo-1024&quot;</span>
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>URL_COMPONENTS<span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span><span class="c1">; Struc Size               ; Scheme Size                  ; Max Port Number</span>
-<span class="w">   </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span>URL_COMPONENTS<span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span>URL_COMPONENTS<span class="p">,</span><span class="mi">12</span><span class="p">),</span><span class="w"> </span><span class="nf">NumPut</span><span class="p">(</span><span class="mh">0xffff</span><span class="p">,</span>URL_COMPONENTS<span class="p">,</span><span class="mi">24</span><span class="p">)</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>offset_name_length<span class="p">,</span><span class="o">|</span>
-<span class="w">   </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="s">&quot;(?P&lt;Offset&gt;\d+)-(?P&lt;Name&gt;[a-zA-Z]+)-(?P&lt;Size&gt;\d+)&quot;</span><span class="p">,</span>iCU_<span class="p">)</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="nv">%iCU_Name%</span><span class="p">,</span>iCU_Size<span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-<span class="w">      </span><span class="nf">NumPut</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">%iCU_Name%</span><span class="p">,</span>URL_COMPONENTS<span class="p">,</span>iCU_Offset<span class="p">)</span>
-<span class="w">      </span><span class="nf">NumPut</span><span class="p">(</span>iCU_Size<span class="p">,</span>URL_COMPONENTS<span class="p">,</span>iCU_Offset<span class="o">+</span><span class="mi">4</span><span class="p">)</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="w">   </span><span class="c1">; Split the given URL; extract scheme, user, pass, authotity (host), port, path, and query (extrainfo)</span>
-<span class="w">   </span><span class="c1">; http://msdn.microsoft.com/en-us/library/aa384376(VS.85).aspx</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCrackUrlA&quot;</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>lpszUrl<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>StrLen<span class="p">(</span>lpszUrl<span class="p">),</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span>URL_COMPONENTS<span class="p">)</span>
-
-<span class="w">   </span><span class="c1">; Update variables to retrieve results</span>
-<span class="w">   </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>offset_name_length<span class="p">,</span><span class="o">|</span>
-<span class="w">   </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="s">&quot;-(?P&lt;Name&gt;[a-zA-Z]+)-&quot;</span><span class="p">,</span>iCU_<span class="p">)</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="nv">%iCU_Name%</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="w">   </span><span class="p">}</span>
-<span class="w">   </span>nPort<span class="o">:=</span>NumGet<span class="p">(</span>URL_COMPONENTS<span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">)</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="c1">; Import any set dwFlags</span>
-<span class="w">   </span>dwFlags<span class="w"> </span><span class="o">:=</span><span class="w"> </span>httpQueryDwFlags
-<span class="w">   </span><span class="c1">; For some reasons using a selfsigned https certificates doesnt work</span>
-<span class="w">   </span><span class="c1">; such as an own webmin service - even though every security is turned off</span>
-<span class="w">   </span><span class="c1">; https with valid certificates works when</span>
-<span class="w">   </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>lpszScheme<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https&quot;</span><span class="p">)</span>
-<span class="w">      </span>dwFlags<span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span>INTERNET_FLAG_SECURE<span class="o">|</span>SECURITY_FLAG_IGNORE_CERT_CN_INVALID
-<span class="w">               </span><span class="o">|</span>SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE<span class="p">)</span>
-
-<span class="w">   </span><span class="c1">; Check for Header and drop exception if unknown or invalid URL</span>
-<span class="w">   </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>lpszScheme<span class="o">=</span><span class="s">&quot;unknown&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>Result<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;ERR: No Valid URL supplied.&quot;</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span>Result<span class="p">)</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="w">   </span><span class="c1">; Initialise httpQuery&#39;s use of the WinINet functions.</span>
-<span class="w">   </span><span class="c1">; http://msdn.microsoft.com/en-us/library/aa385096(VS.85).aspx</span>
-<span class="w">   </span>hInternet<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;WinINet\InternetOpenA&quot;</span>
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>httpAgent<span class="p">,</span><span class="s">&quot;UInt&quot;</span>
-<span class="w">                  </span><span class="p">,(</span>httpProxy<span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w">  </span>INTERNET_OPEN_TYPE_PROXY<span class="w"> </span><span class="o">:</span><span class="w"> </span>INTERNET_OPEN_TYPE_DIRECT<span class="w"> </span><span class="p">)</span>
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>httpProxy<span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>httpProxyBypass<span class="p">,</span><span class="s">&quot;Uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="w">   </span><span class="c1">; Open HTTP session for the given URL</span>
-<span class="w">   </span><span class="c1">; http://msdn.microsoft.com/en-us/library/aa384363(VS.85).aspx</span>
-<span class="w">   </span>hConnect<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;WinINet\InternetConnectA&quot;</span>
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>hInternet<span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>lpszHostname<span class="p">,</span><span class="w"> </span><span class="s">&quot;Int&quot;</span><span class="p">,</span>nPort
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>lpszUserName<span class="p">,</span><span class="w"> </span><span class="s">&quot;Str&quot;</span><span class="p">,</span>lpszPassword<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>INTERNET_SERVICE_HTTP
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uInt*&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="w">   </span><span class="c1">; Do we POST? If so, check for header handling and set default</span>
-<span class="w">   </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>Strlen<span class="p">(</span>POSTDATA<span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>HTTPVerb<span class="o">:=</span><span class="s">&quot;POST&quot;</span>
-<span class="w">      </span><span class="kr">if</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span>Headers<span class="p">)</span><span class="o">=</span><span class="mi">0</span>
-<span class="w">         </span>Headers<span class="o">:=</span><span class="s">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span>
-<span class="w">   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="c1">; otherwise mode must be GET - no header defaults needed</span>
-<span class="w">      </span>HTTPVerb<span class="o">:=</span><span class="s">&quot;GET&quot;</span><span class="w">   </span>
-
-<span class="w">   </span><span class="c1">; Form the request with proper HTTP protocol version and create the request handle</span>
-<span class="w">   </span><span class="c1">; http://msdn.microsoft.com/en-us/library/aa384233(VS.85).aspx</span>
-<span class="w">   </span>hRequest<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;WinINet\HttpOpenRequestA&quot;</span>
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>hConnect<span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>HTTPVerb<span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>lpszUrlPath<span class="w"> </span><span class="p">.</span><span class="w"> </span>lpszExtrainfo
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>ProVer<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;HTTP/1.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Str&quot;</span><span class="p">,</span>httpQueryReferer<span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>httpQueryAcceptTypes
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>dwFlags<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>Context<span class="o">:=</span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
-
-<span class="w">   </span><span class="c1">; Send the specified request to the server</span>
-<span class="w">   </span><span class="c1">; http://msdn.microsoft.com/en-us/library/aa384247(VS.85).aspx</span>
-<span class="w">   </span>sRequest<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;WinINet\HttpSendRequestA&quot;</span>
-<span class="w">                  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>hRequest<span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span>Headers<span class="p">,</span><span class="w"> </span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nf">Strlen</span><span class="p">(</span>Headers<span class="p">)</span>
-<span class="w">                  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Str&quot;</span><span class="p">,</span>POSTData<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nf">Strlen</span><span class="p">(</span>POSTData<span class="p">))</span>
-
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>header<span class="p">,</span><span class="w"> </span><span class="mi">2048</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w">  </span><span class="c1">; max 2K header data for httpResponseHeader</span>
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>header_len<span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="c1">; Check for returned server response-header (works only _after_ request been sent)</span>
-<span class="w">   </span><span class="c1">; http://msdn.microsoft.com/en-us/library/aa384238.aspx</span>
-<span class="w">   </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span>
-<span class="w">     </span><span class="nf">if</span><span class="w"> </span><span class="p">((</span>headerRequest<span class="o">:=</span>DllCall<span class="p">(</span><span class="s">&quot;WinINet\HttpQueryInfoA&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span>hRequest
-<span class="w">      </span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>header<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span>header_len<span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="w">      </span><span class="k">break</span>
-
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>headerRequest<span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span>res<span class="p">,</span>headerLength<span class="o">:=</span>NumGet<span class="p">(</span>header_len<span class="p">),</span><span class="mi">32</span><span class="p">)</span>
-<span class="w">      </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span>res<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span>header<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>headerLength<span class="p">)</span>
-<span class="w">      </span><span class="k">Loop</span><span class="p">,</span><span class="o">%</span><span class="w"> </span>headerLength
-<span class="w">         </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span>res<span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="nb">a_index</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">; Change binary zero to linefeed</span>
-<span class="w">            </span><span class="nf">NumPut</span><span class="p">(</span>Asc<span class="p">(</span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">),</span>res<span class="p">,</span><span class="nb">a_index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uChar&quot;</span><span class="p">)</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span>res<span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="w">   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span>
-<span class="w">      </span>res<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;timeout&quot;</span>
-
-<span class="w">   </span><span class="c1">; Get 1st Line of Full Response</span>
-<span class="w">   </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>res<span class="p">,`</span>n<span class="p">,`</span>r
-<span class="w">   </span><span class="p">{</span>
-<span class="w">      </span>RetValue<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">      </span><span class="k">break</span>
-<span class="w">   </span><span class="p">}</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="c1">; No Connection established - drop exception</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>RetValue<span class="o">=</span><span class="s">&quot;timeout&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>html<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;Error: timeout&quot;</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-<span class="w">   </span><span class="c1">; Strip protocol version from return value</span>
-<span class="w">   </span>RetValue<span class="w"> </span><span class="o">:=</span><span class="w"> </span>RegExReplace<span class="p">(</span>RetValue<span class="p">,</span><span class="s">&quot;HTTP/1\.[01]\s+&quot;</span><span class="p">)</span>
-<span class="w">   </span>
-<span class="w">    </span><span class="c1">; List taken from http://en.wikipedia.org/wiki/List_of_HTTP_status_codes</span>
-<span class="w">   </span>HttpRetCodes<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;100=Continue|101=Switching Protocols|102=Processing (WebDAV) (RFC 2518)|&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;200=OK|201=Created|202=Accepted|203=Non-Authoritative Information|204=No&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; Content|205=Reset Content|206=Partial Content|207=Multi-Status (WebDAV)&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;|300=Multiple Choices|301=Moved Permanently|302=Found|303=See Other|304=&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;Not Modified|305=Use Proxy|306=Switch Proxy|307=Temporary Redirect|400=B&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;ad Request|401=Unauthorized|402=Payment Required|403=Forbidden|404=Not F&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;ound|405=Method Not Allowed|406=Not Acceptable|407=Proxy Authentication &quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;Required|408=Request Timeout|409=Conflict|410=Gone|411=Length Required|4&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;12=Precondition Failed|413=Request Entity Too Large|414=Request-URI Too &quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;Long|415=Unsupported Media Type|416=Requested Range Not Satisfiable|417=&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;Expectation Failed|418=I&#39;m a teapot (RFC 2324)|422=Unprocessable Entity &quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;(WebDAV) (RFC 4918)|423=Locked (WebDAV) (RFC 4918)|424=Failed Dependency&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; (WebDAV) (RFC 4918)|425=Unordered Collection (RFC 3648)|426=Upgrade Req&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;uired (RFC 2817)|449=Retry With|500=Internal Server Error|501=Not Implem&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;ented|502=Bad Gateway|503=Service Unavailable|504=Gateway Timeout|505=HT&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;TP Version Not Supported|506=Variant Also Negotiates (RFC 2295)|507=Insu&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;fficient Storage (WebDAV) (RFC 4918)|509=Bandwidth Limit Exceeded|510=No&quot;</span>
-<span class="w">              </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;t Extended (RFC 2774)&quot;</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="c1">; Gather numeric response value</span>
-<span class="w">   </span>RetValue<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span>RetValue<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="c1">; Parse through return codes and set according informations</span>
-<span class="w">   </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>HttpRetCodes<span class="p">,</span><span class="o">|</span>
-<span class="w">   </span><span class="p">{</span>
-<span class="w">      </span>HttpReturnCode<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w">    </span><span class="c1">; Numeric return value see above</span>
-<span class="w">      </span>HttpReturnMsg<span class="w">  </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="w">      </span><span class="c1">; link for additional information</span>
-<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>RetValue<span class="o">=</span>HttpReturnCode<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span>RetMsg<span class="w"> </span><span class="o">:=</span><span class="w"> </span>HttpReturnMsg
-<span class="w">         </span><span class="k">break</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="w">   </span><span class="c1">; Global HttpQueryOps handling</span>
-<span class="w">   </span><span class="kr">if</span><span class="w"> </span><span class="nf">strlen</span><span class="p">(</span>HTTPQueryOps<span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="c1">; Show full Header response (usefull for debugging)</span>
-<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>instr<span class="p">(</span>HTTPQueryOps<span class="p">,</span><span class="s">&quot;showHeader&quot;</span><span class="p">))</span>
-<span class="w">         </span><span class="k">MsgBox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>res
-<span class="w">      </span><span class="c1">; Save the full Header response in a global Variable</span>
-<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>instr<span class="p">(</span>HTTPQueryOps<span class="p">,</span><span class="s">&quot;storeHeader&quot;</span><span class="p">))</span>
-<span class="w">         </span><span class="kt">global</span><span class="w"> </span>HttpQueryHeader<span class="w"> </span><span class="o">:=</span><span class="w"> </span>res
-<span class="w">      </span><span class="c1">; Check for size updates to export to a global Var</span>
-<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>instr<span class="p">(</span>HTTPQueryOps<span class="p">,</span><span class="s">&quot;updateSize&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>res<span class="p">,`</span>n
-<span class="w">            </span><span class="kr">If</span><span class="w"> </span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nb">A_LoopField</span><span class="p">,</span><span class="s">&quot;Content-Length:\s+?(?P&lt;Size&gt;\d+)&quot;</span><span class="p">,</span>full<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">               </span><span class="kt">global</span><span class="w"> </span>HttpQueryFullSize<span class="w"> </span><span class="o">:=</span><span class="w"> </span>fullSize
-<span class="w">               </span><span class="k">break</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">         </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>fullSize<span class="o">+</span><span class="mi">0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="w">            </span>HttpQueryFullSize<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;size unavailable&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="w">   </span><span class="c1">; Check for valid codes and drop exception if suspicious</span>
-<span class="w">   </span><span class="kr">if</span><span class="w"> </span><span class="o">!</span><span class="p">(</span>InStr<span class="p">(</span><span class="s">&quot;100 200 201 202 302&quot;</span><span class="p">,</span>RetValue<span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>Result<span class="w"> </span><span class="o">:=</span><span class="w"> </span>RetValue<span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span>RetMsg
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nf">StrLen</span><span class="p">(</span>Result<span class="p">)</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>BytesRead<span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span>fsize<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">Loop</span><span class="w">            </span><span class="c1">; the receiver loop - rewritten in the need to enable</span>
-<span class="w">   </span><span class="p">{</span><span class="w">               </span><span class="c1">; support for larger file downloads</span>
-<span class="w">      </span>bc<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_Index</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span>buffer<span class="nv">%bc%</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">; setup new chunk for this receive round</span>
-<span class="w">      </span>ReadFile<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\InternetReadFile&quot;</span>
-<span class="w">                  </span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>hRequest<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span>buffer<span class="nv">%bc%</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span>BytesRead<span class="p">)</span>
-<span class="w">      </span>ReadBytes<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span>BytesRead<span class="p">)</span><span class="w">    </span><span class="c1">; how many bytes were received?</span>
-<span class="w">      </span><span class="nf">If</span><span class="w"> </span><span class="p">((</span>ReadFile<span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="p">(</span><span class="o">!</span>ReadBytes<span class="p">))</span><span class="w">  </span><span class="c1">; we have had no error yet and received no more bytes</span>
-<span class="w">         </span><span class="k">break</span><span class="w">                         </span><span class="c1">; we must be done! so lets break the receiver loop</span>
-<span class="w">      </span><span class="k">Else</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span>fsize<span class="w"> </span><span class="o">+=</span><span class="w"> </span>ReadBytes<span class="w">            </span><span class="c1">; sum up all chunk sizes for correct return size</span>
-<span class="w">         </span>sizeArray<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span>ReadBytes<span class="w"> </span><span class="s">&quot;|&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">      </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span>instr<span class="p">(</span>HTTPQueryOps<span class="p">,</span><span class="s">&quot;updateSize&quot;</span><span class="p">))</span>
-<span class="w">         </span><span class="kt">Global</span><span class="w"> </span>HttpQueryCurrentSize<span class="w"> </span><span class="o">:=</span><span class="w"> </span>fsize
-<span class="w">   </span><span class="p">}</span>
-<span class="w">   </span>sizeArray<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span>sizeArray<span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w">   </span><span class="c1">; trim last PipeChar</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>result<span class="p">,</span>fSize<span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="w">      </span><span class="c1">; reconstruct the result from above generated chunkblocks</span>
-<span class="w">   </span>Dest<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span>result<span class="w">                       </span><span class="c1">; to a our ByRef result variable</span>
-<span class="w">   </span><span class="k">Loop</span><span class="p">,</span>Parse<span class="p">,</span>SizeArray<span class="p">,</span><span class="o">|</span>
-<span class="w">      </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span>Dest<span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span>buffer<span class="nv">%A_Index%</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nb">A_LoopField</span><span class="p">)</span>
-<span class="w">      </span><span class="p">,</span><span class="w"> </span>Dest<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">     </span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="w"> </span>hRequest<span class="p">)</span><span class="w">   </span><span class="c1">; close all opened</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="w"> </span>hInternet<span class="p">)</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">)</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>hModule<span class="p">)</span><span class="w">                    </span><span class="c1">; unload the library</span>
-<span class="w">   </span><span class="k">return</span><span class="w"> </span>fSize<span class="w">                          </span><span class="c1">; return the size - strings need update via VarSetCapacity(res,-1)</span>
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="c-Singleline">; httpQuery-0-3-5.ahk</span>
@@ -249,142 +11,142 @@ New Lexer:
 <span class="c-Singleline">   ; in case u need a different UserAgent, Proxy, ProxyByPass, Referrer, and AcceptType just</span>
 <span class="c-Singleline">   ; specify them as global variables - mind the varname for referrer is httpQueryReferer [sic].</span>
 <span class="c-Singleline">   ; Also if any special dwFlags are needed such as INTERNET_FLAG_NO_AUTO_REDIRECT or cache</span>
-<span class="c-Singleline">   ; handling this might be set using the httpQueryDwFlags variable as global</span>
-<span class="w">   </span><span class="nb">global</span> <span class="n">httpQueryOps</span><span class="p">,</span> <span class="n">httpAgent</span><span class="p">,</span> <span class="n">httpProxy</span><span class="p">,</span> <span class="n">httpProxyByPass</span><span class="p">,</span> <span class="n">httpQueryReferer</span><span class="p">,</span> <span class="n">httpQueryAcceptType</span>
+<span class="c-Singleline">   ; handling this might be set using the httpQueryDwFlags variable as global</span><span class="nf"></span>
+<span class="nf">   global</span> <span class="n">httpQueryOps</span><span class="p">,</span> <span class="n">httpAgent</span><span class="p">,</span> <span class="n">httpProxy</span><span class="p">,</span> <span class="n">httpProxyByPass</span><span class="p">,</span> <span class="n">httpQueryReferer</span><span class="p">,</span> <span class="n">httpQueryAcceptType</span>
        <span class="p">,</span> <span class="n">httpQueryDwFlags</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ; Get any missing default Values</span>
-   <span class="n">defaultOps</span> <span class="o">=</span>
+<span class="w">   </span><span class="n">defaultOps</span><span class="p"> =</span>
 <span class="w">   </span><span class="g">(LTrim Join|</span>
 <span class="g">      httpAgent=AutoHotkeyScript|httpProxy=0|httpProxyByPass=0|INTERNET_FLAG_SECURE=0x00800000</span>
 <span class="g">      SECURITY_FLAG_IGNORE_UNKNOWN_CA=0x00000100|SECURITY_FLAG_IGNORE_CERT_CN_INVALID=0x00001000</span>
 <span class="g">      SECURITY_FLAG_IGNORE_CERT_DATE_INVALID=0x00002000|SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE=0x00000200</span>
 <span class="g">      INTERNET_OPEN_TYPE_PROXY=3|INTERNET_OPEN_TYPE_DIRECT=1|INTERNET_SERVICE_HTTP=3</span>
 <span class="g">   )</span>
-<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">defaultOps</span><span class="p">,</span><span class="o">|</span>
-   <span class="p">{</span>
-      <span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;(?P&lt;Option&gt;[^=]+)=(?P&lt;Default&gt;.*)&quot;</span><span class="p">,</span><span class="n">http</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="nv">%httpOption%</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="s">Parse</span><span class="p">,</span><span class="s">defaultOps</span><span class="p">,</span><span class="s">|</span><span class="w"></span>
+<span class="w">   </span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">      RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;(?P&lt;Option&gt;[^=]+)=(?P&lt;Default&gt;.*)&quot;</span><span class="p">,</span><span class="n">http</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      if StrLen</span><span class="p">(</span><span class="nv">%httpOption%</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
          <span class="nv">%httpOption%</span> <span class="o">:=</span> <span class="n">httpDefault</span>
    <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Load Library</span>
-   <span class="n">hModule</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="s">&quot;WinINet.Dll&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="n">hModule</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span> <span class="s">&quot;WinINet.Dll&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; SetUpStructures for URL_COMPONENTS / needed for InternetCrackURL</span>
 <span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa385420(VS.85).aspx</span>
 <span class="w">   </span><span class="nl">offset_name_length:</span><span class="o">=</span> <span class="s">&quot;4-lpszScheme-255|16-lpszHostName-1024|28-lpszUserName-1024|&quot;</span>
-                  <span class="o">.</span> <span class="s">&quot;36-lpszPassword-1024|44-lpszUrlPath-1024|52-lpszExtrainfo-1024&quot;</span>
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
-<span class="c-Singleline">   ; Struc Size               ; Scheme Size                  ; Max Port Number</span>
-   <span class="nf">NumPut</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="nf">NumPut</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span> <span class="nf">NumPut</span><span class="p">(</span><span class="mh">0xffff</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">24</span><span class="p">)</span>
+                  <span class="o">.</span> <span class="s">&quot;36-lpszPassword-1024|44-lpszUrlPath-1024|52-lpszExtrainfo-1024&quot;</span><span class="nf"></span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">   ; Struc Size               ; Scheme Size                  ; Max Port Number</span><span class="nf"></span>
+<span class="nf">   NumPut</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="nf"> NumPut</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span><span class="nf"> NumPut</span><span class="p">(</span><span class="mh">0xffff</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">24</span><span class="p">)</span><span class="w"></span>
 <span class="w">   </span>
-<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">offset_name_length</span><span class="p">,</span><span class="o">|</span>
-   <span class="p">{</span>
-      <span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;(?P&lt;Offset&gt;\d+)-(?P&lt;Name&gt;[a-zA-Z]+)-(?P&lt;Size&gt;\d+)&quot;</span><span class="p">,</span><span class="n">iCU_</span><span class="p">)</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="nv">%iCU_Name%</span><span class="p">,</span><span class="n">iCU_Size</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-      <span class="nf">NumPut</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">%iCU_Name%</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="n">iCU_Offset</span><span class="p">)</span>
-      <span class="nf">NumPut</span><span class="p">(</span><span class="n">iCU_Size</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="n">iCU_Offset</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="s">Parse</span><span class="p">,</span><span class="s">offset_name_length</span><span class="p">,</span><span class="s">|</span><span class="w"></span>
+<span class="w">   </span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">      RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;(?P&lt;Offset&gt;\d+)-(?P&lt;Name&gt;[a-zA-Z]+)-(?P&lt;Size&gt;\d+)&quot;</span><span class="p">,</span><span class="n">iCU_</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="nv">%iCU_Name%</span><span class="p">,</span><span class="n">iCU_Size</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      NumPut</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">%iCU_Name%</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="n">iCU_Offset</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      NumPut</span><span class="p">(</span><span class="n">iCU_Size</span><span class="p">,</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="n">iCU_Offset</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span>
    <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Split the given URL; extract scheme, user, pass, authotity (host), port, path, and query (extrainfo)</span>
-<span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa384376(VS.85).aspx</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCrackUrlA&quot;</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">lpszUrl</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">lpszUrl</span><span class="p">),</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">URL_COMPONENTS</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa384376(VS.85).aspx</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCrackUrlA&quot;</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">lpszUrl</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nf">StrLen</span><span class="p">(</span><span class="n">lpszUrl</span><span class="p">),</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">URL_COMPONENTS</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Update variables to retrieve results</span>
-<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">offset_name_length</span><span class="p">,</span><span class="o">|</span>
-   <span class="p">{</span>
-      <span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;-(?P&lt;Name&gt;[a-zA-Z]+)-&quot;</span><span class="p">,</span><span class="n">iCU_</span><span class="p">)</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="nv">%iCU_Name%</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="s">Parse</span><span class="p">,</span><span class="s">offset_name_length</span><span class="p">,</span><span class="s">|</span><span class="w"></span>
+<span class="w">   </span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">      RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;-(?P&lt;Name&gt;[a-zA-Z]+)-&quot;</span><span class="p">,</span><span class="n">iCU_</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="nv">%iCU_Name%</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
    <span class="p">}</span>
 <span class="w">   </span><span class="nl">nPort:</span><span class="o">=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">URL_COMPONENTS</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ; Import any set dwFlags</span>
-   <span class="n">dwFlags</span> <span class="o">:=</span> <span class="n">httpQueryDwFlags</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="n">dwFlags</span><span class="p"> </span><span class="o">:=</span> <span class="n">httpQueryDwFlags</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ; For some reasons using a selfsigned https certificates doesnt work</span>
 <span class="c-Singleline">   ; such as an own webmin service - even though every security is turned off</span>
 <span class="c-Singleline">   ; https with valid certificates works when</span>
-   <span class="n">if</span> <span class="p">(</span><span class="n">lpszScheme</span> <span class="o">=</span> <span class="s">&quot;https&quot;</span><span class="p">)</span>
-      <span class="n">dwFlags</span> <span class="o">|=</span> <span class="p">(</span><span class="n">INTERNET_FLAG_SECURE</span><span class="o">|</span><span class="n">SECURITY_FLAG_IGNORE_CERT_CN_INVALID</span>
+<span class="w">   </span><span class="n">if</span><span class="p"> (</span><span class="n">lpszScheme</span> <span class="o">=</span> <span class="s">&quot;https&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="n">dwFlags</span><span class="p"> </span><span class="o">|=</span> <span class="p">(</span><span class="n">INTERNET_FLAG_SECURE</span><span class="o">|</span><span class="n">SECURITY_FLAG_IGNORE_CERT_CN_INVALID</span>
                <span class="o">|</span><span class="n">SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Check for Header and drop exception if unknown or invalid URL</span>
-   <span class="n">if</span> <span class="p">(</span><span class="n">lpszScheme</span><span class="o">=</span><span class="s">&quot;unknown&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">Result</span> <span class="o">:=</span> <span class="s">&quot;ERR: No Valid URL supplied.&quot;</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">Result</span><span class="p">)</span>
+<span class="w">   </span><span class="n">if</span><span class="p"> (</span><span class="n">lpszScheme</span><span class="o">=</span><span class="s">&quot;unknown&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">      </span><span class="n">Result</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;ERR: No Valid URL supplied.&quot;</span><span class="nf"></span>
+<span class="nf">      Return StrLen</span><span class="p">(</span><span class="n">Result</span><span class="p">)</span>
    <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Initialise httpQuery&#39;s use of the WinINet functions.</span>
 <span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa385096(VS.85).aspx</span>
-   <span class="n">hInternet</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetOpenA&quot;</span>
+<span class="w">   </span><span class="n">hInternet</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetOpenA&quot;</span>
                   <span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">httpAgent</span><span class="p">,</span><span class="s">&quot;UInt&quot;</span>
                   <span class="p">,(</span><span class="n">httpProxy</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">?</span>  <span class="n">INTERNET_OPEN_TYPE_PROXY</span> <span class="o">:</span> <span class="n">INTERNET_OPEN_TYPE_DIRECT</span> <span class="p">)</span>
                   <span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">httpProxy</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">httpProxyBypass</span><span class="p">,</span><span class="s">&quot;Uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Open HTTP session for the given URL</span>
 <span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa384363(VS.85).aspx</span>
-   <span class="n">hConnect</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetConnectA&quot;</span>
+<span class="w">   </span><span class="n">hConnect</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetConnectA&quot;</span>
                   <span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">hInternet</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">lpszHostname</span><span class="p">,</span> <span class="s">&quot;Int&quot;</span><span class="p">,</span><span class="n">nPort</span>
                   <span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">lpszUserName</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">lpszPassword</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">INTERNET_SERVICE_HTTP</span>
                   <span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;uInt*&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Do we POST? If so, check for header handling and set default</span>
-   <span class="n">if</span> <span class="p">(</span><span class="nf">Strlen</span><span class="p">(</span><span class="n">POSTDATA</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">      </span><span class="nl">HTTPVerb:</span><span class="o">=</span><span class="s">&quot;POST&quot;</span>
-<span class="w">      </span><span class="nb">if </span><span class="nf">StrLen</span><span class="p">(</span><span class="n">Headers</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">   </span><span class="n">if</span><span class="p"> (</span><span class="nf">Strlen</span><span class="p">(</span><span class="n">POSTDATA</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">      </span><span class="nl">HTTPVerb:</span><span class="o">=</span><span class="s">&quot;POST&quot;</span><span class="nf"></span>
+<span class="nf">      if StrLen</span><span class="p">(</span><span class="n">Headers</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
 <span class="w">         </span><span class="nl">Headers:</span><span class="o">=</span><span class="s">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span>
    <span class="p">}</span> <span class="n">else</span><span class="c-Singleline"> ; otherwise mode must be GET - no header defaults needed</span>
 <span class="w">      </span><span class="nl">HTTPVerb:</span><span class="o">=</span><span class="s">&quot;GET&quot;</span><span class="c-Singleline">   </span>
 
 <span class="c-Singleline">   ; Form the request with proper HTTP protocol version and create the request handle</span>
 <span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa384233(VS.85).aspx</span>
-   <span class="n">hRequest</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\HttpOpenRequestA&quot;</span>
+<span class="w">   </span><span class="n">hRequest</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\HttpOpenRequestA&quot;</span>
                   <span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">hConnect</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">HTTPVerb</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">lpszUrlPath</span> <span class="o">.</span> <span class="n">lpszExtrainfo</span>
                   <span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">ProVer</span> <span class="o">:=</span> <span class="s">&quot;HTTP/1.1&quot;</span><span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">httpQueryReferer</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">httpQueryAcceptTypes</span>
                   <span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">dwFlags</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">Context</span><span class="o">:=</span><span class="mi">0</span> <span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Send the specified request to the server</span>
 <span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa384247(VS.85).aspx</span>
-   <span class="n">sRequest</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\HttpSendRequestA&quot;</span>
+<span class="w">   </span><span class="n">sRequest</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\HttpSendRequestA&quot;</span>
                   <span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">hRequest</span><span class="p">,</span><span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">Headers</span><span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nf">Strlen</span><span class="p">(</span><span class="n">Headers</span><span class="p">)</span>
-                  <span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">POSTData</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nf">Strlen</span><span class="p">(</span><span class="n">POSTData</span><span class="p">))</span>
+                  <span class="p">,</span> <span class="s">&quot;Str&quot;</span><span class="p">,</span><span class="n">POSTData</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nf">Strlen</span><span class="p">(</span><span class="n">POSTData</span><span class="p">))</span><span class="nf"></span>
 
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">  ; max 2K header data for httpResponseHeader</span>
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">header_len</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline">  ; max 2K header data for httpResponseHeader</span><span class="nf"></span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">header_len</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ; Check for returned server response-header (works only _after_ request been sent)</span>
 <span class="c-Singleline">   ; http://msdn.microsoft.com/en-us/library/aa384238.aspx</span>
-<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span> <span class="mi">5</span>
-     <span class="n">if</span> <span class="p">((</span><span class="n">headerRequest</span><span class="o">:=</span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\HttpQueryInfoA&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hRequest</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> 5</span><span class="w"></span>
+<span class="w">     </span> <span class="n">if</span> <span class="p">((</span><span class="n">headerRequest</span><span class="o">:=</span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\HttpQueryInfoA&quot;</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="n">hRequest</span>
       <span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">header</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">header_len</span><span class="p">,</span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">break</span>
+<span class="w">      </span><span class="nb">break</span><span class="w"></span>
 
-   <span class="n">If</span> <span class="p">(</span><span class="n">headerRequest</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">headerLength</span><span class="o">:=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">header_len</span><span class="p">),</span><span class="mi">32</span><span class="p">)</span>
-      <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">res</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">header</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">headerLength</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Loop</span><span class="p">,</span><span class="o">%</span> <span class="n">headerLength</span>
-         <span class="n">if</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">res</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="nv">a_index</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; Change binary zero to linefeed</span>
-            <span class="nf">NumPut</span><span class="p">(</span><span class="nf">Asc</span><span class="p">(</span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">),</span><span class="n">res</span><span class="p">,</span><span class="nv">a_index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uChar&quot;</span><span class="p">)</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">   </span> <span class="n">If</span> <span class="p">(</span><span class="n">headerRequest</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">headerLength</span><span class="o">:=</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">header_len</span><span class="p">),</span><span class="mi">32</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">res</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">header</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">headerLength</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">Loop</span><span class="p">,</span><span class="s">% headerLength</span><span class="w"></span>
+<span class="w">         </span> <span class="n">if</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">res</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="nv">a_index</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; Change binary zero to linefeed</span><span class="nf"></span>
+<span class="nf">            NumPut</span><span class="p">(</span><span class="nf">Asc</span><span class="p">(</span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">),</span><span class="n">res</span><span class="p">,</span><span class="nv">a_index</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;uChar&quot;</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
    <span class="p">}</span> <span class="n">else</span>
-      <span class="n">res</span> <span class="o">:=</span> <span class="s">&quot;timeout&quot;</span><span class="c-Singleline"></span>
+<span class="w">      </span><span class="n">res</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;timeout&quot;</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Get 1st Line of Full Response</span>
-<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">res</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="se">`r</span>
-   <span class="p">{</span>
-      <span class="n">RetValue</span> <span class="o">:=</span> <span class="nv">A_LoopField</span>
-<span class="w">      </span><span class="nb">break</span>
-   <span class="p">}</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="s">Parse</span><span class="p">,</span><span class="s">res</span><span class="p">,</span><span class="se">`n</span><span class="p">,</span><span class="se">`r</span><span class="w"></span>
+<span class="w">   </span> <span class="p">{</span>
+<span class="w">      </span><span class="n">RetValue</span><span class="p"> </span><span class="o">:=</span> <span class="nv">A_LoopField</span>
+<span class="w">      </span><span class="nb">break</span><span class="w"></span>
+<span class="w">   </span> <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ; No Connection established - drop exception</span>
-   <span class="n">If</span> <span class="p">(</span><span class="n">RetValue</span><span class="o">=</span><span class="s">&quot;timeout&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">html</span> <span class="o">:=</span> <span class="s">&quot;Error: timeout&quot;</span>
-<span class="w">      </span><span class="nb">return</span> <span class="o">-</span><span class="mi">1</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="n">RetValue</span><span class="o">=</span><span class="s">&quot;timeout&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">      </span><span class="n">html</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;Error: timeout&quot;</span><span class="nf"></span>
+<span class="nf">      return</span> <span class="o">-</span><span class="mi">1</span>
    <span class="p">}</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ; Strip protocol version from return value</span>
-   <span class="n">RetValue</span> <span class="o">:=</span> <span class="nf">RegExReplace</span><span class="p">(</span><span class="n">RetValue</span><span class="p">,</span><span class="s">&quot;HTTP/1\.[01]\s+&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="n">RetValue</span><span class="p"> </span><span class="o">:=</span><span class="nf"> RegExReplace</span><span class="p">(</span><span class="n">RetValue</span><span class="p">,</span><span class="s">&quot;HTTP/1\.[01]\s+&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">    ; List taken from http://en.wikipedia.org/wiki/List_of_HTTP_status_codes</span>
-   <span class="n">HttpRetCodes</span> <span class="o">:=</span> <span class="s">&quot;100=Continue|101=Switching Protocols|102=Processing (WebDAV) (RFC 2518)|&quot;</span>
+<span class="w">   </span><span class="n">HttpRetCodes</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;100=Continue|101=Switching Protocols|102=Processing (WebDAV) (RFC 2518)|&quot;</span>
               <span class="o">.</span> <span class="s">&quot;200=OK|201=Created|202=Accepted|203=Non-Authoritative Information|204=No&quot;</span>
               <span class="o">.</span> <span class="s">&quot; Content|205=Reset Content|206=Partial Content|207=Multi-Status (WebDAV)&quot;</span>
               <span class="o">.</span> <span class="s">&quot;|300=Multiple Choices|301=Moved Permanently|302=Found|303=See Other|304=&quot;</span>
@@ -404,75 +166,75 @@ New Lexer:
               <span class="o">.</span> <span class="s">&quot;t Extended (RFC 2774)&quot;</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ; Gather numeric response value</span>
-   <span class="n">RetValue</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">RetValue</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="n">RetValue</span><span class="p"> </span><span class="o">:=</span><span class="nf"> SubStr</span><span class="p">(</span><span class="n">RetValue</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
 <span class="c-Singleline">   ; Parse through return codes and set according informations</span>
-<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">HttpRetCodes</span><span class="p">,</span><span class="o">|</span>
-   <span class="p">{</span>
-      <span class="n">HttpReturnCode</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="c-Singleline">    ; Numeric return value see above</span>
-      <span class="n">HttpReturnMsg</span>  <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline">      ; link for additional information</span>
-      <span class="n">if</span> <span class="p">(</span><span class="n">RetValue</span><span class="o">=</span><span class="n">HttpReturnCode</span><span class="p">)</span> <span class="p">{</span>
-         <span class="n">RetMsg</span> <span class="o">:=</span> <span class="n">HttpReturnMsg</span>
-<span class="w">         </span><span class="nb">break</span>
-      <span class="p">}</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="s">Parse</span><span class="p">,</span><span class="s">HttpRetCodes</span><span class="p">,</span><span class="s">|</span><span class="w"></span>
+<span class="w">   </span> <span class="p">{</span>
+<span class="w">      </span><span class="n">HttpReturnCode</span><span class="p"> </span><span class="o">:=</span><span class="nf"> SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="c-Singleline">    ; Numeric return value see above</span>
+<span class="w">      </span><span class="n">HttpReturnMsg</span><span class="p"> </span><span class="w"> </span><span class="o">:=</span><span class="nf"> SubStr</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="c-Singleline">      ; link for additional information</span>
+<span class="w">      </span><span class="n">if</span><span class="p"> (</span><span class="n">RetValue</span><span class="o">=</span><span class="n">HttpReturnCode</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">         </span><span class="n">RetMsg</span><span class="p"> </span><span class="o">:=</span> <span class="n">HttpReturnMsg</span>
+<span class="w">         </span><span class="nb">break</span><span class="w"></span>
+<span class="w">      </span> <span class="p">}</span>
    <span class="p">}</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">   ; Global HttpQueryOps handling</span>
-<span class="w">   </span><span class="nb">if </span><span class="nf">strlen</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="p">{</span><span class="c-Singleline"></span>
+<span class="c-Singleline">   ; Global HttpQueryOps handling</span><span class="nf"></span>
+<span class="nf">   if strlen</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">      ; Show full Header response (usefull for debugging)</span>
-      <span class="n">if</span> <span class="p">(</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;showHeader&quot;</span><span class="p">))</span>
-<span class="w">         </span><span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">res</span><span class="c-Singleline"></span>
+<span class="w">      </span><span class="n">if</span><span class="p"> (</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;showHeader&quot;</span><span class="p">))</span>
+<span class="w">         </span><span class="nb">MsgBox</span><span class="p"> % </span><span class="n">res</span><span class="c-Singleline"></span>
 <span class="c-Singleline">      ; Save the full Header response in a global Variable</span>
-      <span class="n">if</span> <span class="p">(</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;storeHeader&quot;</span><span class="p">))</span>
-<span class="w">         </span><span class="nb">global</span> <span class="n">HttpQueryHeader</span> <span class="o">:=</span> <span class="n">res</span><span class="c-Singleline"></span>
+<span class="w">      </span><span class="n">if</span><span class="p"> (</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;storeHeader&quot;</span><span class="p">))</span><span class="nf"></span>
+<span class="nf">         global</span> <span class="n">HttpQueryHeader</span> <span class="o">:=</span> <span class="n">res</span><span class="c-Singleline"></span>
 <span class="c-Singleline">      ; Check for size updates to export to a global Var</span>
-      <span class="n">if</span> <span class="p">(</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;updateSize&quot;</span><span class="p">))</span> <span class="p">{</span>
-<span class="w">         </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">res</span><span class="p">,</span><span class="se">`n</span>
-<span class="w">            </span><span class="nb">If </span><span class="nf">RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;Content-Length:\s+?(?P&lt;Size&gt;\d+)&quot;</span><span class="p">,</span><span class="n">full</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">               </span><span class="nb">global</span> <span class="n">HttpQueryFullSize</span> <span class="o">:=</span> <span class="n">fullSize</span>
-<span class="w">               </span><span class="nb">break</span>
-            <span class="p">}</span>
-         <span class="n">if</span> <span class="p">(</span><span class="n">fullSize</span><span class="o">+</span><span class="mi">0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">HttpQueryFullSize</span> <span class="o">:=</span> <span class="s">&quot;size unavailable&quot;</span>
+<span class="w">      </span><span class="n">if</span><span class="p"> (</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;updateSize&quot;</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">         </span><span class="nb">Loop</span><span class="p">,</span><span class="s">Parse</span><span class="p">,</span><span class="s">res</span><span class="p">,</span><span class="se">`n</span><span class="w"></span>
+<span class="w">            </span><span class="nf"> If RegExMatch</span><span class="p">(</span><span class="nv">A_LoopField</span><span class="p">,</span><span class="s">&quot;Content-Length:\s+?(?P&lt;Size&gt;\d+)&quot;</span><span class="p">,</span><span class="n">full</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">               global</span> <span class="n">HttpQueryFullSize</span> <span class="o">:=</span> <span class="n">fullSize</span>
+<span class="w">               </span><span class="nb">break</span><span class="w"></span>
+<span class="w">            </span> <span class="p">}</span>
+<span class="w">         </span><span class="n">if</span><span class="p"> (</span><span class="n">fullSize</span><span class="o">+</span><span class="mi">0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">            </span><span class="n">HttpQueryFullSize</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;size unavailable&quot;</span>
       <span class="p">}</span>
    <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">   ; Check for valid codes and drop exception if suspicious</span>
-   <span class="n">if</span> <span class="o">!</span><span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="s">&quot;100 200 201 202 302&quot;</span><span class="p">,</span><span class="n">RetValue</span><span class="p">))</span> <span class="p">{</span>
-      <span class="n">Result</span> <span class="o">:=</span> <span class="n">RetValue</span> <span class="s">&quot; &quot;</span> <span class="n">RetMsg</span>
-<span class="w">      </span><span class="nb">return</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">Result</span><span class="p">)</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">if</span><span class="p"> </span><span class="o">!</span><span class="p">(</span><span class="nf">InStr</span><span class="p">(</span><span class="s">&quot;100 200 201 202 302&quot;</span><span class="p">,</span><span class="n">RetValue</span><span class="p">))</span> <span class="p">{</span>
+<span class="w">      </span><span class="n">Result</span><span class="p"> </span><span class="o">:=</span> <span class="n">RetValue</span> <span class="s">&quot; &quot;</span> <span class="n">RetMsg</span><span class="nf"></span>
+<span class="nf">      return StrLen</span><span class="p">(</span><span class="n">Result</span><span class="p">)</span>
+   <span class="p">}</span><span class="nf"></span>
 
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">BytesRead</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-   <span class="n">fsize</span> <span class="o">:=</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">Loop</span><span class="c-Singleline">            ; the receiver loop - rewritten in the need to enable</span>
-   <span class="p">{</span><span class="c-Singleline">               ; support for larger file downloads</span>
-      <span class="n">bc</span> <span class="o">:=</span> <span class="nv">A_Index</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">buffer</span><span class="nv">%bc%</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; setup new chunk for this receive round</span>
-      <span class="n">ReadFile</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetReadFile&quot;</span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">BytesRead</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">   </span><span class="n">fsize</span><span class="p"> </span><span class="o">:=</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="c-Singleline">            ; the receiver loop - rewritten in the need to enable</span><span class="w"></span>
+<span class="w">   </span> <span class="p">{</span><span class="c-Singleline">               ; support for larger file downloads</span>
+<span class="w">      </span><span class="n">bc</span><span class="p"> </span><span class="o">:=</span> <span class="nv">A_Index</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="n">buffer</span><span class="nv">%bc%</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ; setup new chunk for this receive round</span>
+<span class="w">      </span><span class="n">ReadFile</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetReadFile&quot;</span>
                   <span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">hRequest</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">buffer</span><span class="nv">%bc%</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">BytesRead</span><span class="p">)</span>
-      <span class="n">ReadBytes</span> <span class="o">:=</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">BytesRead</span><span class="p">)</span><span class="c-Singleline">    ; how many bytes were received?</span>
-      <span class="n">If</span> <span class="p">((</span><span class="n">ReadFile</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="p">(</span><span class="o">!</span><span class="n">ReadBytes</span><span class="p">))</span><span class="c-Singleline">  ; we have had no error yet and received no more bytes</span>
-<span class="w">         </span><span class="nb">break</span><span class="c-Singleline">                         ; we must be done! so lets break the receiver loop</span>
-<span class="w">      </span><span class="nb">Else</span> <span class="p">{</span>
-         <span class="n">fsize</span> <span class="o">+=</span> <span class="n">ReadBytes</span><span class="c-Singleline">            ; sum up all chunk sizes for correct return size</span>
-         <span class="n">sizeArray</span> <span class="o">.=</span> <span class="n">ReadBytes</span> <span class="s">&quot;|&quot;</span>
+<span class="w">      </span><span class="n">ReadBytes</span><span class="p"> </span><span class="o">:=</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">BytesRead</span><span class="p">)</span><span class="c-Singleline">    ; how many bytes were received?</span>
+<span class="w">      </span><span class="n">If</span><span class="p"> ((</span><span class="n">ReadFile</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="p">(</span><span class="o">!</span><span class="n">ReadBytes</span><span class="p">))</span><span class="c-Singleline">  ; we have had no error yet and received no more bytes</span>
+<span class="w">         </span><span class="nb">break</span><span class="c-Singleline">                         ; we must be done! so lets break the receiver loop</span><span class="w"></span>
+<span class="w">      </span> <span class="n">Else</span> <span class="p">{</span>
+<span class="w">         </span><span class="n">fsize</span><span class="p"> </span><span class="o">+=</span> <span class="n">ReadBytes</span><span class="c-Singleline">            ; sum up all chunk sizes for correct return size</span>
+<span class="w">         </span><span class="n">sizeArray</span><span class="p"> </span><span class="o">.=</span> <span class="n">ReadBytes</span> <span class="s">&quot;|&quot;</span>
       <span class="p">}</span>
-      <span class="n">if</span> <span class="p">(</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;updateSize&quot;</span><span class="p">))</span>
-<span class="w">         </span><span class="nb">Global</span> <span class="n">HttpQueryCurrentSize</span> <span class="o">:=</span> <span class="n">fsize</span>
+<span class="w">      </span><span class="n">if</span><span class="p"> (</span><span class="nf">instr</span><span class="p">(</span><span class="n">HTTPQueryOps</span><span class="p">,</span><span class="s">&quot;updateSize&quot;</span><span class="p">))</span><span class="nf"></span>
+<span class="nf">         Global</span> <span class="n">HttpQueryCurrentSize</span> <span class="o">:=</span> <span class="n">fsize</span>
    <span class="p">}</span>
-   <span class="n">sizeArray</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">sizeArray</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">   ; trim last PipeChar</span>
-   
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">fSize</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">      ; reconstruct the result from above generated chunkblocks</span>
-   <span class="n">Dest</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">result</span><span class="c-Singleline">                       ; to a our ByRef result variable</span>
-<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="n">Parse</span><span class="p">,</span><span class="n">SizeArray</span><span class="p">,</span><span class="o">|</span>
-      <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">Dest</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">buffer</span><span class="nv">%A_Index%</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
-      <span class="p">,</span> <span class="n">Dest</span> <span class="o">+=</span> <span class="nv">A_LoopField</span>
-     
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span> <span class="n">hRequest</span><span class="p">)</span><span class="c-Singleline">   ; close all opened</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span> <span class="n">hInternet</span><span class="p">)</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">)</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hModule</span><span class="p">)</span><span class="c-Singleline">                    ; unload the library</span>
-<span class="w">   </span><span class="nb">return</span> <span class="n">fSize</span><span class="c-Singleline">                          ; return the size - strings need update via VarSetCapacity(res,-1)</span>
-<span class="p">}</span>
+<span class="w">   </span><span class="n">sizeArray</span><span class="p"> </span><span class="o">:=</span><span class="nf"> SubStr</span><span class="p">(</span><span class="n">sizeArray</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="c-Singleline">   ; trim last PipeChar</span><span class="nf"></span>
+<span class="nf">   </span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">fSize</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c-Singleline">      ; reconstruct the result from above generated chunkblocks</span>
+<span class="w">   </span><span class="n">Dest</span><span class="p"> </span><span class="o">:=</span> <span class="o">&amp;</span><span class="n">result</span><span class="c-Singleline">                       ; to a our ByRef result variable</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p">,</span><span class="s">Parse</span><span class="p">,</span><span class="s">SizeArray</span><span class="p">,</span><span class="s">|</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="n">Dest</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">buffer</span><span class="nv">%A_Index%</span><span class="p">,</span><span class="s">&quot;uInt&quot;</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">Dest</span> <span class="o">+=</span> <span class="nv">A_LoopField</span><span class="nf"></span>
+<span class="nf">     </span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span> <span class="n">hRequest</span><span class="p">)</span><span class="c-Singleline">   ; close all opened</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span> <span class="n">hInternet</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;WinINet\InternetCloseHandle&quot;</span><span class="p">,</span> <span class="s">&quot;uInt&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hModule</span><span class="p">)</span><span class="c-Singleline">                    ; unload the library</span><span class="nf"></span>
+<span class="nf">   return</span> <span class="n">fSize</span><span class="c-Singleline">                          ; return the size - strings need update via VarSetCapacity(res,-1)</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

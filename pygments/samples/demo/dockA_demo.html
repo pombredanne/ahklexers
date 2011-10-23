@@ -1,21 +1,30 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include DockA.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH2</span><span class="p">,</span> <span class="n">client</span>
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="n">h100</span> <span class="n">w200</span>
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">2</span><span class="o">:+</span><span class="n">LastFound</span>
-<span class="n">cGui</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="s">&quot;A&quot;</span><span class="p">)</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
 
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">HwndH1</span><span class="p">,</span> <span class="n">host</span>
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="n">Show</span><span class="p">,</span> <span class="n">h100</span> <span class="n">w200</span>
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span><span class="o">:+</span><span class="n">LastFound</span>
-<span class="n">hGui</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="s">&quot;A&quot;</span><span class="p">)</span>
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
-<span class="n">DockA</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="n">cGui</span><span class="p">,</span> <span class="s">&quot;x(1) y()&quot;</span><span class="p">)</span>
-<span class="nb">Return</span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 2:Add</span><span class="p">,</span><span class="s"> Text</span><span class="p">,</span><span class="s"> HwndH2</span><span class="p">,</span><span class="s"> client</span><span class="w"></span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 2:Show</span><span class="p">,</span><span class="s"> h100 w200</span><span class="w"></span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 2:+LastFound</span><span class="w"></span>
+
+<span class="n">cGui</span><span class="p"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">)</span><span class="w"></span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 1:Add</span><span class="p">,</span><span class="s"> Text</span><span class="p">,</span><span class="s"> HwndH1</span><span class="p">,</span><span class="s"> host</span><span class="w"></span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 1:Show</span><span class="p">,</span><span class="s"> h100 w200</span><span class="w"></span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 1:+LastFound</span><span class="w"></span>
+
+<span class="n">hGui</span><span class="p"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">)</span><span class="w"></span>
+
+<span class="n">DockA</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="n">cGui</span><span class="p">,</span> <span class="s">&quot;x(1) y()&quot;</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">Return</span><span class="w"></span>
 
 <span class="nl">GuiClose:</span>
-<span class="nb">ExitApp</span>
+<span class="nb">ExitApp</span><span class="w"></span>
 </pre></div>

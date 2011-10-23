@@ -1,94 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="cm">/*</span>
-<span class="cm">;</span>
-<span class="cm">;                             pgArray v2.1 ~ by Infogulch</span>
-<span class="cm">;                  http://www.autohotkey.com/forum/viewtopic.php?t=36072</span>
-<span class="cm">;                        Lib for manipulating ahk&#39;s psuedo-arrays</span>
-<span class="cm">;</span>
-<span class="cm">; Note:</span>
-<span class="cm">;   these functions are lib compatible</span>
-<span class="cm">;   these functions only work on global arrays</span>
-<span class="cm">;   the number of elements of the given array MUST be contained in the</span>
-<span class="cm">;      0 element index of the array (e.g. &quot;MyArray0&quot;)</span>
-<span class="cm">;   you can&#39;t use the p character as the name of an array, as that is the name of the</span>
-<span class="cm">;      array of internal params of the _Insert function. (will change to more obscure)</span>
-<span class="cm">;   see link above for docs. there are several examples at the bottom of this script</span>
-<span class="cm">;</span>
-<span class="cm">*/</span>
-
-<span class="nf">pgArray_Insert</span><span class="p">(</span><span class="w"> </span>ArrayName<span class="p">,</span><span class="w"> </span>Idx<span class="p">,</span><span class="w"> </span>p1<span class="p">,</span><span class="w"> </span>p2<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>p3<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>p4<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>p5<span class="o">=</span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span>
-<span class="p">{</span><span class="w"> </span><span class="c1">;By Infogulch - insert a values into an array starting at idx</span>
-<span class="c1">;you can add more params as needed. (p6=&quot;&quot;, p7=&quot;&quot;..) put the last n of pN in the loop just below</span>
-<span class="w">   </span><span class="kt">Local</span><span class="w"> </span>p0<span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>MoveToNum<span class="p">,</span><span class="w"> </span>MoveFmNum<span class="p">,</span><span class="w"> </span>pc
-<span class="w">   </span><span class="k">Loop</span><span class="w"> </span><span class="mi">5</span>
-<span class="w">      </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>p<span class="nv">%A_Index%</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">         </span>p0<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_Index</span>
-<span class="w">   </span>pc<span class="w"> </span><span class="o">:=</span><span class="w"> </span>p0
-<span class="w">   </span><span class="kr">If</span><span class="w"> </span>Idx<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">      </span>Idx<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="k">Loop</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">+=</span>p0<span class="p">)</span>
-<span class="w">      </span><span class="nf">If</span><span class="w"> </span><span class="p">((</span>MoveToNum<span class="o">:=</span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">-</span><span class="p">(</span><span class="nb">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span>Idx<span class="p">)</span><span class="w"> </span><span class="c1">;zero-based reverse index</span>
-<span class="w">         </span><span class="k">Break</span>
-<span class="w">      </span><span class="k">Else</span><span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>MoveToNum<span class="o">&lt;=</span>Idx<span class="o">+</span>p0<span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>MoveToNum<span class="o">&gt;=</span>Idx<span class="p">)</span>
-<span class="w">         </span><span class="nv">%ArrayName%%MoveToNum%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>p<span class="nv">%pc%</span><span class="p">,</span><span class="w"> </span>pc<span class="o">--</span>
-<span class="w">      </span><span class="k">Else</span>
-<span class="w">         </span>MoveFmNum<span class="w"> </span><span class="o">:=</span><span class="w"> </span>MoveToNum<span class="w"> </span><span class="o">-</span><span class="w"> </span>p0<span class="p">,</span><span class="w"> </span><span class="nv">%ArrayName%%MoveToNum%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nv">%ArrayName%%MoveFmNum%</span>
-<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="nv">%ArrayName%</span><span class="mi">0</span>
-<span class="p">}</span>
-
-<span class="nf">pgArray_Shift</span><span class="p">(</span><span class="w"> </span>ArrayName<span class="p">,</span><span class="w"> </span>Idx<span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>HowFar<span class="o">=</span><span class="mi">1</span><span class="w"> </span><span class="p">)</span>
-<span class="p">{</span><span class="w"> </span><span class="c1">;By Infogulch - delete element @ Idx and shift left all the elements to its right</span>
-<span class="w">   </span><span class="kt">Local</span><span class="w"> </span>Num<span class="p">,</span><span class="w"> </span>RetVal
-<span class="w">   </span><span class="kr">If</span><span class="w"> </span>Idx<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">      </span>Idx<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span>RetVal<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nv">%ArrayName%%Idx%</span>
-<span class="w">   </span>LC<span class="o">:=</span><span class="nv">%ArrayName%</span><span class="mi">0</span>
-<span class="w">   </span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">-=</span>HowFar
-<span class="w">   </span><span class="k">Loop</span><span class="w"> </span><span class="o">%</span><span class="w"> </span>LC
-<span class="w">   </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="nb">A_Index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span>Idx<span class="w"> </span><span class="p">)</span>
-<span class="w">         </span><span class="k">Continue</span>
-<span class="w">      </span>NxtIdx<span class="o">:=</span><span class="nb">A_Index</span><span class="o">+</span>HowFar
-<span class="w">      </span><span class="nv">%ArrayName%%A_Index%</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nb">A_Index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nv">%ArrayName%%NxtIdx%</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">)</span>
-<span class="w">   </span><span class="p">}</span>
-<span class="w">   </span>ErrorLevel<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">return</span><span class="w"> </span>RetVal
-<span class="p">}</span>
-
-<span class="nf">pgArray_Rotate</span><span class="p">(</span><span class="w"> </span>ArrayName<span class="p">,</span><span class="w"> </span>FromIdx<span class="p">,</span><span class="w"> </span>ToIdx<span class="w"> </span><span class="p">)</span>
-<span class="p">{</span>
-<span class="c1">;By Infogulch - pulls out an element in an array and inserts it to the new location,</span>
-<span class="c1">;   rotating all elements between FromIdx and ToIdx</span>
-<span class="w">   </span><span class="kt">Local</span><span class="w"> </span>Save
-<span class="w">   </span><span class="kr">If</span><span class="w"> </span>FromIdx<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">      </span>FromIdx<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="kr">If</span><span class="w"> </span>ToIdx<span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">      </span>ToIdx<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span>Save<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nv">%ArrayName%%FromIdx%</span>
-<span class="w">   </span><span class="nf">pgArray_Shift</span><span class="p">(</span>ArrayName<span class="p">,</span><span class="w"> </span>FromIdx<span class="p">)</span>
-<span class="w">   </span><span class="nf">pgArray_Insert</span><span class="p">(</span>ArrayName<span class="p">,</span><span class="w"> </span>ToIdx<span class="p">,</span><span class="w"> </span>Save<span class="p">)</span>
-<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="nf">Abs</span><span class="p">(</span>FromIdx<span class="o">-</span>ToIdx<span class="p">)</span>
-<span class="p">}</span>
-
-<span class="nf">pgArray_Swap</span><span class="p">(</span><span class="w"> </span>ByRef<span class="w"> </span>Var1<span class="p">,</span><span class="w"> </span>ByRef<span class="w"> </span>Var2<span class="w"> </span><span class="p">)</span>
-<span class="p">{</span><span class="w"> </span><span class="c1">;almost striaght from the manual</span>
-<span class="w">   </span>Var1_<span class="w"> </span><span class="o">:=</span><span class="w"> </span>Var1
-<span class="w">   </span>Var1<span class="w">  </span><span class="o">:=</span><span class="w"> </span>Var2
-<span class="w">   </span>Var2<span class="w">  </span><span class="o">:=</span><span class="w"> </span>Var1_
-<span class="p">}</span>
-
-<span class="cm">/* Some More Examples:</span>
-
-<span class="cm">Shift:</span>
-<span class="cm">   Remove the last element: (pop)</span>
-<span class="cm">      pgArray_Shift(&quot;MyArray&quot;, -1)</span>
-<span class="cm">   Remove the last two elements:</span>
-<span class="cm">      pgArray_Shift(&quot;MyArray&quot;, -2, 2)</span>
-<span class="cm">   Remove the first element: (shift)</span>
-<span class="cm">      pgArray_Shift(&quot;MyArray&quot;)</span>
-<span class="cm">*/</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="cm">/*</span>
@@ -106,68 +16,68 @@ New Lexer:
 <span class="cm">;      array of internal params of the _Insert function. (will change to more obscure)</span>
 <span class="cm">;   see link above for docs. there are several examples at the bottom of this script</span>
 <span class="cm">;</span>
-<span class="cm">*/</span>
+<span class="cm">*/</span><span class="w"></span>
 
-<span class="n">pgArray_Insert</span><span class="p">(</span> <span class="n">ArrayName</span><span class="p">,</span> <span class="n">Idx</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p3</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p4</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p5</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span> 
+<span class="n">pgArray_Insert</span><span class="p">(</span> <span class="n">ArrayName</span><span class="p">,</span> <span class="n">Idx</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p3</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p4</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">p5</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="p">)</span><span class="w"> </span>
 <span class="p">{</span><span class="c-Singleline"> ;By Infogulch - insert a values into an array starting at idx</span>
-<span class="c-Singleline">;you can add more params as needed. (p6=&quot;&quot;, p7=&quot;&quot;..) put the last n of pN in the loop just below</span>
-<span class="w">   </span><span class="nb">Local</span> <span class="n">p0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">MoveToNum</span><span class="p">,</span> <span class="n">MoveFmNum</span><span class="p">,</span> <span class="n">pc</span>
-<span class="w">   </span><span class="nb">Loop</span> <span class="mi">5</span>
-      <span class="n">If</span> <span class="p">(</span><span class="n">p</span><span class="nv">%A_Index%</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-         <span class="n">p0</span> <span class="o">:=</span> <span class="nv">A_Index</span>
-   <span class="n">pc</span> <span class="o">:=</span> <span class="n">p0</span>
-<span class="w">   </span><span class="nb">If </span><span class="n">Idx</span> <span class="o">&lt;</span> <span class="mi">1</span>
-      <span class="n">Idx</span> <span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="w">   </span><span class="nb">Loop</span> <span class="o">%</span> <span class="p">(</span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">+=</span><span class="n">p0</span><span class="p">)</span>
-      <span class="n">If</span> <span class="p">((</span><span class="n">MoveToNum</span><span class="o">:=</span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">-</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">Idx</span><span class="p">)</span><span class="c-Singleline"> ;zero-based reverse index</span>
-<span class="w">         </span><span class="nb">Break</span>
-<span class="w">      </span><span class="nb">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">MoveToNum</span><span class="o">&lt;=</span><span class="n">Idx</span><span class="o">+</span><span class="n">p0</span><span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">MoveToNum</span><span class="o">&gt;=</span><span class="n">Idx</span><span class="p">)</span>
+<span class="c-Singleline">;you can add more params as needed. (p6=&quot;&quot;, p7=&quot;&quot;..) put the last n of pN in the loop just below</span><span class="nf"></span>
+<span class="nf">   Local</span> <span class="n">p0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">MoveToNum</span><span class="p">,</span> <span class="n">MoveFmNum</span><span class="p">,</span> <span class="n">pc</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="w"> </span><span class="s">5</span><span class="w"></span>
+<span class="w">      </span> <span class="n">If</span> <span class="p">(</span><span class="n">p</span><span class="nv">%A_Index%</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">         </span><span class="n">p0</span><span class="p"> </span><span class="o">:=</span> <span class="nv">A_Index</span>
+<span class="w">   </span><span class="n">pc</span><span class="p"> </span><span class="o">:=</span> <span class="n">p0</span><span class="nf"></span>
+<span class="nf">   If </span><span class="n">Idx</span> <span class="o">&lt;</span> <span class="mi">1</span>
+<span class="w">      </span><span class="n">Idx</span><span class="p"> </span><span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p"> % (</span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">+=</span><span class="n">p0</span><span class="p">)</span>
+<span class="w">      </span><span class="n">If</span><span class="p"> ((</span><span class="n">MoveToNum</span><span class="o">:=</span><span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">-</span><span class="p">(</span><span class="nv">A_Index</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">Idx</span><span class="p">)</span><span class="c-Singleline"> ;zero-based reverse index</span>
+<span class="w">         </span><span class="nb">Break</span><span class="w"></span>
+<span class="w">      </span> <span class="n">Else</span> <span class="n">If</span> <span class="p">(</span><span class="n">MoveToNum</span><span class="o">&lt;=</span><span class="n">Idx</span><span class="o">+</span><span class="n">p0</span><span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">MoveToNum</span><span class="o">&gt;=</span><span class="n">Idx</span><span class="p">)</span>
          <span class="nv">%ArrayName%%MoveToNum%</span> <span class="o">:=</span> <span class="n">p</span><span class="nv">%pc%</span><span class="p">,</span> <span class="n">pc</span><span class="o">--</span>
-<span class="w">      </span><span class="nb">Else</span>
-         <span class="n">MoveFmNum</span> <span class="o">:=</span> <span class="n">MoveToNum</span> <span class="o">-</span> <span class="n">p0</span><span class="p">,</span> <span class="nv">%ArrayName%%MoveToNum%</span> <span class="o">:=</span> <span class="nv">%ArrayName%%MoveFmNum%</span>
-<span class="w">   </span><span class="nb">return</span> <span class="s">&quot;&quot;</span> <span class="nv">%ArrayName%</span><span class="mi">0</span>
-<span class="p">}</span>
+<span class="w">      </span><span class="nb">Else</span><span class="w"></span>
+<span class="w">         </span> <span class="n">MoveFmNum</span> <span class="o">:=</span> <span class="n">MoveToNum</span> <span class="o">-</span> <span class="n">p0</span><span class="p">,</span> <span class="nv">%ArrayName%%MoveToNum%</span> <span class="o">:=</span> <span class="nv">%ArrayName%%MoveFmNum%</span><span class="nf"></span>
+<span class="nf">   return</span> <span class="s">&quot;&quot;</span> <span class="nv">%ArrayName%</span><span class="mi">0</span>
+<span class="p">}</span><span class="w"></span>
 
 <span class="n">pgArray_Shift</span><span class="p">(</span> <span class="n">ArrayName</span><span class="p">,</span> <span class="n">Idx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">HowFar</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
-<span class="p">{</span><span class="c-Singleline"> ;By Infogulch - delete element @ Idx and shift left all the elements to its right</span>
-<span class="w">   </span><span class="nb">Local</span> <span class="n">Num</span><span class="p">,</span> <span class="n">RetVal</span>
-<span class="w">   </span><span class="nb">If </span><span class="n">Idx</span> <span class="o">&lt;</span> <span class="mi">1</span>
-      <span class="n">Idx</span> <span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span>
-   <span class="n">RetVal</span> <span class="o">:=</span> <span class="nv">%ArrayName%%Idx%</span>
+<span class="p">{</span><span class="c-Singleline"> ;By Infogulch - delete element @ Idx and shift left all the elements to its right</span><span class="nf"></span>
+<span class="nf">   Local</span> <span class="n">Num</span><span class="p">,</span> <span class="n">RetVal</span><span class="nf"></span>
+<span class="nf">   If </span><span class="n">Idx</span> <span class="o">&lt;</span> <span class="mi">1</span>
+<span class="w">      </span><span class="n">Idx</span><span class="p"> </span><span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">   </span><span class="n">RetVal</span><span class="p"> </span><span class="o">:=</span> <span class="nv">%ArrayName%%Idx%</span>
 <span class="w">   </span><span class="nl">LC:</span><span class="o">=</span><span class="nv">%ArrayName%</span><span class="mi">0</span>
    <span class="nv">%ArrayName%</span><span class="mi">0</span><span class="o">-=</span><span class="n">HowFar</span>
-<span class="w">   </span><span class="nb">Loop</span> <span class="o">%</span> <span class="n">LC</span>
+<span class="w">   </span><span class="nb">Loop</span><span class="p"> % </span><span class="n">LC</span>
    <span class="p">{</span>
-      <span class="n">If</span> <span class="p">(</span><span class="nv">A_Index</span> <span class="o">&lt;</span> <span class="n">Idx</span> <span class="p">)</span>
-<span class="w">         </span><span class="nb">Continue</span>
-<span class="w">      </span><span class="nl">NxtIdx:</span><span class="o">=</span><span class="nv">A_Index</span><span class="o">+</span><span class="n">HowFar</span>
+<span class="w">      </span><span class="n">If</span><span class="p"> (</span><span class="nv">A_Index</span> <span class="o">&lt;</span> <span class="n">Idx</span> <span class="p">)</span>
+<span class="w">         </span><span class="nb">Continue</span><span class="w"></span>
+<span class="w">      </span> <span class="n">NxtIdx</span><span class="o">:=</span><span class="nv">A_Index</span><span class="o">+</span><span class="n">HowFar</span>
       <span class="nv">%ArrayName%%A_Index%</span> <span class="o">:=</span> <span class="p">(</span> <span class="nv">A_Index</span> <span class="o">&lt;=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">?</span> <span class="nv">%ArrayName%%NxtIdx%</span> <span class="o">:</span> <span class="s">&quot;&quot;</span> <span class="p">)</span>
    <span class="p">}</span>
-   <span class="nv">ErrorLevel</span> <span class="o">:=</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">return</span> <span class="n">RetVal</span>
-<span class="p">}</span>
+<span class="w">   </span><span class="n">ErrorLevel</span><span class="p"> </span><span class="o">:=</span> <span class="mi">0</span><span class="nf"></span>
+<span class="nf">   return</span> <span class="n">RetVal</span>
+<span class="p">}</span><span class="w"></span>
 
 <span class="n">pgArray_Rotate</span><span class="p">(</span> <span class="n">ArrayName</span><span class="p">,</span> <span class="n">FromIdx</span><span class="p">,</span> <span class="n">ToIdx</span> <span class="p">)</span>
 <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">;By Infogulch - pulls out an element in an array and inserts it to the new location,</span>
-<span class="c-Singleline">;   rotating all elements between FromIdx and ToIdx</span>
-<span class="w">   </span><span class="nb">Local</span> <span class="n">Save</span>
-<span class="w">   </span><span class="nb">If </span><span class="n">FromIdx</span> <span class="o">&lt;</span> <span class="mi">1</span>
-      <span class="n">FromIdx</span> <span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="w">   </span><span class="nb">If </span><span class="n">ToIdx</span> <span class="o">&lt;</span> <span class="mi">1</span>
-      <span class="n">ToIdx</span> <span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span>
-   <span class="n">Save</span> <span class="o">:=</span> <span class="nv">%ArrayName%%FromIdx%</span>
+<span class="c-Singleline">;   rotating all elements between FromIdx and ToIdx</span><span class="nf"></span>
+<span class="nf">   Local</span> <span class="n">Save</span><span class="nf"></span>
+<span class="nf">   If </span><span class="n">FromIdx</span> <span class="o">&lt;</span> <span class="mi">1</span>
+<span class="w">      </span><span class="n">FromIdx</span><span class="p"> </span><span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="nf"></span>
+<span class="nf">   If </span><span class="n">ToIdx</span> <span class="o">&lt;</span> <span class="mi">1</span>
+<span class="w">      </span><span class="n">ToIdx</span><span class="p"> </span><span class="o">+=</span> <span class="nv">%ArrayName%</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="w">   </span><span class="n">Save</span><span class="p"> </span><span class="o">:=</span> <span class="nv">%ArrayName%%FromIdx%</span>
    <span class="n">pgArray_Shift</span><span class="p">(</span><span class="n">ArrayName</span><span class="p">,</span> <span class="n">FromIdx</span><span class="p">)</span>
-   <span class="n">pgArray_Insert</span><span class="p">(</span><span class="n">ArrayName</span><span class="p">,</span> <span class="n">ToIdx</span><span class="p">,</span> <span class="n">Save</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">return</span> <span class="nf">Abs</span><span class="p">(</span><span class="n">FromIdx</span><span class="o">-</span><span class="n">ToIdx</span><span class="p">)</span>
-<span class="p">}</span>
+   <span class="n">pgArray_Insert</span><span class="p">(</span><span class="n">ArrayName</span><span class="p">,</span> <span class="n">ToIdx</span><span class="p">,</span> <span class="n">Save</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   return Abs</span><span class="p">(</span><span class="n">FromIdx</span><span class="o">-</span><span class="n">ToIdx</span><span class="p">)</span>
+<span class="p">}</span><span class="w"></span>
 
 <span class="n">pgArray_Swap</span><span class="p">(</span> <span class="n">ByRef</span> <span class="n">Var1</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Var2</span> <span class="p">)</span>
 <span class="p">{</span><span class="c-Singleline"> ;almost striaght from the manual</span>
-   <span class="n">Var1_</span> <span class="o">:=</span> <span class="n">Var1</span>
-   <span class="n">Var1</span>  <span class="o">:=</span> <span class="n">Var2</span>
-   <span class="n">Var2</span>  <span class="o">:=</span> <span class="n">Var1_</span>
-<span class="p">}</span>
+<span class="w">   </span><span class="n">Var1_</span><span class="p"> </span><span class="o">:=</span> <span class="n">Var1</span>
+<span class="w">   </span><span class="n">Var1</span><span class="p"> </span><span class="w"> </span><span class="o">:=</span> <span class="n">Var2</span>
+<span class="w">   </span><span class="n">Var2</span><span class="p"> </span><span class="w"> </span><span class="o">:=</span> <span class="n">Var1_</span>
+<span class="p">}</span><span class="w"></span>
 
 <span class="cm">/* Some More Examples:</span>
 
@@ -178,5 +88,5 @@ New Lexer:
 <span class="cm">      pgArray_Shift(&quot;MyArray&quot;, -2, 2)</span>
 <span class="cm">   Remove the first element: (shift)</span>
 <span class="cm">      pgArray_Shift(&quot;MyArray&quot;)</span>
-<span class="cm">*/</span>
+<span class="cm">*/</span><span class="w"></span>
 </pre></div>

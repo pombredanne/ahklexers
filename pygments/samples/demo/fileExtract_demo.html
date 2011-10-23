@@ -1,79 +1,86 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include FileExtract.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="c-Singleline">; Self-compiling Example Script (not Unicode-compatible) by Lexikos</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
 
-<span class="n">if</span> <span class="o">!</span><span class="nv">A_IsCompiled</span>
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+
+<span class="c-Singleline">; Self-compiling Example Script (not Unicode-compatible) by Lexikos</span><span class="w"></span>
+
+<span class="n">if</span><span class="p"> </span><span class="o">!</span><span class="nv">A_IsCompiled</span>
 <span class="p">{</span><span class="c-Singleline">   ; Self-compile-and-run.</span>
-<span class="w">    </span><span class="nb">RunWait</span><span class="p">,</span> <span class="nv">%A_AhkPath%</span>\<span class="o">..</span>\<span class="n">Compiler</span>\<span class="n">Ahk2Exe</span><span class="o">.</span><span class="n">exe</span> <span class="o">/</span><span class="ow">in</span> <span class="s">&quot;%A_ScriptFullPath%&quot;</span>
-<span class="w">    </span><span class="nb">Run</span> <span class="o">%</span> <span class="nf">SubStr(</span><span class="nv">A_ScriptFullPath</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">InStr(</span><span class="nv">A_ScriptFullPath</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="s">&quot;.exe&quot;</span>
+<span class="w">    </span><span class="nb">RunWait</span><span class="p">,</span><span class="s"> %A_AhkPath%\..\Compiler\Ahk2Exe.exe /in &quot;%A_ScriptFullPath%&quot;</span><span class="w"></span>
+<span class="w">    </span> <span class="n">Run</span> <span class="o">%</span><span class="nf"> SubStr</span><span class="p">(</span><span class="nv">A_ScriptFullPath</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="nf"> InStr</span><span class="p">(</span><span class="nv">A_ScriptFullPath</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="s">&quot;.exe&quot;</span>
 <span class="w">    </span><span class="nb">ExitApp</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   </span>
-<span class="c-Singleline">    ; Not executed by AutoHotkey, but interpreted by Ahk2Exe:</span>
-<span class="w">    </span><span class="nb">FileInstall</span><span class="p">,</span> <span class="n">FileExtract_Demo</span><span class="o">.</span><span class="n">ahk</span><span class="p">,</span> <span class="o">~</span>
-<span class="p">}</span>
+<span class="c-Singleline">    ; Not executed by AutoHotkey, but interpreted by Ahk2Exe:</span><span class="w"></span>
+<span class="w">    </span> <span class="n">FileInstall</span><span class="p">,</span> <span class="n">FileExtract_Demo</span><span class="o">.</span><span class="n">ahk</span><span class="p">,</span> <span class="o">~</span>
+<span class="p">}</span><span class="w"></span>
 
-<span class="nb">Menu</span><span class="p">,</span> <span class="n">Tray</span><span class="p">,</span> <span class="n">MainWindow</span>
+<span class="nb">Menu</span><span class="p">,</span><span class="s"> Tray</span><span class="p">,</span><span class="s"> MainWindow</span><span class="w"></span>
 
-<span class="nf">VarSetCapacity(</span><span class="n">important</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="nf">Asc(</span><span class="s">&quot;=&quot;</span><span class="p">))</span>
+
+<span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">important</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span><span class="nf"> Asc</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">))</span>
 <span class="n">GuiOut</span><span class="p">(</span><span class="n">important</span> <span class="s">&quot; Actual Script&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Initialize pData since it has no value yet:</span>
-<span class="n">pData</span> <span class="o">:=</span> <span class="mi">0</span><span class="c-Singleline"></span>
+<span class="n">pData</span><span class="p"> </span><span class="o">:=</span> <span class="mi">0</span><span class="c-Singleline"></span>
 <span class="c-Singleline">; DataSize specifies the desired initial size of the buffer, or zero for &quot;don&#39;t care&quot;.</span>
-<span class="n">DataSize</span> <span class="o">:=</span> <span class="mi">0</span><span class="c-Singleline"></span>
+<span class="n">DataSize</span><span class="p"> </span><span class="o">:=</span> <span class="mi">0</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">; The script itself is either &gt;AUTOHOTKEY SCRIPT&lt; or &gt;AHK WITH ICON&lt;.</span>
-<span class="nb">if </span><span class="n">FileExtract_ToMem</span><span class="p">(</span><span class="s">&quot;&gt;AUTOHOTKEY SCRIPT&lt;&quot;</span><span class="p">,</span> <span class="n">pData</span><span class="p">,</span> <span class="n">DataSize</span><span class="p">)</span>
+<span class="c-Singleline">; The script itself is either &gt;AUTOHOTKEY SCRIPT&lt; or &gt;AHK WITH ICON&lt;.</span><span class="nf"></span>
+<span class="nf">if </span><span class="n">FileExtract_ToMem</span><span class="p">(</span><span class="s">&quot;&gt;AUTOHOTKEY SCRIPT&lt;&quot;</span><span class="p">,</span> <span class="n">pData</span><span class="p">,</span> <span class="n">DataSize</span><span class="p">)</span>
     <span class="o">||</span> <span class="n">FileExtract_ToMem</span><span class="p">(</span><span class="s">&quot;&gt;AHK WITH ICON&lt;&quot;</span><span class="p">,</span> <span class="n">pData</span><span class="p">,</span> <span class="n">DataSize</span><span class="p">)</span>
 <span class="p">{</span><span class="c-Singleline">   ; Show the string data in a GUI.</span>
     <span class="n">GuiOut</span><span class="p">(</span><span class="n">GetStrN</span><span class="p">(</span><span class="n">pData</span><span class="p">,</span> <span class="n">DataSize</span><span class="p">))</span>
 <span class="p">}</span>
-<span class="nb">else</span>
+<span class="nb">else</span><span class="w"></span>
+
 <span class="p">{</span><span class="c-Singleline">   ; Note: At this point, AutoHotkey has probably already shown an error dialog.</span>
     <span class="n">GuiOut</span><span class="p">(</span><span class="s">&quot;-- Failed! --&quot;</span><span class="p">)</span>
-<span class="p">}</span>
+<span class="p">}</span><span class="w"></span>
 
 <span class="n">GuiOut</span><span class="p">(</span><span class="n">important</span> <span class="s">&quot; FileExtract_Demo.ahk&quot;</span><span class="p">)</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">; Extract a FileInstall&#39;d file.</span>
-<span class="nb">if </span><span class="n">FileExtract_ToMem</span><span class="p">(</span><span class="s">&quot;FileExtract_Demo.ahk&quot;</span><span class="p">,</span> <span class="n">pData</span><span class="p">,</span> <span class="n">DataSize</span><span class="p">)</span>
+<span class="c-Singleline">; Extract a FileInstall&#39;d file.</span><span class="nf"></span>
+<span class="nf">if </span><span class="n">FileExtract_ToMem</span><span class="p">(</span><span class="s">&quot;FileExtract_Demo.ahk&quot;</span><span class="p">,</span> <span class="n">pData</span><span class="p">,</span> <span class="n">DataSize</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">GuiOut</span><span class="p">(</span><span class="n">GetStrN</span><span class="p">(</span><span class="n">pData</span><span class="p">,</span> <span class="n">DataSize</span><span class="p">))</span>
 <span class="p">}</span>
-<span class="nb">else</span>
+<span class="nb">else</span><span class="w"></span>
+
 <span class="p">{</span>
     <span class="n">GuiOut</span><span class="p">(</span><span class="s">&quot;-- Failed! --&quot;</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">; Free the buffer.</span>
-<span class="nf">DllCall(</span><span class="s">&quot;GlobalFree&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">pData</span><span class="p">)</span>
+<span class="c-Singleline">; Free the buffer.</span><span class="nf"></span>
+<span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;GlobalFree&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">pData</span><span class="p">)</span><span class="nf"></span>
 
-<span class="nb">return</span>
+<span class="nf">return</span><span class="w"></span>
 
-<span class="n">GuiOut</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">GuiNum</span><span class="o">=</span><span class="mi">37</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">    </span><span class="nb">static</span> <span class="n">GuiText</span>
-<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="nv">%GuiNum%</span><span class="o">:</span> <span class="n">Default</span>
-    <span class="n">if</span> <span class="p">(</span><span class="n">GuiText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">GuiText</span> <span class="o">:=</span> <span class="n">Text</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Font</span><span class="p">,,</span> <span class="n">Courier</span> <span class="n">New</span>
-<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">ReadOnly</span> <span class="n">W600</span> <span class="n">H400</span><span class="p">,</span> <span class="nv">%GuiText%</span>
+<span class="n">GuiOut</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">GuiNum</span><span class="o">=</span><span class="mi">37</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">    static</span> <span class="n">GuiText</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span><span class="s"> %GuiNum%: Default</span><span class="w"></span>
+<span class="w">    </span> <span class="n">if</span> <span class="p">(</span><span class="n">GuiText</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">        </span><span class="n">GuiText</span><span class="p"> </span><span class="o">:=</span> <span class="n">Text</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
+<span class="w">        </span><span class="nb">Gui</span><span class="p">,</span><span class="s"> Font</span><span class="p">,,</span><span class="s"> Courier New</span><span class="w"></span>
+<span class="w">        </span> <span class="n">Gui</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Edit</span><span class="p">,</span> <span class="n">ReadOnly</span> <span class="n">W600</span> <span class="n">H400</span><span class="p">,</span> <span class="nv">%GuiText%</span>
     <span class="p">}</span> <span class="n">else</span>
-<span class="w">        </span><span class="nb">GuiControl</span><span class="p">,,</span> <span class="n">Edit1</span><span class="p">,</span> <span class="o">%</span> <span class="n">GuiText</span> <span class="o">.=</span> <span class="n">Text</span> <span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span>
-<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span> <span class="o">+</span><span class="n">LabelGuiOut</span>
-<span class="w">    </span><span class="nb">ControlSend</span><span class="p">,</span> <span class="n">Edit1</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span><span class="n">End</span><span class="p">}</span>
-<span class="w">    </span><span class="nb">return</span>
+<span class="w">        </span><span class="nb">GuiControl</span><span class="p">,,</span><span class="s"> Edit1</span><span class="p">, % </span><span class="s">GuiText .= Text &quot;`n&quot;</span><span class="w"></span>
+<span class="w">    </span> <span class="n">Gui</span><span class="p">,</span> <span class="n">Show</span>
+<span class="w">    </span><span class="nb">Gui</span><span class="p">,</span><span class="s"> +LastFound +LabelGuiOut</span><span class="w"></span>
+<span class="w">    </span> <span class="n">ControlSend</span><span class="p">,</span> <span class="n">Edit1</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span><span class="n">End</span><span class="p">}</span><span class="nf"></span>
+<span class="nf">    return</span>
 <span class="w">    </span><span class="nl">GuiOutClose:</span>
 <span class="w">    </span><span class="nl">GuiOutEscape:</span>
-<span class="w">    </span><span class="nb">ExitApp</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="nb">ExitApp</span><span class="w"></span>
 
-<span class="n">GetStrN</span><span class="p">(</span><span class="n">Pointer</span><span class="p">,</span> <span class="n">Length</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nf">VarSetCapacity(</span><span class="n">String</span><span class="p">,</span> <span class="n">Length</span><span class="p">)</span>
-    <span class="nf">DllCall(</span><span class="s">&quot;lstrcpyn&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Pointer</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">Length</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">return</span> <span class="n">String</span>
-<span class="p">}</span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">GetStrN</span><span class="p">(</span><span class="n">Pointer</span><span class="p">,</span> <span class="n">Length</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">    VarSetCapacity</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">Length</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">    DllCall</span><span class="p">(</span><span class="s">&quot;lstrcpyn&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Pointer</span><span class="p">,</span> <span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="n">Length</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">    return</span> <span class="n">String</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

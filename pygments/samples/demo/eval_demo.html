@@ -1,27 +1,33 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Eval.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
-<span class="nb">#SingleInstance</span> <span class="n">Force</span>
-<span class="nb">SetBatchLines</span> <span class="o">-</span><span class="mi">1</span>
-<span class="nb">Process</span> <span class="n">Priority</span><span class="p">,,</span><span class="n">High</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="s">&quot;Eval(</span><span class="se">&quot;&quot;</span><span class="s">100 + 22 - 55</span><span class="se">&quot;&quot;</span><span class="s">) expresses to: &quot;</span> <span class="o">.</span>  <span class="n">Eval</span><span class="p">(</span><span class="s">&quot;100 + 22 - 55&quot;</span><span class="p">)</span>
-<span class="nb">MsgBox</span> <span class="n">Next</span><span class="p">,</span> <span class="n">the</span> <span class="n">script</span> <span class="n">waits</span> <span class="n">for</span> <span class="n">the</span> <span class="n">hotkeys</span> <span class="n">WIN</span><span class="o">+-</span> <span class="ow">and</span> <span class="n">WIN</span><span class="o">+=</span> <span class="p">(</span><span class="n">Win</span> <span class="ow">and</span> <span class="n">minus</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">Win</span> <span class="ow">and</span> <span class="n">equal</span> <span class="n">sign</span><span class="p">)</span><span class="o">.</span> <span class="n">Select</span> <span class="n">any</span> <span class="n">text</span> <span class="n">to</span> <span class="n">express</span> <span class="ow">and</span> <span class="n">see</span> <span class="n">the</span> <span class="n">result</span><span class="o">.</span> <span class="n">One</span> <span class="n">key</span> <span class="n">replaces</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">other</span> <span class="n">one</span> <span class="n">append</span> <span class="n">the</span> <span class="n">result</span><span class="o">.</span><span class="c-Singleline"></span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+<span class="nb">#SingleInstance</span><span class="w"> </span><span class="s">Force</span><span class="w"></span>
+
+<span class="nb">SetBatchLines</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="nb">Process</span><span class="w"> </span><span class="s">Priority</span><span class="p">,,</span><span class="s">High</span><span class="w"></span>
+
+
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;Eval(</span><span class="se">&quot;&quot;</span><span class="s">100 + 22 - 55</span><span class="se">&quot;&quot;</span><span class="s">) expresses to: &quot;</span> <span class="o">.</span>  <span class="n">Eval</span><span class="p">(</span><span class="s">&quot;100 + 22 - 55&quot;</span><span class="p">)</span>
+<span class="nb">MsgBox</span><span class="w"> </span><span class="s">Next</span><span class="p">,</span><span class="s"> the script waits for the hotkeys WIN+- and WIN+= (Win and minus key and Win and equal sign). Select any text to express and see the result. One key replaces and the other one append the result.</span><span class="w"></span>
+
 
 <span class="c-Singleline">; Monster by Laszlo</span>
 <span class="nl">#-::</span><span class="c-Singleline">                                  ; Replace selection or `expression with result</span>
 <span class="nl">#=::</span><span class="c-Singleline">                                  ; Append result to selection or `expression</span>
-   <span class="nv">ClipBoard</span> <span class="o">=</span>
-<span class="w">   </span><span class="nb">SendInput</span> <span class="o">^</span><span class="n">c</span><span class="c-Singleline">                        ; copy selection</span>
-<span class="w">   </span><span class="nb">ClipWait</span> <span class="mf">0.5</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">      </span><span class="nb">SendInput</span> <span class="o">+</span><span class="p">{</span><span class="n">HOME</span><span class="p">}</span><span class="o">^</span><span class="n">c</span><span class="c-Singleline">              ; copy, keep selection to overwrite (^x for some apps)</span>
-<span class="w">      </span><span class="nb">ClipWait</span> <span class="mi">1</span>
-<span class="w">      </span><span class="nb">IfEqual</span> <span class="nv">ErrorLevel</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">Return</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">RegExMatch(</span><span class="nv">ClipBoard</span><span class="p">,</span> <span class="s">&quot;(.*)(``)(.*)&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="w">         </span><span class="nb">SendInput</span> <span class="o">%</span>  <span class="s">&quot;{RAW}&quot;</span> <span class="n">y1</span> <span class="o">.</span> <span class="p">(</span><span class="nv">A_ThisHotKey</span><span class="o">=</span><span class="s">&quot;#=&quot;</span> <span class="o">?</span> <span class="n">y3</span> <span class="o">.</span> <span class="s">&quot; = &quot;</span>  <span class="o">:</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="n">Eval</span><span class="p">(</span><span class="n">y3</span><span class="p">)</span>
+<span class="w">   </span><span class="n">ClipBoard</span><span class="p"> =</span>
+<span class="w">   </span><span class="nb">SendInput</span><span class="w"> </span><span class="o">^</span><span class="n">c</span><span class="c-Singleline">                        ; copy selection</span>
+<span class="w">   </span><span class="nb">ClipWait</span><span class="w"> </span><span class="s">0.5</span><span class="w"></span>
+<span class="w">   </span> <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span><span class="p">)</span> <span class="p">{</span>
+<span class="w">      </span><span class="nb">SendInput</span><span class="w"> </span><span class="o">+</span><span class="p">{</span><span class="n">HOME</span><span class="p">}</span><span class="o">^</span><span class="n">c</span><span class="c-Singleline">              ; copy, keep selection to overwrite (^x for some apps)</span>
+<span class="w">      </span><span class="nb">ClipWait</span><span class="w"> </span><span class="s">1</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> IfEqual</span> <span class="nv">ErrorLevel</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nf"> Return</span>
+<span class="nf">      If RegExMatch</span><span class="p">(</span><span class="nv">ClipBoard</span><span class="p">,</span> <span class="s">&quot;(.*)(``)(.*)&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="w">         </span><span class="nb">SendInput</span><span class="p"> % </span> <span class="s">&quot;{RAW}&quot;</span> <span class="n">y1</span> <span class="o">.</span> <span class="p">(</span><span class="nv">A_ThisHotKey</span><span class="o">=</span><span class="s">&quot;#=&quot;</span> <span class="o">?</span> <span class="n">y3</span> <span class="o">.</span> <span class="s">&quot; = &quot;</span>  <span class="o">:</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="n">Eval</span><span class="p">(</span><span class="n">y3</span><span class="p">)</span>
    <span class="p">}</span> <span class="n">Else</span>
-<span class="w">      </span><span class="nb">SendInput</span> <span class="o">%</span> <span class="s">&quot;{RAW}&quot;</span> <span class="o">.</span> <span class="p">(</span><span class="nv">A_ThisHotKey</span><span class="o">=</span><span class="s">&quot;#=&quot;</span> <span class="o">?</span> <span class="nv">ClipBoard</span> <span class="o">.</span> <span class="s">&quot; = &quot;</span>  <span class="o">:</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="n">Eval</span><span class="p">(</span><span class="nv">ClipBoard</span><span class="p">)</span>
-<span class="nb">Return</span>
+<span class="w">      </span><span class="nb">SendInput</span><span class="p"> % </span><span class="s">&quot;{RAW}&quot;</span> <span class="o">.</span> <span class="p">(</span><span class="nv">A_ThisHotKey</span><span class="o">=</span><span class="s">&quot;#=&quot;</span> <span class="o">?</span> <span class="nv">ClipBoard</span> <span class="o">.</span> <span class="s">&quot; = &quot;</span>  <span class="o">:</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">.</span> <span class="n">Eval</span><span class="p">(</span><span class="nv">ClipBoard</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">Return</span><span class="w"></span>
 </pre></div>

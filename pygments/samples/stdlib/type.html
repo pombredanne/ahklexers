@@ -1,200 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="c1">;?added by Tuncay: Added &quot;type_&quot; prefix to all functions, i.e. IsType() renamed to type_is().</span>
-<span class="c1">;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
-<span class="c1">;</span>
-<span class="c1">; Library:      Type Functions</span>
-<span class="c1">; Description:  Functions related to AHK variable types</span>
-<span class="c1">; Online Ref.:  http://www.autohotkey.com/forum/viewtopic.php?t=59341</span>
-<span class="c1">;</span>
-<span class="c1">; Last Update:  17/June/2010 16:15</span>
-<span class="c1">;</span>
-<span class="c1">; Created by:   MasterFocus</span>
-<span class="c1">;               http://www.autohotkey.net/~MasterFocus/AHK/</span>
-<span class="c1">;</span>
-<span class="c1">; This library contains 5 functions. One of them consists of an independent</span>
-<span class="c1">; version of a previous function. For usage and dependencies, see each</span>
-<span class="c1">; function&#39;s documentation (located directly above it). There is also an</span>
-<span class="c1">; example section at the bottom of this file.</span>
-<span class="c1">;</span>
-<span class="c1">; This library is licensed under GNU LGPL (v3.0).</span>
-<span class="c1">; Please refer to my webpage when giving credits.</span>
-<span class="c1">;</span>
-<span class="c1">;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
-
-<span class="c1">;</span>
-<span class="c1">;</span>
-<span class="c1">;</span>
-
-<span class="c1">;========================================================================</span>
-<span class="c1">;</span>
-<span class="c1">; Function:     IsType</span>
-<span class="c1">; Description:  Indicates if a given input is of a certain type</span>
-<span class="c1">;</span>
-<span class="c1">; + Required parameters:</span>
-<span class="c1">; - p_Input     The variable/value/string to be checked</span>
-<span class="c1">; - p_Type      A string of one exact AHK variable type</span>
-<span class="c1">;</span>
-<span class="c1">; The function returns true if the input is of that type, false otherwise.</span>
-<span class="c1">;</span>
-<span class="c1">;========================================================================</span>
-
-<span class="nf">type_is</span><span class="p">(</span><span class="w"> </span>p_Input<span class="w"> </span><span class="p">,</span><span class="w"> </span>p_Type<span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c1">;?mod IsType( p_Input , p_Type )</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="kr">If</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span><span class="p">,</span>p_Type<span class="p">,</span>false<span class="p">)</span>
-<span class="w">    </span><span class="kr">If</span><span class="w"> </span>p_Input<span class="w"> </span>is<span class="w"> </span><span class="nv">%p_Type%</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="p">}</span>
-
-<span class="c1">;</span>
-<span class="c1">;</span>
-<span class="c1">;</span>
-
-<span class="c1">;========================================================================</span>
-<span class="c1">;</span>
-<span class="c1">; Function:     VarTypes</span>
-<span class="c1">; Description:  Returns a CSV string with the types of the given input</span>
-<span class="c1">;</span>
-<span class="c1">; + Required parameters:</span>
-<span class="c1">; - p_Input     The variable/value/string to be checked</span>
-<span class="c1">;</span>
-<span class="c1">; The function returns a CSV string containing all AHK variable types that</span>
-<span class="c1">; fit to the given input, or blank if none do.</span>
-<span class="c1">;</span>
-<span class="c1">;========================================================================</span>
-
-<span class="nf">type_var</span><span class="p">(</span><span class="w"> </span>p_Input<span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c1">;?mod VarTypes( p_Input )</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="kt">static</span><span class="w"> </span>st_Types<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
-<span class="w">  </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>st_Types<span class="p">,</span><span class="w"> </span><span class="p">`,</span>
-<span class="w">    </span><span class="kr">If</span><span class="w"> </span>p_Input<span class="w"> </span>is<span class="w"> </span><span class="nv">%A_LoopField%</span>
-<span class="w">      </span>l_Output<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>l_Output<span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="c1">;</span>
-<span class="c1">;</span>
-<span class="c1">;</span>
-
-<span class="c1">;========================================================================</span>
-<span class="c1">;</span>
-<span class="c1">; Function:     SameTypes</span>
-<span class="c1">; Description:  Returns a CSV string with all common variable types found</span>
-<span class="c1">;</span>
-<span class="c1">; + Required parameters:</span>
-<span class="c1">; - p_Input1    The first variable/value/string to be checked</span>
-<span class="c1">; - p_Input2    The second variable/value/string to be checked</span>
-<span class="c1">;</span>
-<span class="c1">; + Dependencies:</span>
-<span class="c1">; - VarTypes()</span>
-<span class="c1">;</span>
-<span class="c1">; The function returns a CSV string containing all AHK variable types that</span>
-<span class="c1">; fit to both input values, or blank if none do.</span>
-<span class="c1">;</span>
-<span class="c1">;========================================================================</span>
-
-<span class="nf">type_same</span><span class="p">(</span><span class="w"> </span>p_Input1<span class="w"> </span><span class="p">,</span><span class="w"> </span>p_Input2<span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c1">;?mod SameTypes( p_Input1 , p_Input2 )</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">(</span>l_Type1<span class="w"> </span><span class="o">:=</span><span class="w"> </span>type_var<span class="p">(</span>p_Input1<span class="p">))</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span>l_Type2<span class="w"> </span><span class="o">:=</span><span class="w"> </span>type_var<span class="p">(</span>p_Input2<span class="p">))</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c1">;?mod VarTypes(p_Input2)</span>
-<span class="w">    </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>l_Type1<span class="p">,</span><span class="w"> </span><span class="p">`,</span>
-<span class="w">      </span><span class="kr">If</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span>l_Type2<span class="p">,</span><span class="nb">A_LoopField</span><span class="p">)</span>
-<span class="w">        </span>l_Output<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>l_Output<span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="c1">;</span>
-<span class="c1">;</span>
-<span class="c1">;</span>
-
-<span class="c1">;========================================================================</span>
-<span class="c1">;</span>
-<span class="c1">; Function:     SameTypes02</span>
-<span class="c1">; Description:  An independent version of SomeTypes()</span>
-<span class="c1">;</span>
-<span class="c1">; This function is the same as SameTypes(), without any dependencies.</span>
-<span class="c1">;</span>
-<span class="c1">;========================================================================</span>
-
-<span class="nf">type_same02</span><span class="p">(</span><span class="w"> </span>p_Input1<span class="w"> </span><span class="p">,</span><span class="w"> </span>p_Input2<span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c1">;?mod SameTypes02( p_Input1 , p_Input2 )</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="kt">static</span><span class="w"> </span>st_Types<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
-<span class="w">  </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>st_Types<span class="p">,</span><span class="w"> </span><span class="p">`,</span>
-<span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="kr">If</span><span class="w"> </span>p_Input1<span class="w"> </span>is<span class="w"> </span><span class="nv">%A_LoopField%</span>
-<span class="w">      </span>l_Type1<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">    </span><span class="kr">If</span><span class="w"> </span>p_Input2<span class="w"> </span>is<span class="w"> </span><span class="nv">%A_LoopField%</span>
-<span class="w">      </span>l_Type2<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">(</span>l_Type1<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span>l_Type1<span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span>l_Type2<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span>l_Type2<span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
-<span class="w">    </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>l_Type1<span class="p">,</span><span class="w"> </span><span class="p">`,</span>
-<span class="w">      </span><span class="kr">If</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span>l_Type2<span class="p">,</span><span class="nb">A_LoopField</span><span class="p">)</span>
-<span class="w">        </span>l_Output<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>l_Output<span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="c1">;</span>
-<span class="c1">;</span>
-<span class="c1">;</span>
-
-<span class="c1">;========================================================================</span>
-<span class="c1">;</span>
-<span class="c1">; Function:     CommonTypes</span>
-<span class="c1">; Description:  Returns a CSV string with all common variable types found</span>
-<span class="c1">;</span>
-<span class="c1">; + Required parameters:</span>
-<span class="c1">; - p_InputList   A CSV string of literal variable names (see remarks below)</span>
-<span class="c1">;</span>
-<span class="c1">; + Dependencies:</span>
-<span class="c1">; - VarTypes()</span>
-<span class="c1">;</span>
-<span class="c1">; The function returns a CSV string containing all AHK variable types that</span>
-<span class="c1">; fit to all input values, or blank if none do. The input list must be a</span>
-<span class="c1">; CSV string of literal variable names and/or values. If you want to check</span>
-<span class="c1">; the common variable types for 3 variables named &#39;var1&#39;, &#39;var2&#39; and &#39;var3&#39;,</span>
-<span class="c1">; you must pass the string &quot;var1,var2,var3&quot; as the input list.</span>
-<span class="c1">;</span>
-<span class="c1">;========================================================================</span>
-
-<span class="nf">type_common</span><span class="p">(</span><span class="w"> </span>p_InputList<span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c1">;?mod CommonTypes( p_InputList )</span>
-<span class="p">{</span>
-<span class="w">  </span>l_ValidTypes<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
-<span class="w">  </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>p_InputList<span class="p">,</span><span class="w"> </span><span class="p">`,</span>
-<span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="w"> </span>l_CurrentTypes<span class="w"> </span><span class="o">:=</span><span class="w"> </span>type_var<span class="p">(</span><span class="nv">%A_LoopField%</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c1">;?mod VarTypes(%A_LoopField%)</span>
-<span class="w">      </span><span class="k">Return</span>
-<span class="w">    </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>l_CurrentTypes<span class="p">,</span><span class="w"> </span><span class="p">`,</span>
-<span class="w">      </span><span class="kr">If</span><span class="w"> </span><span class="nf">InStr</span><span class="p">(</span>l_ValidTypes<span class="p">,</span><span class="nb">A_LoopField</span><span class="p">)</span>
-<span class="w">        </span>l_NewValidTypes<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="nb">A_LoopField</span>
-<span class="w">    </span>l_ValidTypes<span class="w"> </span><span class="o">:=</span><span class="w"> </span>l_NewValidTypes<span class="w">  </span><span class="p">,</span><span class="w">  </span>l_NewValidTypes<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="k">Return</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>l_ValidTypes<span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="c1">;</span>
-<span class="c1">;</span>
-<span class="c1">;</span>
-
-<span class="o">/************************************************************************</span>
-<span class="o">/</span><span class="w"> </span><span class="o">***</span><span class="w"> </span>Example<span class="w"> </span>Section
-<span class="o">/</span><span class="w"> </span>This<span class="w"> </span>commented<span class="w"> </span>section<span class="w"> </span>contains<span class="w"> </span>usage<span class="w"> </span>examples<span class="w"> </span>for<span class="w"> </span><span class="mi">4</span><span class="w"> </span>of<span class="w"> </span><span class="mi">5</span><span class="w"> </span>functions
-
-text<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;* EXAMPLES *&quot;</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">var1 = &quot;</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>var1<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;AB4D&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span>VarTypes<span class="p">(</span><span class="w"> </span>var1<span class="w"> </span><span class="p">)</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">var2 = &quot;</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>var2<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;8df3K&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span>VarTypes<span class="p">(</span><span class="w"> </span>var2<span class="w"> </span><span class="p">)</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">var3 = &quot;</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>var3<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;2345&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span>VarTypes<span class="p">(</span><span class="w"> </span>var3<span class="w"> </span><span class="p">)</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="w"> </span><span class="s">&quot;SameTypes(var1,var2): &quot;</span><span class="w"> </span>SameTypes<span class="p">(</span>var1<span class="p">,</span>var2<span class="p">)</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="w"> </span><span class="s">&quot;SameTypes02(var1,var3): &quot;</span><span class="w"> </span>SameTypes02<span class="p">(</span>var1<span class="p">,</span>var3<span class="p">)</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="w"> </span><span class="s">&quot;CommonTypes(&quot;&quot;var1,var2,var3&quot;&quot;): &quot;</span><span class="w"> </span>CommonTypes<span class="p">(</span><span class="s">&quot;var1,var2,var3&quot;</span><span class="p">)</span>
-text<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="w"> </span><span class="s">&quot;CommonTypes(&quot;&quot;var3,var1,var2&quot;&quot;): &quot;</span><span class="w"> </span>CommonTypes<span class="p">(</span><span class="s">&quot;var3,var1,var2&quot;</span><span class="p">)</span>
-
-<span class="k">MsgBox</span><span class="w"> </span><span class="nv">%text%</span>
-
-<span class="o">************************************************************************/</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="c-Singleline">;?added by Tuncay: Added &quot;type_&quot; prefix to all functions, i.e. IsType() renamed to type_is().</span>
@@ -234,14 +38,14 @@ New Lexer:
 <span class="c-Singleline">;</span>
 <span class="c-Singleline">; The function returns true if the input is of that type, false otherwise.</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">;========================================================================</span>
+<span class="c-Singleline">;========================================================================</span><span class="w"></span>
 
 <span class="n">type_is</span><span class="p">(</span> <span class="n">p_Input</span> <span class="p">,</span> <span class="n">p_Type</span> <span class="p">)</span><span class="c-Singleline"> ;?mod IsType( p_Input , p_Type )</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span><span class="p">,</span><span class="n">p_Type</span><span class="p">,</span><span class="nv">false</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">If </span><span class="n">p_Input</span> <span class="ow">is</span> <span class="nv">%p_Type%</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="mi">0</span>
+<span class="p">{</span><span class="nf"></span>
+<span class="nf">  If InStr</span><span class="p">(</span><span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span><span class="p">,</span><span class="n">p_Type</span><span class="p">,</span><span class="nv">false</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">    If </span><span class="n">p_Input</span> <span class="ow">is</span> <span class="nv">%p_Type%</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">1</span><span class="nf"></span>
+<span class="nf">  Return</span> <span class="mi">0</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
@@ -259,15 +63,15 @@ New Lexer:
 <span class="c-Singleline">; The function returns a CSV string containing all AHK variable types that</span>
 <span class="c-Singleline">; fit to the given input, or blank if none do.</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">;========================================================================</span>
+<span class="c-Singleline">;========================================================================</span><span class="w"></span>
 
 <span class="n">type_var</span><span class="p">(</span> <span class="n">p_Input</span> <span class="p">)</span><span class="c-Singleline"> ;?mod VarTypes( p_Input )</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="nb">static</span> <span class="n">st_Types</span> <span class="o">:=</span> <span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
-<span class="w">  </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">st_Types</span><span class="p">,</span> <span class="se">`,</span>
-<span class="w">    </span><span class="nb">If </span><span class="n">p_Input</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
-      <span class="n">l_Output</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">{</span><span class="nf"></span>
+<span class="nf">  static</span> <span class="n">st_Types</span> <span class="o">:=</span> <span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
+<span class="w">  </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> st_Types</span><span class="p">,</span><span class="s"> `</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nf"> If </span><span class="n">p_Input</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
+<span class="w">      </span><span class="n">l_Output</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span><span class="nf"></span>
+<span class="nf">  Return SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
@@ -289,15 +93,15 @@ New Lexer:
 <span class="c-Singleline">; The function returns a CSV string containing all AHK variable types that</span>
 <span class="c-Singleline">; fit to both input values, or blank if none do.</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">;========================================================================</span>
+<span class="c-Singleline">;========================================================================</span><span class="w"></span>
 
 <span class="n">type_same</span><span class="p">(</span> <span class="n">p_Input1</span> <span class="p">,</span> <span class="n">p_Input2</span> <span class="p">)</span><span class="c-Singleline"> ;?mod SameTypes( p_Input1 , p_Input2 )</span>
 <span class="p">{</span>
-  <span class="n">If</span> <span class="p">(</span> <span class="p">(</span><span class="n">l_Type1</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="n">p_Input1</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">l_Type2</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="n">p_Input2</span><span class="p">))</span> <span class="p">)</span><span class="c-Singleline"> ;?mod VarTypes(p_Input2)</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">l_Type1</span><span class="p">,</span> <span class="se">`,</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
-        <span class="n">l_Output</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="n">If</span><span class="p"> (</span> <span class="p">(</span><span class="n">l_Type1</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="n">p_Input1</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">l_Type2</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="n">p_Input2</span><span class="p">))</span> <span class="p">)</span><span class="c-Singleline"> ;?mod VarTypes(p_Input2)</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> l_Type1</span><span class="p">,</span><span class="s"> `</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> If InStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
+<span class="w">        </span><span class="n">l_Output</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span><span class="nf"></span>
+<span class="nf">  Return SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
@@ -311,23 +115,23 @@ New Lexer:
 <span class="c-Singleline">;</span>
 <span class="c-Singleline">; This function is the same as SameTypes(), without any dependencies.</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">;========================================================================</span>
+<span class="c-Singleline">;========================================================================</span><span class="w"></span>
 
 <span class="n">type_same02</span><span class="p">(</span> <span class="n">p_Input1</span> <span class="p">,</span> <span class="n">p_Input2</span> <span class="p">)</span><span class="c-Singleline"> ;?mod SameTypes02( p_Input1 , p_Input2 )</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="nb">static</span> <span class="n">st_Types</span> <span class="o">:=</span> <span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
-<span class="w">  </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">st_Types</span><span class="p">,</span> <span class="se">`,</span>
-  <span class="p">{</span>
-<span class="w">    </span><span class="nb">If </span><span class="n">p_Input1</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
-      <span class="n">l_Type1</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-<span class="w">    </span><span class="nb">If </span><span class="n">p_Input2</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
-      <span class="n">l_Type2</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
+<span class="p">{</span><span class="nf"></span>
+<span class="nf">  static</span> <span class="n">st_Types</span> <span class="o">:=</span> <span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
+<span class="w">  </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> st_Types</span><span class="p">,</span><span class="s"> `</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">    If </span><span class="n">p_Input1</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
+<span class="w">      </span><span class="n">l_Type1</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span><span class="nf"></span>
+<span class="nf">    If </span><span class="n">p_Input2</span> <span class="ow">is</span> <span class="nv">%A_LoopField%</span>
+<span class="w">      </span><span class="n">l_Type2</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
   <span class="p">}</span>
-  <span class="n">If</span> <span class="p">(</span> <span class="p">(</span><span class="n">l_Type1</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Type1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">l_Type2</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="p">)</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">l_Type1</span><span class="p">,</span> <span class="se">`,</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
-        <span class="n">l_Output</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="n">If</span><span class="p"> (</span> <span class="p">(</span><span class="n">l_Type1</span> <span class="o">:=</span><span class="nf"> SubStr</span><span class="p">(</span><span class="n">l_Type1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">l_Type2</span> <span class="o">:=</span><span class="nf"> SubStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="p">)</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> l_Type1</span><span class="p">,</span><span class="s"> `</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> If InStr</span><span class="p">(</span><span class="n">l_Type2</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
+<span class="w">        </span><span class="n">l_Output</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span><span class="nf"></span>
+<span class="nf">  Return SubStr</span><span class="p">(</span><span class="n">l_Output</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
@@ -351,26 +155,26 @@ New Lexer:
 <span class="c-Singleline">; the common variable types for 3 variables named &#39;var1&#39;, &#39;var2&#39; and &#39;var3&#39;,</span>
 <span class="c-Singleline">; you must pass the string &quot;var1,var2,var3&quot; as the input list.</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">;========================================================================</span>
+<span class="c-Singleline">;========================================================================</span><span class="w"></span>
 
 <span class="n">type_common</span><span class="p">(</span> <span class="n">p_InputList</span> <span class="p">)</span><span class="c-Singleline"> ;?mod CommonTypes( p_InputList )</span>
 <span class="p">{</span>
-  <span class="n">l_ValidTypes</span> <span class="o">:=</span> <span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
-<span class="w">  </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">p_InputList</span><span class="p">,</span> <span class="se">`,</span>
-  <span class="p">{</span>
-    <span class="n">If</span> <span class="o">!</span><span class="p">(</span> <span class="n">l_CurrentTypes</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="nv">%A_LoopField%</span><span class="p">)</span> <span class="p">)</span><span class="c-Singleline"> ;?mod VarTypes(%A_LoopField%)</span>
-<span class="w">      </span><span class="nb">Return</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">l_CurrentTypes</span><span class="p">,</span> <span class="se">`,</span>
-<span class="w">      </span><span class="nb">If </span><span class="nf">InStr</span><span class="p">(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
-        <span class="n">l_NewValidTypes</span> <span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
-    <span class="n">l_ValidTypes</span> <span class="o">:=</span> <span class="n">l_NewValidTypes</span>  <span class="p">,</span>  <span class="n">l_NewValidTypes</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
-  <span class="p">}</span>
-<span class="w">  </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="n">l_ValidTypes</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;integer,float,number,digit,xdigit,alpha,upper,lower,alnum,space,time&quot;</span>
+<span class="w">  </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> p_InputList</span><span class="p">,</span><span class="s"> `</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span> <span class="p">{</span>
+<span class="w">    </span><span class="n">If</span><span class="p"> </span><span class="o">!</span><span class="p">(</span> <span class="n">l_CurrentTypes</span> <span class="o">:=</span> <span class="n">type_var</span><span class="p">(</span><span class="nv">%A_LoopField%</span><span class="p">)</span> <span class="p">)</span><span class="c-Singleline"> ;?mod VarTypes(%A_LoopField%)</span><span class="nf"></span>
+<span class="nf">      Return</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> l_CurrentTypes</span><span class="p">,</span><span class="s"> `</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> If InStr</span><span class="p">(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="nv">A_LoopField</span><span class="p">)</span>
+<span class="w">        </span><span class="n">l_NewValidTypes</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;,&quot;</span> <span class="nv">A_LoopField</span>
+<span class="w">    </span><span class="n">l_ValidTypes</span><span class="p"> </span><span class="o">:=</span> <span class="n">l_NewValidTypes</span>  <span class="p">,</span>  <span class="n">l_NewValidTypes</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span>
+  <span class="p">}</span><span class="nf"></span>
+<span class="nf">  Return SubStr</span><span class="p">(</span><span class="n">l_ValidTypes</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">;</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">;</span>
+<span class="c-Singleline">;</span><span class="w"></span>
 
 <span class="cm">/************************************************************************</span>
 <span class="cm">/ *** Example Section</span>

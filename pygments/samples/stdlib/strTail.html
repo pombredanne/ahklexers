@@ -1,20 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="c1">; StrTail: Return the last lines of string by Tuncay</span>
-<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=262371#262371</span>
-<span class="c1">; Creative Commons Attribution 3.0 Unported, http://creativecommons.org/licenses/by/3.0/</span>
-<span class="nf">strTail</span><span class="p">(</span>_Str<span class="p">,</span><span class="w"> </span>_LineNum<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">StringGetPos</span><span class="p">,</span><span class="w"> </span>Pos<span class="p">,</span><span class="w"> </span>_Str<span class="p">,</span><span class="w"> </span><span class="p">`</span>n<span class="p">,</span><span class="w"> </span>R<span class="nv">%_LineNum%</span>
-<span class="w">    </span><span class="k">StringTrimLeft</span><span class="p">,</span><span class="w"> </span>_Str<span class="p">,</span><span class="w"> </span>_Str<span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="o">++</span>Pos
-<span class="w">    </span><span class="k">Return</span><span class="w"> </span>_Str
-<span class="p">}</span>
-
-<span class="c1">; Here is one getting last line only and optimized for speed.</span>
-<span class="nf">strTail_last</span><span class="p">(</span>ByRef<span class="w"> </span>_Str<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>_Str<span class="p">,</span>InStr<span class="p">(</span>_Str<span class="p">,</span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">,</span>False<span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="c-Singleline">; StrTail: Return the last lines of string by Tuncay</span>
@@ -22,13 +6,13 @@ New Lexer:
 <span class="c-Singleline">; Creative Commons Attribution 3.0 Unported, http://creativecommons.org/licenses/by/3.0/</span>
 <span class="n">strTail</span><span class="p">(</span><span class="n">_Str</span><span class="p">,</span> <span class="n">_LineNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="nb">StringGetPos</span><span class="p">,</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">_Str</span><span class="p">,</span> <span class="se">`n</span><span class="p">,</span> <span class="n">R</span><span class="nv">%_LineNum%</span>
-<span class="w">    </span><span class="nb">StringTrimLeft</span><span class="p">,</span> <span class="n">_Str</span><span class="p">,</span> <span class="n">_Str</span><span class="p">,</span> <span class="o">%</span> <span class="o">++</span><span class="n">Pos</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="n">_Str</span>
+<span class="w">    </span><span class="nb">StringGetPos</span><span class="p">,</span><span class="s"> Pos</span><span class="p">,</span><span class="s"> _Str</span><span class="p">,</span><span class="s"> `n</span><span class="p">,</span><span class="s"> R%_LineNum%</span><span class="w"></span>
+<span class="w">    </span> <span class="n">StringTrimLeft</span><span class="p">,</span> <span class="n">_Str</span><span class="p">,</span> <span class="n">_Str</span><span class="p">,</span> <span class="o">%</span> <span class="o">++</span><span class="n">Pos</span><span class="nf"></span>
+<span class="nf">    Return</span> <span class="n">_Str</span>
 <span class="p">}</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Here is one getting last line only and optimized for speed.</span>
-<span class="n">strTail_last</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Str</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">_Str</span><span class="p">,</span><span class="nf">InStr</span><span class="p">(</span><span class="n">_Str</span><span class="p">,</span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">,</span><span class="nv">False</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">}</span>
+<span class="n">strTail_last</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">_Str</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">    Return SubStr</span><span class="p">(</span><span class="n">_Str</span><span class="p">,</span><span class="nf">InStr</span><span class="p">(</span><span class="n">_Str</span><span class="p">,</span><span class="s">&quot;</span><span class="se">`n</span><span class="s">&quot;</span><span class="p">,</span><span class="nv">False</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

@@ -1,12 +1,16 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ShowMenu.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="n">ShowMenu</span><span class="p">(</span><span class="s">&quot;[MyMenu]`nitem1`nitem2`n-`nitem3&quot;</span><span class="p">)</span>
-<span class="nb">return</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+
+<span class="n">ShowMenu</span><span class="p">(</span><span class="s">&quot;[MyMenu]`nitem1`nitem2`n-`nitem3&quot;</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">return</span><span class="w"></span>
 
 <span class="nl">MyMenu:</span>
-<span class="w">   </span><span class="nb">MsgBox</span> <span class="nv">%A_ThisMenuItem%</span>
-<span class="nb">return</span> 
+<span class="w">   </span><span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%A_ThisMenuItem%</span><span class="w"></span>
+
+<span class="nf">return</span><span class="w"> </span>
 </pre></div>

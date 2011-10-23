@@ -26,12 +26,10 @@ class AutohotkeyLexer(ExtendedRegexLexer):
             (r'^(\s*)(\()', bygroups(Whitespace, Generic), 'incontinuation'),
             include('labels'),  
             include('commands'),
-            (r'(\s*)([a-zA-Z_#@$][a-zA-Z0-9_#@$]*)(\s*)(\W=)',
-             bygroups(Whitespace, Name, Whitespace, Punctuation)), 
-            (r'^\s*\w[^=:(,%\s]*', Name, 'incommand'),       
+            include('builtInFunctions'),                   
+            (r'^(\s*)(\w[^=:(%,\s]*)([,\s])', bygroups(Whitespace, Name, Punctuation), 'incommand'),       
             include('variables'),
             include('expressions'),                        
-            include('builtInFunctions'),                   
             include('builtInVariables'),                   
             (r'"', String, combined('stringescape', 'dqs')),
             include('numbers'),                            
@@ -43,16 +41,18 @@ class AutohotkeyLexer(ExtendedRegexLexer):
         'variables': [(r'\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable),
                       ], 
         'expressions': [                                   
-            (r'\s+', Whitespace),                          
+            (r'\s+$', Whitespace),                          
             (r'[]{}(),;[]', Punctuation),                  
             (r'(in|is|and|or|not)\b', Operator.Word),      
             (r'!=|==|:=|\.=|<<|>>|[-~+/*%=<>&^|?:!.]', Operator),            
             ],                                             
         'incommand': [                                     
-            (r'(\s*)(,)', bygroups(Whitespace, Punctuation)),
             (r'\s*%\s', Punctuation, '#pop'),
-            (r'[^\n]', String, 'rawstring'),
+            (r'\s*[(=]', Punctuation, '#pop'),
+            (r'(\s*)(!=|==|:=|\.=|<<|>>|[-~+/*=<>&^|?:!.])', bygroups(Whitespace, Operator), '#pop'),            
             include('comments'),
+            (r'(\n\s*)([^,])', commands_callback, '#pop'),
+            (r'(\s*)(,?)', bygroups(Whitespace, Punctuation), 'rawstring'),
             ],                  
         'comments': [           
             (r'^(\s*)(/\*)', bygroups(Whitespace, Comment.Multiline),
@@ -68,11 +68,11 @@ class AutohotkeyLexer(ExtendedRegexLexer):
         'incontinuation': [      
             (r'^\s*\)', Generic, '#pop'), 
             (r'[^)]', Generic),
-	    (r'[)]', Generic),
-	    ],
+            (r'[)]', Generic),
+            ],
         'commands': [
-            (r'(?i)^(\s*)(global|local|static|'
-        r'#AllowSameLineComments|#ClipboardTimeout|#CommentFlag|'
+            (r'(?i)^(\s*)'
+        r'(#AllowSameLineComments|#ClipboardTimeout|#CommentFlag|'
         r'#ErrorStdOut|#EscapeChar|#HotkeyInterval|'
         r'#HotkeyModifierTimeout|#Hotstring|#IfWinActive|'
         r'#IfWinExist|#IfWinNotActive|#IfWinNotExist|'
@@ -105,12 +105,7 @@ class AutohotkeyLexer(ExtendedRegexLexer):
         r'Goto|GroupActivate|GroupAdd|'
         r'GroupClose|GroupDeactivate|Gui|'
         r'GuiControl|GuiControlGet|Hotkey|'
-        r'IfEqual|IfExist|IfGreaterOrEqual|'
-        r'IfGreater|IfInString|IfLess|'
-        r'IfLessOrEqual|IfMsgBox|IfNotEqual|'
-        r'IfNotExist|IfNotInString|IfWinActive|'
-        r'IfWinExist|IfWinNotActive|IfWinNotExist|'
-        r'If |ImageSearch|IniDelete|'
+        r'ImageSearch|IniDelete|'
         r'IniRead|IniWrite|InputBox|'
         r'Input|KeyHistory|KeyWait|'
         r'ListHotkeys|ListLines|ListVars|'
@@ -121,7 +116,7 @@ class AutohotkeyLexer(ExtendedRegexLexer):
         r'PostMessage|Process|Progress|'
         r'Random|RegDelete|RegRead|'
         r'RegWrite|Reload|Repeat|'
-        r'Return|RunAs|RunWait|'
+        r'RunAs|RunWait|'
         r'Run|SendEvent|SendInput|'
         r'SendMessage|SendMode|SendPlay|'
         r'SendRaw|Send|SetBatchLines|'
@@ -153,8 +148,14 @@ class AutohotkeyLexer(ExtendedRegexLexer):
              bygroups(Whitespace,  Name.Builtin), 'incommand' ),
             ],                                                 
         'builtInFunctions': [                                  
-            (r'(?i)(Abs|ACos|Asc|'
-        r'ASin|ATan|Ceil|'
+            (r'(?i)(\s*)(Abs|ACos|Asc|'
+        r'global|local|static|return|'
+        r'ASin|ATan|Ceil|If |'
+        r'IfEqual|IfExist|IfGreaterOrEqual|'
+        r'IfGreater|IfInString|IfLess|'
+        r'IfLessOrEqual|IfMsgBox|IfNotEqual|'
+        r'IfNotExist|IfNotInString|IfWinActive|'
+        r'IfWinExist|IfWinNotActive|IfWinNotExist|'
         r'Chr|Cos|DllCall|'
         r'Exp|FileExist|Floor|'
         r'GetKeyState|IL_Add|IL_Create|'
@@ -262,13 +263,13 @@ class AutohotkeyLexer(ExtendedRegexLexer):
             include('strings')
         ],
         'rawstring': [
-            (r'\`[\,\%\`abfnrtv]', String.Escape),
+            (r'\`[\,\%\`;abfnrtv]', String.Escape),
             (r'(\n\s*)([^,])', commands_callback, '#pop:2'),
             (r',\s*%\s', Punctuation, '#pop'),
-            include('comments'),            
-            (r'\s+', Whitespace),  
+            (r'\s*;.*?$', Comment.Singleline),
+            (r'\s+$', Whitespace),  
             include('variables'), 
-            (r'[^,\n]+', String),
+            (r'[^,;\n]+', String),
             (r',', Punctuation),
             ],
         'garbage': [

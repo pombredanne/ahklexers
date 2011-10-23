@@ -1,36 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="cm">/*</span>
-<span class="cm">	Function: grep</span>
-<span class="cm">		Sets the output variable to all the entire or specified subpattern matches and returns their offsets within the haystack.</span>
-
-<span class="cm">	Parameters:</span>
-<span class="cm">		h - haystack</span>
-<span class="cm">		n - regex</span>
-<span class="cm">		v - output variable (ByRef)</span>
-<span class="cm">		s - (optional) starting position (default: 1)</span>
-<span class="cm">		e - (optional) subpattern to save in the output variable, where 0 is the entire match (default: 0)</span>
-<span class="cm">		d - (optional) delimiter - the character that seperates multiple values (default: EOT (0x04))</span>
-
-<span class="cm">	Returns:</span>
-<span class="cm">		The position (or offset) of each entire match.</span>
-
-<span class="cm">	Remarks:</span>
-<span class="cm">		Since multiple values are seperated with the delimiter any found within the haystack will be removed.</span>
-
-<span class="cm">	License:</span>
-<span class="cm">		- Version 2.0 &lt;http://www.autohotkey.net/~Titan/#grep&gt;</span>
-<span class="cm">		- Simplified BSD License &lt;http://www.autohotkey.net/~Titan/license.txt&gt;</span>
-<span class="cm">*/</span>
-<span class="nf">grep</span><span class="p">(</span>h<span class="p">,</span><span class="w"> </span>n<span class="p">,</span><span class="w"> </span>ByRef<span class="w"> </span>v<span class="p">,</span><span class="w"> </span>s<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span>e<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>d<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">	</span>v<span class="w"> </span><span class="o">=</span>
-<span class="w">	</span><span class="k">StringReplace</span><span class="p">,</span><span class="w"> </span>h<span class="p">,</span><span class="w"> </span>h<span class="p">,</span><span class="w"> </span><span class="nv">%d%</span><span class="p">,</span><span class="w"> </span><span class="p">,</span><span class="w"> </span>All
-<span class="w">	</span><span class="k">Loop</span>
-<span class="w">		</span><span class="kr">If</span><span class="w"> </span>s<span class="w"> </span><span class="o">:=</span><span class="w"> </span>RegExMatch<span class="p">(</span>h<span class="p">,</span><span class="w"> </span>n<span class="p">,</span><span class="w"> </span>c<span class="p">,</span><span class="w"> </span>s<span class="p">)</span>
-<span class="w">			</span>p<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span>d<span class="w"> </span><span class="p">.</span><span class="w"> </span>s<span class="p">,</span><span class="w"> </span>s<span class="w"> </span><span class="o">+=</span><span class="w"> </span>StrLen<span class="p">(</span>c<span class="p">),</span><span class="w"> </span>v<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span>d<span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">(</span>e<span class="w"> </span><span class="o">?</span><span class="w"> </span>c<span class="nv">%e%</span><span class="w"> </span><span class="o">:</span><span class="w"> </span>c<span class="p">)</span>
-<span class="w">		</span><span class="k">Else</span><span class="w"> </span><span class="k">Return</span><span class="p">,</span><span class="w"> </span><span class="nf">SubStr</span><span class="p">(</span>p<span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span>v<span class="w"> </span><span class="o">:=</span><span class="w"> </span>SubStr<span class="p">(</span>v<span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="cm">/*</span>
@@ -56,11 +24,12 @@ New Lexer:
 <span class="cm">		- Simplified BSD License &lt;http://www.autohotkey.net/~Titan/license.txt&gt;</span>
 <span class="cm">*/</span>
 <span class="n">grep</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">v</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
-	<span class="n">v</span> <span class="o">=</span>
-<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="nv">%d%</span><span class="p">,</span> <span class="p">,</span> <span class="n">All</span>
-<span class="w">	</span><span class="nb">Loop</span>
-<span class="w">		</span><span class="nb">If </span><span class="n">s</span> <span class="o">:=</span> <span class="nf">RegExMatch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
-			<span class="n">p</span> <span class="o">.=</span> <span class="n">d</span> <span class="o">.</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span> <span class="o">+=</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">v</span> <span class="o">.=</span> <span class="n">d</span> <span class="o">.</span> <span class="p">(</span><span class="n">e</span> <span class="o">?</span> <span class="n">c</span><span class="nv">%e%</span> <span class="o">:</span> <span class="n">c</span><span class="p">)</span>
-<span class="w">		</span><span class="nb">Else</span> <span class="n">Return</span><span class="p">,</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">v</span> <span class="o">:=</span> <span class="nf">SubStr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="p">}</span>
+<span class="w">	</span><span class="n">v</span><span class="p"> =</span>
+<span class="w">	</span><span class="nb">StringReplace</span><span class="p">,</span><span class="s"> h</span><span class="p">,</span><span class="s"> h</span><span class="p">,</span><span class="s"> %d%</span><span class="p">,</span><span class="s"> </span><span class="p">,</span><span class="s"> All</span><span class="w"></span>
+<span class="w">		</span><span class="nb">Loop</span><span class="w"></span>
+<span class="w">		</span><span class="nf">	If </span><span class="n">s</span> <span class="o">:=</span><span class="nf"> RegExMatch</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+<span class="w">			</span><span class="n">p</span><span class="p"> </span><span class="o">.=</span> <span class="n">d</span> <span class="o">.</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span> <span class="o">+=</span><span class="nf"> StrLen</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">v</span> <span class="o">.=</span> <span class="n">d</span> <span class="o">.</span> <span class="p">(</span><span class="n">e</span> <span class="o">?</span> <span class="n">c</span><span class="nv">%e%</span> <span class="o">:</span> <span class="n">c</span><span class="p">)</span>
+<span class="w">		</span><span class="nb">Else</span><span class="w"> </span><span class="s">Return</span><span class="p">,</span><span class="s"> SubStr(p</span><span class="p">,</span><span class="s"> 2)</span><span class="p">,</span><span class="s"> v := SubStr(v</span><span class="p">,</span><span class="s"> 2)</span><span class="w"></span>
+
+<span class="p">}</span><span class="w"></span>
 </pre></div>

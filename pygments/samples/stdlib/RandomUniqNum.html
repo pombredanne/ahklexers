@@ -1,42 +1,22 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="c1">; Generating unique random integers by Laszlo</span>
-<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=30664#30664</span>
-<span class="nf">RandomUniqNum</span><span class="p">(</span>Min<span class="p">,</span>Max<span class="p">,</span>N<span class="p">)</span>
-<span class="p">{</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Max<span class="w"> </span><span class="o">-</span><span class="w"> </span>Min<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span>N<span class="p">)</span>
-<span class="w">      </span><span class="k">MsgBox</span><span class="w"> </span>Cannot<span class="w"> </span>have<span class="w"> </span><span class="nv">%N%</span><span class="w"> </span>different<span class="w"> </span>numbers<span class="w"> </span>between<span class="w"> </span><span class="nv">%MIN%</span><span class="w"> </span><span class="kr">and</span><span class="w"> </span><span class="nv">%MAX%</span>
-<span class="w">   </span><span class="k">Else</span><span class="w"> </span><span class="k">Loop</span><span class="w"> </span><span class="nv">%N%</span>
-<span class="w">     </span><span class="k">Loop</span>
-<span class="w">     </span><span class="p">{</span>
-<span class="w">       </span><span class="k">Random</span><span class="w"> </span>R<span class="p">,</span><span class="w"> </span><span class="nv">%MIN%</span><span class="p">,</span><span class="w"> </span><span class="nv">%MAX%</span><span class="w">     </span><span class="c1">; R = random number</span>
-<span class="w">       </span><span class="k">IfNotEqual</span><span class="w"> </span>i<span class="nv">%R%</span><span class="p">,,</span><span class="k">Continue</span><span class="w">  </span><span class="c1">; repetition found, try again</span>
-<span class="w">       </span>i<span class="nv">%R%</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">                   </span><span class="c1">; note occurrence</span>
-<span class="w">       </span>RNList<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">%RNList%</span><span class="p">,</span><span class="nv">%R%</span>
-<span class="w">       </span><span class="k">break</span><span class="w">                      </span><span class="c1">; different number</span>
-<span class="w">     </span><span class="p">}</span>
-<span class="w">   </span><span class="k">StringTrimLeft</span><span class="w"> </span>RNList<span class="p">,</span>RNList<span class="p">,</span><span class="mi">1</span><span class="w"> </span><span class="c1">; remove leading &quot;,&quot;</span>
-<span class="w">   </span><span class="k">Return</span><span class="w"> </span>RNList
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="c-Singleline">; Generating unique random integers by Laszlo</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=30664#30664</span>
 <span class="n">RandomUniqNum</span><span class="p">(</span><span class="n">Min</span><span class="p">,</span><span class="n">Max</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
 <span class="p">{</span>
-   <span class="n">If</span> <span class="p">(</span><span class="n">Max</span> <span class="o">-</span> <span class="n">Min</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">MsgBox</span> <span class="n">Cannot</span> <span class="n">have</span> <span class="nv">%N%</span> <span class="n">different</span> <span class="n">numbers</span> <span class="n">between</span> <span class="nv">%MIN%</span> <span class="ow">and</span> <span class="nv">%MAX%</span>
-<span class="w">   </span><span class="nb">Else</span> <span class="n">Loop</span> <span class="nv">%N%</span>
-<span class="w">     </span><span class="nb">Loop</span>
-     <span class="p">{</span>
-<span class="w">       </span><span class="nb">Random</span> <span class="n">R</span><span class="p">,</span> <span class="nv">%MIN%</span><span class="p">,</span> <span class="nv">%MAX%</span><span class="c-Singleline">     ; R = random number</span>
-<span class="w">       </span><span class="nb">IfNotEqual</span> <span class="n">i</span><span class="nv">%R%</span><span class="p">,,</span><span class="n">Continue</span><span class="c-Singleline">  ; repetition found, try again</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="n">Max</span> <span class="o">-</span> <span class="n">Min</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>
+<span class="w">      </span><span class="nb">MsgBox</span><span class="w"> </span><span class="s">Cannot have %N% different numbers between %MIN% and %MAX%</span><span class="w"></span>
+<span class="w">   </span> <span class="n">Else</span> <span class="n">Loop</span> <span class="nv">%N%</span>
+<span class="w">     </span><span class="nb">Loop</span><span class="w"></span>
+<span class="w">     </span> <span class="p">{</span>
+<span class="w">       </span><span class="nb">Random</span><span class="w"> </span><span class="s">R</span><span class="p">,</span><span class="s"> %MIN%</span><span class="p">,</span><span class="s"> %MAX%     </span><span class="c-Singleline">; R = random number</span><span class="w"></span>
+<span class="w">       </span><span class="nf"> IfNotEqual</span> <span class="n">i</span><span class="nv">%R%</span><span class="p">,,</span><span class="n">Continue</span><span class="c-Singleline">  ; repetition found, try again</span>
        <span class="n">i</span><span class="nv">%R%</span> <span class="o">=</span> <span class="mi">1</span><span class="c-Singleline">                   ; note occurrence</span>
-       <span class="n">RNList</span> <span class="o">=</span> <span class="nv">%RNList%</span><span class="p">,</span><span class="nv">%R%</span>
-<span class="w">       </span><span class="nb">break</span><span class="c-Singleline">                      ; different number</span>
-     <span class="p">}</span>
-<span class="w">   </span><span class="nb">StringTrimLeft</span> <span class="n">RNList</span><span class="p">,</span><span class="n">RNList</span><span class="p">,</span><span class="mi">1</span><span class="c-Singleline"> ; remove leading &quot;,&quot;</span>
-<span class="w">   </span><span class="nb">Return</span> <span class="n">RNList</span>
-<span class="p">}</span>
+<span class="w">       </span><span class="n">RNList</span><span class="p"> =</span> <span class="nv">%RNList%</span><span class="p">,</span><span class="nv">%R%</span>
+<span class="w">       </span><span class="nb">break</span><span class="c-Singleline">                      ; different number</span><span class="w"></span>
+<span class="w">     </span> <span class="p">}</span>
+<span class="w">   </span><span class="nb">StringTrimLeft</span><span class="w"> </span><span class="s">RNList</span><span class="p">,</span><span class="s">RNList</span><span class="p">,</span><span class="s">1 </span><span class="c-Singleline">; remove leading &quot;,&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="nf"> Return</span> <span class="n">RNList</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

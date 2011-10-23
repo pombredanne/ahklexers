@@ -1,17 +1,21 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include RPath.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="c-Singleline">; From Path2 to Path1</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
 
-<span class="n">Path1</span> <span class="o">=</span> <span class="n">ahkstdlib</span>\<span class="n">samp</span>\<span class="n">foo</span>\<span class="n">bar</span>
-<span class="n">Path2</span> <span class="o">=</span> <span class="n">ahkstdlib</span>\<span class="n">samp</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">Path1</span><span class="o">=</span><span class="nv">%Path1%</span><span class="se">`n</span><span class="n">Path2</span><span class="o">=</span><span class="nv">%Path2%</span><span class="se">`n`n</span>
-<span class="nb">MsgBox</span><span class="p">,</span> <span class="o">%</span> <span class="n">p</span> <span class="o">.</span> <span class="s">&quot;&gt; RPath_Relative(Path1, Path2)`n`n&quot;</span> <span class="o">.</span> <span class="n">RPath_Relative</span><span class="p">(</span><span class="n">Path1</span><span class="p">,</span> <span class="n">Path2</span><span class="p">)</span>
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
-<span class="n">Path1</span> <span class="o">=</span> \\<span class="n">server</span><span class="o">.</span><span class="n">com</span>\<span class="n">user</span>\<span class="n">Files</span>\<span class="n">Docs</span>\<span class="n">Code</span>\<span class="n">AHK</span>\<span class="n">SciTEDirector</span>\<span class="n">includes</span>
-<span class="n">Path2</span> <span class="o">=</span> <span class="o">..</span>\<span class="o">..</span>\<span class="n">SmartGui</span>\<span class="n">no_commit</span>\<span class="n">icons_dev</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">Path1</span><span class="o">=</span><span class="nv">%Path1%</span><span class="se">`n</span><span class="n">Path2</span><span class="o">=</span><span class="nv">%Path2%</span><span class="se">`n`n</span>
-<span class="nb">MsgBox</span><span class="p">,</span> <span class="o">%</span> <span class="n">p</span> <span class="o">.</span> <span class="s">&quot;&gt; RPath_Absolute(Path1, Path2)`n`n&quot;</span> <span class="o">.</span> <span class="n">RPath_Absolute</span><span class="p">(</span><span class="n">Path1</span><span class="p">,</span> <span class="n">Path2</span><span class="p">)</span>
+
+<span class="c-Singleline">; From Path2 to Path1</span><span class="w"></span>
+
+<span class="n">Path1</span><span class="p"> =</span> <span class="n">ahkstdlib</span>\<span class="n">samp</span>\<span class="n">foo</span>\<span class="n">bar</span>
+<span class="n">Path2</span><span class="p"> =</span> <span class="n">ahkstdlib</span>\<span class="n">samp</span>
+<span class="n">p</span><span class="p"> =</span> <span class="n">Path1</span><span class="o">=</span><span class="nv">%Path1%</span><span class="se">`n</span><span class="n">Path2</span><span class="o">=</span><span class="nv">%Path2%</span><span class="se">`n`n</span>
+<span class="nb">MsgBox</span><span class="p">,</span><span class="s"> % p . &quot;&gt; RPath_Relative(Path1</span><span class="p">,</span><span class="s"> Path2)`n`n&quot; . RPath_Relative(Path1</span><span class="p">,</span><span class="s"> Path2)</span><span class="w"></span>
+
+
+<span class="n">Path1</span><span class="p"> =</span> \\<span class="n">server</span><span class="o">.</span><span class="n">com</span>\<span class="n">user</span>\<span class="n">Files</span>\<span class="n">Docs</span>\<span class="n">Code</span>\<span class="n">AHK</span>\<span class="n">SciTEDirector</span>\<span class="n">includes</span>
+<span class="n">Path2</span><span class="p"> =</span> <span class="o">..</span>\<span class="o">..</span>\<span class="n">SmartGui</span>\<span class="n">no_commit</span>\<span class="n">icons_dev</span>
+<span class="n">p</span><span class="p"> =</span> <span class="n">Path1</span><span class="o">=</span><span class="nv">%Path1%</span><span class="se">`n</span><span class="n">Path2</span><span class="o">=</span><span class="nv">%Path2%</span><span class="se">`n`n</span>
+<span class="nb">MsgBox</span><span class="p">,</span><span class="s"> % p . &quot;&gt; RPath_Absolute(Path1</span><span class="p">,</span><span class="s"> Path2)`n`n&quot; . RPath_Absolute(Path1</span><span class="p">,</span><span class="s"> Path2)</span><span class="w"></span>
 </pre></div>

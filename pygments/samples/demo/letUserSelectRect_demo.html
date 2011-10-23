@@ -1,11 +1,16 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include LetUserSelectRect.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
-<span class="nb">CoordMode</span><span class="p">,</span> <span class="n">Mouse</span><span class="c-Singleline"> ; Required: change coord mode to screen vs relative.</span>
- 
-<span class="n">LetUserSelectRect</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
-<span class="nb">MsgBox</span> <span class="nv">%x1%</span><span class="p">,</span><span class="nv">%y1%</span>  <span class="nv">%x2%</span><span class="p">,</span><span class="nv">%y2%</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="nb">ExitApp</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+<span class="nb">CoordMode</span><span class="p">,</span><span class="s"> Mouse </span><span class="c-Singleline">; Required: change coord mode to screen vs relative.</span><span class="w"></span>
+<span class="w"> </span>
+
+<span class="n">LetUserSelectRect</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+<span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%x1%</span><span class="p">,</span><span class="nv">%y1%</span><span class="s">  %x2%</span><span class="p">,</span><span class="nv">%y2%</span><span class="w"></span>
+
+
+<span class="nb">ExitApp</span><span class="w"></span>
 </pre></div>

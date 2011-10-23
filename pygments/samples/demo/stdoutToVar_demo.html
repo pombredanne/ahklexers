@@ -1,8 +1,11 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include StdoutToVar.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">StdoutToVar_CreateProcess</span><span class="p">(</span><span class="s">&quot;ipconfig.exe /all&quot;</span><span class="p">)</span>
-<span class="nb">MsgBox</span> <span class="o">%</span> <span class="n">StdoutToVar_CreateProcess</span><span class="p">(</span><span class="s">&quot;ping.exe www.autohotkey.com&quot;</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="n">StdoutToVar_CreateProcess</span><span class="p">(</span><span class="s">&quot;ipconfig.exe /all&quot;</span><span class="p">)</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="n">StdoutToVar_CreateProcess</span><span class="p">(</span><span class="s">&quot;ping.exe www.autohotkey.com&quot;</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span><span class="w"></span>
 </pre></div>

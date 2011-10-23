@@ -1,5 +1,5 @@
 import os, sys, subprocess, re, codecs
-from ahkLexer import AhkLexer
+from ahkLexer import AutohotkeyLexer
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.style import Style
@@ -12,7 +12,7 @@ for f in glob.glob( os.path.join(samplesDir, '*.ahk') ):
     code = fh.read()
     fh.close()			   				 
     formatter = HtmlFormatter() 
-    codeh = highlight(code, AhkLexer(), formatter)
+    codeh = highlight(code, AutohotkeyLexer(), formatter)
     if(-1 != codeh.find('''class="err"''')):
         print "failed on file {0}".format(f,)
     g = f.replace("ahk", "html")

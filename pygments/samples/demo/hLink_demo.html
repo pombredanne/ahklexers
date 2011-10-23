@@ -1,27 +1,31 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include HLink.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
-<span class="nb">#SingleInstance</span> <span class="n">force</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
-   <span class="n">hGui</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="p">)</span> <span class="o">+</span><span class="mi">0</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+<span class="nb">#SingleInstance</span><span class="w"> </span><span class="s">force</span><span class="w"></span>
+
+<span class="w">   </span> <span class="n">Gui</span><span class="p">,</span> <span class="o">+</span><span class="n">LastFound</span>
+<span class="w">   </span><span class="n">hGui</span><span class="p"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">()</span> <span class="o">+</span><span class="mi">0</span><span class="w"></span>
 
    <span class="n">HLink_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span>  <span class="mi">250</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;OnLink&quot;</span><span class="p">,</span> <span class="s">&quot;Click &#39;here&#39;:www.Google.com to go to Google&quot;</span> <span class="p">)</span>
    <span class="n">HLink_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">40</span><span class="p">,</span>  <span class="mi">250</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;OnLink&quot;</span><span class="p">,</span> <span class="s">&quot;Click &#39;this link&#39;:www.Yahoo.com to go to Yahoo&quot;</span><span class="p">)</span>
    <span class="n">HLink_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">170</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;OnLink&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;About HLink&#39;:About&quot;</span><span class="p">)</span>
    <span class="n">HLink_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;OnLink&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;Forum&#39;:http://www.autohotkey.com/forum/topic19508.html&quot;</span><span class="p">)</span>
    <span class="n">HLink_Add</span><span class="p">(</span><span class="n">hGui</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">60</span><span class="p">,</span>  <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;Google&#39;:www.Google.com&quot;</span><span class="p">)</span><span class="c-Singleline"> ;without handler</span>
-<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span> <span class="n">Show</span><span class="p">,</span> <span class="n">w300</span> <span class="n">h200</span>
-<span class="nb">return</span>
+<span class="w">   </span><span class="nb">Gui</span><span class="p">,</span><span class="s"> Show</span><span class="p">,</span><span class="s"> w300 h200</span><span class="w"></span>
 
-<span class="n">OnLink</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Link</span><span class="p">){</span>
-<span class="w">    </span><span class="nb">if </span><span class="n">Link</span> <span class="o">=</span> <span class="n">About</span>
-<span class="w">        </span><span class="nb">msgbox</span> <span class="n">Hlink</span> <span class="n">control</span><span class="se">`n</span><span class="n">by</span> <span class="n">majkinetor</span>
-<span class="w">    </span><span class="nb">else</span> <span class="n">return</span> <span class="mi">1</span>
+<span class="nf">return</span><span class="w"></span>
 
-<span class="p">}</span>
+<span class="n">OnLink</span><span class="p">(</span><span class="n">hCtrl</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Link</span><span class="p">){</span><span class="nf"></span>
+<span class="nf">    if </span><span class="n">Link</span> <span class="o">=</span> <span class="n">About</span>
+<span class="w">        </span><span class="nb">msgbox</span><span class="w"> </span><span class="s">Hlink control`nby majkinetor</span><span class="w"></span>
+<span class="w">    </span> <span class="n">else</span><span class="nf"> return</span> <span class="mi">1</span><span class="w"></span>
+
+<span class="p">}</span><span class="w"></span>
 
 <span class="nl">GuiClose:</span>
-<span class="nb">ExitApp</span>
+<span class="nb">ExitApp</span><span class="w"></span>
 </pre></div>

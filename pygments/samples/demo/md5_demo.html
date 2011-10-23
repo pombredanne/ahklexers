@@ -1,11 +1,15 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include md5.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="nb">MsgBox</span><span class="p">,,</span> <span class="n">MD5_File</span><span class="p">(),</span> <span class="o">%</span> <span class="nv">A_AhkPath</span> <span class="o">.</span> <span class="s">&quot;:`n`n&quot;</span> <span class="o">.</span> <span class="n">MD5_File</span><span class="p">(</span> <span class="nv">A_AhkPath</span> <span class="p">)</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
 
-<span class="n">V</span> <span class="o">:=</span> <span class="s">&quot;The quick brown fox jumps over the lazy dog&quot;</span>
-<span class="n">L</span> <span class="o">:=</span> <span class="nf">StrLen(</span><span class="n">V</span><span class="p">)</span>
-<span class="nb">MsgBox</span><span class="p">,,</span> <span class="n">MD5</span><span class="p">(),</span> <span class="o">%</span> <span class="n">V</span> <span class="o">.</span> <span class="s">&quot;:`n`n&quot;</span> <span class="o">.</span> <span class="n">MD5</span><span class="p">(</span> <span class="n">V</span><span class="p">,</span><span class="n">L</span> <span class="p">)</span>
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+
+<span class="nb">MsgBox</span><span class="p">,,</span><span class="s"> MD5_File()</span><span class="p">, % </span><span class="s">A_AhkPath . &quot;:`n`n&quot; . MD5_File( A_AhkPath )</span><span class="w"></span>
+
+
+<span class="n">V</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;The quick brown fox jumps over the lazy dog&quot;</span>
+<span class="n">L</span><span class="p"> </span><span class="o">:=</span><span class="nf"> StrLen</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="nb">MsgBox</span><span class="p">,,</span><span class="s"> MD5()</span><span class="p">, % </span><span class="s">V . &quot;:`n`n&quot; . MD5( V</span><span class="p">,</span><span class="s">L )</span><span class="w"></span>
 </pre></div>

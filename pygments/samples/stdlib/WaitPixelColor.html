@@ -1,68 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="c1">;========================================================================</span>
-<span class="c1">; </span>
-<span class="c1">; Function:     WaitPixelColor</span>
-<span class="c1">; Description:  Waits until pixel is a certain color (w/ optional timeout)</span>
-<span class="c1">; Online Ref.:  http://www.autohotkey.com/forum/topic43807.html</span>
-<span class="c1">;</span>
-<span class="c1">; Last Update:  19/July/2009 04:30</span>
-<span class="c1">;</span>
-<span class="c1">; Created by:   MasterFocus</span>
-<span class="c1">;               http://www.autohotkey.net/~MasterFocus/AHK/</span>
-<span class="c1">;</span>
-<span class="c1">;========================================================================</span>
-<span class="c1">;</span>
-<span class="c1">; p_DesiredColor, p_PosX, p_PosY [, p_TimeOut, p_GetMode, p_ReturnColor]</span>
-<span class="c1">;</span>
-<span class="c1">; + Required parameters:</span>
-<span class="c1">; - p_DesiredColor      The color you are waiting for</span>
-<span class="c1">; - p_PosX, p_PosY      Pixel coordinates</span>
-<span class="c1">;</span>
-<span class="c1">; + Optional parameters:</span>
-<span class="c1">; - p_TimeOut           Timeout in milliseconds (default is 0, no timeout)</span>
-<span class="c1">; - p_GetMode           PixelGetColor mode(s) (default is blank)</span>
-<span class="c1">; - p_ReturnColor       Boolean, see returned values below (deafult is 0)</span>
-<span class="c1">;</span>
-<span class="c1">; + Returned values when ReturnColor is 0 (false):</span>
-<span class="c1">; - 0      The desired color was found</span>
-<span class="c1">; - 1      There was a problem during PixelGetColor</span>
-<span class="c1">; - 2      The function timed out</span>
-<span class="c1">;</span>
-<span class="c1">; + Returned values when ReturnColor is 1 (true):</span>
-<span class="c1">; - Blank        There was a problem during PixelGetColor</span>
-<span class="c1">; - Non-blank    Will be the latest found color, even if not the desired one</span>
-<span class="c1">;</span>
-<span class="c1">;========================================================================</span>
-
-<span class="nf">WaitPixelColor</span><span class="p">(</span>p_DesiredColor<span class="p">,</span>p_PosX<span class="p">,</span>p_PosY<span class="p">,</span>p_TimeOut<span class="o">=</span><span class="mi">0</span><span class="p">,</span>p_GetMode<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>p_ReturnColor<span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span>l_Start<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">A_TickCount</span>
-<span class="w">    </span><span class="k">Loop</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="k">PixelGetColor</span><span class="p">,</span><span class="w"> </span>l_RetrievedColor<span class="p">,</span><span class="w"> </span><span class="nv">%p_PosX%</span><span class="p">,</span><span class="w"> </span><span class="nv">%p_PosY%</span><span class="p">,</span><span class="w"> </span><span class="nv">%p_GetMode%</span>
-<span class="w">        </span><span class="kr">If</span><span class="w"> </span>ErrorLevel
-<span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span>p_ReturnColor
-<span class="w">                </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">            </span><span class="k">Break</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">        </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>l_RetrievedColor<span class="w"> </span><span class="o">=</span><span class="w"> </span>p_DesiredColor<span class="w"> </span><span class="p">)</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span>p_ReturnColor
-<span class="w">                </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">            </span><span class="k">Break</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">        </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span><span class="w"> </span>p_TimeOut<span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nb">A_TickCount</span><span class="w"> </span><span class="o">-</span><span class="w"> </span>l_Start<span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span>p_TimeOut<span class="w"> </span><span class="p">)</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="kr">If</span><span class="w"> </span><span class="o">!</span>p_ReturnColor
-<span class="w">                </span><span class="k">Return</span><span class="w"> </span><span class="mi">2</span>
-<span class="w">            </span><span class="k">Break</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="k">Return</span><span class="w"> </span>l_RetrievedColor
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="c-Singleline">;========================================================================</span>
@@ -98,33 +34,33 @@ New Lexer:
 <span class="c-Singleline">; - Blank        There was a problem during PixelGetColor</span>
 <span class="c-Singleline">; - Non-blank    Will be the latest found color, even if not the desired one</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">;========================================================================</span>
+<span class="c-Singleline">;========================================================================</span><span class="w"></span>
 
 <span class="n">WaitPixelColor</span><span class="p">(</span><span class="n">p_DesiredColor</span><span class="p">,</span><span class="n">p_PosX</span><span class="p">,</span><span class="n">p_PosY</span><span class="p">,</span><span class="n">p_TimeOut</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p_GetMode</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">p_ReturnColor</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">l_Start</span> <span class="o">:=</span> <span class="nv">A_TickCount</span>
-<span class="w">    </span><span class="nb">Loop</span>
-    <span class="p">{</span>
-<span class="w">        </span><span class="nb">PixelGetColor</span><span class="p">,</span> <span class="n">l_RetrievedColor</span><span class="p">,</span> <span class="nv">%p_PosX%</span><span class="p">,</span> <span class="nv">%p_PosY%</span><span class="p">,</span> <span class="nv">%p_GetMode%</span>
-<span class="w">        </span><span class="nb">If </span><span class="nv">ErrorLevel</span>
+<span class="w">    </span><span class="n">l_Start</span><span class="p"> </span><span class="o">:=</span> <span class="nv">A_TickCount</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="w"></span>
+<span class="w">    </span> <span class="p">{</span>
+<span class="w">        </span><span class="nb">PixelGetColor</span><span class="p">,</span><span class="s"> l_RetrievedColor</span><span class="p">,</span><span class="s"> %p_PosX%</span><span class="p">,</span><span class="s"> %p_PosY%</span><span class="p">,</span><span class="s"> %p_GetMode%</span><span class="w"></span>
+<span class="w">        </span><span class="nf"> If </span><span class="nv">ErrorLevel</span>
         <span class="p">{</span>
-            <span class="n">If</span> <span class="o">!</span><span class="n">p_ReturnColor</span>
-<span class="w">                </span><span class="nb">Return</span> <span class="mi">1</span>
-<span class="w">            </span><span class="nb">Break</span>
-        <span class="p">}</span>
-        <span class="n">If</span> <span class="p">(</span> <span class="n">l_RetrievedColor</span> <span class="o">=</span> <span class="n">p_DesiredColor</span> <span class="p">)</span>
+<span class="w">            </span><span class="n">If</span><span class="p"> </span><span class="o">!</span><span class="n">p_ReturnColor</span><span class="nf"></span>
+<span class="nf">                Return</span> <span class="mi">1</span>
+<span class="w">            </span><span class="nb">Break</span><span class="w"></span>
+<span class="w">        </span> <span class="p">}</span>
+<span class="w">        </span><span class="n">If</span><span class="p"> (</span> <span class="n">l_RetrievedColor</span> <span class="o">=</span> <span class="n">p_DesiredColor</span> <span class="p">)</span>
         <span class="p">{</span>
-            <span class="n">If</span> <span class="o">!</span><span class="n">p_ReturnColor</span>
-<span class="w">                </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">            </span><span class="nb">Break</span>
-        <span class="p">}</span>
-        <span class="n">If</span> <span class="p">(</span> <span class="n">p_TimeOut</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span> <span class="nv">A_TickCount</span> <span class="o">-</span> <span class="n">l_Start</span> <span class="o">&gt;=</span> <span class="n">p_TimeOut</span> <span class="p">)</span>
+<span class="w">            </span><span class="n">If</span><span class="p"> </span><span class="o">!</span><span class="n">p_ReturnColor</span><span class="nf"></span>
+<span class="nf">                Return</span> <span class="mi">0</span>
+<span class="w">            </span><span class="nb">Break</span><span class="w"></span>
+<span class="w">        </span> <span class="p">}</span>
+<span class="w">        </span><span class="n">If</span><span class="p"> (</span> <span class="n">p_TimeOut</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span> <span class="nv">A_TickCount</span> <span class="o">-</span> <span class="n">l_Start</span> <span class="o">&gt;=</span> <span class="n">p_TimeOut</span> <span class="p">)</span>
         <span class="p">{</span>
-            <span class="n">If</span> <span class="o">!</span><span class="n">p_ReturnColor</span>
-<span class="w">                </span><span class="nb">Return</span> <span class="mi">2</span>
-<span class="w">            </span><span class="nb">Break</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="w">    </span><span class="nb">Return</span> <span class="n">l_RetrievedColor</span>
-<span class="p">}</span>
+<span class="w">            </span><span class="n">If</span><span class="p"> </span><span class="o">!</span><span class="n">p_ReturnColor</span><span class="nf"></span>
+<span class="nf">                Return</span> <span class="mi">2</span>
+<span class="w">            </span><span class="nb">Break</span><span class="w"></span>
+<span class="w">        </span> <span class="p">}</span>
+    <span class="p">}</span><span class="nf"></span>
+<span class="nf">    Return</span> <span class="n">l_RetrievedColor</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

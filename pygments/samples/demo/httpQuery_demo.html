@@ -1,25 +1,31 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include httpQuery.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+<span class="nb">#NoEnv</span><span class="w"></span>
+
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
 
 <span class="c-Singleline">; exmpl.searchAHKforum.httpQuery.ahk</span>
 <span class="c-Singleline">; Searches the forum for a given Phrase: in this case httpQuery</span>
-<span class="nb">#noenv</span>
-<span class="n">html</span>     <span class="o">:=</span> <span class="s">&quot;&quot;</span>
-<span class="n">URL</span>      <span class="o">:=</span> <span class="s">&quot;http://www.autohotkey.com/forum/search.php?mode=results&quot;</span>
-<span class="n">POSTData</span> <span class="o">:=</span> <span class="s">&quot;search_keywords=httpQuery&amp;search_terms=all&amp;search_forum=-1&amp;&quot;</span>
+<span class="nb">#noenv</span><span class="w"></span>
+
+<span class="n">html</span><span class="p"> </span><span class="w">    </span><span class="o">:=</span> <span class="s">&quot;&quot;</span>
+<span class="n">URL</span><span class="p"> </span><span class="w">     </span><span class="o">:=</span> <span class="s">&quot;http://www.autohotkey.com/forum/search.php?mode=results&quot;</span>
+<span class="n">POSTData</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;search_keywords=httpQuery&amp;search_terms=all&amp;search_forum=-1&amp;&quot;</span>
           <span class="o">.</span> <span class="s">&quot;search_time=0&amp;search_fields=all&amp;show_results=topics&amp;return_chars=500&quot;</span>
-          <span class="o">.</span> <span class="s">&quot;&amp;sort_by=0&amp;sort_dir=DESC&quot;</span>
+          <span class="o">.</span> <span class="s">&quot;&amp;sort_by=0&amp;sort_dir=DESC&quot;</span><span class="w"></span>
 
-<span class="n">length</span> <span class="o">:=</span> <span class="n">httpQuery</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="n">URL</span><span class="p">,</span><span class="n">POSTdata</span><span class="p">)</span>
-<span class="nf">varSetCapacity(</span><span class="n">html</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">length</span><span class="p"> </span><span class="o">:=</span> <span class="n">httpQuery</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="n">URL</span><span class="p">,</span><span class="n">POSTdata</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">varSetCapacity</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
 
-<span class="nb">Gui</span><span class="p">,</span><span class="n">Add</span><span class="p">,</span><span class="n">Edit</span><span class="p">,</span><span class="n">w600</span> <span class="o">+</span><span class="n">Wrap</span> <span class="n">r25</span><span class="p">,</span><span class="o">%</span> <span class="n">html</span>
-<span class="nb">Gui</span><span class="p">,</span><span class="n">Show</span>
-<span class="nb">Return</span>
+<span class="nb">Gui</span><span class="p">,</span><span class="s">Add</span><span class="p">,</span><span class="s">Edit</span><span class="p">,</span><span class="s">w600 +Wrap r25</span><span class="p">,% </span><span class="s">html</span><span class="w"></span>
+
+<span class="nb">Gui</span><span class="p">,</span><span class="s">Show</span><span class="w"></span>
+
+<span class="nf">Return</span><span class="w"></span>
 
 <span class="nl">GuiClose:</span>
 <span class="nl">GuiEscape:</span>
-<span class="w">   </span><span class="nb">ExitApp</span>
+<span class="w">   </span><span class="nb">ExitApp</span><span class="w"></span>
 </pre></div>

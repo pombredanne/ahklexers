@@ -1,52 +1,59 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; gdi+ ahk tutorial 1 written by tic (Tariq Porter)</span>
 <span class="c-Singleline">; Requires Gdip.ahk either in your Lib folder as standard library or using #Include</span>
 <span class="c-Singleline">;</span>
-<span class="c-Singleline">; Tutorial to draw a single ellipse and rectangle to the screen</span>
+<span class="c-Singleline">; Tutorial to draw a single ellipse and rectangle to the screen</span><span class="w"></span>
 
-<span class="nb">#SingleInstance</span><span class="p">,</span> <span class="n">Force</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SetBatchLines</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="c-Singleline"></span>
+<span class="nb">#SingleInstance</span><span class="p">,</span><span class="s"> Force</span><span class="w"></span>
+
+<span class="nb">#NoEnv</span><span class="w"></span>
+
+<span class="nb">SetBatchLines</span><span class="p">,</span><span class="s"> -1</span><span class="w"></span>
+
 
 <span class="c-Singleline">; Uncomment if Gdip.ahk is not in your standard library</span>
 <span class="c-Singleline">;#Include, Gdip.ahk</span>
 
 <span class="c-Singleline">; Start gdi+</span>
-<span class="n">If</span> <span class="o">!</span><span class="n">pToken</span> <span class="o">:=</span> <span class="n">Gdip_Startup</span><span class="p">()</span>
+<span class="n">If</span><span class="p"> </span><span class="o">!</span><span class="n">pToken</span> <span class="o">:=</span> <span class="n">Gdip_Startup</span><span class="p">()</span>
 <span class="p">{</span>
-<span class="w">	</span><span class="nb">MsgBox</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="n">gdiplus</span> <span class="n">error</span><span class="o">!</span><span class="p">,</span> <span class="n">Gdiplus</span> <span class="n">failed</span> <span class="n">to</span> <span class="n">start</span><span class="o">.</span> <span class="n">Please</span> <span class="n">ensure</span> <span class="n">you</span> <span class="n">have</span> <span class="n">gdiplus</span> <span class="n">on</span> <span class="n">your</span> <span class="n">system</span>
-<span class="w">	</span><span class="nb">ExitApp</span>
+<span class="w">	</span><span class="nb">MsgBox</span><span class="p">,</span><span class="s"> 48</span><span class="p">,</span><span class="s"> gdiplus error!</span><span class="p">,</span><span class="s"> Gdiplus failed to start. Please ensure you have gdiplus on your system</span><span class="w"></span>
+<span class="w">		</span><span class="nb">ExitApp</span><span class="w"></span>
+
 <span class="p">}</span>
-<span class="nb">OnExit</span><span class="p">,</span> <span class="n">Exit</span><span class="c-Singleline"></span>
+<span class="nb">OnExit</span><span class="p">,</span><span class="s"> Exit</span><span class="w"></span>
+
 
 <span class="c-Singleline">; Set the width and height we want as our drawing area, to draw everything in. This will be the dimensions of our bitmap</span>
-<span class="n">Width</span> <span class="o">:=</span> <span class="mi">600</span><span class="p">,</span> <span class="n">Height</span> <span class="o">:=</span> <span class="mi">400</span><span class="c-Singleline"></span>
+<span class="n">Width</span><span class="p"> </span><span class="o">:=</span> <span class="mi">600</span><span class="p">,</span> <span class="n">Height</span> <span class="o">:=</span> <span class="mi">400</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Create a layered window (+E0x80000 : must be used for UpdateLayeredWindow to work!) that is always on top (+AlwaysOnTop), has no taskbar entry or caption</span>
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span> <span class="o">-</span><span class="n">Caption</span> <span class="o">+</span><span class="n">E0x80000</span> <span class="o">+</span><span class="n">LastFound</span> <span class="o">+</span><span class="n">OwnDialogs</span> <span class="o">+</span><span class="n">Owner</span> <span class="o">+</span><span class="n">AlwaysOnTop</span><span class="c-Singleline"></span>
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 1: -Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop</span><span class="w"></span>
+
 
 <span class="c-Singleline">; Show the window</span>
-<span class="nb">Gui</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span> <span class="n">Show</span><span class="p">,</span> <span class="n">NA</span><span class="c-Singleline"></span>
+<span class="nb">Gui</span><span class="p">,</span><span class="s"> 1: Show</span><span class="p">,</span><span class="s"> NA</span><span class="w"></span>
+
 
 <span class="c-Singleline">; Get a handle to this window we have created in order to update it later</span>
-<span class="n">hwnd1</span> <span class="o">:=</span> <span class="nf">WinExist(</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="n">hwnd1</span><span class="p"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">()</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Create a gdi bitmap with width and height of what we are going to draw into it. This is the entire drawing area for everything</span>
-<span class="n">hbm</span> <span class="o">:=</span> <span class="n">CreateDIBSection</span><span class="p">(</span><span class="n">Width</span><span class="p">,</span> <span class="n">Height</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="n">hbm</span><span class="p"> </span><span class="o">:=</span> <span class="n">CreateDIBSection</span><span class="p">(</span><span class="n">Width</span><span class="p">,</span> <span class="n">Height</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Get a device context compatible with the screen</span>
-<span class="n">hdc</span> <span class="o">:=</span> <span class="n">CreateCompatibleDC</span><span class="p">()</span><span class="c-Singleline"></span>
+<span class="n">hdc</span><span class="p"> </span><span class="o">:=</span> <span class="n">CreateCompatibleDC</span><span class="p">()</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Select the bitmap into the device context</span>
-<span class="n">obm</span> <span class="o">:=</span> <span class="n">SelectObject</span><span class="p">(</span><span class="n">hdc</span><span class="p">,</span> <span class="n">hbm</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="n">obm</span><span class="p"> </span><span class="o">:=</span> <span class="n">SelectObject</span><span class="p">(</span><span class="n">hdc</span><span class="p">,</span> <span class="n">hbm</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Get a pointer to the graphics of the bitmap, for use with drawing functions</span>
-<span class="n">G</span> <span class="o">:=</span> <span class="n">Gdip_GraphicsFromHDC</span><span class="p">(</span><span class="n">hdc</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="n">G</span><span class="p"> </span><span class="o">:=</span> <span class="n">Gdip_GraphicsFromHDC</span><span class="p">(</span><span class="n">hdc</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Set the smoothing mode to antialias = 4 to make shapes appear smother (only used for vector drawing and filling)</span>
 <span class="n">Gdip_SetSmoothingMode</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Create a fully opaque red brush (ARGB = Transparency, red, green, blue) to draw a circle</span>
-<span class="n">pBrush</span> <span class="o">:=</span> <span class="n">Gdip_BrushCreateSolid</span><span class="p">(</span><span class="mh">0xffff0000</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="n">pBrush</span><span class="p"> </span><span class="o">:=</span> <span class="n">Gdip_BrushCreateSolid</span><span class="p">(</span><span class="mh">0xffff0000</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Fill the graphics of the bitmap with an ellipse using the brush created</span>
 <span class="c-Singleline">; Filling from coordinates (100,50) an ellipse of 200x300</span>
@@ -56,7 +63,7 @@
 <span class="n">Gdip_DeleteBrush</span><span class="p">(</span><span class="n">pBrush</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Create a slightly transparent (66) blue brush (ARGB = Transparency, red, green, blue) to draw a rectangle</span>
-<span class="n">pBrush</span> <span class="o">:=</span> <span class="n">Gdip_BrushCreateSolid</span><span class="p">(</span><span class="mh">0x660000ff</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="n">pBrush</span><span class="p"> </span><span class="o">:=</span> <span class="n">Gdip_BrushCreateSolid</span><span class="p">(</span><span class="mh">0x660000ff</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Fill the graphics of the bitmap with a rectangle using the brush created</span>
 <span class="c-Singleline">; Filling from coordinates (250,80) a rectangle of 300x200</span>
@@ -81,14 +88,15 @@
 <span class="n">DeleteDC</span><span class="p">(</span><span class="n">hdc</span><span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; The graphics may now be deleted</span>
-<span class="n">Gdip_DeleteGraphics</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
-<span class="nb">Return</span><span class="c-Singleline"></span>
+<span class="n">Gdip_DeleteGraphics</span><span class="p">(</span><span class="n">G</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">Return</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">;#######################################################################</span>
+<span class="c-Singleline">;#######################################################################</span><span class="w"></span>
 
-<span class="nb">Exit</span><span class="o">:</span><span class="c-Singleline"></span>
+<span class="nl">Exit:</span><span class="c-Singleline"></span>
 <span class="c-Singleline">; gdi+ may now be shutdown on exiting the program</span>
 <span class="n">Gdip_Shutdown</span><span class="p">(</span><span class="n">pToken</span><span class="p">)</span>
-<span class="nb">ExitApp</span>
-<span class="nb">Return</span>
+<span class="nb">ExitApp</span><span class="w"></span>
+
+<span class="nf">Return</span><span class="w"></span>
 </pre></div>

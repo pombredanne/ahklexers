@@ -1,11 +1,14 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include USBD.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+<span class="nb">#NoEnv</span><span class="w"></span>
+
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
 
 <span class="c-Singleline">; You may use a drive letter</span>
 <span class="n">USBD_SafelyRemove</span><span class="p">(</span> <span class="s">&quot;H:&quot;</span> <span class="p">)</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; call DeviceEject() directly with a DeviceID</span>
-<span class="c-Singleline">;USBD_DeviceEject( &quot;USB\VID_058F&amp;PID_6387\GDLL4HW4&quot; )</span>
+<span class="c-Singleline">;USBD_DeviceEject( &quot;USB\VID_058F&amp;PID_6387\GDLL4HW4&quot; )</span><span class="w"></span>
 </pre></div>

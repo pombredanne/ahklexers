@@ -1,307 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=170587#170587</span>
-
-<span class="c1">;Origional FTP Functions by Olfen &amp; Andreone</span>
-<span class="c1">;See the following post:</span>
-<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?t=10393</span>
-<span class="c1">;Modified by ahklerner</span>
-
-<span class="nf">FTP_CreateDirectory</span><span class="p">(</span>hConnect<span class="p">,</span>DirName<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpCreateDirectoryA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>DirName<span class="p">)</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_RemoveDirectory</span><span class="p">(</span>hConnect<span class="p">,</span>DirName<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpRemoveDirectoryA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>DirName<span class="p">)</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_SetCurrentDirectory</span><span class="p">(</span>hConnect<span class="p">,</span>DirName<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpSetCurrentDirectoryA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>DirName<span class="p">)</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_PutFile</span><span class="p">(</span>hConnect<span class="p">,</span>LocalFile<span class="p">,</span><span class="w"> </span>NewRemoteFile<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>Flags<span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;Flags:</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_UNKNOWN = 0 (Defaults to FTP_TRANSFER_TYPE_BINARY)</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_ASCII = 1</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_BINARY = 2</span>
-<span class="w">   </span><span class="kr">If</span><span class="w"> </span>NewRemoteFile<span class="o">=</span>
-<span class="w">      </span>NewRemoteFile<span class="w"> </span><span class="o">:=</span><span class="w"> </span>LocalFile
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpPutFileA&quot;</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>LocalFile
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>NewRemoteFile
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>Flags
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">;dwContext</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_GetFile</span><span class="p">(</span>hConnect<span class="p">,</span>RemoteFile<span class="p">,</span><span class="w"> </span>NewFile<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>Flags<span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;Flags:</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_UNKNOWN = 0 (Defaults to FTP_TRANSFER_TYPE_BINARY)</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_ASCII = 1</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_BINARY = 2</span>
-<span class="w">   </span><span class="kr">If</span><span class="w"> </span>NewFile<span class="o">=</span>
-<span class="w">      </span>NewFile<span class="w"> </span><span class="o">:=</span><span class="w"> </span>RemoteFile
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpGetFileA&quot;</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>RemoteFile
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>NewFile
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;do not overwrite existing files</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">;dwFlagsAndAttributes</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>Flags
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">;dwContext</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_GetFileSize</span><span class="p">(</span>hConnect<span class="p">,</span>FileName<span class="p">,</span><span class="w"> </span>Flags<span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;Flags:</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_UNKNOWN = 0 (Defaults to FTP_TRANSFER_TYPE_BINARY)</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_ASCII = 1</span>
-<span class="w">   </span><span class="c1">;FTP_TRANSFER_TYPE_BINARY = 2</span>
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>fof_hInternet<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpOpenFileA&quot;</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>FileName
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80000000</span><span class="w"> </span><span class="c1">;dwAccess: GENERIC_READ</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>Flags
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">;dwContext</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>fof_hInternet<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
-
-<span class="w">   </span>FileSize<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpGetFileSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>fof_hInternet<span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span><span class="w">  </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>fof_hInternet<span class="p">)</span>
-<span class="w">   </span><span class="k">Return</span><span class="p">,</span><span class="w"> </span>FileSize
-<span class="w">   </span><span class="p">}</span>
-
-
-<span class="nf">FTP_DeleteFile</span><span class="p">(</span>hConnect<span class="p">,</span>FileName<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w">  </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpDeleteFileA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>FileName<span class="p">)</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_RenameFile</span><span class="p">(</span>hConnect<span class="p">,</span>Existing<span class="p">,</span><span class="w"> </span>New<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpRenameFileA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>Existing<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>New<span class="p">)</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_Open</span><span class="p">(</span>Server<span class="p">,</span><span class="w"> </span>Port<span class="o">=</span><span class="mi">21</span><span class="p">,</span><span class="w"> </span>Username<span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>Password<span class="o">=</span><span class="mi">0</span><span class="w"> </span><span class="p">,</span>Proxy<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span>ProxyBypass<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span>IfEqual<span class="p">,</span><span class="w"> </span>Username<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">SetEnv</span><span class="p">,</span><span class="w"> </span>Username<span class="p">,</span><span class="w"> </span>anonymous
-<span class="w">   </span>IfEqual<span class="p">,</span><span class="w"> </span>Password<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">SetEnv</span><span class="p">,</span><span class="w"> </span>Password<span class="p">,</span><span class="w"> </span>anonymous
-
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>Proxy<span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">      </span>AccessType<span class="o">=</span><span class="mi">3</span>
-<span class="w">   </span><span class="k">Else</span>
-<span class="w">      </span>AccessType<span class="o">=</span><span class="mi">1</span>
-<span class="w">   </span><span class="c1">;#define INTERNET_OPEN_TYPE_PRECONFIG                    0   // use registry configuration</span>
-<span class="w">   </span><span class="c1">;#define INTERNET_OPEN_TYPE_DIRECT                       1   // direct to net</span>
-<span class="w">   </span><span class="c1">;#define INTERNET_OPEN_TYPE_PROXY                        3   // via named proxy</span>
-<span class="w">   </span><span class="c1">;#define INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY  4   // prevent using java/script/INS</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="c1">;global ic_hInternet</span>
-<span class="w">   </span><span class="kt">global</span><span class="w"> </span>ic_hInternet<span class="p">,</span>io_hInternet<span class="p">,</span><span class="w"> </span>hModule
-<span class="w">   </span>hModule<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wininet.dll&quot;</span><span class="p">)</span>
-
-<span class="w">   </span>io_hInternet<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\InternetOpenA&quot;</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">A_ScriptName</span><span class="w"> </span><span class="c1">;lpszAgent</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>AccessType
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>Proxy
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>ProxyBypass
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">;dwFlags</span>
-
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="kr">or</span><span class="w"> </span>io_hInternet<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">FTP_Close</span><span class="p">()</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">      </span><span class="p">}</span>
-
-<span class="w">   </span>ic_hInternet<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\InternetConnectA&quot;</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>io_hInternet
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>Server
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>Port
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>Username
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>Password
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;dwService (INTERNET_SERVICE_FTP = 1)</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">;dwFlags</span>
-<span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">;dwContext</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>ic_hInternet<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span>ic_hInternet
-<span class="w">   </span><span class="p">}</span>
-
-<span class="nf">FTP_CloseSocket</span><span class="p">(</span>hConnect<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span><span class="w">  </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">)</span>
-<span class="w">   </span><span class="p">}</span>
-<span class="w">   </span>
-<span class="nf">FTP_Close</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="kt">global</span><span class="w"> </span>ic_hInternet<span class="p">,</span><span class="w"> </span>io_hInternet<span class="p">,</span><span class="w"> </span>hModule
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span><span class="w">  </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>ic_hInternet<span class="p">)</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span><span class="w">  </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>io_hInternet<span class="p">)</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UInt&quot;</span><span class="p">,</span><span class="w"> </span>hModule<span class="p">)</span>
-<span class="w">   </span><span class="p">}</span>
-
-
-<span class="nf">FTP_GetFileInfo</span><span class="p">(</span>ByRef<span class="w"> </span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span>InfoName<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Name&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span>value<span class="p">,</span><span class="w"> </span><span class="mi">1040</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="w">      </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>value<span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="err">@</span>FindData<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">44</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1040</span><span class="p">)</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span>value<span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;CreationTime&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">32</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>FTP_FileTimeToStr<span class="p">(</span>value<span class="p">)</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;LastAccessTime&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">32</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>FTP_FileTimeToStr<span class="p">(</span>value<span class="p">)</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;LastWriteTime&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">32</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">)</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>FTP_FileTimeToStr<span class="p">(</span>value<span class="p">)</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Size&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">28</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">32</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">)</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Attrib&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsNormal&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;N&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsDirectory&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;D&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsReadOnly&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;R&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsHidden&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;H&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsSystem&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;S&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsArchive&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;A&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsTemp&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;T&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsEncrypted&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;E&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsCompressed&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;C&quot;</span>
-<span class="w">      </span><span class="nf">If</span><span class="p">(</span>FTP_GetFileInfo<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="s">&quot;IsVirtual&quot;</span><span class="p">))</span>
-<span class="w">         </span>value<span class="w"> </span><span class="p">.</span><span class="o">=</span><span class="w"> </span><span class="s">&quot;V&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsReadOnly&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_READONLY</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsHidden&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_HIDDEN</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsSystem&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_SYSTEM</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsDirectory&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_DIRECTORY</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsArchive&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">32</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_ARCHIVE</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsNormal&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">128</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_NORMAL</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsTemp&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_TEMPORARY</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsEncrypted&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">2048</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_OFFLINE</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsOffline&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">4096</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_ENCRYPTED</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsCompressed&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">16384</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_COMPRESSED</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nf">If</span><span class="p">(</span>InfoName<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;IsVirtual&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span>value<span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">(</span>NumGet<span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">65536</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">; FILE_ATTRIBUTE_VIRTUAL</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="k">Return</span><span class="w"> </span>value
-<span class="w">   </span><span class="p">}</span>
-
-
-
-<span class="nf">FTP_FileTimeToStr</span><span class="p">(</span>FileTime<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;FileTimeToSystemTime&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>FileTime<span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span>SystemTime<span class="p">)</span>
-<span class="w">   </span><span class="k">Return</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="w">      </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="w">      </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="w">      </span><span class="p">.</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="w">      </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="w">      </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="w">      </span><span class="p">.</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="nf">NumGet</span><span class="p">(</span>SystemTime<span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="p">}</span>
-
-
-<span class="nf">FTP_FindFirstFile</span><span class="p">(</span>hConnect<span class="p">,</span><span class="w"> </span>SearchFile<span class="p">,</span><span class="w"> </span>ByRef<span class="w"> </span><span class="err">@</span>FindData<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="c1">; WIN32_FIND_DATA structure size is 4 + 3*8 + 4*4 + 260*4 + 14*4 = 1140</span>
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">1140</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span><span class="c1">;MsgBox % &quot;FFF:= &quot; . </span>
-<span class="w">   </span>hEnum<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpFindFirstFileA&quot;</span>
-<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect
-<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>SearchFile
-<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="err">@</span>FindData
-<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span>
-<span class="w">   </span><span class="nf">If</span><span class="p">(</span><span class="o">!</span>hEnum<span class="p">)</span>
-<span class="w">      </span><span class="nf">VarSetCapacity</span><span class="p">(</span><span class="err">@</span>FindData<span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span><span class="k">Return</span><span class="w"> </span>hEnum
-<span class="p">}</span>
-
-
-<span class="nf">FTP_FindNextFile</span><span class="p">(</span>hEnum<span class="p">,</span><span class="w"> </span>ByRef<span class="w"> </span><span class="err">@</span>FindData<span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="k">Return</span><span class="w"> </span><span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetFindNextFileA&quot;</span>
-<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hEnum
-<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="err">@</span>FindData<span class="p">)</span>
-<span class="p">}</span><span class="w"> </span>
-
-<span class="c1">; This function is made by fincs</span>
-<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=246250#246250</span>
-<span class="nf">FTP_GetCurrentDirectory</span><span class="p">(</span>hConnect<span class="p">,</span>ByRef<span class="w"> </span>DirName<span class="p">){</span>
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>DirName<span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">)</span>
-<span class="w">   </span><span class="nf">VarSetCapacity</span><span class="p">(</span>MaxDirN<span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span>
-<span class="w">   </span><span class="nf">NumPut</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span>MaxDirN<span class="p">)</span>
-<span class="w">   </span>r<span class="w"> </span><span class="o">:=</span><span class="w"> </span>DllCall<span class="p">(</span><span class="s">&quot;wininet\FtpGetCurrentDirectoryA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span>hConnect<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>DirName<span class="p">,</span><span class="w"> </span><span class="s">&quot;str&quot;</span><span class="p">,</span><span class="w"> </span>MaxDirN<span class="p">)</span>
-<span class="w">   </span><span class="nf">If</span><span class="w"> </span><span class="p">(</span>ErrorLevel<span class="w"> </span><span class="kr">or</span><span class="w"> </span><span class="o">!</span>r<span class="p">)</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">   </span><span class="k">Else</span>
-<span class="w">      </span><span class="k">Return</span><span class="w"> </span><span class="mi">1</span>
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=170587#170587</span>
@@ -309,64 +6,64 @@ New Lexer:
 <span class="c-Singleline">;Origional FTP Functions by Olfen &amp; Andreone</span>
 <span class="c-Singleline">;See the following post:</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?t=10393</span>
-<span class="c-Singleline">;Modified by ahklerner</span>
+<span class="c-Singleline">;Modified by ahklerner</span><span class="w"></span>
 
 <span class="n">FTP_CreateDirectory</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">DirName</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpCreateDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">)</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpCreateDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">)</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+   <span class="p">}</span><span class="w"></span>
 
 <span class="n">FTP_RemoveDirectory</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">DirName</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpRemoveDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">)</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpRemoveDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">)</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+   <span class="p">}</span><span class="w"></span>
 
 <span class="n">FTP_SetCurrentDirectory</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">DirName</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpSetCurrentDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">)</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpSetCurrentDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">)</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+   <span class="p">}</span><span class="w"></span>
 
 <span class="n">FTP_PutFile</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">LocalFile</span><span class="p">,</span> <span class="n">NewRemoteFile</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;Flags:</span>
 <span class="c-Singleline">   ;FTP_TRANSFER_TYPE_UNKNOWN = 0 (Defaults to FTP_TRANSFER_TYPE_BINARY)</span>
 <span class="c-Singleline">   ;FTP_TRANSFER_TYPE_ASCII = 1</span>
-<span class="c-Singleline">   ;FTP_TRANSFER_TYPE_BINARY = 2</span>
-<span class="w">   </span><span class="nb">If </span><span class="n">NewRemoteFile</span><span class="o">=</span>
-      <span class="n">NewRemoteFile</span> <span class="o">:=</span> <span class="n">LocalFile</span><span class="c-Singleline"></span>
+<span class="c-Singleline">   ;FTP_TRANSFER_TYPE_BINARY = 2</span><span class="nf"></span>
+<span class="nf">   If </span><span class="n">NewRemoteFile</span><span class="o">=</span>
+<span class="w">      </span><span class="n">NewRemoteFile</span><span class="p"> </span><span class="o">:=</span> <span class="n">LocalFile</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpPutFileA&quot;</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpPutFileA&quot;</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">LocalFile</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">NewRemoteFile</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Flags</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwContext</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+   <span class="p">}</span><span class="w"></span>
 
 <span class="n">FTP_GetFile</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">RemoteFile</span><span class="p">,</span> <span class="n">NewFile</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;Flags:</span>
 <span class="c-Singleline">   ;FTP_TRANSFER_TYPE_UNKNOWN = 0 (Defaults to FTP_TRANSFER_TYPE_BINARY)</span>
 <span class="c-Singleline">   ;FTP_TRANSFER_TYPE_ASCII = 1</span>
-<span class="c-Singleline">   ;FTP_TRANSFER_TYPE_BINARY = 2</span>
-<span class="w">   </span><span class="nb">If </span><span class="n">NewFile</span><span class="o">=</span>
-      <span class="n">NewFile</span> <span class="o">:=</span> <span class="n">RemoteFile</span><span class="c-Singleline"></span>
+<span class="c-Singleline">   ;FTP_TRANSFER_TYPE_BINARY = 2</span><span class="nf"></span>
+<span class="nf">   If </span><span class="n">NewFile</span><span class="o">=</span>
+<span class="w">      </span><span class="n">NewFile</span><span class="p"> </span><span class="o">:=</span> <span class="n">RemoteFile</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpGetFileA&quot;</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpGetFileA&quot;</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">RemoteFile</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">NewFile</span>
@@ -374,11 +71,11 @@ New Lexer:
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="c-Singleline"> ;dwFlagsAndAttributes</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Flags</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwContext</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+   <span class="p">}</span><span class="w"></span>
 
 <span class="n">FTP_GetFileSize</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">FileName</span><span class="p">,</span> <span class="n">Flags</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;Flags:</span>
@@ -386,69 +83,69 @@ New Lexer:
 <span class="c-Singleline">   ;FTP_TRANSFER_TYPE_ASCII = 1</span>
 <span class="c-Singleline">   ;FTP_TRANSFER_TYPE_BINARY = 2</span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">fof_hInternet</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpOpenFileA&quot;</span>
+<span class="w">   </span><span class="n">fof_hInternet</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpOpenFileA&quot;</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FileName</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mh">0x80000000</span><span class="c-Singleline"> ;dwAccess: GENERIC_READ</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Flags</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwContext</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">fof_hInternet</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="o">-</span><span class="mi">1</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">fof_hInternet</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="o">-</span><span class="mi">1</span><span class="w"></span>
 
-   <span class="n">FileSize</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpGetFileSize&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">fof_hInternet</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">fof_hInternet</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">Return</span><span class="p">,</span> <span class="n">FileSize</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">FileSize</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpGetFileSize&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">fof_hInternet</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">fof_hInternet</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   Return</span><span class="p">,</span> <span class="n">FileSize</span>
+   <span class="p">}</span><span class="w"></span>
 
 
 <span class="n">FTP_DeleteFile</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">FileName</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">r</span> <span class="o">:=</span>  <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpDeleteFileA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf">  DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpDeleteFileA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">FileName</span><span class="p">)</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+   <span class="p">}</span><span class="w"></span>
 
 <span class="n">FTP_RenameFile</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">Existing</span><span class="p">,</span> <span class="n">New</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;global ic_hInternet</span>
-   <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpRenameFileA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Existing</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">New</span><span class="p">)</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpRenameFileA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Existing</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">New</span><span class="p">)</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+   <span class="p">}</span><span class="w"></span>
 
-<span class="n">FTP_Open</span><span class="p">(</span><span class="n">Server</span><span class="p">,</span> <span class="n">Port</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">Username</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Password</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span><span class="n">Proxy</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ProxyBypass</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">   </span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">Username</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">Username</span><span class="p">,</span> <span class="n">anonymous</span>
-<span class="w">   </span><span class="nb">IfEqual</span><span class="p">,</span> <span class="n">Password</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">Password</span><span class="p">,</span> <span class="n">anonymous</span>
+<span class="n">FTP_Open</span><span class="p">(</span><span class="n">Server</span><span class="p">,</span> <span class="n">Port</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">Username</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Password</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span><span class="n">Proxy</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">ProxyBypass</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">   IfEqual</span><span class="p">,</span> <span class="n">Username</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">Username</span><span class="p">,</span> <span class="n">anonymous</span><span class="nf"></span>
+<span class="nf">   IfEqual</span><span class="p">,</span> <span class="n">Password</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SetEnv</span><span class="p">,</span> <span class="n">Password</span><span class="p">,</span> <span class="n">anonymous</span><span class="w"></span>
 
-   <span class="n">If</span> <span class="p">(</span><span class="n">Proxy</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="n">Proxy</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
       <span class="n">AccessType</span><span class="o">=</span><span class="mi">3</span>
-<span class="w">   </span><span class="nb">Else</span>
-      <span class="n">AccessType</span><span class="o">=</span><span class="mi">1</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="nb">Else</span><span class="w"></span>
+<span class="w">      </span> <span class="n">AccessType</span><span class="o">=</span><span class="mi">1</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;#define INTERNET_OPEN_TYPE_PRECONFIG                    0   // use registry configuration</span>
 <span class="c-Singleline">   ;#define INTERNET_OPEN_TYPE_DIRECT                       1   // direct to net</span>
 <span class="c-Singleline">   ;#define INTERNET_OPEN_TYPE_PROXY                        3   // via named proxy</span>
 <span class="c-Singleline">   ;#define INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY  4   // prevent using java/script/INS</span>
 <span class="c-Singleline">   </span>
-<span class="c-Singleline">   ;global ic_hInternet</span>
-<span class="w">   </span><span class="nb">global</span> <span class="n">ic_hInternet</span><span class="p">,</span><span class="n">io_hInternet</span><span class="p">,</span> <span class="n">hModule</span>
-   <span class="n">hModule</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;wininet.dll&quot;</span><span class="p">)</span>
+<span class="c-Singleline">   ;global ic_hInternet</span><span class="nf"></span>
+<span class="nf">   global</span> <span class="n">ic_hInternet</span><span class="p">,</span><span class="n">io_hInternet</span><span class="p">,</span> <span class="n">hModule</span>
+<span class="w">   </span><span class="n">hModule</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;LoadLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="s">&quot;wininet.dll&quot;</span><span class="p">)</span><span class="w"></span>
 
-   <span class="n">io_hInternet</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetOpenA&quot;</span>
+<span class="w">   </span><span class="n">io_hInternet</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetOpenA&quot;</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="nv">A_ScriptName</span><span class="c-Singleline"> ;lpszAgent</span>
    <span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">AccessType</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Proxy</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">ProxyBypass</span>
-   <span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwFlags</span>
+   <span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwFlags</span><span class="w"></span>
 
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">io_hInternet</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">FTP_Close</span><span class="p">()</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-      <span class="p">}</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">io_hInternet</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">FTP_Close</span><span class="p">()</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+      <span class="p">}</span><span class="w"></span>
 
-   <span class="n">ic_hInternet</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetConnectA&quot;</span>
+<span class="w">   </span><span class="n">ic_hInternet</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetConnectA&quot;</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">io_hInternet</span>
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Server</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">Port</span>
@@ -456,153 +153,153 @@ New Lexer:
    <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">Password</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span> <span class="p">,</span> <span class="mi">1</span><span class="c-Singleline"> ;dwService (INTERNET_SERVICE_FTP = 1)</span>
    <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="c-Singleline"> ;dwFlags</span>
-   <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwContext</span>
-   
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">ic_hInternet</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="n">ic_hInternet</span>
-   <span class="p">}</span>
+   <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"> ;dwContext</span><span class="w"></span>
+<span class="w">   </span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">ic_hInternet</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="n">ic_hInternet</span>
+   <span class="p">}</span><span class="w"></span>
 
-<span class="n">FTP_CloseSocket</span><span class="p">(</span><span class="n">hConnect</span><span class="p">)</span> <span class="p">{</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">)</span>
-   <span class="p">}</span>
-   
-<span class="n">FTP_Close</span><span class="p">()</span> <span class="p">{</span>
-<span class="w">   </span><span class="nb">global</span> <span class="n">ic_hInternet</span><span class="p">,</span> <span class="n">io_hInternet</span><span class="p">,</span> <span class="n">hModule</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">ic_hInternet</span><span class="p">)</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">io_hInternet</span><span class="p">)</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hModule</span><span class="p">)</span>
-   <span class="p">}</span>
+<span class="n">FTP_CloseSocket</span><span class="p">(</span><span class="n">hConnect</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">)</span>
+   <span class="p">}</span><span class="w"></span>
+<span class="w">   </span>
+<span class="n">FTP_Close</span><span class="p">()</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">   global</span> <span class="n">ic_hInternet</span><span class="p">,</span> <span class="n">io_hInternet</span><span class="p">,</span> <span class="n">hModule</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">ic_hInternet</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetCloseHandle&quot;</span><span class="p">,</span>  <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">io_hInternet</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;FreeLibrary&quot;</span><span class="p">,</span> <span class="s">&quot;UInt&quot;</span><span class="p">,</span> <span class="n">hModule</span><span class="p">)</span>
+   <span class="p">}</span><span class="w"></span>
 
 
 <span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">ByRef</span> <span class="n">@FindData</span><span class="p">,</span> <span class="n">InfoName</span><span class="p">)</span> <span class="p">{</span>
-   <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;Name&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">1040</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-      <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">@FindData</span> <span class="o">+</span> <span class="mi">44</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1040</span><span class="p">)</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+   <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;Name&quot;</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">1040</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      DllCall</span><span class="p">(</span><span class="s">&quot;RtlMoveMemory&quot;</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">@FindData</span> <span class="o">+</span> <span class="mi">44</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">1040</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;CreationTime&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;CreationTime&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="w">      </span><span class="n">value</span><span class="p"> </span><span class="o">:=</span> <span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;LastAccessTime&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;LastAccessTime&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+<span class="w">      </span><span class="n">value</span><span class="p"> </span><span class="o">:=</span> <span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;LastWriteTime&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;LastWriteTime&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+<span class="w">      </span><span class="n">value</span><span class="p"> </span><span class="o">:=</span> <span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;Size&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;Size&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;Attrib&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsNormal&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;N&quot;</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;Attrib&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsNormal&quot;</span><span class="p">))</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;N&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsDirectory&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;D&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;D&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsReadOnly&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;R&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;R&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsHidden&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;H&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;H&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsSystem&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;S&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;S&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsArchive&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;A&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;A&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsTemp&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;T&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;T&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsEncrypted&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;E&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;E&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsCompressed&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;C&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;C&quot;</span>
       <span class="n">If</span><span class="p">(</span><span class="n">FTP_GetFileInfo</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="s">&quot;IsVirtual&quot;</span><span class="p">))</span>
-         <span class="n">value</span> <span class="o">.=</span> <span class="s">&quot;V&quot;</span>
+<span class="w">         </span><span class="n">value</span><span class="p"> </span><span class="o">.=</span> <span class="s">&quot;V&quot;</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsReadOnly&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_READONLY</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsReadOnly&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_READONLY</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsHidden&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_HIDDEN</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsHidden&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_HIDDEN</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsSystem&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_SYSTEM</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsSystem&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_SYSTEM</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsDirectory&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_DIRECTORY</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsDirectory&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_DIRECTORY</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsArchive&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_ARCHIVE</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsArchive&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_ARCHIVE</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsNormal&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">128</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_NORMAL</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsNormal&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">128</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_NORMAL</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsTemp&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">256</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_TEMPORARY</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsTemp&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">256</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_TEMPORARY</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsEncrypted&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">2048</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_OFFLINE</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsEncrypted&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">2048</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_OFFLINE</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsOffline&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">4096</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_ENCRYPTED</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsOffline&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">4096</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_ENCRYPTED</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsCompressed&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">16384</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_COMPRESSED</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsCompressed&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">16384</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_COMPRESSED</span>
       <span class="p">}</span>
-<span class="w">   </span><span class="nb">else</span> <span class="n">If</span><span class="p">(</span><span class="n">InfoName</span> <span class="o">==</span> <span class="s">&quot;IsVirtual&quot;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">65536</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_VIRTUAL</span>
-      <span class="p">}</span>
-<span class="w">   </span><span class="nb">Return</span> <span class="n">value</span>
-   <span class="p">}</span>
+<span class="w">   </span><span class="nb">else</span><span class="w"> </span><span class="s">If(InfoName == &quot;IsVirtual&quot;) {</span><span class="w"></span>
+<span class="w">      </span> <span class="n">value</span> <span class="o">:=</span> <span class="p">(</span><span class="nf">NumGet</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">65536</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="c-Singleline"> ; FILE_ATTRIBUTE_VIRTUAL</span>
+      <span class="p">}</span><span class="nf"></span>
+<span class="nf">   Return</span> <span class="n">value</span>
+   <span class="p">}</span><span class="w"></span>
 
 
 
-<span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">FileTime</span><span class="p">)</span> <span class="p">{</span>
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-   <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;FileTimeToSystemTime&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">FileTime</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">SystemTime</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">Return</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-      <span class="o">.</span> <span class="s">&quot;/&quot;</span> <span class="o">.</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-      <span class="o">.</span> <span class="s">&quot;/&quot;</span> <span class="o">.</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-      <span class="o">.</span> <span class="s">&quot; &quot;</span> <span class="o">.</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-      <span class="o">.</span> <span class="s">&quot;:&quot;</span> <span class="o">.</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-      <span class="o">.</span> <span class="s">&quot;:&quot;</span> <span class="o">.</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-      <span class="o">.</span> <span class="s">&quot;.&quot;</span> <span class="o">.</span> <span class="nf">NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
-<span class="p">}</span>
+<span class="n">FTP_FileTimeToStr</span><span class="p">(</span><span class="n">FileTime</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   DllCall</span><span class="p">(</span><span class="s">&quot;FileTimeToSystemTime&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">FileTime</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">SystemTime</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   Return NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
+      <span class="o">.</span> <span class="s">&quot;/&quot;</span> <span class="o">.</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
+      <span class="o">.</span> <span class="s">&quot;/&quot;</span> <span class="o">.</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
+      <span class="o">.</span> <span class="s">&quot; &quot;</span> <span class="o">.</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
+      <span class="o">.</span> <span class="s">&quot;:&quot;</span> <span class="o">.</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
+      <span class="o">.</span> <span class="s">&quot;:&quot;</span> <span class="o">.</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
+      <span class="o">.</span> <span class="s">&quot;.&quot;</span> <span class="o">.</span><span class="nf"> NumGet</span><span class="p">(</span><span class="n">SystemTime</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="s">&quot;short&quot;</span><span class="p">)</span>
+<span class="p">}</span><span class="w"></span>
 
 
 <span class="n">FTP_FindFirstFile</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span> <span class="n">SearchFile</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">@FindData</span><span class="p">)</span> <span class="p">{</span><span class="c-Singleline"></span>
-<span class="c-Singleline">   ; WIN32_FIND_DATA structure size is 4 + 3*8 + 4*4 + 260*4 + 14*4 = 1140</span>
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">1140</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">   ; WIN32_FIND_DATA structure size is 4 + 3*8 + 4*4 + 260*4 + 14*4 = 1140</span><span class="nf"></span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">1140</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="c-Singleline"></span>
 <span class="c-Singleline">   ;MsgBox % &quot;FFF:= &quot; . </span>
-   <span class="n">hEnum</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpFindFirstFileA&quot;</span>
+<span class="w">   </span><span class="n">hEnum</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpFindFirstFileA&quot;</span>
       <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span>
       <span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">SearchFile</span>
       <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">@FindData</span>
       <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span>
-      <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-   
-   <span class="n">If</span><span class="p">(</span><span class="o">!</span><span class="n">hEnum</span><span class="p">)</span>
-      <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="w">   </span><span class="nb">Return</span> <span class="n">hEnum</span>
-<span class="p">}</span>
+      <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span>
+   <span class="n">If</span><span class="p">(</span><span class="o">!</span><span class="n">hEnum</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      VarSetCapacity</span><span class="p">(</span><span class="n">@FindData</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   Return</span> <span class="n">hEnum</span>
+<span class="p">}</span><span class="w"></span>
 
 
-<span class="n">FTP_FindNextFile</span><span class="p">(</span><span class="n">hEnum</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">@FindData</span><span class="p">)</span> <span class="p">{</span>
-<span class="w">   </span><span class="nb">Return</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetFindNextFileA&quot;</span>
+<span class="n">FTP_FindNextFile</span><span class="p">(</span><span class="n">hEnum</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">@FindData</span><span class="p">)</span> <span class="p">{</span><span class="nf"></span>
+<span class="nf">   Return DllCall</span><span class="p">(</span><span class="s">&quot;wininet\InternetFindNextFileA&quot;</span>
       <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hEnum</span>
       <span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">@FindData</span><span class="p">)</span>
 <span class="p">}</span><span class="c-Singleline"> </span>
 
 <span class="c-Singleline">; This function is made by fincs</span>
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=246250#246250</span>
-<span class="n">FTP_GetCurrentDirectory</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">DirName</span><span class="p">){</span>
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">DirName</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
-   <span class="nf">VarSetCapacity</span><span class="p">(</span><span class="n">MaxDirN</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-   <span class="nf">NumPut</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">MaxDirN</span><span class="p">)</span>
-   <span class="n">r</span> <span class="o">:=</span> <span class="nf">DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpGetCurrentDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">MaxDirN</span><span class="p">)</span>
-   <span class="n">If</span> <span class="p">(</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="w">   </span><span class="nb">Else</span>
-<span class="w">      </span><span class="nb">Return</span> <span class="mi">1</span>
-<span class="p">}</span>
+<span class="n">FTP_GetCurrentDirectory</span><span class="p">(</span><span class="n">hConnect</span><span class="p">,</span><span class="n">ByRef</span> <span class="n">DirName</span><span class="p">){</span><span class="nf"></span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">DirName</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   VarSetCapacity</span><span class="p">(</span><span class="n">MaxDirN</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">   NumPut</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">MaxDirN</span><span class="p">)</span>
+<span class="w">   </span><span class="n">r</span><span class="p"> </span><span class="o">:=</span><span class="nf"> DllCall</span><span class="p">(</span><span class="s">&quot;wininet\FtpGetCurrentDirectoryA&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">hConnect</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">DirName</span><span class="p">,</span> <span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="n">MaxDirN</span><span class="p">)</span>
+<span class="w">   </span><span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="ow">or</span> <span class="o">!</span><span class="n">r</span><span class="p">)</span><span class="nf"></span>
+<span class="nf">      Return</span> <span class="mi">0</span>
+<span class="w">   </span><span class="nb">Else</span><span class="w"></span>
+<span class="w">      </span><span class="nf"> Return</span> <span class="mi">1</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

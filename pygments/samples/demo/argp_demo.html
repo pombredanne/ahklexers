@@ -1,15 +1,18 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include argp.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+<span class="nb">#NoEnv</span><span class="w"></span>
 
-<span class="c-Singleline">; This demo shows the two functions working on same options string</span>
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
 
-<span class="n">options</span> <span class="o">=</span> <span class="o">-</span><span class="n">A</span><span class="o">=</span><span class="err">&#39;</span><span class="mi">33</span><span class="err">&#39;</span> <span class="o">-</span><span class="n">i</span> <span class="o">/</span><span class="n">f</span><span class="o">:</span><span class="n">c</span><span class="o">:</span>\<span class="n">test</span> <span class="o">-</span><span class="n">time</span><span class="o">:</span><span class="mi">5</span><span class="o">:</span><span class="mi">10</span> <span class="o">-</span><span class="n">x</span> <span class="o">/</span><span class="n">date</span><span class="o">:</span><span class="mi">11</span><span class="o">:</span><span class="mo">08</span><span class="o">:</span><span class="mi">2009</span><span class="c-Singleline"></span>
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
+
+<span class="c-Singleline">; This demo shows the two functions working on same options string</span><span class="w"></span>
+
+<span class="n">options</span><span class="p"> =</span> <span class="o">-</span><span class="n">A</span><span class="o">=</span>&#39;<span class="mi">33</span>&#39; <span class="o">-</span><span class="n">i</span> <span class="o">/</span><span class="n">f</span><span class="o">:</span><span class="n">c</span><span class="o">:</span>\<span class="n">test</span> <span class="o">-</span><span class="n">time</span><span class="o">:</span><span class="mi">5</span><span class="o">:</span><span class="mi">10</span> <span class="o">-</span><span class="n">x</span> <span class="o">/</span><span class="n">date</span><span class="o">:</span><span class="mi">11</span><span class="o">:</span><span class="mo">08</span><span class="o">:</span><span class="mi">2009</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Example 1: argp_parse()</span>
-<span class="n">count</span> <span class="o">:=</span> <span class="n">argp_parse</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">n3</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">n4</span><span class="p">,</span> <span class="n">v4</span><span class="p">,</span> <span class="n">n5</span><span class="p">,</span> <span class="n">v5</span><span class="p">,</span> <span class="n">n6</span><span class="p">,</span> <span class="n">v6</span><span class="p">,</span> <span class="n">n7</span><span class="p">,</span> <span class="n">v7</span><span class="p">,</span> <span class="n">n8</span><span class="p">,</span> <span class="n">v8</span><span class="p">)</span>
-<span class="n">Text</span> <span class="o">=</span>
+<span class="n">count</span><span class="p"> </span><span class="o">:=</span> <span class="n">argp_parse</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">n3</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">n4</span><span class="p">,</span> <span class="n">v4</span><span class="p">,</span> <span class="n">n5</span><span class="p">,</span> <span class="n">v5</span><span class="p">,</span> <span class="n">n6</span><span class="p">,</span> <span class="n">v6</span><span class="p">,</span> <span class="n">n7</span><span class="p">,</span> <span class="n">v7</span><span class="p">,</span> <span class="n">n8</span><span class="p">,</span> <span class="n">v8</span><span class="p">)</span>
+<span class="n">Text</span><span class="p"> =</span>
 <span class="g">(</span>
 <span class="g">Options string:</span>
 <span class="g">%options%</span>
@@ -23,12 +26,13 @@
 <span class="g">Value of key 3 (v3):</span>
 <span class="g">%v3%</span>
 <span class="g">)</span>
-<span class="nb">MsgBox</span><span class="p">,,</span> <span class="n">argp_parse</span><span class="p">(),</span> <span class="nv">%Text%</span><span class="c-Singleline"></span>
+<span class="nb">MsgBox</span><span class="p">,,</span><span class="s"> argp_parse()</span><span class="p">,</span><span class="s"> %Text%</span><span class="w"></span>
+
 
 <span class="c-Singleline">; Example 1: argp_getopt()</span>
-<span class="n">searchList</span> <span class="o">:=</span> <span class="s">&quot;s i test a&quot;</span>
-<span class="n">optlist</span> <span class="o">:=</span> <span class="n">argp_getopt</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">searchList</span><span class="p">,</span> <span class="nv">false</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">v4</span><span class="p">)</span>
-<span class="n">Text</span> <span class="o">=</span>
+<span class="n">searchList</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;s i test a&quot;</span>
+<span class="n">optlist</span><span class="p"> </span><span class="o">:=</span> <span class="n">argp_getopt</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">searchList</span><span class="p">,</span> <span class="nv">false</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">v4</span><span class="p">)</span>
+<span class="n">Text</span><span class="p"> =</span>
 <span class="g">(</span>
 <span class="g">Options string:</span>
 <span class="g">%options%</span>
@@ -45,5 +49,5 @@
 <span class="g">Value of key 4 from search list (v4, &quot;a&quot; in this example):</span>
 <span class="g">%v4%</span>
 <span class="g">)</span>
-<span class="nb">MsgBox</span><span class="p">,,</span> <span class="n">argp_getopt</span><span class="p">(),</span> <span class="nv">%Text%</span>
+<span class="nb">MsgBox</span><span class="p">,,</span><span class="s"> argp_getopt()</span><span class="p">,</span><span class="s"> %Text%</span><span class="w"></span>
 </pre></div>

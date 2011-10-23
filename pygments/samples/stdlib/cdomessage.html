@@ -1,55 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="cm">/*</span>
-<span class="cm">; In this example, Email is sent using GMail SMTP (SSL) server. </span>
-<span class="cm">cdomessage( sFrom     := &quot;Mail_Address_Of_Sender&quot;</span>
-<span class="cm">          , sTo       := &quot;Mail_Address_Of_Receipient&quot;</span>
-<span class="cm">          , sSubject  := &quot;Message_Subject&quot;</span>
-<span class="cm">          , sBody     := &quot;Message_Text&quot;</span>
-<span class="cm">          , sAttach   := &quot;&quot;                 ; Path of attachment, &quot;|&quot; delimieted</span>
-<span class="cm">          , sServer   := &quot;smtp.gmail.com&quot;   ; specify your SMTP server</span>
-<span class="cm">          , sUsername := &quot;your_username&quot;</span>
-<span class="cm">          , sPassword := &quot;your_password&quot; </span>
-<span class="cm">          , bTLS      := True               ; False</span>
-<span class="cm">          , nPort     := 465                ; 25</span>
-<span class="cm">          , nSend     := 2                  ; cdoSendUsingPort</span>
-<span class="cm">          , nAuth     := 1 )                ; cdoBasic</span>
-<span class="cm">*/</span>
-
-<span class="c1">; CDO COM - Email Delivery by Sean</span>
-<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?t=39797</span>
-<span class="nf">cdomessage</span><span class="p">(</span>sFrom<span class="p">,</span><span class="w"> </span>sTo<span class="p">,</span><span class="w"> </span>sSubject<span class="p">,</span><span class="w"> </span>sBody<span class="p">,</span><span class="w"> </span>sAttach<span class="p">,</span><span class="w"> </span>sServer<span class="p">,</span><span class="w"> </span>sUsername<span class="p">,</span><span class="w"> </span>sPassword<span class="p">,</span><span class="w"> </span>bTLS<span class="w"> </span><span class="o">=</span><span class="w"> </span>True<span class="p">,</span><span class="w"> </span>nPort<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w"> </span>nSend<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span>nAuth<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="nf">COM_Init</span><span class="p">()</span>
-<span class="w">    </span>pmsg<span class="w"> </span><span class="o">:=</span><span class="w">   </span>COM_CreateObject<span class="p">(</span><span class="s">&quot;CDO.Message&quot;</span><span class="p">)</span>
-<span class="w">    </span>pcfg<span class="w"> </span><span class="o">:=</span><span class="w">   </span>COM_Invoke<span class="p">(</span>pmsg<span class="p">,</span><span class="w"> </span><span class="s">&quot;Configuration&quot;</span><span class="p">)</span>
-<span class="w">    </span>pfld<span class="w"> </span><span class="o">:=</span><span class="w">   </span>COM_Invoke<span class="p">(</span>pcfg<span class="p">,</span><span class="w"> </span><span class="s">&quot;Fields&quot;</span><span class="p">)</span>
-
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/sendusing&quot;</span><span class="p">,</span><span class="w"> </span>nSend<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/smtpserver&quot;</span><span class="p">,</span><span class="w"> </span>sServer<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/smtpserverport&quot;</span><span class="p">,</span><span class="w"> </span>nPort<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/smtpusessl&quot;</span><span class="p">,</span><span class="w"> </span>bTLS<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/smtpauthenticate&quot;</span><span class="p">,</span><span class="w"> </span>nAuth<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/sendusername&quot;</span><span class="p">,</span><span class="w"> </span>sUsername<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/sendpassword&quot;</span><span class="p">,</span><span class="w"> </span>sPassword<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pfld<span class="p">,</span><span class="w"> </span><span class="s">&quot;Update&quot;</span><span class="p">)</span>
-
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pmsg<span class="p">,</span><span class="w"> </span><span class="s">&quot;From&quot;</span><span class="p">,</span><span class="w"> </span>sFrom<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pmsg<span class="p">,</span><span class="w"> </span><span class="s">&quot;To&quot;</span><span class="p">,</span><span class="w"> </span>sTo<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pmsg<span class="p">,</span><span class="w"> </span><span class="s">&quot;Subject&quot;</span><span class="p">,</span><span class="w"> </span>sSubject<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pmsg<span class="p">,</span><span class="w"> </span><span class="s">&quot;TextBody&quot;</span><span class="p">,</span><span class="w"> </span>sBody<span class="p">)</span>
-<span class="w">    </span><span class="k">Loop</span><span class="p">,</span><span class="w"> </span>Parse<span class="p">,</span><span class="w"> </span>sAttach<span class="p">,</span><span class="w"> </span><span class="o">|</span><span class="p">,</span><span class="w"> </span><span class="nv">%A_Space%%A_Tab%</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pmsg<span class="p">,</span><span class="w"> </span><span class="s">&quot;AddAttachment&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">A_LoopField</span><span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Invoke</span><span class="p">(</span>pmsg<span class="p">,</span><span class="w"> </span><span class="s">&quot;Send&quot;</span><span class="p">)</span>
-
-<span class="w">    </span><span class="nf">COM_Release</span><span class="p">(</span>pfld<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Release</span><span class="p">(</span>pcfg<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Release</span><span class="p">(</span>pmsg<span class="p">)</span>
-<span class="w">    </span><span class="nf">COM_Term</span><span class="p">()</span><span class="w"> </span>
-<span class="w">    </span><span class="k">Return</span><span class="w"> </span><span class="mi">0</span>
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="cm">/*</span>
@@ -73,9 +22,9 @@ New Lexer:
 <span class="n">cdomessage</span><span class="p">(</span><span class="n">sFrom</span><span class="p">,</span> <span class="n">sTo</span><span class="p">,</span> <span class="n">sSubject</span><span class="p">,</span> <span class="n">sBody</span><span class="p">,</span> <span class="n">sAttach</span><span class="p">,</span> <span class="n">sServer</span><span class="p">,</span> <span class="n">sUsername</span><span class="p">,</span> <span class="n">sPassword</span><span class="p">,</span> <span class="n">bTLS</span> <span class="o">=</span> <span class="nv">True</span><span class="p">,</span> <span class="n">nPort</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span> <span class="n">nSend</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nAuth</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">COM_Init</span><span class="p">()</span>
-    <span class="n">pmsg</span> <span class="o">:=</span>   <span class="n">COM_CreateObject</span><span class="p">(</span><span class="s">&quot;CDO.Message&quot;</span><span class="p">)</span>
-    <span class="n">pcfg</span> <span class="o">:=</span>   <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;Configuration&quot;</span><span class="p">)</span>
-    <span class="n">pfld</span> <span class="o">:=</span>   <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pcfg</span><span class="p">,</span> <span class="s">&quot;Fields&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">pmsg</span><span class="p"> </span><span class="o">:=</span>   <span class="n">COM_CreateObject</span><span class="p">(</span><span class="s">&quot;CDO.Message&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">pcfg</span><span class="p"> </span><span class="o">:=</span>   <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;Configuration&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">pfld</span><span class="p"> </span><span class="o">:=</span>   <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pcfg</span><span class="p">,</span> <span class="s">&quot;Fields&quot;</span><span class="p">)</span><span class="w"></span>
 
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pfld</span><span class="p">,</span> <span class="s">&quot;Item&quot;</span><span class="p">,</span> <span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/sendusing&quot;</span><span class="p">,</span> <span class="n">nSend</span><span class="p">)</span>
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pfld</span><span class="p">,</span> <span class="s">&quot;Item&quot;</span><span class="p">,</span> <span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout&quot;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
@@ -85,20 +34,20 @@ New Lexer:
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pfld</span><span class="p">,</span> <span class="s">&quot;Item&quot;</span><span class="p">,</span> <span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/smtpauthenticate&quot;</span><span class="p">,</span> <span class="n">nAuth</span><span class="p">)</span>
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pfld</span><span class="p">,</span> <span class="s">&quot;Item&quot;</span><span class="p">,</span> <span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/sendusername&quot;</span><span class="p">,</span> <span class="n">sUsername</span><span class="p">)</span>
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pfld</span><span class="p">,</span> <span class="s">&quot;Item&quot;</span><span class="p">,</span> <span class="s">&quot;http://schemas.microsoft.com/cdo/configuration/sendpassword&quot;</span><span class="p">,</span> <span class="n">sPassword</span><span class="p">)</span>
-    <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pfld</span><span class="p">,</span> <span class="s">&quot;Update&quot;</span><span class="p">)</span>
+    <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pfld</span><span class="p">,</span> <span class="s">&quot;Update&quot;</span><span class="p">)</span><span class="w"></span>
 
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;From&quot;</span><span class="p">,</span> <span class="n">sFrom</span><span class="p">)</span>
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;To&quot;</span><span class="p">,</span> <span class="n">sTo</span><span class="p">)</span>
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;Subject&quot;</span><span class="p">,</span> <span class="n">sSubject</span><span class="p">)</span>
     <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;TextBody&quot;</span><span class="p">,</span> <span class="n">sBody</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span> <span class="n">Parse</span><span class="p">,</span> <span class="n">sAttach</span><span class="p">,</span> <span class="o">|</span><span class="p">,</span> <span class="nv">%A_Space%%A_Tab%</span>
-    <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;AddAttachment&quot;</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">)</span>
-    <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;Send&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> sAttach</span><span class="p">,</span><span class="s"> |</span><span class="p">,</span><span class="s"> %A_Space%%A_Tab%</span><span class="w"></span>
+<span class="w">    </span> <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;AddAttachment&quot;</span><span class="p">,</span> <span class="nv">A_LoopField</span><span class="p">)</span>
+    <span class="n">COM_Invoke</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="s">&quot;Send&quot;</span><span class="p">)</span><span class="w"></span>
 
     <span class="n">COM_Release</span><span class="p">(</span><span class="n">pfld</span><span class="p">)</span>
     <span class="n">COM_Release</span><span class="p">(</span><span class="n">pcfg</span><span class="p">)</span>
     <span class="n">COM_Release</span><span class="p">(</span><span class="n">pmsg</span><span class="p">)</span>
-    <span class="n">COM_Term</span><span class="p">()</span> 
-<span class="w">    </span><span class="nb">Return</span> <span class="mi">0</span>
-<span class="p">}</span>
+    <span class="n">COM_Term</span><span class="p">()</span><span class="nf"> </span>
+<span class="nf">    Return</span> <span class="mi">0</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

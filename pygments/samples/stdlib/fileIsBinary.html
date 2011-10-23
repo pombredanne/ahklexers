@@ -1,15 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css">old lexer: 
-<div class="highlight"><pre><span class="c1">; Returns True if file content contains binary zeros.</span>
-<span class="c1">; Textfiles never contain null.</span>
-<span class="c1">; http://www.autohotkey.com/forum/viewtopic.php?p=320069#320069</span>
-<span class="nf">fileIsBinary</span><span class="p">(</span>_filePath<span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">FileGetSize</span><span class="p">,</span><span class="w"> </span>data_size<span class="p">,</span><span class="w"> </span><span class="nv">%_filePath%</span>
-<span class="w">    </span><span class="k">FileRead</span><span class="p">,</span><span class="w"> </span>data<span class="p">,</span><span class="w"> </span><span class="nv">%_filePath%</span>
-<span class="w">    </span><span class="nf">return</span><span class="w"> </span><span class="p">(</span>data_size<span class="w"> </span><span class="o">!=</span><span class="w"> </span>StrLen<span class="p">(</span>data<span class="p">))</span>
-<span class="p">}</span>
-</pre></div>
-
+<LINK href="styles.css" rel="stylesheet" type="text/css">
 
 New Lexer: 
 <div class="highlight"><pre><span class="c-Singleline">; Returns True if file content contains binary zeros.</span>
@@ -17,8 +6,8 @@ New Lexer:
 <span class="c-Singleline">; http://www.autohotkey.com/forum/viewtopic.php?p=320069#320069</span>
 <span class="n">fileIsBinary</span><span class="p">(</span><span class="n">_filePath</span><span class="p">)</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="nb">FileGetSize</span><span class="p">,</span> <span class="n">data_size</span><span class="p">,</span> <span class="nv">%_filePath%</span>
-<span class="w">    </span><span class="nb">FileRead</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nv">%_filePath%</span>
-<span class="w">    </span><span class="nb">return</span> <span class="p">(</span><span class="n">data_size</span> <span class="o">!=</span> <span class="nf">StrLen</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="nb">FileGetSize</span><span class="p">,</span><span class="s"> data_size</span><span class="p">,</span><span class="s"> %_filePath%</span><span class="w"></span>
+<span class="w">    </span> <span class="n">FileRead</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nv">%_filePath%</span><span class="nf"></span>
+<span class="nf">    return</span> <span class="p">(</span><span class="n">data_size</span> <span class="o">!=</span><span class="nf"> StrLen</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>

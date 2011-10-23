@@ -1,19 +1,23 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Hotstrings.ahk</span>
-<span class="nb">#NoEnv</span>
-<span class="nb">SendMode</span> <span class="n">Input</span>
-<span class="nb">SetWorkingDir</span> <span class="nv">%A_ScriptDir%</span><span class="c-Singleline"></span>
+<span class="nb">#NoEnv</span><span class="w"></span>
+
+<span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
+
+<span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
+
 
 <span class="c-Singleline">; hotstrings(&quot;(B|b)tw\s&quot;, &quot;%$1%y the way&quot;) ; type &#39;btw&#39; followed by space, tab or return</span>
 <span class="c-Singleline">; hotstrings(&quot;i)omg&quot;, &quot;oh my god{!}&quot;) ; type &#39;OMG&#39; in any case, upper, lower or mixed</span>
-<span class="c-Singleline">; hotstrings(&quot;\bcolou?r&quot;, &quot;rgb(128, 255, 0);&quot;) ; &#39;\b&#39; prevents matching with anything before the word, e.g. &#39;multicololoured&#39;</span>
+<span class="c-Singleline">; hotstrings(&quot;\bcolou?r&quot;, &quot;rgb(128, 255, 0);&quot;) ; &#39;\b&#39; prevents matching with anything before the word, e.g. &#39;multicololoured&#39;</span><span class="w"></span>
 
 <span class="n">hotstrings</span><span class="p">(</span><span class="s">&quot;now#&quot;</span><span class="p">,</span> <span class="s">&quot;%A_Now%&quot;</span><span class="p">)</span>
 <span class="n">hotstrings</span><span class="p">(</span><span class="s">&quot;(B|b)tw&quot;</span><span class="p">,</span> <span class="s">&quot;%$1%y the way&quot;</span><span class="p">)</span>
-<span class="n">hotstrings</span><span class="p">(</span><span class="s">&quot;(\d+)\/(\d+)%&quot;</span><span class="p">,</span> <span class="s">&quot;percent&quot;</span><span class="p">)</span><span class="c-Singleline"> ; try 4/50%</span>
-<span class="nb">Return</span>
+<span class="n">hotstrings</span><span class="p">(</span><span class="s">&quot;(\d+)\/(\d+)%&quot;</span><span class="p">,</span> <span class="s">&quot;percent&quot;</span><span class="p">)</span><span class="c-Singleline"> ; try 4/50%</span><span class="nf"></span>
+<span class="nf">Return</span><span class="w"></span>
 
 <span class="nl">percent:</span>
-<span class="n">p</span> <span class="o">:=</span> <span class="nf">Round(</span><span class="n">$1</span> <span class="o">/</span> <span class="n">$2</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
-<span class="nb">Send</span><span class="p">,</span> <span class="nv">%p%</span><span class="se">`%</span>
-<span class="nb">Return</span>
+<span class="n">p</span><span class="p"> </span><span class="o">:=</span><span class="nf"> Round</span><span class="p">(</span><span class="n">$1</span> <span class="o">/</span> <span class="n">$2</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+<span class="nb">Send</span><span class="p">,</span><span class="s"> %p%`%</span><span class="w"></span>
+
+<span class="nf">Return</span><span class="w"></span>
 </pre></div>
