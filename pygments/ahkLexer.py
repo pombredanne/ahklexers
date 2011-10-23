@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
-from pygments.lexer import Lexer, RegexLexer, include, bygroups, using, \
+from pygments.lexer import Lexer, ExtendedRegexLexer, RegexLexer, include, bygroups, using, \
      this, do_insertions
-
+ 
 from pygments.token import *       
-class AutohotkeyLexer(RegexLexer):
+class AutohotkeyLexer(ExtendedRegexLexer):
     """  
     For `autohotkey <http://www.autohotkey.com/>`_ source code.
        
@@ -16,31 +16,45 @@ class AutohotkeyLexer(RegexLexer):
     mimetypes = ['text/x-autohotkey']
     from pygments.lexer import ExtendedRegexLexer, RegexLexer, \
     bygroups, using, include, combined
-    tokens = { 		       	
-        'root': [	       
+    def commands_callback(lexer, match, ctx):
+        pwhitespace = match.group(1)
+        yield match.start(), Whitespace, pwhitespace
+        ctx.pos = match.end() - 2
+    tokens = { 	               	
+        'root': [	        
             include('comments'),
             (r'^(\s*)(\()', bygroups(Whitespace, Generic), 'incontinuation'),
-            include('labels'),
-            (r'\s*\w[^=(,%]*', Name, 'incommand'), 
-            (r'[]{}(),;[]', Punctuation),
-            (r'(in|is|and|or|not)\b', Operator.Word),
-            (r'\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable), 
-            (r'!=|==|:=|\.=|<<|>>|[-~+/*%=<>&^|?:!.]', Operator),            
+            include('labels'),  
             include('commands'),
-            include('builtInFunctions'),
-            include('builtInVariables'),
+            (r'(\s*)([a-zA-Z_#@$][a-zA-Z0-9_#@$]*)(\s*)(\W=)',
+             bygroups(Whitespace, Name, Punctuation, Whitespace)), 
+            (r'\s*\w[^=:(,%\s]*', Name, 'incommand'),       
+            include('variables'),
+            include('expressions'),                        
+            include('builtInFunctions'),                   
+            include('builtInVariables'),                   
             (r'"', String, combined('stringescape', 'dqs')),
-            include('numbers'),
-            (r'[a-zA-Z_#@$][a-zA-Z0-9_#@$]*', Name),  
-            (r'\\|\'', Text),
-            (r'\`([\,\%\`abfnrtv\-\+;])', String.Escape),
-            include('garbage'),
-        ],		       
-        'incommand': [
-            (r'\s*,', Punctuation, combined('rawstringescape', 'rawstring')),
-            (r'\s*%', Punctuation, '#pop'), 
-            ],
-        'comments': [
+            include('numbers'),                            
+            (r'[a-zA-Z_#@$][a-zA-Z0-9_#@$]*', Name),       
+            (r'\\|\'', Text),                              
+            (r'\`([\,\%\`abfnrtv\-\+;])', String.Escape),  
+            include('garbage'),                            
+        ],  
+        'variables': [(r'\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable),
+                      ], 
+        'expressions': [                                   
+            (r'\s+', Whitespace),                          
+            (r'[]{}(),;[]', Punctuation),                  
+            (r'(in|is|and|or|not)\b', Operator.Word),      
+            (r'!=|==|:=|\.=|<<|>>|[-~+/*%=<>&^|?:!.]', Operator),            
+            ],                                             
+        'incommand': [                                     
+            (r'(\s*)(,)', bygroups(Whitespace, Punctuation)),
+            (r'\s*%\s', Punctuation, '#pop'),
+            (r'[^\n]', String, 'rawstring'),
+            include('comments'),
+            ],                  
+        'comments': [           
             (r'^(\s*)(/\*)', bygroups(Whitespace, Comment.Multiline),
                              'incomment'),
             (r'\s+;.*?$', Comment.Singleline),
@@ -50,7 +64,7 @@ class AutohotkeyLexer(RegexLexer):
             (r'^\s*\*/', Comment.Multiline, '#pop'),
             (r'[^*/]', Comment.Multiline),
             (r'[*/]', Comment.Multiline)
-        ],		       
+        ],      	       
         'incontinuation': [      
             (r'^\s*\)', Generic, '#pop'), 
             (r'[^)]', Generic),
@@ -136,9 +150,9 @@ class AutohotkeyLexer(RegexLexer):
         r'WinMove|WinRestore|WinSetTitle|'
         r'WinSet|WinShow|WinWaitActive|'
         r'WinWaitClose|WinWaitNotActive|WinWait)\b',
-             bygroups(Whitespace,  Name.Builtin)),
-            ],
-        'builtInFunctions': [
+             bygroups(Whitespace,  Name.Builtin), 'incommand' ),
+            ],                                                 
+        'builtInFunctions': [                                  
             (r'(?i)(Abs|ACos|Asc|'
         r'ASin|ATan|Ceil|'
         r'Chr|Cos|DllCall|'
@@ -240,9 +254,6 @@ class AutohotkeyLexer(RegexLexer):
         'stringescape': [
             (r'\"\"|\`([\,\%\`abfnrtv])', String.Escape),
         ],
-        'rawstringescape': [
-            (r'\`([\,\%\`abfnrtv])', String.Escape),
-        ],
         'strings': [
             (r'[^"\n]+', String),
         ],
@@ -251,9 +262,13 @@ class AutohotkeyLexer(RegexLexer):
             include('strings')
         ],
         'rawstring': [
-            (r'\n\s*[^,]', String, '#pop:2'),
+            (r'\`[\,\%\`abfnrtv]', String.Escape),
+            (r'(\n\s*)([^,])', commands_callback, '#pop:2'),
+            (r',\s*%\s', Punctuation, '#pop'),
+            include('comments'),            
+            (r'\s+', Whitespace),  
+            include('variables'), 
             (r'[^,\n]+', String),
-            (r',\s*%', Punctuation, '#pop:2'),
             (r',', Punctuation),
             ],
         'garbage': [
