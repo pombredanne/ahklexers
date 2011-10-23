@@ -18,17 +18,15 @@ class AutohotkeyLexer(RegexLexer):
     bygroups, using, include, combined
     tokens = { 		       	
         'root': [	       
-            (r'^(\s*)(/\*)', bygroups(Whitespace, Comment.Multiline),
-                             'incomment'),
+            include('comments'),
             (r'^(\s*)(\()', bygroups(Whitespace, Generic), 'incontinuation'),
-            (r'\s+;.*?$', Comment.Singleline),
-            (r'^;.*?$', Comment.Singleline),
+            include('labels'),
+            (r'\s*\w[^=(,%]*', Name, 'incommand'), 
             (r'[]{}(),;[]', Punctuation),
             (r'(in|is|and|or|not)\b', Operator.Word),
             (r'\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable), 
             (r'!=|==|:=|\.=|<<|>>|[-~+/*%=<>&^|?:!.]', Operator),            
             include('commands'),
-            include('labels'),
             include('builtInFunctions'),
             include('builtInVariables'),
             (r'"', String, combined('stringescape', 'dqs')),
@@ -38,6 +36,16 @@ class AutohotkeyLexer(RegexLexer):
             (r'\`([\,\%\`abfnrtv\-\+;])', String.Escape),
             include('garbage'),
         ],		       
+        'incommand': [
+            (r'\s*,', Punctuation, combined('rawstringescape', 'rawstring')),
+            (r'\s*%', Punctuation, '#pop'), 
+            ],
+        'comments': [
+            (r'^(\s*)(/\*)', bygroups(Whitespace, Comment.Multiline),
+                             'incomment'),
+            (r'\s+;.*?$', Comment.Singleline),
+            (r'^;.*?$', Comment.Singleline),
+            ],
         'incomment': [	       
             (r'^\s*\*/', Comment.Multiline, '#pop'),
             (r'[^*/]', Comment.Multiline),
@@ -232,13 +240,22 @@ class AutohotkeyLexer(RegexLexer):
         'stringescape': [
             (r'\"\"|\`([\,\%\`abfnrtv])', String.Escape),
         ],
+        'rawstringescape': [
+            (r'\`([\,\%\`abfnrtv])', String.Escape),
+        ],
         'strings': [
             (r'[^"\n]+', String),
         ],
         'dqs': [
             (r'"', String, '#pop'),
             include('strings')
-        ],        
+        ],
+        'rawstring': [
+            (r'\n\s*[^,]', String, '#pop:2'),
+            (r'[^,\n]+', String),
+            (r',\s*%', Punctuation, '#pop:2'),
+            (r',', Punctuation),
+            ],
         'garbage': [
             (r'[^\S\n]', Text),
 #            (r'.', Text),      # no cheating
