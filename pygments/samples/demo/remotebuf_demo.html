@@ -1,5 +1,5 @@
 <LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include RemoteBuf.ahk</span>
-<span class="c-Singleline">; Example by majkinetor</span>
+<span class="c-Singleline">; Example by majkinetor</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="c-Singleline">  ; Recommended for performance and compatibility with future AutoHotkey releases.</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input  </span><span class="c-Singleline">; Recommended for new scripts due to its superior speed and reliability.</span><span class="w"></span>
@@ -7,35 +7,35 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="c-Singleline">  ; Ensures a consistent starting directory.</span><span class="w"></span>
 
 
-<span class="c-Singleline">;get the handle of the Explorer window</span>
+<span class="c-Singleline">;get the handle of the Explorer window</span><span class="w"></span>
 <span class="w">   </span><span class="nb">WinGet</span><span class="p">,</span><span class="s"> hw</span><span class="p">,</span><span class="s"> ID</span><span class="p">,</span><span class="s"> ahk_class ExploreWClass</span><span class="w"></span>
 
 
-<span class="c-Singleline">;open two buffers</span>
-   <span class="n">RemoteBuf_Open</span><span class="p">(</span> <span class="n">hBuf1</span><span class="p">,</span> <span class="n">hw</span><span class="p">,</span> <span class="mi">128</span> <span class="p">)</span>
-   <span class="n">RemoteBuf_Open</span><span class="p">(</span> <span class="n">hBuf2</span><span class="p">,</span> <span class="n">hw</span><span class="p">,</span> <span class="mi">16</span>  <span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">;open two buffers</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Open</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf1</span><span class="p">,</span><span class="w"> </span><span class="n">hw</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Open</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf2</span><span class="p">,</span><span class="w"> </span><span class="n">hw</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="w">  </span><span class="p">)</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">;write something</span>
-<span class="w">   </span><span class="n">str</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;1234&quot;</span>
-   <span class="n">RemoteBuf_Write</span><span class="p">(</span> <span class="n">hBuf1</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span><span class="nf"> strlen</span><span class="p">(</span><span class="n">str</span><span class="p">)</span> <span class="p">)</span><span class="w"></span>
+<span class="c-Singleline">;write something</span><span class="w"></span>
+<span class="w">   </span><span class="n">str</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;1234&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Write</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf1</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="nf"> strlen</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 
-<span class="w">   </span><span class="n">str</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;_5678&quot;</span>
-   <span class="n">RemoteBuf_Write</span><span class="p">(</span> <span class="n">hBuf1</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span><span class="nf"> strlen</span><span class="p">(</span><span class="n">str</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="n">str</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;_5678&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Write</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf1</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="nf"> strlen</span><span class="p">(</span><span class="n">str</span><span class="p">),</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"></span>
 
-<span class="w">   </span><span class="n">str</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;_testing&quot;</span>
-   <span class="n">RemoteBuf_Write</span><span class="p">(</span> <span class="n">hBuf2</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span><span class="nf"> strlen</span><span class="p">(</span><span class="n">str</span><span class="p">))</span><span class="c-Singleline"></span>
+<span class="w">   </span><span class="n">str</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;_testing&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Write</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf2</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="nf"> strlen</span><span class="p">(</span><span class="n">str</span><span class="p">))</span><span class="c-Singleline"></span>
 
 
-<span class="c-Singleline">;read</span>
-   <span class="n">RemoteBuf_Read</span><span class="p">(</span> <span class="n">hBuf1</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="mi">10</span> <span class="p">)</span>
-<span class="w">   </span><span class="n">out</span><span class="p"> =</span> <span class="nv">%str%</span>
-   <span class="n">RemoteBuf_Read</span><span class="p">(</span> <span class="n">hBuf2</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="mi">10</span> <span class="p">)</span>
-<span class="w">   </span><span class="n">out</span><span class="p"> =</span> <span class="nv">%out%%str%</span><span class="w"></span>
+<span class="c-Singleline">;read</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Read</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf1</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="n">out</span><span class="p"> =</span><span class="w"> </span><span class="nv">%str%</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Read</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf2</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="n">out</span><span class="p"> =</span><span class="w"> </span><span class="nv">%out%%str%</span><span class="w"></span>
 
 <span class="w">   </span><span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%out%</span><span class="w"></span>
 
 
-<span class="c-Singleline">;close</span>
-   <span class="n">RemoteBuf_Close</span><span class="p">(</span> <span class="n">hBuf1</span> <span class="p">)</span>
-   <span class="n">RemoteBuf_Close</span><span class="p">(</span> <span class="n">hBuf2</span> <span class="p">)</span><span class="w"></span>
+<span class="c-Singleline">;close</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Close</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf1</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="n">RemoteBuf_Close</span><span class="p">(</span><span class="w"> </span><span class="n">hBuf2</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 </pre></div>

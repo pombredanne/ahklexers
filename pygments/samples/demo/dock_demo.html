@@ -1,36 +1,36 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Dock.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Dock.ahk</span><span class="w"></span>
 <span class="nb">SetBatchLines</span><span class="p">,</span><span class="s"> -1 </span><span class="w"></span>
 
 <span class="nb">#SingleInstance</span><span class="p">,</span><span class="s"> force </span><span class="w"></span>
 <span class="w">   </span>
-<span class="w">   </span> <span class="n">Msgbox</span> <span class="n">This</span> <span class="n">test</span> <span class="n">will</span> <span class="n">monitor</span> <span class="n">Notepad</span> <span class="n">appearance</span> <span class="ow">and</span> <span class="n">add</span> <span class="n">customizable</span> <span class="n">number</span> <span class="n">of</span> <span class="n">dock</span> <span class="n">clients</span> <span class="n">to</span> <span class="n">its</span> <span class="n">left</span> <span class="n">side</span><span class="o">.</span><span class="w"></span>
+<span class="w">    </span><span class="n">Msgbox</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">monitor</span><span class="w"> </span><span class="n">Notepad</span><span class="w"> </span><span class="n">appearance</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="n">customizable</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">dock</span><span class="w"> </span><span class="n">clients</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">its</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="n">side</span><span class="o">.</span><span class="w"></span>
 
-<span class="w">   </span><span class="n">host</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;ahk_class Notepad&quot;</span><span class="w"> </span>
-<span class="w">   </span><span class="n">clientNo</span><span class="p"> </span><span class="o">:=</span> <span class="mi">5</span><span class="w"> </span>
+<span class="w">   </span><span class="n">host</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;ahk_class Notepad&quot;</span><span class="w"> </span>
+<span class="w">   </span><span class="n">clientNo</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span>
 
 
 <span class="w">   </span><span class="nb">loop</span><span class="p">,</span><span class="s"> %clientNo% </span><span class="w"></span>
-<span class="w">   </span> <span class="p">{</span><span class="w"> </span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span>
 <span class="w">      </span><span class="nb">Gui</span><span class="w"> </span><span class="nv">%A_Index%</span><span class="s">:+LastFound +ToolWindow +Border +Resize -Caption </span><span class="w"></span>
-<span class="w">      </span> <span class="n">Gui</span><span class="p">,</span><span class="nv">%A_Index%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="mh">0x8000</span><span class="p">,</span> <span class="nv">%A_Index%</span><span class="w"> </span>
-      <span class="n">c</span><span class="nv">%A_Index%</span> <span class="o">:=</span><span class="nf"> WinExist</span><span class="p">()</span><span class="w"> </span>
+<span class="w">       </span><span class="n">Gui</span><span class="p">,</span><span class="nv">%A_Index%</span><span class="o">:</span><span class="n">Add</span><span class="p">,</span><span class="w"> </span><span class="n">Button</span><span class="p">,</span><span class="w"> </span><span class="mh">0x8000</span><span class="p">,</span><span class="w"> </span><span class="nv">%A_Index%</span><span class="w"> </span>
+<span class="w">      </span><span class="n">c</span><span class="nv">%A_Index%</span><span class="w"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">()</span><span class="w"> </span>
 
-      <span class="n">Dock</span><span class="p">(</span><span class="s">&quot;+&quot;</span> <span class="n">c</span><span class="nv">%A_Index%</span><span class="p">,</span> <span class="s">&quot;0,-1,-10, 0,0,&quot;</span> <span class="nv">A_Index</span><span class="o">*</span><span class="mi">50</span> <span class="s">&quot;,0,50,0,50&quot;</span><span class="p">)</span><span class="w"> </span>
-   <span class="p">}</span><span class="w"> </span>
+<span class="w">      </span><span class="n">Dock</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="w"> </span><span class="n">c</span><span class="nv">%A_Index%</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0,-1,-10, 0,0,&quot;</span><span class="w"> </span><span class="nv">A_Index</span><span class="o">*</span><span class="mi">50</span><span class="w"> </span><span class="s">&quot;,0,50,0,50&quot;</span><span class="p">)</span><span class="w"> </span>
+<span class="w">   </span><span class="p">}</span><span class="w"> </span>
 
-<span class="w">   </span><span class="n">Dock_OnHostDeath</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;OnHostDeath&quot;</span><span class="nf"> </span>
+<span class="w">   </span><span class="n">Dock_OnHostDeath</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;OnHostDeath&quot;</span><span class="nf"> </span>
 
 <span class="nf">return</span><span class="w"> </span>
 
 <span class="nl">FindHost:</span><span class="nf"> </span>
-<span class="nf">   if </span><span class="n">Dock_HostID</span> <span class="o">:=</span><span class="nf"> WinExist</span><span class="p">(</span><span class="n">host</span><span class="p">)</span><span class="w"> </span>
-   <span class="p">{</span><span class="w"> </span>
+<span class="nf">   if </span><span class="n">Dock_HostID</span><span class="w"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">(</span><span class="n">host</span><span class="p">)</span><span class="w"> </span>
+<span class="w">   </span><span class="p">{</span><span class="w"> </span>
 <span class="w">      </span><span class="nb">SetTimer</span><span class="p">,</span><span class="s"> FindHost</span><span class="p">,</span><span class="s"> OFF </span><span class="w"></span>
-<span class="w">       </span> <span class="n">loop</span><span class="p">,</span> <span class="nv">%clientNo%</span><span class="nf"> </span>
-<span class="nf">         DllCall</span><span class="p">(</span><span class="s">&quot;ShowWindow&quot;</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="n">c</span><span class="nv">%A_Index%</span><span class="p">,</span> <span class="s">&quot;uint&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="w">     </span>
+<span class="w">        </span><span class="n">loop</span><span class="p">,</span><span class="w"> </span><span class="nv">%clientNo%</span><span class="nf"> </span>
+<span class="nf">         DllCall</span><span class="p">(</span><span class="s">&quot;ShowWindow&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="nv">%A_Index%</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;uint&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w">     </span>
 <span class="w">       </span>
-      <span class="n">Dock_Toggle</span><span class="p">(</span><span class="nv">true</span><span class="p">)</span><span class="w"> </span>
-   <span class="p">}</span><span class="nf"> </span>
+<span class="w">      </span><span class="n">Dock_Toggle</span><span class="p">(</span><span class="nv">true</span><span class="p">)</span><span class="w"> </span>
+<span class="w">   </span><span class="p">}</span><span class="nf"> </span>
 <span class="nf">return</span><span class="w"> </span>
 
 <span class="nl">OnHostDeath:</span><span class="w"> </span>

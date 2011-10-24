@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ping.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ping.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,13 +6,13 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="n">hostlist</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;127.0.0.1|192.168.2.1|http://www.google.com||http://www.wikipedia.com|99.99.99.99|&quot;</span>
-<span class="n">data</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;AHK test&quot;</span>
-<span class="n">timeout</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;500&quot;</span><span class="w"></span>
+<span class="n">hostlist</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;127.0.0.1|192.168.2.1|http://www.google.com||http://www.wikipedia.com|99.99.99.99|&quot;</span><span class="w"></span>
+<span class="n">data</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;AHK test&quot;</span><span class="w"></span>
+<span class="n">timeout</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;500&quot;</span><span class="w"></span>
 
 <span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> hostlist</span><span class="p">,</span><span class="s"> |</span><span class="w"></span>
 
-<span class="p">{</span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nb">MsgBox</span><span class="p">,,</span><span class="s"> %A_LoopField%</span><span class="p">, % </span><span class="s">ping(A_LoopField</span><span class="p">,</span><span class="s"> data</span><span class="p">,</span><span class="s"> timeout)</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"></span>

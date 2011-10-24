@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include mg.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include mg.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -11,9 +11,9 @@
 
 <span class="c-Singleline">; Example 1: store gesture in variable and show it in MsgBox if it isn&#39;t blank or zero.</span><span class="w"></span>
 
-<span class="nl">RButton::</span>
-<span class="n">Gesture</span><span class="p"> </span><span class="o">:=</span> <span class="n">MG_Recognize</span><span class="p">()</span><span class="nf"></span>
-<span class="nf">if </span><span class="n">Gesture</span>
+<span class="nl">RButton::</span><span class="w"></span>
+<span class="n">Gesture</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">MG_Recognize</span><span class="p">()</span><span class="nf"></span>
+<span class="nf">if </span><span class="n">Gesture</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="p">,,,</span><span class="s"> %Gesture%</span><span class="p">,</span><span class="s"> 1</span><span class="w"></span>
 
 <span class="nf">Return</span><span class="c-Singleline"></span>
@@ -22,17 +22,17 @@
 
 <span class="nl">MButton::</span><span class="n">MG_Recognize</span><span class="p">()</span><span class="w"></span>
 
-<span class="n">MG_R</span><span class="p">()</span>   <span class="p">{</span>
+<span class="n">MG_R</span><span class="p">()</span><span class="w">   </span><span class="p">{</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="p">,,,</span><span class="s"> %A_ThisFunc%</span><span class="p">,</span><span class="s"> 1</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"></span>
 
-<span class="n">MG_RD</span><span class="p">()</span>   <span class="p">{</span>
+<span class="n">MG_RD</span><span class="p">()</span><span class="w">   </span><span class="p">{</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="p">,,,</span><span class="s"> %A_ThisFunc%</span><span class="p">,</span><span class="s"> 1</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"></span>
 
-<span class="n">MG_RDL</span><span class="p">()</span>   <span class="p">{</span>
+<span class="n">MG_RDL</span><span class="p">()</span><span class="w">   </span><span class="p">{</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="p">,,,</span><span class="s"> %A_ThisFunc%</span><span class="p">,</span><span class="s"> 1</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"></span>

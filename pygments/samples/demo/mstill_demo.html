@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include msTill.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include msTill.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -13,31 +13,31 @@
 <span class="c-Singleline">; Calculate a time when for when to call the subroutine.</span>
 <span class="c-Singleline">; Use current time from now and add 5 seconds to it.</span><span class="w"></span>
 
-<span class="n">Seconds</span><span class="p"> =</span> <span class="mi">5</span>
-<span class="n">targetTime</span><span class="p"> </span><span class="o">:=</span> <span class="nv">A_Now</span>
+<span class="n">Seconds</span><span class="p"> =</span><span class="w"> </span><span class="mi">5</span><span class="w"></span>
+<span class="n">targetTime</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="nv">A_Now</span><span class="w"></span>
 <span class="nb">EnvAdd</span><span class="p">,</span><span class="s"> targetTime</span><span class="p">,</span><span class="s"> %Seconds%</span><span class="p">,</span><span class="s"> Seconds</span><span class="w"></span>
 
 
-<span class="c-Singleline">; Extract the needed hour, minutes and seconds. Drop the date part.</span>
+<span class="c-Singleline">; Extract the needed hour, minutes and seconds. Drop the date part.</span><span class="w"></span>
 <span class="nb">FormatTime</span><span class="p">,</span><span class="s"> targetTime</span><span class="p">,</span><span class="s"> %targetTime%</span><span class="p">,</span><span class="s"> HHmmss</span><span class="w"></span>
 
 
 <span class="c-Singleline">; Single run  with &quot;-&quot;, because running at intervals of the time till </span>
-<span class="c-Singleline">; your destination is Silly</span>
+<span class="c-Singleline">; your destination is Silly</span><span class="w"></span>
 <span class="nb">SetTimer</span><span class="w"> </span><span class="s">Dest</span><span class="p">, % </span><span class="s">&quot;-&quot; msTill(targetTime) </span><span class="w"></span>
 
 
-<span class="c-Singleline">; Just show a countdown.</span>
-<span class="nb">While</span><span class="p"> (</span><span class="n">Seconds</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-<span class="p">{</span>
+<span class="c-Singleline">; Just show a countdown.</span><span class="w"></span>
+<span class="nb">While</span><span class="p"> (</span><span class="n">Seconds</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nb">TrayTip</span><span class="p">,</span><span class="s"> msTill</span><span class="p">,</span><span class="s"> %Seconds% seconds till time</span><span class="w"></span>
-<span class="w">    </span> <span class="n">Sleep</span><span class="p">,</span> <span class="mi">1000</span>
+<span class="w">     </span><span class="n">Sleep</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="w"></span>
 <span class="w">    </span><span class="n">Seconds--</span><span class="p"></span>
 <span class="s">}</span><span class="w"></span>
 
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">Dest:</span>
+<span class="nl">Dest:</span><span class="w"></span>
 <span class="nb">TrayTip</span><span class="w"></span>
 
 <span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%A_Now%</span><span class="w"></span>

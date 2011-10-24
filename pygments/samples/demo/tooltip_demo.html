@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include tooltip.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include tooltip.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -7,104 +7,104 @@
 
 
 <span class="c-Singleline">; Demo Script by HotKeyIt</span>
-<span class="c-Singleline">;-- Build GUI</span>
-<span class="nb">gui</span><span class="w"> </span><span class="o">-</span><span class="n">MinimizeBox</span>
-<span class="nb">Gui</span><span class="w"> </span><span class="o">+</span><span class="n">LastFound</span>
-<span class="nl">GuiHwnd:</span><span class="o">=</span><span class="nf">WinExist</span><span class="p">()</span>
+<span class="c-Singleline">;-- Build GUI</span><span class="w"></span>
+<span class="nb">gui</span><span class="w"> </span><span class="o">-</span><span class="n">MinimizeBox</span><span class="w"></span>
+<span class="nb">Gui</span><span class="w"> </span><span class="o">+</span><span class="n">LastFound</span><span class="w"></span>
+<span class="nl">GuiHwnd:</span><span class="o">=</span><span class="nf">WinExist</span><span class="p">()</span><span class="w"></span>
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Button</span><span class="p">,</span><span class="s">w150 hwndButton1_hWnd gButton1</span><span class="p">,</span><span class="s">Test Button 1</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Button 1: Press me to change my tooltip&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Button1_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Button 1: Press me to change my tooltip&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Button1_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Button</span><span class="p">,</span><span class="s">y+0 w150 hwndButton2_hWnd gButton2</span><span class="p">,</span><span class="s">Test Button 2</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Button 2: Press me to turn off the tooltip for this button&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Button2_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Button 2: Press me to turn off the tooltip for this button&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Button2_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Button</span><span class="p">,</span><span class="s">y+0 w150 hwndButton3_hWnd gButton3</span><span class="p">,</span><span class="s">Test Button 3</span><span class="w"></span>
 
-<span class="n">Tip</span><span class="o">=</span>
+<span class="n">Tip</span><span class="o">=</span><span class="w"></span>
 <span class="w">   </span><span class="g">(ltrim</span>
 <span class="g">    A Multiline Test Tooltip</span>
 <span class="g">    2nd line</span>
 <span class="g">    3rd line</span>
 <span class="g">    4th line.</span>
 <span class="g">    Press me to turn off all tooltips</span>
-<span class="g">   )</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Button3_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="g">   )</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Button3_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Checkbox</span><span class="p">,</span><span class="s">w150 hwndCheckbox_hWnd</span><span class="p">,</span><span class="s">Checkbox Control</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the Checkbox control&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Checkbox_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the Checkbox control&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Checkbox_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Radio</span><span class="p">,</span><span class="s">w150 hwndRadio_hWnd</span><span class="p">,</span><span class="s">Radio Control</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the Radio control&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Radio_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the Radio control&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Radio_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Edit</span><span class="p">,</span><span class="s">w150 hwndEdit_hWnd</span><span class="p">,</span><span class="s">Edit Control</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the Edit control&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Edit_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the Edit control&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Edit_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Text</span><span class="p">,</span><span class="s">w150 hwndText_hWnd gNull</span><span class="p">,</span><span class="s">Text Control</span><span class="w"></span>
 
-<span class="n">Tip</span><span class="o">=</span>
+<span class="n">Tip</span><span class="o">=</span><span class="w"></span>
 <span class="w">   </span><span class="g">(ltrim join`s</span>
 <span class="g">    Tooltip for the Text control.`nNote that the Tooltip for a Text control does</span>
 <span class="g">    not show unless a g-label for the control is defined.</span>
-<span class="g">   )</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Text_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="g">   )</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Text_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">Picture</span><span class="p">,</span><span class="s">w150 h100 hwndPicture_hWnd gNull</span><span class="p">,</span><span class="s">Picture.bmp</span><span class="w"></span>
 
-<span class="n">Tip</span><span class="o">=</span>
+<span class="n">Tip</span><span class="o">=</span><span class="w"></span>
 <span class="w">   </span><span class="g">(ltrim join`s</span>
 <span class="g">    Tooltip for the Picture control.`nNote that the Tooltip for a Picture</span>
 <span class="g">    control does not show unless a g-label for the control is defined.   </span>
-<span class="g">   )</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">Picture_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="g">   )</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Picture_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">DropDownList</span><span class="p">,</span><span class="s">w150 r3 hwndDropDownList_hWnd</span><span class="p">,</span><span class="s">DropDownList Control||2|3</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the DropDownList control&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">DropDownList_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the DropDownList control&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">DropDownList_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">ComboBox</span><span class="p">,</span><span class="s">w150 r3 hwndComboBox_hWnd</span><span class="p">,</span><span class="s">ComboBox Control||2|3</span><span class="w"></span>
 <span class="w">    </span><span class="c-Singleline"> ;-- A ComboBox is actually two controls:  An Edit control and a Drop-down</span>
 <span class="c-Singleline">    ;   button. Note that handle returned for this control is for the</span>
-<span class="c-Singleline">    ;   drop-down button, not for the Edit control.</span>
-<span class="n">Tip</span><span class="o">=</span>
+<span class="c-Singleline">    ;   drop-down button, not for the Edit control.</span><span class="w"></span>
+<span class="n">Tip</span><span class="o">=</span><span class="w"></span>
 <span class="w">   </span><span class="g">(ltrim join`s</span>
 <span class="g">    Tooltip for the drop-down button piece of the ComboBox control.`nNote that</span>
 <span class="g">    this tip is different than the Edit piece of the control.</span>
-<span class="g">   )</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">ComboBox_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="g">   )</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">ComboBox_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">ListBox</span><span class="p">,</span><span class="s">w150 r3 hwndListBox_hWnd</span><span class="p">,</span><span class="s">ListBox Control||2|3</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the ListBox control&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">ListBox_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the ListBox control&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">ListBox_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">ListView</span><span class="p">,</span><span class="s">w150 h50 hwndListView_hWnd</span><span class="p">,</span><span class="s">ListView Control</span><span class="w"></span>
 
-<span class="n">Tip</span><span class="o">=</span>
+<span class="n">Tip</span><span class="o">=</span><span class="w"></span>
 <span class="w">   </span><span class="g">(ltrim join`s</span>
 <span class="g">    Tooltip for the ListView control.`nNote that this tip is different than</span>
 <span class="g">    the header piece of the control.</span>
-<span class="g">   )</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">ListView_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="g">   )</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">ListView_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">DateTime</span><span class="p">,</span><span class="s">w150 hwndDateTime_hWnd  </span><span class="c-Singleline">;,DateTime Control</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the DateTime control&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">DateTime_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the DateTime control&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">DateTime_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Add</span><span class="p">,</span><span class="s">UpDown</span><span class="p">,</span><span class="s">hwndUpDown_hWnd Range 1-100</span><span class="p">,</span><span class="s">5</span><span class="w"></span>
 
-<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the UpDown control&quot;</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">UpDown_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
+<span class="nl">Tip:</span><span class="o">=</span><span class="s">&quot;Tooltip for the UpDown control&quot;</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">UpDown_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">gui</span><span class="w"> </span><span class="s">Show</span><span class="p">,,</span><span class="s">Tooltip Test</span><span class="w"></span>
 
@@ -112,37 +112,37 @@
 <span class="c-Singleline">;-- Note: The following information cannot be collected until after the window</span>
 <span class="c-Singleline">;   has been rendered</span>
 
-<span class="c-Singleline">;-- Get hWnd to the Edit control piece of the ComboBox</span>
+<span class="c-Singleline">;-- Get hWnd to the Edit control piece of the ComboBox</span><span class="w"></span>
 <span class="nb">ControlGet</span><span class="w"> </span><span class="s">EditComboBox_hWnd</span><span class="p">,</span><span class="s">hWnd</span><span class="p">,,</span><span class="s">Edit2</span><span class="p">,</span><span class="s">Tooltip Test</span><span class="w"></span>
 
-<span class="n">Tip</span><span class="o">=</span>
+<span class="n">Tip</span><span class="o">=</span><span class="w"></span>
 <span class="w">   </span><span class="g">(ltrim join`s</span>
 <span class="g">    Tooltip for the Edit piece of the ComboBox control.`nNote that this tip is</span>
 <span class="g">    different than the drop-down button piece of this control.</span>
-<span class="g">   )</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">EditComboBox_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="g">   )</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">EditComboBox_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">;-- Get hWnd to the Edit control piece of the ComboBox</span>
+<span class="c-Singleline">;-- Get hWnd to the Edit control piece of the ComboBox</span><span class="w"></span>
 <span class="nb">ControlGet</span><span class="w"> </span><span class="s">ListViewHeader_hWnd</span><span class="p">,</span><span class="s">hWnd</span><span class="p">,,</span><span class="s">SysHeader321</span><span class="p">,</span><span class="s">Tooltip Test</span><span class="w"></span>
 
-<span class="n">Tip</span><span class="o">=</span>
+<span class="n">Tip</span><span class="o">=</span><span class="w"></span>
 <span class="w">   </span><span class="g">(ltrim join`s</span>
 <span class="g">    Tooltip for the header of the ListView control.`nNote that this tip is</span>
 <span class="g">    different than the rest of the ListView control.</span>
-<span class="g">   )</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span> <span class="o">.</span> <span class="n">ListViewHeader_hWnd</span> <span class="o">.</span> <span class="s">&quot; P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="nf"></span>
+<span class="g">   )</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="n">Tip</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">ListViewHeader_hWnd</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot; P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="nf"></span>
 <span class="nf">return</span><span class="w"></span>
 
-<span class="nl">Button1:</span>
-<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;Button 1: New Text&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;AButton1 P&quot;</span> <span class="o">.</span> <span class="n">GuiHwnd</span><span class="p">)</span><span class="nf"></span>
+<span class="nl">Button1:</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;Button 1: New Text&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;AButton1 P&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">GuiHwnd</span><span class="p">)</span><span class="nf"></span>
 <span class="nf">return</span><span class="w"></span>
 
-<span class="nl">Button2:</span>
+<span class="nl">Button2:</span><span class="w"></span>
 <span class="nb">ToolTip</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="nf"></span>
 <span class="nf">return</span><span class="w"></span>
 
-<span class="nl">Button3:</span>
-<span class="nb">ToolTip</span><span class="p">()</span>
+<span class="nl">Button3:</span><span class="w"></span>
+<span class="nb">ToolTip</span><span class="p">()</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="w"> </span><span class="s">64</span><span class="p">,</span><span class="s">ToolTips Cleared</span><span class="p">,</span><span class="s">All Tooltips destroyed.  %A_Space%</span><span class="w"></span>
 
 <span class="nf">return</span><span class="w"></span>
@@ -150,8 +150,8 @@
 <span class="nl">Null:</span><span class="nf"></span>
 <span class="nf">return</span><span class="w"></span>
 
-<span class="nl">GUIClose:</span>
-<span class="nl">GUIescape:</span>
+<span class="nl">GUIClose:</span><span class="w"></span>
+<span class="nl">GUIescape:</span><span class="w"></span>
 <span class="nb">Gui</span><span class="p">,</span><span class="s">Destroy</span><span class="w"></span>
 
 <span class="nb">ExitApp</span><span class="w"></span>

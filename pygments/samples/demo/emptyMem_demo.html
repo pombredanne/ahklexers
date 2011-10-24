@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include EmptyMem.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include EmptyMem.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,12 +6,12 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="c-Singleline">;This example will reduce mem usage from around 5,000k to 500k</span>
+<span class="c-Singleline">;This example will reduce mem usage from around 5,000k to 500k</span><span class="w"></span>
 <span class="nb">Run</span><span class="p">,</span><span class="s"> taskmgr.exe</span><span class="w"></span>
 
 <span class="nb">MsgBox</span><span class="p">,</span><span class="s"> Remember current memory usage then compare.</span><span class="w"></span>
 
-<span class="n">EmptyMem</span><span class="p">()</span>
+<span class="n">EmptyMem</span><span class="p">()</span><span class="w"></span>
 <span class="nb">Sleep</span><span class="p">,</span><span class="s"> 5000</span><span class="w"></span>
 
 <span class="nb">Exitapp</span><span class="w"></span>

@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include baseConvert.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include baseConvert.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,7 +6,7 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="nb">MsgBox</span><span class="p"> % </span><span class="n">baseConvert</span><span class="p">(</span><span class="s">&quot;123456&quot;</span><span class="p">,</span><span class="s">&quot;dec&quot;</span><span class="p">,</span><span class="s">&quot;hex&quot;</span><span class="p">)</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="n">baseConvert</span><span class="p">(</span><span class="s">&quot;123456&quot;</span><span class="p">,</span><span class="s">&quot;dec&quot;</span><span class="p">,</span><span class="s">&quot;hex&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="nb">InputBox</span><span class="p">,</span><span class="s"> x</span><span class="p">,</span><span class="s"> baseConvert</span><span class="p">,</span><span class="s"> Type a decimal to convert to base45</span><span class="p">,,,,,,,,</span><span class="s"> 10</span><span class="w"></span>
 
 <span class="nb">MsgBox</span><span class="p"> % </span><span class="n">baseConvert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="s">&quot;decimal&quot;</span><span class="p">,</span><span class="s">&quot;base45&quot;</span><span class="p">)</span><span class="w"> </span>

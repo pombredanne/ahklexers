@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include strTail.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include strTail.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,7 +6,7 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="n">Text</span><span class="p"> =</span>
+<span class="n">Text</span><span class="p"> =</span><span class="w"></span>
 <span class="g">(</span>
 <span class="g">Text of Line 1</span>
 <span class="g">Text of Line 2</span>
@@ -15,6 +15,6 @@
 <span class="g">Text of Line 5</span>
 <span class="g">)</span><span class="w"></span>
 
-<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;&#39;&quot;</span> <span class="o">.</span> <span class="n">strTail</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;&#39;&quot;</span>
-<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;&#39;&quot;</span> <span class="o">.</span> <span class="n">strTail_last</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span> <span class="o">.</span> <span class="s">&quot;&#39;&quot;</span><span class="w"> </span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;&#39;&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">strTail</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot;&#39;&quot;</span><span class="w"></span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;&#39;&quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">strTail_last</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="s">&quot;&#39;&quot;</span><span class="w"> </span>
 </pre></div>

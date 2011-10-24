@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include WinServ.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include WinServ.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,10 +6,10 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="c-Singleline">;Start the Task Scheduler service by using its Service Name</span>
-<span class="nb">MsgBox</span><span class="p"> % </span><span class="n">WinServ</span><span class="p">(</span><span class="s">&quot;Schedule&quot;</span><span class="p">,</span> <span class="nv">True</span><span class="p">)</span><span class="c-Singleline"> ;Returns True if started successfully.</span>
+<span class="c-Singleline">;Start the Task Scheduler service by using its Service Name</span><span class="w"></span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="n">WinServ</span><span class="p">(</span><span class="s">&quot;Schedule&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">True</span><span class="p">)</span><span class="c-Singleline"> ;Returns True if started successfully.</span>
 
-<span class="c-Singleline">; More Examples:</span>
+<span class="c-Singleline">; More Examples:</span><span class="w"></span>
 <span class="cm">/*</span>
 <span class="cm">;Start the Task Scheduler service by using its Service Name</span>
 <span class="cm">WinServ(&quot;Schedule&quot;, True) ;Returns True if started successfully.</span>

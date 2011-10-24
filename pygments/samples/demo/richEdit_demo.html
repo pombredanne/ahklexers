@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include RichEdit.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include RichEdit.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -10,10 +10,10 @@
 
 <span class="nb">Gui</span><span class="p">,</span><span class="s"> +LastFound</span><span class="w"></span>
 
-<span class="n">hwnd</span><span class="p"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">()</span>
-<span class="n">hRichEdit</span><span class="p"> </span><span class="o">:=</span> <span class="n">RichEdit_Add</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
-<span class="n">RichEdit_SetBgColor</span><span class="p">(</span><span class="n">hRichEdit</span><span class="p">,</span> <span class="s">&quot;0x661122&quot;</span><span class="p">)</span>
-<span class="n">RichEdit_SetCharFormat</span><span class="p">(</span><span class="n">hRichEdit</span><span class="p">,</span> <span class="s">&quot;courier new&quot;</span><span class="p">,</span> <span class="s">&quot;bold&quot;</span><span class="p">,</span> <span class="s">&quot;0x3366ff&quot;</span><span class="p">,</span> <span class="s">&quot;0x333333&quot;</span><span class="p">)</span>
+<span class="n">hwnd</span><span class="p"> </span><span class="o">:=</span><span class="nf"> WinExist</span><span class="p">()</span><span class="w"></span>
+<span class="n">hRichEdit</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">RichEdit_Add</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">)</span><span class="w"></span>
+<span class="n">RichEdit_SetBgColor</span><span class="p">(</span><span class="n">hRichEdit</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0x661122&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">RichEdit_SetCharFormat</span><span class="p">(</span><span class="n">hRichEdit</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;courier new&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0x3366ff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0x333333&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="nb">Gui</span><span class="p">,</span><span class="s"> Show</span><span class="p">,</span><span class="s"> w210 h310</span><span class="w"></span>
 
 
@@ -27,6 +27,6 @@
 
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">GuiClose:</span>
+<span class="nl">GuiClose:</span><span class="w"></span>
 <span class="nb">ExitApp</span><span class="w"></span>
 </pre></div>

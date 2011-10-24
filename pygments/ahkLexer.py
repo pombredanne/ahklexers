@@ -36,7 +36,8 @@ class AutohotkeyLexer(ExtendedRegexLexer):
             (r'[a-zA-Z_#@$][a-zA-Z0-9_#@$]*', Name),       
             (r'\\|\'', Text),                              
             (r'\`([\,\%\`abfnrtv\-\+;])', String.Escape),  
-            include('garbage'),                            
+#            include('garbage'),
+            (r'\s', Whitespace)
         ],  
         'variables': [(r'\%[a-zA-Z_#@$][a-zA-Z0-9_#@$]*\%', Name.Variable),
                       ], 

@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include grep.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include grep.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -8,8 +8,8 @@
 
 <span class="nb">FileRead</span><span class="p">,</span><span class="s"> haystack</span><span class="p">,</span><span class="s"> %A_ScriptName%</span><span class="w"></span>
 
-<span class="n">regex</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;%.*?%&quot;</span>
-<span class="n">pos</span><span class="p"> </span><span class="o">:=</span> <span class="n">grep</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">outputVar</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;, &quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">regex</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;%.*?%&quot;</span><span class="w"></span>
+<span class="n">pos</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">grep</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span><span class="w"> </span><span class="n">regex</span><span class="p">,</span><span class="w"> </span><span class="n">outputVar</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%pos%</span><span class="w"></span>
 

@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Mount.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Mount.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,34 +6,34 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="c-Singleline">; Select source folder</span>
+<span class="c-Singleline">; Select source folder</span><span class="w"></span>
 <span class="nb">FileSelectFolder</span><span class="p">,</span><span class="s"> SourcePath</span><span class="p">,</span><span class="s"> ::{20d04fe0-3aea-1069-a2d8-08002b30309d}</span><span class="p">,</span><span class="s"> 3</span><span class="p">,</span><span class="s"> Select folder to mount</span><span class="w"></span>
 
 
-<span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">If</span><span class="p"> (</span><span class="nv">ErrorLevel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
 <span class="p">{</span><span class="c-Singleline"></span>
-<span class="c-Singleline">	; Mount to first free drive</span>
-<span class="w">	</span><span class="n">path</span><span class="p"> </span><span class="o">:=</span> <span class="n">Mount</span><span class="p">(</span><span class="n">SourcePath</span><span class="p">)</span><span class="c-Singleline"></span>
+<span class="c-Singleline">	; Mount to first free drive</span><span class="w"></span>
+<span class="w">	</span><span class="n">path</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">Mount</span><span class="p">(</span><span class="n">SourcePath</span><span class="p">)</span><span class="c-Singleline"></span>
 
-<span class="c-Singleline">	; Open that drive and wait until MsgBox is closed for unmount</span>
+<span class="c-Singleline">	; Open that drive and wait until MsgBox is closed for unmount</span><span class="w"></span>
 <span class="w">	</span><span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%SourcePath%</span><span class="s"> mounted to %path%</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"></span>
 
-<span class="n">Mount_GetMountPathes</span><span class="p">(</span><span class="n">pathes</span><span class="p">)</span>
-<span class="n">If</span><span class="p"> (</span><span class="n">pathes</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="p">{</span>
+<span class="n">Mount_GetMountPathes</span><span class="p">(</span><span class="n">pathes</span><span class="p">)</span><span class="w"></span>
+<span class="n">If</span><span class="p"> (</span><span class="n">pathes</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">	</span><span class="nb">MsgBox</span><span class="p">,</span><span class="s"> 4</span><span class="p">,,</span><span class="s"> Unmount all these mounts?`n`n%pathes%</span><span class="w"></span>
-<span class="w">	</span><span class="nf">	IfMsgBox</span><span class="p">,</span> <span class="n">Yes</span>
-	<span class="p">{</span>
+<span class="w">	</span><span class="nf">	IfMsgBox</span><span class="p">,</span><span class="w"> </span><span class="n">Yes</span><span class="w"></span>
+<span class="w">	</span><span class="p">{</span><span class="w"></span>
 <span class="w">		</span><span class="nb">Loop</span><span class="p">,</span><span class="s"> Parse</span><span class="p">,</span><span class="s"> pathes</span><span class="p">,</span><span class="s"> `n</span><span class="w"></span>
-<span class="w">		</span>	<span class="p">{</span>
+<span class="w">			</span><span class="p">{</span><span class="w"></span>
 <span class="w">			</span><span class="nb">StringLeft</span><span class="p">,</span><span class="s"> path</span><span class="p">,</span><span class="s"> A_LoopField</span><span class="p">,</span><span class="s"> 1</span><span class="w"></span>
-<span class="w">			</span>	<span class="n">If</span> <span class="p">(</span><span class="n">path</span><span class="p">)</span>
-			<span class="p">{</span>
-				<span class="n">Mount_UnMount</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w">	</span>
-			<span class="p">}</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
+<span class="w">				</span><span class="n">If</span><span class="w"> </span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w"></span>
+<span class="w">			</span><span class="p">{</span><span class="w"></span>
+<span class="w">				</span><span class="n">Mount_UnMount</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w">	</span>
+<span class="w">			</span><span class="p">}</span><span class="w"></span>
+<span class="w">		</span><span class="p">}</span><span class="w"></span>
+<span class="w">	</span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>

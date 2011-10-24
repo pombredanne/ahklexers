@@ -1,4 +1,5 @@
 *.pyc
 *.suo
 *.exe
+*.out
 *.dll

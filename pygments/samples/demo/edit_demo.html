@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Edit.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Edit.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,7 +6,7 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="c-Singleline">; Start Notepad and get handle of the editor.</span>
+<span class="c-Singleline">; Start Notepad and get handle of the editor.</span><span class="w"></span>
 <span class="nb">Run</span><span class="p">,</span><span class="s"> notepad.exe</span><span class="p">,,</span><span class="s"> </span><span class="p">,</span><span class="s"> pid</span><span class="w"></span>
 
 <span class="nb">WinWait</span><span class="w"> </span><span class="s">ahk_pid %pid%</span><span class="w"></span>
@@ -14,18 +14,18 @@
 <span class="nb">ControlGet</span><span class="p">,</span><span class="s"> hEdit</span><span class="p">,</span><span class="s"> Hwnd</span><span class="p">,,</span><span class="s"> Edit1</span><span class="p">,</span><span class="s"> ahk_pid %pid%</span><span class="w"></span>
 
 
-<span class="c-Singleline">; Set default text to opened editor.</span>
+<span class="c-Singleline">; Set default text to opened editor.</span><span class="w"></span>
 <span class="nb">GoSub</span><span class="p">,</span><span class="s"> F1</span><span class="w"></span>
 
 
-<span class="c-Singleline">; Exit script after attached Notepad is closed.</span>
+<span class="c-Singleline">; Exit script after attached Notepad is closed.</span><span class="w"></span>
 <span class="nb">WinWaitClose</span><span class="p">,</span><span class="s"> ahk_pid %pid%</span><span class="w"></span>
 
 <span class="nb">ExitApp</span><span class="c-Singleline"></span>
 
 <span class="c-Singleline">; Hotkeys for testing on that editor.</span><span class="w"></span>
 
-<span class="nl">F1::</span><span class="n">Edit_SetText</span><span class="p">(</span> <span class="n">hEdit</span><span class="p">,</span> <span class="s">&quot;Hotkeys `r`n  F1 - Set editor to default text`r`n  F2 - Show length of text`r`n  F3 - search text </span><span class="se">&quot;&quot;</span><span class="s">Show</span><span class="se">&quot;&quot;</span><span class="s">, ahk_pid %pid%&quot;</span> <span class="p">)</span>
-<span class="nl">F2::</span><span class="n">MsgBox</span> <span class="o">%</span> <span class="s">&quot;Text length: &quot;</span> <span class="o">.</span> <span class="n">Edit_GetTextLength</span><span class="p">(</span> <span class="n">hEdit</span> <span class="p">)</span>
-<span class="nl">F3::</span><span class="n">MsgBox</span> <span class="o">%</span> <span class="s">&quot;Position of </span><span class="se">&quot;&quot;</span><span class="s">Show</span><span class="se">&quot;&quot;</span><span class="s">: &quot;</span> <span class="o">.</span> <span class="n">Edit_FindText</span><span class="p">(</span> <span class="n">hEdit</span><span class="p">,</span>  <span class="s">&quot;Show&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="nl">F1::</span><span class="n">Edit_SetText</span><span class="p">(</span><span class="w"> </span><span class="n">hEdit</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hotkeys `r`n  F1 - Set editor to default text`r`n  F2 - Show length of text`r`n  F3 - search text </span><span class="se">&quot;&quot;</span><span class="s">Show</span><span class="se">&quot;&quot;</span><span class="s">, ahk_pid %pid%&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="nl">F2::</span><span class="n">MsgBox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;Text length: &quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Edit_GetTextLength</span><span class="p">(</span><span class="w"> </span><span class="n">hEdit</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="nl">F3::</span><span class="n">MsgBox</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;Position of </span><span class="se">&quot;&quot;</span><span class="s">Show</span><span class="se">&quot;&quot;</span><span class="s">: &quot;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">Edit_FindText</span><span class="p">(</span><span class="w"> </span><span class="n">hEdit</span><span class="p">,</span><span class="w">  </span><span class="s">&quot;Show&quot;</span><span class="p">)</span><span class="w"></span>
 </pre></div>

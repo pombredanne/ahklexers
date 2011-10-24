@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ini.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include ini.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,25 +6,25 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="c-Singleline">; ----- User Configuration -----</span>
-<span class="n">ConfigFilePath</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;settings.ini&quot;</span><span class="c-Singleline"></span>
+<span class="c-Singleline">; ----- User Configuration -----</span><span class="w"></span>
+<span class="n">ConfigFilePath</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;settings.ini&quot;</span><span class="c-Singleline"></span>
 
 
 <span class="c-Singleline">; ----- Main -----</span><span class="nf"></span>
-<span class="nf">IfNotExist</span><span class="p">,</span> <span class="nv">%ConfigFilePath%</span>
-    <span class="n">createConfigFile</span><span class="p">(</span><span class="n">ConfigFilePath</span><span class="p">)</span><span class="w"></span>
+<span class="nf">IfNotExist</span><span class="p">,</span><span class="w"> </span><span class="nv">%ConfigFilePath%</span><span class="w"></span>
+<span class="w">    </span><span class="n">createConfigFile</span><span class="p">(</span><span class="n">ConfigFilePath</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">FileRead</span><span class="p">,</span><span class="s"> ini</span><span class="p">,</span><span class="s"> %ConfigFilePath%</span><span class="w"></span>
 
-<span class="n">value</span><span class="p"> </span><span class="o">:=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="s">&quot;Started&quot;</span><span class="p">)</span>
+<span class="n">value</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Config&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Started&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="n">value++</span><span class="p"></span>
 <span class="s">ini_replaceValue(ini</span><span class="p">,</span><span class="s"> &quot;Config&quot;</span><span class="p">,</span><span class="s"> &quot;Started&quot;</span><span class="p">,</span><span class="s"> value)</span><span class="w"></span>
 
-<span class="n">updateConfigFile</span><span class="p">(</span><span class="n">ConfigFilePath</span><span class="p">,</span> <span class="n">ini</span><span class="p">)</span><span class="w"></span>
+<span class="n">updateConfigFile</span><span class="p">(</span><span class="n">ConfigFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">ini</span><span class="p">)</span><span class="w"></span>
 
 <span class="nb">FileRead</span><span class="p">,</span><span class="s"> ini</span><span class="p">,</span><span class="s"> %ConfigFilePath%</span><span class="w"></span>
 
-<span class="n">value</span><span class="p"> </span><span class="o">:=</span> <span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s">&quot;Config&quot;</span><span class="p">,</span> <span class="s">&quot;Started&quot;</span><span class="p">)</span>
+<span class="n">value</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ini_getValue</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Config&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Started&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="w"> </span><span class="s">This script was started %value% time/s.</span><span class="w"></span>
 
 
@@ -32,22 +32,22 @@
 <span class="nf">RETURN</span><span class="c-Singleline"> ; End of AutoExec-section</span><span class="w"></span>
 
 
-<span class="n">createConfigFile</span><span class="p">(</span><span class="n">Path</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="n">Template</span><span class="p"> =</span>
+<span class="n">createConfigFile</span><span class="p">(</span><span class="n">Path</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Template</span><span class="p"> =</span><span class="w"></span>
 <span class="w">    </span><span class="g">(LTrim</span>
 <span class="g">    [Config]</span>
 <span class="g">    Started=0</span>
-<span class="g">    )</span>
+<span class="g">    )</span><span class="w"></span>
 <span class="w">    </span><span class="nb">FileAppend</span><span class="p">,</span><span class="s"> %Template%</span><span class="p">,</span><span class="s"> %Path%</span><span class="w"></span>
-<span class="w">    </span><span class="nf"> Return</span>
+<span class="w">    </span><span class="nf"> Return</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 
 
-<span class="n">updateConfigFile</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="n">ByRef</span> <span class="n">Content</span><span class="p">)</span>
-<span class="p">{</span>
+<span class="n">updateConfigFile</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span><span class="w"> </span><span class="n">ByRef</span><span class="w"> </span><span class="n">Content</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nb">FileDelete</span><span class="p">,</span><span class="s"> %Path%</span><span class="w"></span>
-<span class="w">    </span> <span class="n">FileAppend</span><span class="p">,</span> <span class="nv">%Content%</span><span class="p">,</span> <span class="nv">%Path%</span><span class="nf"></span>
-<span class="nf">    Return</span>
+<span class="w">     </span><span class="n">FileAppend</span><span class="p">,</span><span class="w"> </span><span class="nv">%Content%</span><span class="p">,</span><span class="w"> </span><span class="nv">%Path%</span><span class="nf"></span>
+<span class="nf">    Return</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>

@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include CMDret_stream.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include CMDret_stream.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -11,20 +11,20 @@
 <span class="nb">Gui</span><span class="p">,</span><span class="s"> Show</span><span class="p">,</span><span class="s"> x398 y110 h377 w477</span><span class="p">,</span><span class="s"> CMDret - AHK version - Streaming Test App</span><span class="w"></span>
 
 
-<span class="nb">Gui</span><span class="w"> </span><span class="o">+</span><span class="n">LastFound</span>
-<span class="n">StrOut</span><span class="p"> </span><span class="o">:=</span> <span class="n">CMDret_Stream</span><span class="p">(</span><span class="s">&quot;cmd /c dir c:\&quot;</span><span class="p">)</span>
+<span class="nb">Gui</span><span class="w"> </span><span class="o">+</span><span class="n">LastFound</span><span class="w"></span>
+<span class="n">StrOut</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">CMDret_Stream</span><span class="p">(</span><span class="s">&quot;cmd /c dir c:\&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="w"> </span><span class="nv">%StrOut%</span><span class="w"></span>
 
 
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">GuiClose:</span>
+<span class="nl">GuiClose:</span><span class="w"></span>
 <span class="nb">ExitApp</span><span class="w"></span>
 
 
-<span class="n">CMDret_Output</span><span class="p">(</span><span class="n">CMDout</span><span class="p">,</span> <span class="n">CMDname</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="n">CMDret_Output</span><span class="p">(</span><span class="n">CMDout</span><span class="p">,</span><span class="w"> </span><span class="n">CMDname</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="p">{</span><span class="nf"></span>
-<span class="nf">	Global</span> <span class="n">OutputWindow</span>
+<span class="nf">	Global</span><span class="w"> </span><span class="n">OutputWindow</span><span class="w"></span>
 <span class="w">	</span><span class="nb">ControlSetText</span><span class="p">,</span><span class="s"> Edit1</span><span class="p">,</span><span class="s"> %CMDout%</span><span class="w"></span>
 <span class="w">		</span><span class="nb">Sleep</span><span class="p">,</span><span class="s"> 200</span><span class="w"></span>
 

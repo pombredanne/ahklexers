@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include CColor.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include CColor.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -19,13 +19,13 @@
 
 <span class="nb">Sleep</span><span class="p">,</span><span class="s"> 1500</span><span class="w"></span>
 
-<span class="n">CColor</span><span class="p">(</span><span class="n">h2</span><span class="p">,</span> <span class="s">&quot;FFFFFF&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">CColor</span><span class="p">(</span><span class="n">h2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;FFFFFF&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="nb">Gui</span><span class="p">,</span><span class="s"> 1:+LastFound</span><span class="w"></span>
 
 <span class="nb">WinSet</span><span class="p">,</span><span class="s"> ReDraw </span><span class="c-Singleline">; Without this redraw, the change does not take effect!</span><span class="w"></span>
 
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">GuiClose:</span>
+<span class="nl">GuiClose:</span><span class="w"></span>
 <span class="nb">ExitApp</span><span class="w"></span>
 </pre></div>

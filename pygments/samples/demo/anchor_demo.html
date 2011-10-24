@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Anchor.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Anchor.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -40,33 +40,33 @@
 
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">F10::</span><span class="c-Singleline"> ; reset control position</span>
+<span class="nl">F10::</span><span class="c-Singleline"> ; reset control position</span><span class="w"></span>
 <span class="nb">GuiControl</span><span class="p">,</span><span class="s"> Move</span><span class="p">,</span><span class="s"> MyEdit</span><span class="p">,</span><span class="s"> w100 h100 </span><span class="c-Singleline">; move control to a size relative to current Gui dimensions</span><span class="w"></span>
 
-<span class="c-Singleline">; since this script uses multiple GUIs it&#39;s necessary to indicate which one Anchor should use by prefixing the name as done here:</span>
+<span class="c-Singleline">; since this script uses multiple GUIs it&#39;s necessary to indicate which one Anchor should use by prefixing the name as done here:</span><span class="w"></span>
 <span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;1:MyEdit&quot;</span><span class="p">)</span><span class="c-Singleline"> ; reset by passing only the first parameter</span><span class="nf"></span>
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">Win2:</span>
+<span class="nl">Win2:</span><span class="w"></span>
 <span class="nb">Gui</span><span class="p">,</span><span class="s"> 2:Show</span><span class="p">,</span><span class="s"> </span><span class="p">,</span><span class="s"> Window</span><span class="w"></span>
 
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">GuiSize:</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyEdit&quot;</span><span class="p">,</span> <span class="s">&quot;wh&quot;</span><span class="p">)</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyButton&quot;</span><span class="p">,</span> <span class="s">&quot;xy&quot;</span><span class="p">)</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyGroup&quot;</span><span class="p">,</span> <span class="s">&quot;yw&quot;</span><span class="p">,</span> <span class="nv">true</span><span class="p">)</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyCombo&quot;</span><span class="p">,</span> <span class="s">&quot;y&quot;</span><span class="p">)</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyText&quot;</span><span class="p">,</span> <span class="s">&quot;y&quot;</span><span class="p">)</span><span class="nf"></span>
+<span class="nl">GuiSize:</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyEdit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wh&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyButton&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;xy&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyGroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;yw&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">true</span><span class="p">)</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyCombo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;MyText&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p">)</span><span class="nf"></span>
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">2GuiSize:</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;LB&quot;</span><span class="p">,</span> <span class="s">&quot;w0.5 h&quot;</span><span class="p">)</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;Edit&quot;</span><span class="p">,</span> <span class="s">&quot;x0.5 w0.5 h&quot;</span><span class="p">)</span>
-<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;CloseButton&quot;</span><span class="p">,</span> <span class="s">&quot;x0.75 y&quot;</span><span class="p">)</span><span class="nf"></span>
+<span class="nl">2GuiSize:</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;LB&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;w0.5 h&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;Edit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;x0.5 w0.5 h&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">Anchor</span><span class="p">(</span><span class="s">&quot;CloseButton&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;x0.75 y&quot;</span><span class="p">)</span><span class="nf"></span>
 <span class="nf">Return</span><span class="w"></span>
 
-<span class="nl">~*Esc::</span>
-<span class="nl">GuiClose:</span>
+<span class="nl">~*Esc::</span><span class="w"></span>
+<span class="nl">GuiClose:</span><span class="w"></span>
 <span class="nb">ExitApp</span><span class="w"></span>
 </pre></div>

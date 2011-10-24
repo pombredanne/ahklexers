@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Crypt.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include Crypt.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -6,7 +6,7 @@
 <span class="nb">SetWorkingDir</span><span class="w"> </span><span class="nv">%A_ScriptDir%</span><span class="w"></span>
 
 
-<span class="n">V</span><span class="p"> </span><span class="o">:=</span> <span class="s">&quot;The quick brown fox jumps over the lazy dog&quot;</span>
-<span class="n">L</span><span class="p"> </span><span class="o">:=</span><span class="nf"> StrLen</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">V</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;The quick brown fox jumps over the lazy dog&quot;</span><span class="w"></span>
+<span class="n">L</span><span class="p"> </span><span class="o">:=</span><span class="nf"> StrLen</span><span class="p">(</span><span class="n">V</span><span class="p">)</span><span class="w"></span>
 <span class="nb">MsgBox</span><span class="p">,,</span><span class="s"> MD5 with Crypt_Hash()</span><span class="p">, % </span><span class="s">V . &quot;:`n`n&quot; . Crypt_Hash(&amp;V</span><span class="p">,</span><span class="s"> L</span><span class="p">,</span><span class="s"> &quot;MD5&quot;) </span><span class="c-Singleline">; Notice, &amp;V instead of just V</span><span class="w"></span>
 </pre></div>

@@ -1,4 +1,4 @@
-<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include WaitPixelColor.ahk</span>
+<LINK href="styles.css" rel="stylesheet" type="text/css"><div class="highlight"><pre><span class="c-Singleline">; #Include WaitPixelColor.ahk</span><span class="w"></span>
 <span class="nb">#NoEnv</span><span class="w"></span>
 
 <span class="nb">SendMode</span><span class="w"> </span><span class="s">Input</span><span class="w"></span>
@@ -9,24 +9,24 @@
 <span class="nb">CoordMode</span><span class="p">,</span><span class="s"> Pixel</span><span class="p">,</span><span class="s"> Screen</span><span class="w"></span>
 
 
-<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;This example will wait 2 seconds, and then wait until at position x=640, y=480 the color changes to white.&quot;</span>
+<span class="nb">MsgBox</span><span class="p"> % </span><span class="s">&quot;This example will wait 2 seconds, and then wait until at position x=640, y=480 the color changes to white.&quot;</span><span class="w"></span>
 <span class="nb">Sleep</span><span class="p">,</span><span class="s"> 2000</span><span class="w"></span>
 
-<span class="n">ExitCode</span><span class="p"> </span><span class="o">:=</span> <span class="n">WaitPixelColor</span><span class="p">(</span><span class="mh">0xFFFFFF</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">20000</span><span class="p">)</span>
-<span class="n">If</span><span class="p"> (</span><span class="n">ExitCode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-<span class="p">{</span>
+<span class="n">ExitCode</span><span class="p"> </span><span class="o">:=</span><span class="w"> </span><span class="n">WaitPixelColor</span><span class="p">(</span><span class="mh">0xFFFFFF</span><span class="p">,</span><span class="w"> </span><span class="mi">640</span><span class="p">,</span><span class="w"> </span><span class="mi">480</span><span class="p">,</span><span class="w"> </span><span class="mi">20000</span><span class="p">)</span><span class="w"></span>
+<span class="n">If</span><span class="p"> (</span><span class="n">ExitCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nb">MsgBox</span><span class="w"> </span><span class="s">The desired color was found</span><span class="w"></span>
 
-<span class="p">}</span>
+<span class="p">}</span><span class="w"></span>
 <span class="nb">Else</span><span class="w"> </span><span class="s">If (ExitCode = 1)</span><span class="w"></span>
 
-<span class="p">{</span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nb">MsgBox</span><span class="w"> </span><span class="s">There was a problem during PixelGetColor</span><span class="w"></span>
 
-<span class="p">}</span>
+<span class="p">}</span><span class="w"></span>
 <span class="nb">Else</span><span class="w"> </span><span class="s">If (ExitCode = 2)</span><span class="w"></span>
 
-<span class="p">{</span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nb">MsgBox</span><span class="w"> </span><span class="s">The function timed out</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"></span>
