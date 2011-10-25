@@ -19,7 +19,7 @@ class AutohotkeyLexer(ExtendedRegexLexer):
     def commands_callback(lexer, match, ctx):
         pwhitespace = match.group(1)
         yield match.start(), Whitespace, pwhitespace
-        ctx.pos = match.end() - 2
+        ctx.pos = match.end() - 1
     tokens = { 	               	
         'root': [	        
             include('comments'),

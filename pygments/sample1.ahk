@@ -13,6 +13,7 @@ Return
 /*  multiline
 comment
 */
+Msgbox, hello world, % 1, 2
 (
 continuation
 section

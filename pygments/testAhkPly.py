@@ -23,14 +23,14 @@ class mytoken:
         self.lineno = lineno                                          
         self.lexpos = lexpos                                          
                                                                       
-class ltoken:                                                         
-    def __init__(self, t):                                            
-        self.t = t                                                    
-    def token(self):                                                  
-        try:                                                          
-            x = self.t.next()                                         
+class ltoken:                                                           
+    def __init__(self, t):                                              
+        self.t = t                                                      
+    def token(self):                                                    
+        try:                                                            
+            x = self.t.next()                                           
             while (re.search("whitespace", str(x[1])[6:], re.IGNORECASE)):
-                   x = self.t.next()
+                   x = self.t.next()                                    
             y = mytoken(str(x[1])[6:], x[2], 1, x[0])
             print "type: {0}, value: {1}, line: {2}, pos: {3}".format(y.type, y.value, y.lineno, y.lexpos)
             return y

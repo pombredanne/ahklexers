@@ -5,7 +5,7 @@ from pygments.formatters import HtmlFormatter
 from pygments.style import Style
 from pygments.token import *
 
-ahkfile = 'sample1.ahk'
+ahkfile = 'sample3.ahk'
 ahkfileh = 'sample1.html'
 f = open(ahkfile)
 code = f.read()
